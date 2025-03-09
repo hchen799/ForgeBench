@@ -738,6 +738,7 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
     lines.append("")
     lines.append("set_top top")
     lines.append("")
+    lines.append("add_files  top.cpp")
     lines.append("add_files -tb tb_top.cpp")
     lines.append("add_files -tb top.h")
     lines.append("")
