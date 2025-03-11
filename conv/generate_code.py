@@ -1,5 +1,6 @@
 import re
 import random
+import json
 
 def replace_data_type(data_type: str) -> str:
     # Replace all occurrences of <, >, and , with an underscore
@@ -422,6 +423,60 @@ def generate_maxpool_code(
     
     return new_generated_code, func_name
 
+def generate_matrix_add_code(
+    template_path,    # Path to matrix_add_template.cpp
+    DATA_TYPE="float",
+    C=3,
+    H=64,
+    W=64
+):
+    """
+    Reads the matrix addition template and substitutes the placeholders with the provided parameters.
+    The template uses the following placeholders:
+       {DATA_TYPE}, {C}, {H}, {W}
+    
+    The final function has the following signature:
+       void matrix_add(data_t in1[C][H][W], data_t in2[C][H][W], data_t out[C][H][W])
+    
+    Parameters:
+       template_path: path to the matrix_add_template.cpp file.
+       output_path: path to output the generated C code.
+       DATA_TYPE: the C data type for the operation (e.g., "float").
+       C: number of channels.
+       H: height.
+       W: width.
+    """
+    # Read the template file.
+    with open(template_path, "r") as f:
+        template_code = f.read()
+    
+    # Substitute the placeholders.
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        C=C,
+        H=H,
+        W=W
+    )
+    
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    dim_suffix = f"_{C}_{H}_{W}_{DATA_TYPE}"
+    
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+matrix_add)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    func_name = "matrix_add" + dim_suffix
+    
+    return new_generated_code, func_name
+    
+    
+
+
 def generate_func_def(op_info, data_type):
     
     if op_info['func_name'] == 'load':
@@ -436,6 +491,8 @@ def generate_func_def(op_info, data_type):
         code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     elif op_info['func_name'] == 'maxpool':
         code_line, full_func_name = generate_maxpool_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8])
+    elif op_info['func_name'] == 'matrix_add':
+        code_line, full_func_name = generate_matrix_add_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     else:
         print("the operator we do not support!")
         
@@ -468,6 +525,8 @@ def generate_operator_call(op_info, data_type):
         code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     elif op_info['func_name'] == 'maxpool':
         code_line, full_func_name = generate_maxpool_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8])
+    elif op_info['func_name'] == 'matrix_add':
+        code_line, full_func_name = generate_matrix_add_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     else:
         print("the operator we do not support!")
         
@@ -785,109 +844,46 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
 
 
 if __name__ == "__main__":
-    # Example BRAM configuration:
-    brams = [
-        {"name": "BRAM_1", "dims": [2, 4, 4]}, # Used to store the input [c, h, w]
-        {"name": "BRAM_2", "dims": [2, 2, 3, 3]}, # Used to store the conv weights [cout, cin, k, k]
-        {"name": "BRAM_3", "dims": [2]}, # Used to store the bias [cout]
-        {"name": "BRAM_4", "dims": [4, 2]}, #Used to store the batch norm weights [4][cout]
-        {"name": "BRAM_5", "dims": [2, 4, 4]}, #Used to store the temp results before maxpool
-        {"name": "BRAM_6", "dims": [2, 2, 2]} #Used to store the temp results after maxpool
-    ]
+    with open("config.json", "r") as f:
+        config = json.load(f)
     
-    # Example DRAM configuration:
-    drams = [
-        {"name": "DRAM_1", "dims": [2, 4, 4], "bundle": "mem1"}, # Used to load the input [c, h, w]
-        {"name": "DRAM_2", "dims": [2, 2, 3, 3], "bundle": "mem1"}, # Used to load the conv weights [cout, cin, k, k]
-        {"name": "DRAM_3", "dims": [2], "bundle": "mem1"},  #Used to load the bias [cout]
-        {"name": "DRAM_4", "dims": [4, 2], "bundle": "mem1"}, #Used to load the batch norm weights [4][cout]
-        {"name": "DRAM_5", "dims": [2, 2, 2], "bundle": "mem2"} #Used to write back the output [c, h, w]
-    ]
+    # Extract configuration parameters
+    brams = config["brams"]
+    drams = config["drams"]
+    ops = config["ops"]
+    output_dram_names = config["output_dram_names"]
+    FPGA_name = config["FPGA_name"]
+    clock_period = config["clock_period"]
+    task = config["task"]
+    data_type = config["data_type"]
+    top_func_name = config["top_func_name"]
+    output_files = config["output_files"]
     
-    # Example operators dictionary.
-    # The keys determine the order of function calls.
-    ops = {
-        "load_1": {
-            "func_name": "load",
-            "dims": [2, 4, 4],
-            "args": ["DRAM_1", "BRAM_1"]
-        },
-        "load_2": {
-            "func_name": "load",
-            "dims": [2, 2, 3, 3],
-            "args": ["DRAM_2", "BRAM_2"]
-        },
-        "load_3": {
-            "func_name": "load",
-            "dims": [2],
-            "args": ["DRAM_3", "BRAM_3"]
-        },
-        "load_4": {
-            "func_name": "load",
-            "dims": [4, 2],
-            "args": ["DRAM_4", "BRAM_4"]
-        },
-        "batchnorm": {
-            "func_name": "batchnorm",
-            "dims": [2, 4, 4],
-            "func_info":["batch_norm_template.cpp", 0.00001],
-            "args": ["BRAM_1", "BRAM_4", "BRAM_5"]
-        },
-        "conv": {
-            "func_name": "conv",
-            "dims": [2, 2, 4, 4, 3],
-            "func_info":["conv_template.cpp", "group_conv2d", True],
-            "args": ["BRAM_5", "BRAM_2", "BRAM_3", "BRAM_1", "2"]
-        },
-        "activation": {
-            "func_name": "activation",
-            "dims": [2, 4, 4],
-            "func_info":["activations_template.cpp", "relu"],
-            "args": ["BRAM_1", "BRAM_5"]
-        },
-        "maxpool": {
-            "func_name": "maxpool",
-            "dims": [2, 4, 4, 2, 2, 2, 2, 2, 2],
-            "func_info":["maxpool_template.cpp"],
-            "args": ["BRAM_5", "BRAM_6"]
-        },
-        "store": {
-            "func_name": "store",
-            "dims": [2, 2, 2],
-            "args": ["BRAM_6", "DRAM_5"]
-        },
-    }
-    
-    output_dram_names = ["DRAM_4", "DRAM_5"]
-    
-    FPGA_name = "xczu9eg-ffvb1156-2-e"
-    clock_period = 10
-    task = ["csim", "csynth", "cosim", "export_ip"]
-    
-    # Generate the complete HLS C code for the top function.
-    top_code = generate_top_function(brams, drams, ops, data_type="ap_fixed<16, 5>", top_func_name="top")
-    
-    # Write the generated code to a file, for example "top.cpp"
-    output_filename = "top.cpp"
-    with open(output_filename, "w") as f:
+    # Generate the top function C++ code
+    top_code = generate_top_function(brams, drams, ops, data_type=data_type, top_func_name=top_func_name)
+    with open(output_files["top_cpp"], "w") as f:
         f.write(top_code)
-    print("Generated top.cpp:")    
-        
-    top_h_code = generate_top_h(drams, data_type="ap_fixed<16, 5>", top_func_name="top")
-    with open("top.h", "w") as f:
+    print(f"Generated {output_files['top_cpp']}")
+    
+    # Generate the top header file
+    top_h_code = generate_top_h(drams, data_type=data_type, top_func_name=top_func_name)
+    with open(output_files["top_h"], "w") as f:
         f.write(top_h_code)
-    print("Generated top.h:")
+    print(f"Generated {output_files['top_h']}")
     
-    tb_code = generate_testbench_code(drams, output_dram_names, data_type="ap_fixed<16, 5>", top_func_name="top")
-    with open("tb_top.cpp", "w") as f:
+    # Generate the testbench C++ code
+    tb_code = generate_testbench_code(drams, output_dram_names, data_type=data_type, top_func_name=top_func_name)
+    with open(output_files["tb_top_cpp"], "w") as f:
         f.write(tb_code)
-    print("Generated tb_top.cpp:")
+    print(f"Generated {output_files['tb_top_cpp']}")
     
+    # Generate DRAM initialization files (assumes a seed value is needed)
     generate_dram_txt_files(drams, seed=42)
-    print("Generated dram initialization.")
+    print("Generated DRAM initialization files.")
     
-    generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="run_hls.tcl")
-    print("Generated tcl file to launch tasks.")
+    # Generate the TCL file to launch HLS tasks
+    generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename=output_files["run_hls_tcl"])
+    print(f"Generated TCL file: {output_files['run_hls_tcl']}")
     
     
 
