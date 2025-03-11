@@ -10,7 +10,7 @@ def replace_data_type(data_type: str) -> str:
 
 
 def generate_load_function(
-    dims,              # List of dimensions, e.g., [32, 64, 64]
+    dims,              # List of dimensions, e.g., [8, 16, 16]
     data_type="float", # Underlying data type
     func_prefix="load" # Function prefix (will be appended with dims and data_type)
 ):
@@ -22,7 +22,7 @@ def generate_load_function(
       <func_prefix>_<dim1>_<dim2>_..._<dimN>_data_t
     
     Parameters:
-      dims: list of integers, e.g., [32, 64, 64]
+      dims: list of integers, e.g., [8, 16, 16]
       data_type: string, e.g., "float" (used in typedef and function signature)
       func_prefix: prefix for the function name (default "load")
     
@@ -35,10 +35,10 @@ def generate_load_function(
     
     #code_lines.append(f"typedef {data_type} data_t;\n")
     
-    # Build array dimension string, e.g., "[32][64][64]"
+    # Build array dimension string, e.g., "[8][16][16]"
     array_dims = "".join(f"[{d}]" for d in dims)
     
-    # Construct the function name. E.g., load_32_64_64_data_t
+    # Construct the function name. E.g., load_8_16_16_data_t
     dim_suffix = "_".join(str(d) for d in dims)
     
     data_type = replace_data_type(data_type)
@@ -68,7 +68,7 @@ def generate_load_function(
     return "\n".join(code_lines), func_name
 
 def generate_store_function(
-    dims,              # List of dimensions, e.g., [32, 64, 64]
+    dims,              # List of dimensions, e.g., [8, 16, 16]
     data_type="float", # Underlying data type
     func_prefix="store" # Function prefix (will be appended with dims and data_type)
 ):
@@ -80,7 +80,7 @@ def generate_store_function(
       <func_prefix>_<dim1>_<dim2>_..._<dimN>_data_t
     
     Parameters:
-      dims: list of integers, e.g., [32, 64, 64]
+      dims: list of integers, e.g., [8, 16, 16]
       data_type: string, e.g., "float" (used in typedef and function signature)
       func_prefix: prefix for the function name (default "load")
     
@@ -91,10 +91,10 @@ def generate_store_function(
     code_lines = []
     #code_lines.append(f"typedef {data_type} data_t;\n")
     
-    # Build array dimension string, e.g., "[32][64][64]"
+    # Build array dimension string, e.g., "[8][16][16]"
     array_dims = "".join(f"[{d}]" for d in dims)
     
-    # Construct the function name. E.g., load_32_64_64_data_t
+    # Construct the function name. E.g., load_8_16_16_data_t
     dim_suffix = "_".join(str(d) for d in dims)
     data_type = replace_data_type(data_type)
     func_name = f"{func_prefix}_{dim_suffix}_{data_type}"
@@ -142,7 +142,7 @@ inline is bool
 def generate_gemm_function(
         data_type="float",
         func_type="gemm",
-        M=64, N=64, K=64,
+        M=16, N=16, K=16,
         order=['i', 'j', 'k'],
         with_bias=False,
 ):
@@ -207,9 +207,8 @@ def generate_gemm_function(
 
 {{
 {loop_starts}    {init_out}
-{loop_ends}}}
+{loop_ends}
 
-{{
 {loop_starts}    {computation}
 {loop_ends}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
@@ -222,7 +221,7 @@ def generate_gemm_function(
 
 def call_gemm(
         func_type="gemm",
-        M=64, N=64, K=64,
+        M=16, N=16, K=16,
         order=['i', 'j', 'k'],
         with_bias=False,
         input_A_var="input_A",
@@ -272,7 +271,7 @@ def call_gemm(
 
 def call_gemm_inline(
         func_type="gemm",
-        M=64, N=64, K=64,
+        M=16, N=16, K=16,
         order=['i', 'j', 'k'],
         with_bias=False,
         input_A_var="input_A",
@@ -356,7 +355,7 @@ inline is bool
 def generate_mmv_function(
         data_type="int",
         func_type="mmv",
-        M=64, N=64,
+        M=16, N=16,
         order=['i', 'j',],
         with_bias=False,
 ):
@@ -399,7 +398,7 @@ def generate_mmv_function(
 )"""
         init_out = "output[i] = 0;"
     
-    computation = "output[i] += input_A[i][j] * input_B[j]"
+    computation = "output[i] += input_A[i][j] * input_B[j];"
     
     # Create the loop structure based on specified order
     loop_starts = ""
@@ -420,9 +419,8 @@ def generate_mmv_function(
 {function_signature}
 {{
 {loop_starts}    {init_out}
-{loop_ends}}}
+{loop_ends}
 
-{{
 {loop_starts}    {computation}
 {loop_ends}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
@@ -435,7 +433,7 @@ def generate_mmv_function(
 
 def call_mmv(
         func_type="mmv",
-        M=64, N=64,
+        M=16, N=16,
         order=['i', 'j',],
         with_bias=False,  
         input_A_var="input_A",
@@ -486,7 +484,7 @@ def call_mmv(
 
 def call_mmv_inline(
         func_type="mmv",
-        M=64, N=64,
+        M=16, N=16,
         order=['i', 'j',],
         with_bias=False,  
         input_A_var="input_A",
@@ -570,7 +568,7 @@ inline is bool
 def generate_vmm_function(
         data_type="int",
         func_type="vmm",
-        M=64, N=64,
+        M=16, N=16,
         order=['i', 'j',],
         with_bias=False,
 ):
@@ -634,9 +632,8 @@ def generate_vmm_function(
 {function_signature}
 {{
 {loop_starts}    {init_out}
-{loop_ends}}}
+{loop_ends}
 
-{{
 {loop_starts}    {computation}
 {loop_ends}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
@@ -651,7 +648,7 @@ def generate_vmm_function(
 def call_vmm(
         data_type="int",
         func_type="vmm",
-        M=64, N=64,
+        M=16, N=16,
         order=['i', 'j',],
         with_bias=False,  
         input_A_var="input_A",
@@ -702,7 +699,7 @@ def call_vmm(
 
 def call_vmm_inline(
         func_type="vmm",
-        M=64, N=64,
+        M=16, N=16,
         order=['i', 'j',],
         with_bias=False,  
         input_A_var="input_A",
@@ -786,7 +783,7 @@ inline is bool
 def generate_dot_function(
         data_type="int",
         func_type="dot_product",
-        M=64,
+        M=16,
         with_bias=False,
 ):
     """
@@ -839,9 +836,8 @@ def generate_dot_function(
 {function_signature}
 {{
 {loop_starts}    {init_out}
-{loop_ends}}}
+{loop_ends}
 
-{{
 {loop_starts}    {computation}
 {loop_ends}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
@@ -854,7 +850,7 @@ def generate_dot_function(
 
 def call_dot(
         func_type="dot_product",
-        M=64,
+        M=16,
         with_bias=False,  
         input_A_var="input_A",
         input_B_var="input_B",
@@ -899,7 +895,7 @@ def call_dot(
 
 def call_dot_inline(
         func_type="dot_product",
-        M=64,
+        M=16,
         with_bias=False,  
         input_A_var="input_A",
         input_B_var="input_B",
@@ -979,11 +975,11 @@ def generate_operator_call(op_info, data_type):
     
     op_info: dict with keys:
        - "func_name": base function name (e.g., "load", "conv2d", etc.)
-       - "dims": list of integers (e.g., [32,64,64] or [32,64,64,32,64,64])
+       - "dims": list of integers (e.g., [8,16,16] or [8,16,16,8,16,16])
        - "args": list of argument strings for the function call
        
     Returns a string like:
-       load_32_64_64_data_t(DRAM_1, BRAM_1);
+       load_8_16_16_data_t(DRAM_1, BRAM_1);
     """
 
     # Append _data_t to follow the convention.
@@ -1323,7 +1319,7 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
         lines.append("cosim_design")
         lines.append("")
     if "export_ip" in task:
-        lines.append("export_design -format ip_catalog")
+        lines.append("export_design -format ip_catalog -flow impl")
         lines.append("")
         
     lines.append("exit")
@@ -1344,19 +1340,19 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
 if __name__ == "__main__":
     # Example BRAM configuration:
     brams = [
-        {"name": "BRAM_1", "dims": [64, 32]}, # Used to store Matrix 1 [M, N]
-        {"name": "BRAM_2", "dims": [32, 128]}, # Used to store Matrix 2 [N, K]
-        {"name": "BRAM_3", "dims": [128]}, # Used to store bias [K]
-        {"name": "BRAM_4", "dims": [64, 128]}, # Used to store output [M, K]
+        {"name": "BRAM_1", "dims": [16, 8]}, # Used to store Matrix 1 [M, N]
+        {"name": "BRAM_2", "dims": [8, 32]}, # Used to store Matrix 2 [N, K]
+        {"name": "BRAM_3", "dims": [16, 32]}, # Used to store bias [M, K]
+        {"name": "BRAM_4", "dims": [16, 32]}, # Used to store output [M, K]
 
-        {"name": "BRAM_5", "dims": [128]}, # Used to store Vector 2 [K]
-        {"name": "BRAM_6", "dims": [64]}, # Unused Bias
-        {"name": "BRAM_7", "dims": [64]}, # Used to store output of BRAM_4 * BRAM_5 -> [K]
+        {"name": "BRAM_5", "dims": [32]}, # Used to store Vector 2 [K]
+        {"name": "BRAM_6", "dims": [16]}, # Unused Bias
+        {"name": "BRAM_7", "dims": [16]}, # Used to store output of BRAM_4 * BRAM_5 -> [K]
 
-        {"name": "BRAM_8", "dims": [128]}, # Unused Bias
-        {"name": "BRAM_9", "dims": [128]}, # Used to store output of BRAM_7 * BRAM_4 -> [M]
+        {"name": "BRAM_8", "dims": [32]}, # Unused Bias
+        {"name": "BRAM_9", "dims": [32]}, # Used to store output of BRAM_7 * BRAM_4 -> [M]
         
-        {"name": "BRAM_10", "dims": [128]},
+        {"name": "BRAM_10", "dims": [32]},
         {"name": "BRAM_11", "dims": [1]}, # Bias of BRAM_9 * BRAM_10 -> [1]
         {"name": "BRAM_12", "dims": [1]},# Output of BRAM_7 * BRAM_8 + bias -> [1]
     ]
@@ -1369,21 +1365,21 @@ if __name__ == "__main__":
         # {"name": "DRAM_4", "dims": [4, 2], "bundle": "mem1"}, #Used to load the batch norm weights [4][cout]
         # {"name": "DRAM_5", "dims": [2, 2, 2], "bundle": "mem2"} #Used to write back the output [c, h, w]
 
-        {"name": "DRAM_1", "dims": [64, 32], "bundle": "mem1"}, # Used to load the Matrix 1 [M, N]
-        {"name": "DRAM_2", "dims": [32, 128], "bundle": "mem1"}, # Used to load the Matrix 2 [N, K]
-        {"name": "DRAM_3", "dims": [128], "bundle": "mem1"}, # Used to load the bias [K]
-        {"name": "DRAM_4", "dims": [64, 128], "bundle": "mem1"}, # Used to write back the output [M, K]
+        {"name": "DRAM_1", "dims": [16, 8], "bundle": "mem1"}, # Used to load the Matrix 1 [M, N]
+        {"name": "DRAM_2", "dims": [8, 32], "bundle": "mem1"}, # Used to load the Matrix 2 [N, K]
+        {"name": "DRAM_3", "dims": [16, 32], "bundle": "mem1"}, # Used to load the bias [K]
+        {"name": "DRAM_4", "dims": [16, 32], "bundle": "mem2"}, # Used to write back the output [M, K]
 
-        {"name": "DRAM_5", "dims": [128], "bundle": "mem2"}, # Used to load the Vector 2 [K]
-        # {"name": "DRAM_6", "dims": [64], "bundle": "mem2"}, # Unused Bias
-        # {"name": "DRAM_7", "dims": [64], "bundle": "mem2"}, # Used to write back the output of BRAM_4 * BRAM_5 -> [K]
+        {"name": "DRAM_5", "dims": [32], "bundle": "mem1"}, # Used to load the Vector 2 [K]
+        # {"name": "DRAM_6", "dims": [16], "bundle": "mem2"}, # Unused Bias
+        # {"name": "DRAM_7", "dims": [16], "bundle": "mem2"}, # Used to write back the output of BRAM_4 * BRAM_5 -> [K]
 
-        # {"name": "DRAM_8", "dims": [128], "bundle": "mem3"}, # Unused Bias
-        # {"name": "DRAM_9", "dims": [128], "bundle": "mem3"}, # Used to write back the output of BRAM_6 * BRAM_4 -> [M]
+        # {"name": "DRAM_8", "dims": [32], "bundle": "mem3"}, # Unused Bias
+        # {"name": "DRAM_9", "dims": [32], "bundle": "mem3"}, # Used to write back the output of BRAM_6 * BRAM_4 -> [M]
         
-        {"name": "DRAM_10", "dims": [128], "bundle": "mem4"},
-        {"name": "DRAM_11", "dims": [1], "bundle": "mem4"}, # Bias of BRAM_9 * BRAM_10 -> [1]
-        {"name": "DRAM_12", "dims": [1], "bundle": "mem4"},# Output of BRAM_7 * BRAM_8 + bias
+        {"name": "DRAM_10", "dims": [32], "bundle": "mem1"},
+        {"name": "DRAM_11", "dims": [1], "bundle": "mem1"}, # Bias of BRAM_9 * BRAM_10 -> [1]
+        {"name": "DRAM_12", "dims": [1], "bundle": "mem2"},# Output of BRAM_7 * BRAM_8 + bias
 
     ]
     
@@ -1392,28 +1388,28 @@ if __name__ == "__main__":
     ops = {
         "load_1": {
             "func_name": "load",
-            "dims": [64, 32],
+            "dims": [16, 8],
             "args": ["DRAM_1", "BRAM_1"]
         },
         "load_2": {
             "func_name": "load",
-            "dims": [32, 128],
+            "dims": [8, 32],
             "args": ["DRAM_2", "BRAM_2"]
         },
         "load_3": {
             "func_name": "load",
-            "dims": [128],
+            "dims": [16, 32],
             "args": ["DRAM_3", "BRAM_3"]
         },
         "load_4": {
             "func_name": "load",
-            "dims": [128],
+            "dims": [32],
             "args": ["DRAM_5", "BRAM_5"]
         },
 
         "load_5": {
             "func_name": "load",
-            "dims": [128],
+            "dims": [32],
             "args": ["DRAM_10", "BRAM_10"]
         },
 
@@ -1425,34 +1421,34 @@ if __name__ == "__main__":
 
         "gemm_1": {
             "func_name": "gemm",
-            "dims": [64, 128, 32],
+            "dims": [16, 8, 32],
             "func_info": [['i', 'j', 'k'], True, True],
             "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
         },
         
         "store_1": {
             "func_name": "store",
-            "dims": [64, 128],
+            "dims": [16, 32],
             "args": ["BRAM_4", "DRAM_4"]
         },
 
         "vmm": {
             "func_name": "vmm",
-            "dims": [64, 128],
+            "dims": [16, 32],
             "func_info": [['i', 'j'], False, False],
             "args": ["BRAM_4", "BRAM_5", "BRAM_6", "BRAM_7"]
         },
 
         "mmv": {
             "func_name": "mmv",
-            "dims": [64, 128],
+            "dims": [16, 32],
             "func_info": [['j', 'i'], False, False],
             "args": ["BRAM_4", "BRAM_7", "BRAM_8", "BRAM_9"]
         },
 
         "dot_product": {
             "func_name": "dot_product",
-            "dims": [64],
+            "dims": [16],
             "func_info": [True, False, True],
             "args": ["BRAM_9", "BRAM_10", "BRAM_11", "BRAM_12"]
         },
