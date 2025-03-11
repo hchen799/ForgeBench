@@ -174,7 +174,8 @@ def generate_gemm_function(
     {data_type} bias[{M}][{K}],
     {data_type} output[{M}][{K}]
 )"""
-        computation = "output[i][k] += input_A[i][j] * input_B[j][k] + bias[i][k];"
+        init_out = "output[i][k] = bias[i][k];"
+
     else:
         function_name = f"{func_type}_{''.join(order)}"
         function_signature =    f"""void {function_name}(
@@ -182,7 +183,9 @@ def generate_gemm_function(
     {data_type} input_B[{N}][{K}],
     {data_type} output[{M}][{K}]
 )"""
-        computation = "output[i][k] += input_A[i][j] * input_B[j][k];"
+        init_out = "output[i][k] = 0;"
+
+    computation = "output[i][k] += input_A[i][j] * input_B[j][k];"
     
     # Create the loop structure based on specified order
     loop_starts = ""
@@ -201,6 +204,11 @@ def generate_gemm_function(
 //////////////////////////////////////////
 /*==== {function_name.upper()} FUNCTION START ====*/
 {function_signature}
+
+{{
+{loop_starts}    {init_out}
+{loop_ends}}}
+
 {{
 {loop_starts}    {computation}
 {loop_ends}}}
@@ -295,10 +303,12 @@ def call_gemm_inline(
     # Determine function name (for comments only) and computation
     if with_bias:
         function_name = f"{func_type}_{''.join(order)}_bias"
-        computation = f"{output_var}[i][k] += {input_A_var}[i][j] * {input_B_var}[j][k] + {bias_var}[i][k];"
+        init_out = f"{output_var}[i][k] = {bias_var}[i][k];"
     else:
         function_name = f"{func_type}_{''.join(order)}"
-        computation = f"{output_var}[i][k] += {input_A_var}[i][j] * {input_B_var}[j][k];"
+        init_out = f"{output_var}[i][k] = 0;"
+    
+    computation = f"{output_var}[i][k] += {input_A_var}[i][j] * {input_B_var}[j][k];"
     
     # Create the loop structure based on specified order
     loop_starts = ""
@@ -315,6 +325,9 @@ def call_gemm_inline(
     inline_code =   f"""//////////////////////////////////////////
 // Begin: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
+{loop_starts}    {init_out}
+{loop_ends}
+
 {loop_starts}    {computation}
 {loop_ends}//////////////////////////////////////////
 // End: Inline implementation of {function_name.upper()}
@@ -375,7 +388,8 @@ def generate_mmv_function(
     {data_type} bias[{M}],
     {data_type} output[{M}]
 )"""
-        computation = "output[i] += input_A[i][j] * input_B[j] + bias[i];"
+        init_out = "output[i] = bias[i];"
+
     else:
         function_name = f"{func_type}_{''.join(order)}"
         function_signature =    f"""void {function_name}(
@@ -383,7 +397,9 @@ def generate_mmv_function(
     {data_type} input_B[{N}],
     {data_type} output[{M}]
 )"""
-        computation = "output[i] += input_A[i][j] * input_B[j]"
+        init_out = "output[i] = 0;"
+    
+    computation = "output[i] += input_A[i][j] * input_B[j]"
     
     # Create the loop structure based on specified order
     loop_starts = ""
@@ -403,6 +419,10 @@ def generate_mmv_function(
 /*==== {function_name.upper()} FUNCTION START ====*/
 {function_signature}
 {{
+{loop_starts}    {init_out}
+{loop_ends}}}
+
+{{
 {loop_starts}    {computation}
 {loop_ends}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
@@ -410,8 +430,8 @@ def generate_mmv_function(
 // END: {function_name.upper()} FUNCTION{' with BIAS' if with_bias else ''}
 //////////////////////////////////////////
 """
-    
-    return function, function_name
+    ext_func_name = f"{function_name}_{M}_{N}"
+    return function, ext_func_name
 
 def call_mmv(
         func_type="mmv",
@@ -498,10 +518,12 @@ def call_mmv_inline(
     # Determine function name (for comments only) and computation
     if with_bias:
         function_name = f"{func_type}_{''.join(order)}_bias"
-        computation = f"{output_var}[i] += {input_A_var}[i][j] * {input_B_var}[j] + {bias_var}[i];"
+        init_out = f"{output_var}[i] = {bias_var}[i];"
     else:
         function_name = f"{func_type}_{''.join(order)}"
-        computation = f"{output_var}[i] += {input_A_var}[i][j] * {input_B_var}[j];"
+        init_out = f"{output_var}[i] = 0;"
+    
+    computation = f"{output_var}[i] += {input_A_var}[i][j] * {input_B_var}[j];"
     
     loop_starts = ""
     loop_ends = ""
@@ -517,6 +539,9 @@ def call_mmv_inline(
     inline_code =   f"""//////////////////////////////////////////
 // Begin: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
+{loop_starts}    {init_out}
+{loop_ends}
+
 {loop_starts}    {computation}
 {loop_ends}//////////////////////////////////////////
 // End: Inline implementation of {function_name.upper()}
@@ -577,7 +602,7 @@ def generate_vmm_function(
     {data_type} bias[{N}],
     {data_type} output[{N}]
 )"""
-        computation = "output[j] += input_A[i][j] * input_B[i] + bias[j];"
+        init_out = "output[j] = bias[j];"
     else:
         function_name = f"{func_type}_{''.join(order)}"
         function_signature =    f"""void {function_name}(
@@ -585,7 +610,10 @@ def generate_vmm_function(
     {data_type} input_B[{M}],
     {data_type} output[{N}]
 )"""
-        computation = "output[j] += input_A[i][j] * input_B[i];"
+        init_out = "output[j] = 0;"
+
+    computation = "output[j] += input_A[i][j] * input_B[i];"
+
     
     # Create the loop structure based on specified order
     loop_starts = ""
@@ -605,6 +633,10 @@ def generate_vmm_function(
 /*==== {function_name.upper()} FUNCTION START ====*/
 {function_signature}
 {{
+{loop_starts}    {init_out}
+{loop_ends}}}
+
+{{
 {loop_starts}    {computation}
 {loop_ends}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
@@ -613,7 +645,8 @@ def generate_vmm_function(
 //////////////////////////////////////////
 """
     
-    return function, function_name
+    ext_func_name = f"{function_name}_{M}_{N}"
+    return function, ext_func_name
 
 def call_vmm(
         data_type="int",
@@ -702,10 +735,12 @@ def call_vmm_inline(
     # Determine function name (for comments only) and computation
     if with_bias:
         function_name = f"{func_type}_{''.join(order)}_bias"
-        computation = f"{output_var}[j] += {input_A_var}[i][j] * {input_B_var}[i] + {bias_var}[j];"
+        init_out = f"{output_var}[j] = {bias_var}[j];"
     else:
         function_name = f"{func_type}_{''.join(order)}"
-        computation = f"{output_var}[j] += {input_A_var}[i][j] * {input_B_var}[i];"
+        init_out = f"{output_var}[j] = 0;"
+
+    computation = f"{output_var}[j] += {input_A_var}[i][j] * {input_B_var}[i];"
 
     loop_starts = ""
     loop_ends = ""
@@ -721,6 +756,9 @@ def call_vmm_inline(
     inline_code =   f"""//////////////////////////////////////////
 // Begin: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
+{loop_starts}    {init_out}
+{loop_ends}
+
 {loop_starts}    {computation}
 {loop_ends}//////////////////////////////////////////
 // End: Inline implementation of {function_name.upper()}
@@ -769,18 +807,21 @@ def generate_dot_function(
         function_signature =    f"""void {function_name}(
     {data_type} input_A[{M}],
     {data_type} input_B[{M}],
-    {data_type} bias,
-    {data_type} output[0]
+    {data_type} bias[1],
+    {data_type} output[1]
 )"""
-        computation = "output[0] += input_A[i] * input_B[i];"
+        init_out = "output[0] = bias[0];"
+
     else:
         function_name = f"{func_type}"
         function_signature =    f"""void {function_name}(
     {data_type} input_A[{M}],
     {data_type} input_B[{M}],
-    {data_type} output[0]
+    {data_type} output[1]
 )"""
-        computation = "output[0] += input_A[i] * input_B[i];"
+        init_out = "output[0] = 0;"
+    
+    computation = "output[0] += input_A[i] * input_B[i];"
     
     # Create the loop structure based on specified order
     loop_starts = ""
@@ -796,6 +837,10 @@ def generate_dot_function(
 //////////////////////////////////////////
 /*==== {function_name.upper()} FUNCTION START ====*/
 {function_signature}
+{{
+{loop_starts}    {init_out}
+{loop_ends}}}
+
 {{
 {loop_starts}    {computation}
 {loop_ends}}}
@@ -880,11 +925,13 @@ def call_dot_inline(
     # Determine function name (for comments only) and computation
     if with_bias:
         function_name = f"{func_type}_bias"
-        computation = f"{output_var}[0] += {input_A_var}[i] * {input_B_var}[i] + {bias_var};"
+        init_out = f"{output_var}[0] = {bias_var}[0];"
     else:
         function_name = f"{func_type}"
-        computation = f"{output_var}[0] += {input_A_var}[i] * {input_B_var}[i];"
+        init_out = f"{output_var}[0] = 0;"
 
+    computation = f"{output_var}[0] += {input_A_var}[i] * {input_B_var}[i];"
+    
     loop_starts = ""
     loop_ends = ""
     
@@ -896,6 +943,9 @@ def call_dot_inline(
     inline_code =   f"""//////////////////////////////////////////
 // Begin: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
+{loop_starts}    {init_out}
+{loop_ends}
+
 {loop_starts}    {computation}
 {loop_ends}//////////////////////////////////////////
 // End: Inline implementation of {function_name.upper()}
@@ -1294,21 +1344,47 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
 if __name__ == "__main__":
     # Example BRAM configuration:
     brams = [
-        {"name": "BRAM_1", "dims": [2, 4, 4]}, # Used to store the input [c, h, w]
-        {"name": "BRAM_2", "dims": [2, 2, 3, 3]}, # Used to store the conv weights [cout, cin, k, k]
-        {"name": "BRAM_3", "dims": [2]}, # Used to store the bias [cout]
-        {"name": "BRAM_4", "dims": [4, 2]}, #Used to store the batch norm weights [4][cout]
-        {"name": "BRAM_5", "dims": [2, 4, 4]}, #Used to store the temp results before maxpool
-        {"name": "BRAM_6", "dims": [2, 2, 2]} #Used to store the temp results after maxpool
+        {"name": "BRAM_1", "dims": [64, 32]}, # Used to store Matrix 1 [M, N]
+        {"name": "BRAM_2", "dims": [32, 128]}, # Used to store Matrix 2 [N, K]
+        {"name": "BRAM_3", "dims": [128]}, # Used to store bias [K]
+        {"name": "BRAM_4", "dims": [64, 128]}, # Used to store output [M, K]
+
+        {"name": "BRAM_5", "dims": [128]}, # Used to store Vector 2 [K]
+        {"name": "BRAM_6", "dims": [64]}, # Unused Bias
+        {"name": "BRAM_7", "dims": [64]}, # Used to store output of BRAM_4 * BRAM_5 -> [K]
+
+        {"name": "BRAM_8", "dims": [128]}, # Unused Bias
+        {"name": "BRAM_9", "dims": [128]}, # Used to store output of BRAM_7 * BRAM_4 -> [M]
+        
+        {"name": "BRAM_10", "dims": [128]},
+        {"name": "BRAM_11", "dims": [1]}, # Bias of BRAM_9 * BRAM_10 -> [1]
+        {"name": "BRAM_12", "dims": [1]},# Output of BRAM_7 * BRAM_8 + bias -> [1]
     ]
     
     # Example DRAM configuration:
     drams = [
-        {"name": "DRAM_1", "dims": [2, 4, 4], "bundle": "mem1"}, # Used to load the input [c, h, w]
-        {"name": "DRAM_2", "dims": [2, 2, 3, 3], "bundle": "mem1"}, # Used to load the conv weights [cout, cin, k, k]
-        {"name": "DRAM_3", "dims": [2], "bundle": "mem1"},  #Used to load the bias [cout]
-        {"name": "DRAM_4", "dims": [4, 2], "bundle": "mem1"}, #Used to load the batch norm weights [4][cout]
-        {"name": "DRAM_5", "dims": [2, 2, 2], "bundle": "mem2"} #Used to write back the output [c, h, w]
+        # {"name": "DRAM_1", "dims": [2, 4, 4], "bundle": "mem1"}, # Used to load the input [c, h, w]
+        # {"name": "DRAM_2", "dims": [2, 2, 3, 3], "bundle": "mem1"}, # Used to load the conv weights [cout, cin, k, k]
+        # {"name": "DRAM_3", "dims": [2], "bundle": "mem1"},  #Used to load the bias [cout]
+        # {"name": "DRAM_4", "dims": [4, 2], "bundle": "mem1"}, #Used to load the batch norm weights [4][cout]
+        # {"name": "DRAM_5", "dims": [2, 2, 2], "bundle": "mem2"} #Used to write back the output [c, h, w]
+
+        {"name": "DRAM_1", "dims": [64, 32], "bundle": "mem1"}, # Used to load the Matrix 1 [M, N]
+        {"name": "DRAM_2", "dims": [32, 128], "bundle": "mem1"}, # Used to load the Matrix 2 [N, K]
+        {"name": "DRAM_3", "dims": [128], "bundle": "mem1"}, # Used to load the bias [K]
+        {"name": "DRAM_4", "dims": [64, 128], "bundle": "mem1"}, # Used to write back the output [M, K]
+
+        {"name": "DRAM_5", "dims": [128], "bundle": "mem2"}, # Used to load the Vector 2 [K]
+        # {"name": "DRAM_6", "dims": [64], "bundle": "mem2"}, # Unused Bias
+        # {"name": "DRAM_7", "dims": [64], "bundle": "mem2"}, # Used to write back the output of BRAM_4 * BRAM_5 -> [K]
+
+        # {"name": "DRAM_8", "dims": [128], "bundle": "mem3"}, # Unused Bias
+        # {"name": "DRAM_9", "dims": [128], "bundle": "mem3"}, # Used to write back the output of BRAM_6 * BRAM_4 -> [M]
+        
+        {"name": "DRAM_10", "dims": [128], "bundle": "mem4"},
+        {"name": "DRAM_11", "dims": [1], "bundle": "mem4"}, # Bias of BRAM_9 * BRAM_10 -> [1]
+        {"name": "DRAM_12", "dims": [1], "bundle": "mem4"},# Output of BRAM_7 * BRAM_8 + bias
+
     ]
     
     # Example operators dictionary.
@@ -1316,56 +1392,79 @@ if __name__ == "__main__":
     ops = {
         "load_1": {
             "func_name": "load",
-            "dims": [2, 4, 4],
+            "dims": [64, 32],
             "args": ["DRAM_1", "BRAM_1"]
         },
         "load_2": {
             "func_name": "load",
-            "dims": [2, 2, 3, 3],
+            "dims": [32, 128],
             "args": ["DRAM_2", "BRAM_2"]
         },
         "load_3": {
             "func_name": "load",
-            "dims": [2],
+            "dims": [128],
             "args": ["DRAM_3", "BRAM_3"]
         },
         "load_4": {
             "func_name": "load",
-            "dims": [4, 2],
-            "args": ["DRAM_4", "BRAM_4"]
+            "dims": [128],
+            "args": ["DRAM_5", "BRAM_5"]
         },
-        "batchnorm": {
-            "func_name": "batchnorm",
-            "dims": [2, 4, 4],
-            "func_info":["batch_norm_template.cpp", 0.00001],
-            "args": ["BRAM_1", "BRAM_4", "BRAM_5"]
+
+        "load_5": {
+            "func_name": "load",
+            "dims": [128],
+            "args": ["DRAM_10", "BRAM_10"]
         },
-        "conv": {
-            "func_name": "conv",
-            "dims": [2, 2, 4, 4, 3],
-            "func_info":["conv_template.cpp", "group_conv2d", True],
-            "args": ["BRAM_5", "BRAM_2", "BRAM_3", "BRAM_1", "2"]
+
+        "load_6": {
+            "func_name": "load",
+            "dims": [1],
+            "args": ["DRAM_11", "BRAM_11"]
         },
-        "activation": {
-            "func_name": "activation",
-            "dims": [2, 4, 4],
-            "func_info":["activations_template.cpp", "relu"],
-            "args": ["BRAM_1", "BRAM_5"]
+
+        "gemm_1": {
+            "func_name": "gemm",
+            "dims": [64, 128, 32],
+            "func_info": [['i', 'j', 'k'], True, True],
+            "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
         },
-        "maxpool": {
-            "func_name": "maxpool",
-            "dims": [2, 4, 4, 2, 2, 2, 2, 2, 2],
-            "func_info":["maxpool_template.cpp"],
-            "args": ["BRAM_5", "BRAM_6"]
-        },
-        "store": {
+        
+        "store_1": {
             "func_name": "store",
-            "dims": [2, 2, 2],
-            "args": ["BRAM_6", "DRAM_5"]
+            "dims": [64, 128],
+            "args": ["BRAM_4", "DRAM_4"]
         },
+
+        "vmm": {
+            "func_name": "vmm",
+            "dims": [64, 128],
+            "func_info": [['i', 'j'], False, False],
+            "args": ["BRAM_4", "BRAM_5", "BRAM_6", "BRAM_7"]
+        },
+
+        "mmv": {
+            "func_name": "mmv",
+            "dims": [64, 128],
+            "func_info": [['j', 'i'], False, False],
+            "args": ["BRAM_4", "BRAM_7", "BRAM_8", "BRAM_9"]
+        },
+
+        "dot_product": {
+            "func_name": "dot_product",
+            "dims": [64],
+            "func_info": [True, False, True],
+            "args": ["BRAM_9", "BRAM_10", "BRAM_11", "BRAM_12"]
+        },
+
+        "store_2": {
+            "func_name": "store",
+            "dims": [1],
+            "args": ["BRAM_12", "DRAM_12"]
+        }
     }
     
-    output_dram_names = ["DRAM_4", "DRAM_5"]
+    output_dram_names = ["DRAM_4", "DRAM_12"]
     
     FPGA_name = "xczu9eg-ffvb1156-2-e"
     clock_period = 10
