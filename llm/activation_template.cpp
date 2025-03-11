@@ -1,30 +1,4 @@
 
-#include <math.h>
-#include <stdio.h>
-
-typedef {DATA_TYPE} data_t;
-
-/*
- * Auto-generated Activation Functions for 2D Tensors
- * Tensor dimensions: [{SEQ_LENGTH}][{HIDDEN_DIM}]
- * Data type: {DATA_TYPE}
- *
- * Available functions:
- *   - relu
- *   - leaky_relu
- *   - prelu
- *   - rrelu
- *   - thresholded_relu
- *   - relu6
- *   - sigmoid
- *   - tanh_act
- *   - elu
- *   - selu
- *   - gelu
- *   - swish
- *   - softmax  // Softmax is computed along the hidden_dim axis.
- */
-
 /*==== RELU FUNCTION START ====*/
 void relu(
     data_t input[{SEQ_LENGTH}][{HIDDEN_DIM}],
@@ -194,12 +168,14 @@ void gelu(
     data_t output[{SEQ_LENGTH}][{HIDDEN_DIM}]
 )
 {{
-    // Exact GELU using the error function:
-    // GELU(x) = 0.5 * x * (1 + erf(x / sqrt(2)))
+    // Approximation: 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+    const data_t sqrt_2_over_pi = hls::sqrt((data_t)2/(data_t)3.141592653589793);
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
             data_t x = input[i][j];
-            output[i][j] = 0.5 * x * (1 + erf(x / sqrt((data_t)2)));
+            data_t x_cube = x * x * x;
+            data_t tanh_arg = sqrt_2_over_pi * (x + (data_t)0.044715 * x_cube);
+            output[i][j] = (data_t)0.5 * x * (1 + hls::tanh(tanh_arg));
         }}
     }}
 }}

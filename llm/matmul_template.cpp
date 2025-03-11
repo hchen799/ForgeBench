@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <math.h>
 
-typedef {DATA_TYPE} data_t;
 
 void matmul(
     data_t input[{SEQ_LENGTH}][{DIM_IN}],

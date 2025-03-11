@@ -1,7 +1,3 @@
-#include <math.h>
-#include <stdio.h>
-
-typedef {DATA_TYPE} data_t;
 
 void rope(
     data_t input[{SEQ_LENGTH}][{HIDDEN_DIM}],
@@ -13,10 +9,10 @@ void rope(
         for (int k = 0; k < {HIDDEN_DIM}; k += 2) {{
             // Compute frequency scaling factor for this pair.
             // Here we use: freq = 10000^(- (2*k) / HIDDEN_DIM ).
-            data_t freq = pow((data_t)10000, - ((data_t)k / (data_t){HIDDEN_DIM}));
+            data_t freq = hls::pow((data_t)10000, - ((data_t)k / (data_t){HIDDEN_DIM}));
             data_t angle = i * freq;
-            data_t cos_val = cos(angle);
-            data_t sin_val = sin(angle);
+            data_t cos_val = hls::cos(angle);
+            data_t sin_val = hls::sin(angle);
             // Retrieve the pair of values.
             data_t x0 = input[i][k];
             data_t x1 = input[i][k+1];

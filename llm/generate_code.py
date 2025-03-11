@@ -263,7 +263,7 @@ def generate_layer_norm_code(
     # Use regex to capture the function signature of maxpool.
     # We assume the template defines the function starting with "void maxpool(".
     new_generated_code = re.sub(
-        r"(void\s+batch_norm)\s*\(",
+        r"(void\s+layer_norm)\s*\(",
         lambda m: m.group(1) + dim_suffix + "(",
         generated_code,
         count=1
@@ -305,7 +305,7 @@ def generate_rms_norm_code(
     # Use regex to capture the function signature of maxpool.
     # We assume the template defines the function starting with "void maxpool(".
     new_generated_code = re.sub(
-        r"(void\s+batch_norm)\s*\(",
+        r"(void\s+rms_norm)\s*\(",
         lambda m: m.group(1) + dim_suffix + "(",
         generated_code,
         count=1
@@ -365,7 +365,7 @@ def generate_matmul_code(
     # Use regex to capture the function signature of maxpool.
     # We assume the template defines the function starting with "void maxpool(".
     new_generated_code = re.sub(
-        r"(void\s+batch_norm)\s*\(",
+        r"(void\s+matmul)\s*\(",
         lambda m: m.group(1) + dim_suffix + "(",
         generated_code,
         count=1
@@ -405,7 +405,7 @@ def generate_dropout_code(
     # Use regex to capture the function signature of maxpool.
     # We assume the template defines the function starting with "void maxpool(".
     new_generated_code = re.sub(
-        r"(void\s+batch_norm)\s*\(",
+        r"(void\s+dropout)\s*\(",
         lambda m: m.group(1) + dim_suffix + "(",
         generated_code,
         count=1
@@ -477,7 +477,7 @@ def generate_grouped_mha_code(
     # Use regex to capture the function signature of maxpool.
     # We assume the template defines the function starting with "void maxpool(".
     new_generated_code = re.sub(
-        r"(void\s+batch_norm)\s*\(",
+        r"(void\s+grouped_multihead_attention)\s*\(",
         lambda m: m.group(1) + dim_suffix + "(",
         generated_code,
         count=1
@@ -626,14 +626,245 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     
     return "\n".join(code_lines)
 
+def prod(lst):
+    """Return the product of all elements in the list."""
+    result = 1
+    for x in lst:
+        result *= x
+    return result
+
+def generate_top_h(drams, data_type="float", top_func_name="top"):
+    """
+    Generates a top.h header file that declares the top function.
+    
+    Parameters:
+      - drams: list of dictionaries for DRAM arrays. Each dict must have:
+           "name": string (e.g., "DRAM_1"),
+           "dims": list of integers.
+      - data_type: string for data type (e.g., "float").
+      - top_func_name: name of the top function.
+    
+    Returns:
+      A string containing the header file content.
+    """
+    lines = []
+    lines.append("#include <ap_fixed.h>")
+    lines.append("#ifndef TOP_H")
+    lines.append("#define TOP_H")
+    lines.append("")
+    lines.append(f"typedef {data_type} data_t;")
+    lines.append("")
+    
+    # Build function parameter list for DRAM arrays.
+    params = []
+    for dram in drams:
+        dims_str = "".join(f"[{d}]" for d in dram["dims"])
+        params.append(f"data_t {dram['name']}{dims_str}")
+    param_str = ", ".join(params)
+    lines.append(f"void {top_func_name}({param_str});")
+    lines.append("")
+    lines.append("#endif // TOP_H")
+    
+    return "\n".join(lines)
+
+def generate_testbench_code(drams, output_dram_names, data_type="float", top_func_name="top"):
+    """
+    Generates a C test bench for HLS that:
+      - Declares DRAM arrays using the specified dimensions.
+      - Loads initial values from text files (named "<DRAM_name>.txt").
+      - Calls the top function.
+      - Writes the output of the DRAM(s) specified in output_dram_names to separate output files.
+    
+    Parameters:
+      - drams: list of dictionaries for DRAM arrays. Each dict must have:
+            "name": string (e.g., "DRAM_1"),
+            "dims": list of integers,
+            "bundle": string (used in the interface pragma).
+      - output_dram_names: list of strings; each is the name of a DRAM whose contents should be printed.
+      - data_type: string representing the data type (e.g., "float").
+      - top_func_name: name of the top function.
+      
+    Returns:
+      A string containing the complete C test bench code.
+    """
+    code_lines = []
+    # Include headers.
+    code_lines.append('#include <stdio.h>')
+    code_lines.append('#include <stdlib.h>')
+    code_lines.append("#include <ap_fixed.h>")
+    code_lines.append('#include "top.h"  // Include the top function declaration')
+    code_lines.append("")
+    
+    # Define data type.
+    code_lines.append(f"typedef {data_type} data_t;")
+    code_lines.append("")
+    
+    # Declare DRAM arrays.
+    for dram in drams:
+        dims_str = "".join(f"[{d}]" for d in dram["dims"])
+        code_lines.append(f"data_t {dram['name']}{dims_str};")
+    code_lines.append("")
+    
+    # Helper function to load a text file into an array.
+    code_lines.append("void load_txt_to_array(const char *filename, data_t *array, int total_size) {")
+    code_lines.append("    FILE *fp = fopen(filename, \"r\");")
+    code_lines.append("    if (fp == NULL) {")
+    code_lines.append("        printf(\"Failed to open %s\\n\", filename);")
+    code_lines.append("        exit(1);")
+    code_lines.append("    }")
+    code_lines.append("    for (int i = 0; i < total_size; i++) {")
+    code_lines.append("        float temp;")
+    code_lines.append("        fscanf(fp, \"%f\", &temp);")
+    code_lines.append("        array[i] = (data_t)temp;")
+    code_lines.append("    }")
+    code_lines.append("    fclose(fp);")
+    code_lines.append("}")
+    code_lines.append("")
+    
+    # Main function.
+    code_lines.append("int main() {")
+    
+    # For each DRAM, generate a load call.
+    for dram in drams:
+        total_elements = prod(dram["dims"])
+        code_lines.append(f"    load_txt_to_array(\"{dram['name']}.txt\", (data_t*){dram['name']}, {total_elements});")
+    code_lines.append("")
+    
+    # Insert top function call. DRAM arguments in the order of the drams list.
+    dram_args = ", ".join(d["name"] for d in drams)
+    code_lines.append(f"    {top_func_name}({dram_args});")
+    code_lines.append("")
+    
+    # For each output DRAM specified in output_dram_names, generate printing code.
+    for out_name in output_dram_names:
+        # Find the DRAM in the configuration.
+        matched = None
+        for dram in drams:
+            if dram["name"] == out_name:
+                matched = dram
+                break
+        if matched is None:
+            raise ValueError(f"Output DRAM {out_name} not found in DRAM configuration.")
+        total_out = prod(matched["dims"])
+        code_lines.append(f"    // Write contents of {out_name} to {out_name}_output.txt")
+        code_lines.append("    {")
+        code_lines.append(f"        FILE *fp = fopen(\"{out_name}_output.txt\", \"w\");")
+        code_lines.append("        if (fp != NULL) {")
+        code_lines.append(f"            for (int i = 0; i < {total_out}; i++) {{")
+        code_lines.append(f"                fprintf(fp, \"%f \", (float)((data_t*){out_name})[i]);")
+        code_lines.append("            }")
+        code_lines.append("            fclose(fp);")
+        code_lines.append("        }")
+        code_lines.append("    }")
+        code_lines.append("")
+    
+    code_lines.append("    return 0;")
+    code_lines.append("}")
+    
+    return "\n".join(code_lines)
+
+
+def generate_dram_txt_files(drams, seed=None):
+    """
+    For each DRAM in the configuration, generate a .txt file containing random numbers
+    between 0 and 1, one per line.
+    
+    Parameters:
+      - drams: a list of dictionaries. Each dictionary should have:
+           "name": string, e.g., "DRAM_1"
+           "dims": list of integers, e.g., [2, 4, 4]
+      - seed: optional integer seed for reproducibility.
+    """
+    if seed is not None:
+        random.seed(seed)
+    
+    for dram in drams:
+        total_elements = prod(dram["dims"])
+        filename = f"{dram['name']}.txt"
+        with open(filename, "w") as f:
+            # Generate random numbers between 0 and 1.
+            #numbers = [str(random.random()) for _ in range(total_elements)]
+            numbers = [str(0) for _ in range(total_elements)]
+            # Write each number on a new line.
+            #f.write("\n".join(numbers))
+            f.write("\n".join(numbers))
+        print(f"Generated {filename} with {total_elements} random numbers.")
+        
+def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="design.tcl"):
+    """
+    Generates a TCL file for HLS that includes the add_files -tb commands for each DRAM.
+    
+    Parameters:
+      - drams: list of dictionaries, each with a "name" key (e.g., "DRAM_1")
+      - output_filename: the name of the TCL file to generate.
+      
+    The generated TCL file will contain lines like:
+        add_files -tb DRAM_1.txt
+        add_files -tb DRAM_2.txt
+        ...
+    """
+    # You can add a header if needed.
+    lines = []
+    lines.append("# Auto-generated TCL file for HLS")
+    lines.append("open_project project_1")
+    lines.append("")
+    lines.append("set_top top")
+    lines.append("")
+    lines.append("add_files  top.cpp")
+    lines.append("add_files -tb tb_top.cpp")
+    lines.append("add_files -tb top.h")
+    lines.append("")
+
+    # Generate add_files lines for each DRAM based on user configuration.
+    for dram in drams:
+        lines.append(f"add_files -tb {dram['name']}.txt")
+    
+    lines.append('open_solution "solution1"')
+    lines.append("")
+    lines.append(f"set_part {FPGA_name}")
+    lines.append("")
+    lines.append(f"create_clock -period {clock_period} -name default")
+    lines.append("")
+    
+    if "csim" in task:
+        lines.append("csim_design")
+        lines.append("")
+    if "csynth" in task:
+        lines.append("csynth_design")
+        lines.append("")
+    if "cosim" in task:
+        lines.append("cosim_design")
+        lines.append("")
+    if "export_ip" in task:
+        lines.append("export_design -format ip_catalog")
+        lines.append("")
+        
+    lines.append("exit")
+    # (Optional) Add other static TCL commands if needed.
+    # For example:
+    # lines.append("")
+    # lines.append("open_project my_project")
+    # lines.append("set_part {xc7z020clg484-1}")
+    # etc.
+    
+    # Write the TCL file.
+    with open(output_filename, "w") as f:
+        f.write("\n".join(lines))
+    
+    print(f"Generated TCL file '{output_filename}' with the following contents:")
+    print("\n".join(lines))
+
+
+
+
 # Define transformer block parameters.
-SEQ_LENGTH = 128
-DIM_IN     = 512
-NUM_HEAD   = 8
+SEQ_LENGTH = 8
+DIM_IN     = 32
+NUM_HEAD   = 4
 DIM_Q      = DIM_IN / NUM_HEAD
 DIM_K      = DIM_IN / NUM_HEAD
 DIM_V      = DIM_IN / NUM_HEAD
-DIM_OUT    = 512
+DIM_OUT    = 32
 
 brams = [
         {"name": "BRAM_attn_input",      "dims": [SEQ_LENGTH, DIM_IN]},
@@ -642,6 +873,8 @@ brams = [
         {"name": "BRAM_weights_v",       "dims": [DIM_IN, DIM_IN]},
         {"name": "BRAM_1",     "dims": [SEQ_LENGTH, DIM_OUT]},
         {"name": "BRAM_2",     "dims": [SEQ_LENGTH, DIM_OUT]},
+        {"name": "BRAM_MLP_1",     "dims": [SEQ_LENGTH, 4 * DIM_OUT]},
+        {"name": "BRAM_MLP_2",     "dims": [SEQ_LENGTH, 4 * DIM_OUT]},
         {"name": "BRAM_layer_norm_weights_1",     "dims": [2, DIM_OUT]},
         {"name": "FF_weights_1",     "dims": [4 * DIM_OUT, DIM_OUT]},
         {"name": "FF_weights_2",     "dims": [DIM_OUT, 4 * DIM_OUT]},
@@ -720,7 +953,7 @@ ops = {
     },
     "layernorm_1": {
         "func_name": "layernorm",
-        "dims": [SEQ_LENGTH, DIM_OUT, 1e-5],
+        "dims": [SEQ_LENGTH, DIM_OUT, 1e-2],
         "func_info": ["layer_norm_template.cpp"],
         "args": ["BRAM_2", "BRAM_layer_norm_weights_1[0]", "BRAM_layer_norm_weights_1[1]", "BRAM_1"]
     },
@@ -728,19 +961,19 @@ ops = {
         "func_name": "matmul",
         "dims": [SEQ_LENGTH, DIM_OUT, 4 * DIM_OUT],
         "func_info": ["matmul_template.cpp", False],
-        "args": ["BRAM_1", "FF_weights_1", "BRAM_2"]
+        "args": ["BRAM_1", "FF_weights_1", "BRAM_MLP_1"]
     },
     "activation": {
             "func_name": "activation",
-            "dims": [SEQ_LENGTH, DIM_OUT],
+            "dims": [SEQ_LENGTH, 4 * DIM_OUT],
             "func_info":["activation_template.cpp", "gelu"],
-            "args": ["BRAM_2", "BRAM_1"]
+            "args": ["BRAM_MLP_1", "BRAM_MLP_2"]
         },
     "matmul_2": {
         "func_name": "matmul",
         "dims": [SEQ_LENGTH, 4 * DIM_OUT, DIM_OUT],
         "func_info": ["matmul_template.cpp", False],
-        "args": ["BRAM_1", "FF_weights_2", "BRAM_2"]
+        "args": ["BRAM_MLP_2", "FF_weights_2", "BRAM_2"]
     },
     "dropout_2": {
         "func_name": "dropout",
@@ -750,7 +983,7 @@ ops = {
     },
     "layernorm_2": {
         "func_name": "layernorm",
-        "dims": [SEQ_LENGTH, DIM_OUT, 1e-5],
+        "dims": [SEQ_LENGTH, DIM_OUT, 1e-2],
         "func_info": ["layer_norm_template.cpp"],
         "args": ["BRAM_1", "BRAM_layer_norm_weights_2[0]", "BRAM_layer_norm_weights_2[1]", "BRAM_2"]
     },
@@ -761,6 +994,12 @@ ops = {
     }
 }
 
+output_dram_names = ["DRAM_output"]
+    
+FPGA_name = "xczu9eg-ffvb1156-2-e"
+clock_period = 10
+task = ["csim", "csynth", "cosim", "export_ip"]
+#task = ["csynth"]
 # Generate the complete HLS C code for the top function.
 top_code = generate_top_function(brams, drams, ops, data_type="ap_fixed<16, 5>", top_func_name="top")
 
@@ -769,5 +1008,23 @@ output_filename = "top.cpp"
 with open(output_filename, "w") as f:
     f.write(top_code)
 print("Generated top.cpp:")    
+
+top_h_code = generate_top_h(drams, data_type="ap_fixed<16, 5>", top_func_name="top")
+with open("top.h", "w") as f:
+    f.write(top_h_code)
+print("Generated top.h:")
+
+tb_code = generate_testbench_code(drams, output_dram_names, data_type="ap_fixed<16, 5>", top_func_name="top")
+with open("tb_top.cpp", "w") as f:
+    f.write(tb_code)
+print("Generated tb_top.cpp:")
+
+generate_dram_txt_files(drams, seed=42)
+print("Generated dram initialization.")
+
+generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="run_hls.tcl")
+print("Generated tcl file to launch tasks.")
+
+
 
 
