@@ -1,9 +1,4 @@
 
-#include <math.h>
-#include <stdio.h>
-
-typedef {DATA_TYPE} data_t;
-
 // Simple LCG for pseudo-random numbers.
 unsigned int lcg_rand(unsigned int *seed) {{
     *seed = (1103515245 * (*seed) + 12345) & 0x7fffffff;

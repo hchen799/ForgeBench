@@ -1,7 +1,4 @@
-#include <math.h>
-#include <stdio.h>
 
-typedef {DATA_TYPE} data_t;
 
 void layer_norm(
     data_t input[{SEQ_LENGTH}][{DIM}],
@@ -28,7 +25,7 @@ void layer_norm(
 
         // Normalize and scale: output = gamma * (x - mean) / sqrt(variance + epsilon) + beta
         for (int j = 0; j < {DIM}; j++) {{
-            output[i][j] = gamma[j] * ((input[i][j] - mean) / sqrt(variance + {EPSILON})) + beta[j];
+            output[i][j] = gamma[j] * ((input[i][j] - mean) / hls::sqrt(variance + (data_t){EPSILON})) + beta[j];
         }}
     }}
 }}

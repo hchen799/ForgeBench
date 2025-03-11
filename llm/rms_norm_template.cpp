@@ -1,7 +1,3 @@
-#include <math.h>
-#include <stdio.h>
-
-typedef {DATA_TYPE} data_t;
 
 void rms_norm(
     data_t input[{SEQ_LENGTH}][{DIM}],

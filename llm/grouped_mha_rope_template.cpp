@@ -1,7 +1,3 @@
-#include <math.h>
-#include <stdio.h>
-
-typedef {DATA_TYPE} data_t;
 
 /*
  * Auto-generated Grouped Multi-head Attention (with optional inline RoPE)
@@ -26,7 +22,7 @@ void grouped_multihead_attention(
 {{
     const int num_heads = {NUM_HEADS};
     const int head_dim = {HEAD_DIM};
-    const data_t scale = 1.0 / sqrt((data_t)head_dim);
+    const data_t scale = (data_t)1.0 / hls::sqrt((data_t)head_dim);
 
     data_t Q[{SEQ_LENGTH}][{DIM_OUT}];
     data_t K[{SEQ_LENGTH}][{DIM_OUT}];
@@ -75,7 +71,7 @@ void grouped_multihead_attention(
                     max_score = scores[i][j];
 
             for (int j = 0; j < {SEQ_LENGTH}; j++) {{
-                scores[i][j] = exp(scores[i][j] - max_score);
+                scores[i][j] = hls::exp(scores[i][j] - max_score);
                 sum_exp += scores[i][j];
             }}
             for (int j = 0; j < {SEQ_LENGTH}; j++)
