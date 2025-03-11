@@ -1,0 +1,773 @@
+import re
+import random
+
+def replace_data_type(data_type: str) -> str:
+    # Replace all occurrences of <, >, and , with an underscore
+    result = re.sub(r'[<>,]', '_', data_type)
+    # Remove all spaces
+    result = result.replace(" ", "")
+    return result
+
+
+def generate_activation_function(
+    template_path,   # Path to the activation template file (e.g., activations_template_2d.cpp)
+    func_name,       # The activation function to generate (e.g., "relu6", "sigmoid", "gelu", etc.)
+    DATA_TYPE="float",
+    SEQ_LENGTH=128,
+    HIDDEN_DIM=512
+):
+    """
+    Reads the 2D activation function template and substitutes common placeholders:
+       {DATA_TYPE}, {SEQ_LENGTH}, and {HIDDEN_DIM}.
+    Then extracts the function block corresponding to the specified activation (func_name)
+    and writes it to output_path.
+    
+    Supported func_name values (case-insensitive):
+      "relu", "leaky_relu", "prelu", "rrelu", "thresholded_relu", "relu6",
+      "sigmoid", "tanh_act", "elu", "selu", "gelu", "swish", "softmax".
+    """
+    # 1) Read the full template file.
+    with open(template_path, "r") as f:
+        template_code = f.read()
+    
+    # 2) Substitute common placeholders.
+    formatted_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        SEQ_LENGTH=SEQ_LENGTH,
+        HIDDEN_DIM=HIDDEN_DIM
+    )
+    
+    # 3) Determine marker strings based on the specified activation function.
+    func_name = func_name.lower()  # Normalize to lower-case
+    marker_start = ""
+    marker_end = ""
+    
+    if func_name == "relu":
+        marker_start = "/*==== RELU FUNCTION START ====*/"
+        marker_end = "/*==== RELU FUNCTION END ====*/"
+    elif func_name == "leaky_relu":
+        marker_start = "/*==== LEAKY_RELU FUNCTION START ====*/"
+        marker_end = "/*==== LEAKY_RELU FUNCTION END ====*/"
+    elif func_name == "prelu":
+        marker_start = "/*==== PRELU FUNCTION START ====*/"
+        marker_end = "/*==== PRELU FUNCTION END ====*/"
+    elif func_name == "rrelu":
+        marker_start = "/*==== RRELU FUNCTION START ====*/"
+        marker_end = "/*==== RRELU FUNCTION END ====*/"
+    elif func_name == "thresholded_relu":
+        marker_start = "/*==== THRESHOLDED_RELU FUNCTION START ====*/"
+        marker_end = "/*==== THRESHOLDED_RELU FUNCTION END ====*/"
+    elif func_name == "relu6":
+        marker_start = "/*==== RELU6 FUNCTION START ====*/"
+        marker_end = "/*==== RELU6 FUNCTION END ====*/"
+    elif func_name == "sigmoid":
+        marker_start = "/*==== SIGMOID FUNCTION START ====*/"
+        marker_end = "/*==== SIGMOID FUNCTION END ====*/"
+    elif func_name == "tanh_act":
+        marker_start = "/*==== TANH FUNCTION START ====*/"
+        marker_end = "/*==== TANH FUNCTION END ====*/"
+    elif func_name == "elu":
+        marker_start = "/*==== ELU FUNCTION START ====*/"
+        marker_end = "/*==== ELU FUNCTION END ====*/"
+    elif func_name == "selu":
+        marker_start = "/*==== SELU FUNCTION START ====*/"
+        marker_end = "/*==== SELU FUNCTION END ====*/"
+    elif func_name == "gelu":
+        marker_start = "/*==== GELU FUNCTION START ====*/"
+        marker_end = "/*==== GELU FUNCTION END ====*/"
+    elif func_name == "swish":
+        marker_start = "/*==== SWISH FUNCTION START ====*/"
+        marker_end = "/*==== SWISH FUNCTION END ====*/"
+    elif func_name == "softmax":
+        marker_start = "/*==== SOFTMAX FUNCTION START ====*/"
+        marker_end = "/*==== SOFTMAX FUNCTION END ====*/"
+    else:
+        raise ValueError("Invalid function name. Choose one of: relu, leaky_relu, prelu, rrelu, thresholded_relu, relu6, sigmoid, tanh_act, elu, selu, gelu, swish, softmax.")
+    
+    # 4) Extract the specified function block.
+    start_idx = formatted_code.find(marker_start)
+    end_idx = formatted_code.find(marker_end)
+    if start_idx == -1 or end_idx == -1:
+        raise ValueError("Could not find the specified function markers in the template.")
+    
+    # Skip marker text.
+    function_block = formatted_code[start_idx + len(marker_start): end_idx].strip()
+    
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    dim_suffix = f"_{SEQ_LENGTH}_{HIDDEN_DIM}_{DATA_TYPE}"
+    # Use a regex to capture "void" followed by the function name
+    function_block = re.sub(
+        r"(void\s+(\w+))\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(", 
+        function_block,
+        count=1
+    )
+    
+    # 5) Optionally, include a header (everything before the first marker).
+    header_end = formatted_code.find("/*====")
+    header = ""
+    if header_end != -1:
+        header = formatted_code[:header_end].strip() + "\n\n"
+    
+    output_code = header + function_block
+    
+    return output_code, func_name + dim_suffix
+    
+
+
+
+def generate_load_function(
+    dims,              # List of dimensions, e.g., [32, 64, 64]
+    data_type="float", # Underlying data type
+    func_prefix="load" # Function prefix (will be appended with dims and data_type)
+):
+    """
+    Generates an HLS C function that copies an input array to an output array.
+    The function is for arrays of dimensions given in the list 'dims'.
+    
+    The generated function will have a name of the form:
+      <func_prefix>_<dim1>_<dim2>_..._<dimN>_data_t
+    
+    Parameters:
+      dims: list of integers, e.g., [32, 64, 64]
+      data_type: string, e.g., "float" (used in typedef and function signature)
+      func_prefix: prefix for the function name (default "load")
+    
+    Returns:
+      A string with the generated HLS C code.
+    """
+    # Construct the typedef and include lines
+    code_lines = []
+    
+    
+    #code_lines.append(f"typedef {data_type} data_t;\n")
+    
+    # Build array dimension string, e.g., "[32][64][64]"
+    array_dims = "".join(f"[{d}]" for d in dims)
+    
+    # Construct the function name. E.g., load_32_64_64_data_t
+    dim_suffix = "_".join(str(d) for d in dims)
+    
+    data_type = replace_data_type(data_type)
+    func_name = f"{func_prefix}_{dim_suffix}_{data_type}"
+    
+    # Build function signature
+    code_lines.append(f"void {func_name}(data_t input{array_dims}, data_t output{array_dims})")
+    code_lines.append("{")
+    
+    # Generate nested loops.
+    # We'll name the loop indices based on the dimension order: idx0, idx1, ..., idxN.
+    indent = "    "
+    for idx, d in enumerate(dims):
+        code_lines.append(f"{indent * (idx+1)}for (int idx{idx} = 0; idx{idx} < {d}; idx{idx}++) {{")
+    
+    # Generate the assignment line.
+    # Build index strings for input and output, e.g., [idx0][idx1][idx2]
+    index_str = "".join(f"[idx{idx}]" for idx in range(len(dims)))
+    code_lines.append(f"{indent * (len(dims)+1)}output{index_str} = input{index_str};")
+    
+    # Close all for loops
+    for idx in range(len(dims)-1, -1, -1):
+        code_lines.append(f"{indent * (idx+1)}}}")
+    
+    code_lines.append("}")
+    
+    return "\n".join(code_lines), func_name
+
+
+def generate_store_function(
+    dims,              # List of dimensions, e.g., [32, 64, 64]
+    data_type="float", # Underlying data type
+    func_prefix="store" # Function prefix (will be appended with dims and data_type)
+):
+    """
+    Generates an HLS C function that copies an input array to an output array.
+    The function is for arrays of dimensions given in the list 'dims'.
+    
+    The generated function will have a name of the form:
+      <func_prefix>_<dim1>_<dim2>_..._<dimN>_data_t
+    
+    Parameters:
+      dims: list of integers, e.g., [32, 64, 64]
+      data_type: string, e.g., "float" (used in typedef and function signature)
+      func_prefix: prefix for the function name (default "load")
+    
+    Returns:
+      A string with the generated HLS C code.
+    """
+    # Construct the typedef and include lines
+    code_lines = []
+    #code_lines.append(f"typedef {data_type} data_t;\n")
+    
+    # Build array dimension string, e.g., "[32][64][64]"
+    array_dims = "".join(f"[{d}]" for d in dims)
+    
+    # Construct the function name. E.g., load_32_64_64_data_t
+    dim_suffix = "_".join(str(d) for d in dims)
+    data_type = replace_data_type(data_type)
+    func_name = f"{func_prefix}_{dim_suffix}_{data_type}"
+    
+    # Build function signature
+    code_lines.append(f"void {func_name}(data_t input{array_dims}, data_t output{array_dims})")
+    code_lines.append("{")
+    
+    # Generate nested loops.
+    # We'll name the loop indices based on the dimension order: idx0, idx1, ..., idxN.
+    indent = "    "
+    for idx, d in enumerate(dims):
+        code_lines.append(f"{indent * (idx+1)}for (int idx{idx} = 0; idx{idx} < {d}; idx{idx}++) {{")
+    
+    # Generate the assignment line.
+    # Build index strings for input and output, e.g., [idx0][idx1][idx2]
+    index_str = "".join(f"[idx{idx}]" for idx in range(len(dims)))
+    code_lines.append(f"{indent * (len(dims)+1)}output{index_str} = input{index_str};")
+    
+    # Close all for loops
+    for idx in range(len(dims)-1, -1, -1):
+        code_lines.append(f"{indent * (idx+1)}}}")
+    
+    code_lines.append("}")
+    
+    return "\n".join(code_lines), func_name
+
+
+def generate_layer_norm_code(
+    template_path,    # Path to layer_norm_template.cpp
+    DATA_TYPE="float",
+    SEQ_LENGTH=128,   # e.g., sequence length
+    DIM=512,          # e.g., feature dimension
+    EPSILON=1e-5      # e.g., epsilon value
+):
+    """
+    Reads the layer norm template file and substitutes placeholders with the provided parameters.
+    The expected placeholders in the template are:
+       {DATA_TYPE}, {SEQ_LENGTH}, {DIM}, and {EPSILON}.
+       
+    Generates the final HLS C code and writes it to output_path.
+    """
+    # 1) Read the template file.
+    with open(template_path, "r") as f:
+        template_code = f.read()
+    
+    # 2) Substitute placeholders.
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        SEQ_LENGTH=SEQ_LENGTH,
+        DIM=DIM,
+        EPSILON=EPSILON
+    )
+    
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    dim_suffix = f"_{SEQ_LENGTH}_{DIM}_{DATA_TYPE}"
+    func_name = "layer_norm" + dim_suffix
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+batch_norm)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    return new_generated_code, func_name
+    
+    
+def generate_rms_norm_code(
+    template_path,    # Path to rms_norm_template.cpp
+    output_path,      # Output file (e.g., rms_norm.cpp)
+    DATA_TYPE="float",
+    SEQ_LENGTH=128,   # e.g., sequence length (number of rows)
+    DIM=512,          # e.g., feature dimension (number of columns)
+    EPSILON=1e-5      # small constant to avoid division by zero
+):
+    """
+    Reads the RMSNorm template file and substitutes placeholders with the provided parameters.
+    Expected placeholders in the template:
+      {DATA_TYPE}, {SEQ_LENGTH}, {DIM}, {EPSILON}.
+      
+    Generates the final HLS C code and writes it to output_path.
+    """
+    # 1) Read the template file.
+    with open(template_path, "r") as f:
+        template_code = f.read()
+    
+    # 2) Substitute placeholders.
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        SEQ_LENGTH=SEQ_LENGTH,
+        DIM=DIM,
+        EPSILON=EPSILON
+    )
+    
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    dim_suffix = f"_{SEQ_LENGTH}_{DIM}_{DATA_TYPE}"
+    func_name = "rms_norm" + dim_suffix
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+batch_norm)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    return new_generated_code, func_name
+
+
+def generate_matmul_code(
+    template_path,   # Path to matmul_template.cpp
+    DATA_TYPE="float",
+    SEQ_LENGTH=128,
+    DIM_IN=512,
+    DIM_OUT=256,
+    use_bias=False
+):
+    """
+    Reads the matrix multiplication template and substitutes placeholders.
+    The template expects the following placeholders:
+       {DATA_TYPE}, {SEQ_LENGTH}, {DIM_IN}, {DIM_OUT}, {BIAS_ARG}, and {INIT_VAL}.
+    
+    If use_bias is True:
+       - {BIAS_ARG} becomes: "    data_t bias[{DIM_OUT}],\n"
+       - {INIT_VAL} becomes: "bias[j]"
+    Otherwise:
+       - {BIAS_ARG} becomes an empty string.
+       - {INIT_VAL} becomes: "((data_t)0)"
+    """
+    # Read the template file.
+    with open(template_path, "r") as f:
+        template_code = f.read()
+    
+    # Build bias-related placeholders.
+    if use_bias:
+        bias_arg = "    data_t bias[{DIM_OUT}],\n".format(DIM_OUT=DIM_OUT)
+        init_val = "bias[j]"
+    else:
+        bias_arg = ""
+        init_val = "((data_t)0)"
+    
+    # Substitute placeholders in the template.
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        SEQ_LENGTH=SEQ_LENGTH,
+        DIM_IN=DIM_IN,
+        DIM_OUT=DIM_OUT,
+        BIAS_ARG=bias_arg,
+        INIT_VAL=init_val
+    )
+    
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    if use_bias == True:
+        dim_suffix = f"_{SEQ_LENGTH}_{DIM_IN}_{DIM_OUT}_bias_{DATA_TYPE}"
+    else:
+        dim_suffix = f"_{SEQ_LENGTH}_{DIM_IN}_{DIM_OUT}_{DATA_TYPE}"
+    func_name = "matmul" + dim_suffix
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+batch_norm)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    return new_generated_code, func_name
+    
+
+def generate_dropout_code(
+    template_path,    # Path to dropout_template.cpp
+    DATA_TYPE="float",
+    SEQ_LENGTH=128,
+    DIM=512
+):
+    """
+    Reads the dropout template and substitutes placeholders with provided parameters.
+    
+    Expected placeholders in the template:
+      {DATA_TYPE}, {SEQ_LENGTH}, {DIM}
+      
+    Generates the final HLS C code for the dropout function and writes it to output_path.
+    """
+    # 1) Read the template file.
+    with open(template_path, "r") as f:
+        template_code = f.read()
+    
+    # 2) Substitute placeholders.
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        SEQ_LENGTH=SEQ_LENGTH,
+        DIM=DIM
+    )
+    
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    dim_suffix = f"_{SEQ_LENGTH}_{DIM}_{DATA_TYPE}"
+    func_name = "dropout" + dim_suffix
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+batch_norm)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    return new_generated_code, func_name
+    
+    
+def generate_grouped_mha_code(
+    template_path,
+    DATA_TYPE="float",
+    SEQ_LENGTH=128,
+    DIM_IN=512,
+    NUM_HEADS=8,
+    HEAD_DIM=64,
+    use_rope=True
+):
+    DIM_OUT = NUM_HEADS * HEAD_DIM
+
+    if use_rope:
+        rope_inline = f"""
+    // Inline RoPE logic
+    for (int seq = 0; seq < {SEQ_LENGTH}; seq++) {{
+        for (int h = 0; h < {NUM_HEADS}; h++) {{
+            for (int d = 0; d < {HEAD_DIM}; d += 2) {{
+                int idx = h * {HEAD_DIM} + d;
+                data_t theta = pow(10000.0, -(data_t)d / {HEAD_DIM});
+                data_t angle = seq * theta;
+                data_t cos_val = cos(angle);
+                data_t sin_val = sin(angle);
+
+                // Apply RoPE to Q
+                data_t q0 = Q[seq][idx];
+                data_t q1 = Q[seq][idx + 1];
+                Q[seq][idx]     = q0 * cos_val - q1 * sin_val;
+                Q[seq][idx + 1] = q0 * sin_val + q1 * cos_val;
+
+                // Apply RoPE to K
+                data_t k0 = K[seq][idx];
+                data_t k1 = K[seq][idx + 1];
+                K[seq][idx]     = k0 * cos_val - k1 * sin_val;
+                K[seq][idx + 1] = k0 * sin_val + k1 * cos_val;
+            }}
+        }}
+    }}"""
+    else:
+        rope_inline = ''
+
+    # Read template
+    with open(template_path, "r") as f:
+        template_code = f.read()
+
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        SEQ_LENGTH=SEQ_LENGTH,
+        DIM_IN=DIM_IN,
+        DIM_OUT=DIM_OUT,
+        NUM_HEADS=NUM_HEADS,
+        HEAD_DIM=HEAD_DIM,
+        ROPE_INLINE=rope_inline
+    )
+
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    if use_rope == True:
+        dim_suffix = f"_{SEQ_LENGTH}_{DIM_IN}_{NUM_HEADS}_{HEAD_DIM}_rope_{DATA_TYPE}"
+    else:
+        dim_suffix = f"_{SEQ_LENGTH}_{DIM_IN}_{NUM_HEADS}_{HEAD_DIM}_{DATA_TYPE}"
+    func_name = "grouped_multihead_attention" + dim_suffix
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+batch_norm)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    return new_generated_code, func_name
+    
+    
+def generate_func_def(op_info, data_type):
+    
+    if op_info['func_name'] == 'load':
+        code_line, full_func_name = generate_load_function(op_info["dims"], data_type, func_prefix="load")
+    elif op_info['func_name'] == 'store':
+        code_line, full_func_name = generate_store_function(op_info["dims"], data_type, func_prefix="store")
+    elif op_info['func_name'] == 'matmul':
+        code_line, full_func_name = generate_matmul_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
+    elif op_info['func_name'] == 'mha':
+        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
+    elif op_info['func_name'] == 'layernorm':
+        code_line, full_func_name = generate_layer_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+    elif op_info['func_name'] == 'rmsnorm':
+        code_line, full_func_name = generate_rms_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+    elif op_info['func_name'] == 'activation':
+        code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'dropout':
+        code_line, full_func_name = generate_dropout_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])
+    else:
+        print("the operator we do not support!")
+        
+    return code_line, full_func_name
+
+
+def generate_operator_call(op_info, data_type):
+    """
+    Generates a single function call string given an operator dictionary.
+    
+    op_info: dict with keys:
+       - "func_name": base function name (e.g., "load", "conv2d", etc.)
+       - "dims": list of integers (e.g., [32,64,64] or [32,64,64,32,64,64])
+       - "args": list of argument strings for the function call
+       
+    Returns a string like:
+       load_32_64_64_data_t(DRAM_1, BRAM_1);
+    """
+
+    if op_info['func_name'] == 'load':
+        code_line, full_func_name = generate_load_function(op_info["dims"], data_type, func_prefix="load")
+    elif op_info['func_name'] == 'store':
+        code_line, full_func_name = generate_store_function(op_info["dims"], data_type, func_prefix="store")
+    elif op_info['func_name'] == 'matmul':
+        code_line, full_func_name = generate_matmul_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
+    elif op_info['func_name'] == 'mha':
+        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
+    elif op_info['func_name'] == 'layernorm':
+        code_line, full_func_name = generate_layer_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+    elif op_info['func_name'] == 'rmsnorm':
+        code_line, full_func_name = generate_rms_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+    elif op_info['func_name'] == 'activation':
+        code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'dropout':
+        code_line, full_func_name = generate_dropout_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])
+    else:
+        print("the operator we do not support!")
+     
+    args_str = ", ".join(op_info["args"])
+    return f"{full_func_name}({args_str});"
+    
+    
+def generate_top_function(brams, drams, ops, data_type="float", top_func_name="top"):
+    """
+    Generates the complete HLS C top function.
+    
+    Parameters:
+      - brams: list of dicts for BRAM arrays. Each dict has:
+           "name": string, array name.
+           "dims": list of ints for dimensions.
+      - drams: list of dicts for DRAM arrays used in the top function. Each dict has:
+           "name": string, array name.
+           "dims": list of ints for dimensions.
+           "bundle": string, the bundle name for the HLS interface pragma.
+      - ops: a dictionary (or ordered dict) where each key is an operator name 
+             (for ordering) and the value is a dict with keys "func_name", "dims", "args".
+      - data_type: the C data type for data_t.
+      - top_func_name: name of the top function.
+      
+    Returns a string containing the generated HLS C code.
+    """
+    code_lines = []
+    
+    code_lines.append("")
+    code_lines.append(f"#include <stdio.h>")
+    code_lines.append(f"#include <iostream>")
+    code_lines.append(f"#include <fstream>")
+    code_lines.append(f"#include <cstdlib>")
+    code_lines.append(f"#include <ap_fixed.h>")
+    code_lines.append(f"#include <hls_math.h>")
+    code_lines.append(f"#include <stdlib.h>")
+    code_lines.append(f"#include <cstdint>")
+    code_lines.append(f"#include <hls_math.h>")
+    code_lines.append(f"using namespace std;\n")
+    
+    # 1. Write typedef.
+    code_lines.append(f"typedef {data_type} data_t;\n")
+    
+    # 2. Declare BRAM arrays.
+    for bram in brams:
+        dims_str = "".join(f"[{d}]" for d in bram["dims"])
+        code_lines.append(f"data_t {bram['name']}{dims_str};")
+    
+    code_lines.append("")  # blank line
+    
+    func_name_set = set()
+    func_def_name_list = []
+   
+    for key, op_info in ops.items():
+       func_def_code, func_name  = generate_func_def(op_info, data_type)
+       if func_name not in func_name_set:
+           func_name_set.add(func_name)
+           code_lines.append(func_def_code)
+           code_lines.append("")
+           func_def_name_list.append(func_name)
+    
+    # 3. Build the top function signature with DRAM parameters.
+    dram_params = []
+    for dram in drams:
+        dims_str = "".join(f"[{d}]" for d in dram["dims"])
+        dram_params.append(f"data_t {dram['name']}{dims_str}")
+    params_str = ", ".join(dram_params)
+    code_lines.append(f"void {top_func_name}({params_str})")
+    code_lines.append("{")
+    
+    # 4. Insert the #pragma HLS interface lines for each DRAM.
+    for dram in drams:
+        code_lines.append(f"    #pragma HLS interface m_axi port={dram['name']} offset=slave bundle={dram['bundle']}")
+    
+    code_lines.append("")  # blank line before function calls
+    
+    # 5. Generate the operator function calls.
+    # If ops is a dictionary, we iterate in insertion order.
+    for key, op_info in ops.items():
+        #print("the value of key is:", key)
+        call_str = generate_operator_call(op_info, data_type)
+        code_lines.append(f"    {call_str}")
+    
+    code_lines.append("}")
+    
+    return "\n".join(code_lines)
+
+# Define transformer block parameters.
+SEQ_LENGTH = 128
+DIM_IN     = 512
+NUM_HEAD   = 8
+DIM_Q      = DIM_IN / NUM_HEAD
+DIM_K      = DIM_IN / NUM_HEAD
+DIM_V      = DIM_IN / NUM_HEAD
+DIM_OUT    = 512
+
+brams = [
+        {"name": "BRAM_attn_input",      "dims": [SEQ_LENGTH, DIM_IN]},
+        {"name": "BRAM_weights_q",       "dims": [DIM_IN, DIM_IN]},
+        {"name": "BRAM_weights_k",       "dims": [DIM_IN, DIM_IN]},
+        {"name": "BRAM_weights_v",       "dims": [DIM_IN, DIM_IN]},
+        {"name": "BRAM_1",     "dims": [SEQ_LENGTH, DIM_OUT]},
+        {"name": "BRAM_2",     "dims": [SEQ_LENGTH, DIM_OUT]},
+        {"name": "BRAM_layer_norm_weights_1",     "dims": [2, DIM_OUT]},
+        {"name": "FF_weights_1",     "dims": [4 * DIM_OUT, DIM_OUT]},
+        {"name": "FF_weights_2",     "dims": [DIM_OUT, 4 * DIM_OUT]},
+        {"name": "BRAM_layer_norm_weights_2",     "dims": [2, DIM_OUT]},
+        
+    ]
+
+    # Define DRAM configuration (for input/output).
+drams = [
+    {"name": "DRAM_attn_input",  "dims": [SEQ_LENGTH, DIM_IN],  "bundle": "mem1"},
+    {"name": "DRAM_weights_q",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
+    {"name": "DRAM_weights_k",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
+    {"name": "DRAM_weights_v",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
+    {"name": "DRAM_layer_norm_weights_1",  "dims": [2, DIM_OUT],  "bundle": "mem1"},
+    {"name": "DRAM_FF_weights_1",  "dims": [4 * DIM_OUT, DIM_OUT],  "bundle": "mem1"},
+    {"name": "DRAM_FF_weights_2",  "dims": [DIM_OUT, 4 * DIM_OUT],  "bundle": "mem1"},
+    {"name": "DRAM_layer_norm_weights_2",  "dims": [2, DIM_OUT],  "bundle": "mem1"},
+    {"name": "DRAM_output", "dims": [SEQ_LENGTH, DIM_OUT], "bundle": "mem2"}
+]
+
+
+
+# Build the ops dictionary.
+ops = {
+    "load_1": {
+        "func_name": "load",
+        "dims": [SEQ_LENGTH, DIM_IN],
+        "args": ["DRAM_attn_input", "BRAM_attn_input"]
+    },
+    "load_2": {
+        "func_name": "load",
+        "dims": [DIM_IN, DIM_IN],
+        "args": ["DRAM_weights_q", "BRAM_weights_q"]
+    },
+    "load_3": {
+        "func_name": "load",
+        "dims": [DIM_IN, DIM_IN],
+        "args": ["DRAM_weights_k", "BRAM_weights_k"]
+    },
+    "load_4": {
+        "func_name": "load",
+        "dims": [DIM_IN, DIM_IN],
+        "args": ["DRAM_weights_v", "BRAM_weights_v"]
+    },
+    "load_5": {
+        "func_name": "load",
+        "dims": [2, DIM_OUT],
+        "args": ["DRAM_layer_norm_weights_1", "BRAM_layer_norm_weights_1"]
+    },
+    "load_6": {
+        "func_name": "load",
+        "dims": [4 * DIM_OUT, DIM_OUT],
+        "args": ["DRAM_FF_weights_1", "FF_weights_1"]
+    },
+    "load_7": {
+        "func_name": "load",
+        "dims": [DIM_OUT, 4 * DIM_OUT],
+        "args": ["DRAM_FF_weights_2", "FF_weights_2"]
+    },
+    "load_8": {
+        "func_name": "load",
+        "dims": [2, DIM_OUT],
+        "args": ["DRAM_layer_norm_weights_2", "BRAM_layer_norm_weights_2"]
+    },
+    "mha": {
+        "func_name": "mha",
+        "dims": [SEQ_LENGTH, DIM_IN, NUM_HEAD, int(DIM_IN/NUM_HEAD)],
+        "func_info": ["grouped_mha_rope_template.cpp", False],
+        "args": ["BRAM_attn_input", "BRAM_weights_q", "BRAM_weights_k", "BRAM_weights_v", "BRAM_1", "8"]
+    },
+    "dropout": {
+        "func_name": "dropout",
+        "dims": [SEQ_LENGTH, DIM_OUT],
+        "func_info": ["dropout_template.cpp"],
+        "args": ["BRAM_1", "BRAM_2", "0.5", "47"]
+    },
+    "layernorm_1": {
+        "func_name": "layernorm",
+        "dims": [SEQ_LENGTH, DIM_OUT, 1e-5],
+        "func_info": ["layer_norm_template.cpp"],
+        "args": ["BRAM_2", "BRAM_layer_norm_weights_1[0]", "BRAM_layer_norm_weights_1[1]", "BRAM_1"]
+    },
+    "matmul_1": {
+        "func_name": "matmul",
+        "dims": [SEQ_LENGTH, DIM_OUT, 4 * DIM_OUT],
+        "func_info": ["matmul_template.cpp", False],
+        "args": ["BRAM_1", "FF_weights_1", "BRAM_2"]
+    },
+    "activation": {
+            "func_name": "activation",
+            "dims": [SEQ_LENGTH, DIM_OUT],
+            "func_info":["activation_template.cpp", "gelu"],
+            "args": ["BRAM_2", "BRAM_1"]
+        },
+    "matmul_2": {
+        "func_name": "matmul",
+        "dims": [SEQ_LENGTH, 4 * DIM_OUT, DIM_OUT],
+        "func_info": ["matmul_template.cpp", False],
+        "args": ["BRAM_1", "FF_weights_2", "BRAM_2"]
+    },
+    "dropout_2": {
+        "func_name": "dropout",
+        "dims": [SEQ_LENGTH, DIM_OUT],
+        "func_info": ["dropout_template.cpp"],
+        "args": ["BRAM_2", "BRAM_1", "0.5", "47"]
+    },
+    "layernorm_2": {
+        "func_name": "layernorm",
+        "dims": [SEQ_LENGTH, DIM_OUT, 1e-5],
+        "func_info": ["layer_norm_template.cpp"],
+        "args": ["BRAM_1", "BRAM_layer_norm_weights_2[0]", "BRAM_layer_norm_weights_2[1]", "BRAM_2"]
+    },
+    "store": {
+        "func_name": "store",
+        "dims": [SEQ_LENGTH, DIM_OUT],
+        "args": ["BRAM_2", "DRAM_output"]
+    }
+}
+
+# Generate the complete HLS C code for the top function.
+top_code = generate_top_function(brams, drams, ops, data_type="ap_fixed<16, 5>", top_func_name="top")
+
+# Write the generated code to a file, for example "top.cpp"
+output_filename = "top.cpp"
+with open(output_filename, "w") as f:
+    f.write(top_code)
+print("Generated top.cpp:")    
+
+
