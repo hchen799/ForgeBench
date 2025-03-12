@@ -1,6 +1,7 @@
 import re
 import random
 import json
+import os
 
 def replace_data_type(data_type: str) -> str:
     # Replace all occurrences of <, >, and , with an underscore
@@ -131,9 +132,13 @@ def generate_conv_function(
     DATA_TYPE="float",
     C_IN=16,
     C_OUT=32,
-    H=64,
-    W=64,
+    H_IN=64,
+    W_IN=64,
+    H_OUT=64,
+    W_OUT=64,
     K=3,
+    PAD=1,             # Padding size (assumed same for height and width)
+    STRIDE=2,          # Stride (assumed same for height and width)
     with_bias=False       # Whether bias is included in the function
 ):
     """
@@ -161,9 +166,13 @@ def generate_conv_function(
         DATA_TYPE=DATA_TYPE,
         C_IN=C_IN,
         C_OUT=C_OUT,
-        H=H,
-        W=W,
+        H_IN=H_IN,
+        W_IN=W_IN,
+        H_OUT=H_OUT,
+        W_OUT=W_OUT,
         K=K,
+        PAD = PAD,
+        STRIDE = STRIDE,
         CONV_BIAS_ARG=bias_arg,
         BIAS_INIT_EXPR=bias_init_expr,
         GROUP_BIAS_ARG=group_bias_arg,
@@ -191,9 +200,9 @@ def generate_conv_function(
     
     DATA_TYPE = replace_data_type(DATA_TYPE)
     if with_bias == False:
-        dim_suffix = f"_{C_IN}_{C_OUT}_{H}_{W}_{K}_{DATA_TYPE}"
+        dim_suffix = f"_{C_IN}_{C_OUT}_{H_IN}_{W_IN}_{H_OUT}_{W_OUT}_{K}_{PAD}_{STRIDE}_{DATA_TYPE}"
     else:
-        dim_suffix = f"_{C_IN}_{C_OUT}_{H}_{W}_{K}_{DATA_TYPE}_bias"
+        dim_suffix = f"_{C_IN}_{C_OUT}_{H_IN}_{W_IN}_{H_OUT}_{W_OUT}_{K}_{PAD}_{STRIDE}_{DATA_TYPE}_bias"
     # Use a regex to capture "void" followed by the function name
     function_block = re.sub(
         r"(void\s+(\w+))\s*\(",
@@ -484,7 +493,7 @@ def generate_func_def(op_info, data_type):
     elif op_info['func_name'] == 'store':
         code_line, full_func_name = generate_store_function(op_info["dims"], data_type, func_prefix="store")
     elif op_info['func_name'] == 'conv':
-        code_line, full_func_name = generate_conv_function(op_info["func_info"][0], op_info["func_info"][1], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["func_info"][2])
+        code_line, full_func_name = generate_conv_function(op_info["func_info"][0], op_info["func_info"][1], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8], op_info["func_info"][2])
     elif op_info['func_name'] == 'batchnorm':
         code_line, full_func_name = generate_batch_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'activation':
@@ -518,7 +527,7 @@ def generate_operator_call(op_info, data_type):
     elif op_info['func_name'] == 'store':
         code_line, full_func_name = generate_store_function(op_info["dims"], data_type, func_prefix="store")
     elif op_info['func_name'] == 'conv':
-        code_line, full_func_name = generate_conv_function(op_info["func_info"][0], op_info["func_info"][1], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["func_info"][2])   
+        code_line, full_func_name = generate_conv_function(op_info["func_info"][0], op_info["func_info"][1], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8], op_info["func_info"][2])
     elif op_info['func_name'] == 'batchnorm':
         code_line, full_func_name = generate_batch_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'activation':
@@ -753,7 +762,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     return "\n".join(code_lines)
 
 
-def generate_dram_txt_files(drams, seed=None):
+def generate_dram_txt_files(drams, path, seed=None):
     """
     For each DRAM in the configuration, generate a .txt file containing random numbers
     between 0 and 1, one per line.
@@ -769,7 +778,7 @@ def generate_dram_txt_files(drams, seed=None):
     
     for dram in drams:
         total_elements = prod(dram["dims"])
-        filename = f"{dram['name']}.txt"
+        filename = path + f"{dram['name']}.txt"
         with open(filename, "w") as f:
             # Generate random numbers between 0 and 1.
             numbers = [str(random.random()) for _ in range(total_elements)]
@@ -844,7 +853,7 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
 
 
 if __name__ == "__main__":
-    with open("config.json", "r") as f:
+    with open("resnet18_3_3_512_relu.json", "r") as f:
         config = json.load(f)
     
     # Extract configuration parameters
@@ -858,7 +867,10 @@ if __name__ == "__main__":
     data_type = config["data_type"]
     top_func_name = config["top_func_name"]
     output_files = config["output_files"]
+    path = output_files["hls_project_path"]
     
+    if not os.path.exists(path):
+        os.makedirs(path)
     # Generate the top function C++ code
     top_code = generate_top_function(brams, drams, ops, data_type=data_type, top_func_name=top_func_name)
     with open(output_files["top_cpp"], "w") as f:
@@ -878,7 +890,7 @@ if __name__ == "__main__":
     print(f"Generated {output_files['tb_top_cpp']}")
     
     # Generate DRAM initialization files (assumes a seed value is needed)
-    generate_dram_txt_files(drams, seed=42)
+    generate_dram_txt_files(drams, path, seed=42)
     print("Generated DRAM initialization files.")
     
     # Generate the TCL file to launch HLS tasks
