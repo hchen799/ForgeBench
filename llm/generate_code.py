@@ -535,7 +535,57 @@ def generate_matrix_add_code(
     
     return new_generated_code, func_name
     
+def generate_elementwise_mult_code(
+    template_path,    # Path to matrix_add_template.cpp
+    DATA_TYPE="float",
+    SEQ_LENGTH=64,
+    DIM=64
+):
+    """
+    Reads the matrix addition template and substitutes the placeholders with the provided parameters.
+    The template uses the following placeholders:
+       {DATA_TYPE}, {C}, {H}, {W}
     
+    The final function has the following signature:
+       void elementwise_mult(data_t in1[C][H][W], data_t in2[C][H][W], data_t out[C][H][W])
+    
+    Parameters:
+       template_path: path to the elementwise_mult_template.cpp file.
+       output_path: path to output the generated C code.
+       DATA_TYPE: the C data type for the operation (e.g., "float").
+       C: number of channels.
+       H: height.
+       W: width.
+    """
+    # Read the template file.
+    with open(template_path, "r") as f:
+        template_code = f.read()
+    
+    # Substitute the placeholders.
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        SEQ_LENGTH = SEQ_LENGTH,
+        DIM = DIM
+    )
+    
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    dim_suffix = f"_{SEQ_LENGTH}_{DIM}_{DATA_TYPE}"
+    
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+elementwise_mult)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    func_name = "elementwise_mult" + dim_suffix
+    
+    return new_generated_code, func_name
+    
+ 
+
 def generate_func_def(op_info, data_type):
     
     if op_info['func_name'] == 'load':
@@ -556,7 +606,8 @@ def generate_func_def(op_info, data_type):
         code_line, full_func_name = generate_dropout_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])
     elif op_info['func_name'] == 'matrix_add':
         code_line, full_func_name = generate_matrix_add_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])
-    else:
+    elif op_info['func_name'] == 'elementwise_mult':
+        code_line, full_func_name = generate_elementwise_mult_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])else:
         print("the operator we do not support!")
         
     return code_line, full_func_name
@@ -593,6 +644,8 @@ def generate_operator_call(op_info, data_type):
         code_line, full_func_name = generate_dropout_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])
     elif op_info['func_name'] == 'matrix_add':
         code_line, full_func_name = generate_matrix_add_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'elementwise_mult':
+        code_line, full_func_name = generate_elementwise_mult_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])
     else:
         print("the operator we do not support!")
      
@@ -1056,7 +1109,8 @@ ops = {
 
 output_dram_names = ["DRAM_output"]
     
-FPGA_name = "xczu9eg-ffvb1156-2-e"
+F        {"name": "BRAM_MLP_1", "dims": [8, 128]},
+PGA_name = "xczu9eg-ffvb1156-2-e"
 clock_period = 10
 task = ["csim", "csynth", "cosim", "export_ip"]
 #task = ["csynth"]
