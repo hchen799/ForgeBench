@@ -853,7 +853,7 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
 
 
 if __name__ == "__main__":
-    with open("resnet18_3_3_512_relu.json", "r") as f:
+    with open("resnet50_512_block4_downsample.json", "r") as f:
         config = json.load(f)
     
     # Extract configuration parameters

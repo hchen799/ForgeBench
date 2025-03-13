@@ -1,4 +1,3 @@
-
 /*
  * Auto-generated Grouped Multi-head Attention (with optional inline RoPE)
  *
