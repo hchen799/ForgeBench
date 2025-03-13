@@ -70,7 +70,6 @@ void load_32_128_ap_fixed_16_5_(data_t input[32][128], data_t output[32][128])
     }
 }
 
-
 /*
  * Auto-generated Grouped Multi-head Attention (with optional inline RoPE)
  *
@@ -167,7 +166,6 @@ void load_32_128_ap_fixed_16_5_(data_t input[32][128], data_t output[32][128])
         }
     }
 }
-
 
 
 // Simple LCG for pseudo-random numbers.

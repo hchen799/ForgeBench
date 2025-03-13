@@ -18,7 +18,7 @@ def create_run_directory(run_name, base_dir="runs"):
     os.makedirs(run_dir, exist_ok=True)
     return run_dir
 
-def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e", clock_period=10, task=["csim", "csynth", "cosim", "export_ip"]):
+def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e", clock_period=10, task=["csynth", "export_ip"]):
     config = load_json_config(config_path)
     run_name = os.path.splitext(os.path.basename(config_path))[0]
     run_dir = create_run_directory(run_name, base_dir)

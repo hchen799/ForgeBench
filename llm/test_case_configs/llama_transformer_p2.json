@@ -47,7 +47,7 @@
         "matmul_1": {"func_name": "matmul", "dims": [8, 32, 128], "func_info": ["matmul_template.cpp", true], "args": ["BRAM_2", "FF_weights_1", "BRAM_MLP_1"]},
         "matmul_2": {"func_name": "matmul", "dims": [8, 32, 128], "func_info": ["matmul_template.cpp", true], "args": ["BRAM_2", "FF_weights_2", "BRAM_MLP_2"]},
         "activation": {"func_name": "activation", "dims": [8, 128], "func_info": ["activation_template.cpp", "swish"], "args": ["BRAM_MLP_2", "BRAM_SWISH"]},
-        "elementwise_mult_1": {"func_name": "elementwise_mult", "dims": [8, 128], "func_info": ["elementwise_mult.cpp"], "args": ["BRAM_SWISH", "BRAM_MLP_1", "BRAM_MLP_3"]},
+        "elementwise_mult_1": {"func_name": "elementwise_mult", "dims": [8, 128], "func_info": ["elementwise_mult_template.cpp"], "args": ["BRAM_SWISH", "BRAM_MLP_1", "BRAM_MLP_3"]},
         "matmul_3": {"func_name": "matmul", "dims": [8, 128, 32], "func_info": ["matmul_template.cpp", false], "args": ["BRAM_MLP_3", "FF_weights_3", "BRAM_1"]},
         "dropout_2": {"func_name": "dropout", "dims": [8, 32], "func_info": ["dropout_template.cpp"], "args": ["BRAM_1", "BRAM_2", "0.5", "47"]},
         

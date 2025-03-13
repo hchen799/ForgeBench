@@ -3,7 +3,7 @@
  * Auto-generated Activation Functions for CNNs (3D version)
  * 
  * Data type: {DATA_TYPE}
- * Tensor dimensions: [{C}][{H}][{W}]
+ * Tensor dimensions: [{H}][{W}]
  *
  * Available functions:
  *   - relu

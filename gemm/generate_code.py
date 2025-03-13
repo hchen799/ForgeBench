@@ -1072,8 +1072,7 @@ def generate_func_def(op_info, data_type):
     elif op_info['func_name'] == 'dot_product':
         code_line, full_func_name = generate_dot_function(data_type, "dot_product", op_info["dims"][0], op_info["func_info"][0])
     elif op_info['func_name'] == 'activation':
-        code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
-
+        code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1])
     else:
         print("the operator we do not support!")
         
@@ -1102,7 +1101,7 @@ def generate_operator_call(op_info, data_type):
         args_str = ", ".join(op_info["args"])
         call_str =  f"{full_func_name}({args_str});"
     elif op_info['func_name'] == 'activation':
-        code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1])
         args_str = ", ".join(op_info["args"])
         call_str =  f"{full_func_name}({args_str});"
     elif op_info['func_name'] == 'gemm':

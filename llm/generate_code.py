@@ -274,7 +274,6 @@ def generate_layer_norm_code(
     
 def generate_rms_norm_code(
     template_path,    # Path to rms_norm_template.cpp
-    output_path,      # Output file (e.g., rms_norm.cpp)
     DATA_TYPE="float",
     SEQ_LENGTH=128,   # e.g., sequence length (number of rows)
     DIM=512,          # e.g., feature dimension (number of columns)
@@ -607,7 +606,8 @@ def generate_func_def(op_info, data_type):
     elif op_info['func_name'] == 'matrix_add':
         code_line, full_func_name = generate_matrix_add_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])
     elif op_info['func_name'] == 'elementwise_mult':
-        code_line, full_func_name = generate_elementwise_mult_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1])else:
+        code_line, full_func_name = generate_elementwise_mult_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1]) 
+    else:
         print("the operator we do not support!")
         
     return code_line, full_func_name
@@ -963,181 +963,180 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
 
 
 
+if __name__ == "__main__":
+    # Define transformer block parameters.
+    SEQ_LENGTH = 8
+    DIM_IN     = 32
+    NUM_HEAD   = 4
+    DIM_Q      = DIM_IN / NUM_HEAD
+    DIM_K      = DIM_IN / NUM_HEAD
+    DIM_V      = DIM_IN / NUM_HEAD
+    DIM_OUT    = 32
 
-# Define transformer block parameters.
-SEQ_LENGTH = 8
-DIM_IN     = 32
-NUM_HEAD   = 4
-DIM_Q      = DIM_IN / NUM_HEAD
-DIM_K      = DIM_IN / NUM_HEAD
-DIM_V      = DIM_IN / NUM_HEAD
-DIM_OUT    = 32
+    brams = [
+            {"name": "BRAM_attn_input",      "dims": [SEQ_LENGTH, DIM_IN]},
+            {"name": "BRAM_weights_q",       "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_weights_k",       "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_weights_v",       "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_1",     "dims": [SEQ_LENGTH, DIM_OUT]},
+            {"name": "BRAM_2",     "dims": [SEQ_LENGTH, DIM_OUT]},
+            {"name": "BRAM_MLP_1",     "dims": [SEQ_LENGTH, 4 * DIM_OUT]},
+            {"name": "BRAM_MLP_2",     "dims": [SEQ_LENGTH, 4 * DIM_OUT]},
+            {"name": "BRAM_layer_norm_weights_1",     "dims": [2, DIM_OUT]},
+            {"name": "FF_weights_1",     "dims": [4 * DIM_OUT, DIM_OUT]},
+            {"name": "FF_weights_2",     "dims": [DIM_OUT, 4 * DIM_OUT]},
+            {"name": "BRAM_layer_norm_weights_2",     "dims": [2, DIM_OUT]},
+            
+        ]
 
-brams = [
-        {"name": "BRAM_attn_input",      "dims": [SEQ_LENGTH, DIM_IN]},
-        {"name": "BRAM_weights_q",       "dims": [DIM_IN, DIM_IN]},
-        {"name": "BRAM_weights_k",       "dims": [DIM_IN, DIM_IN]},
-        {"name": "BRAM_weights_v",       "dims": [DIM_IN, DIM_IN]},
-        {"name": "BRAM_1",     "dims": [SEQ_LENGTH, DIM_OUT]},
-        {"name": "BRAM_2",     "dims": [SEQ_LENGTH, DIM_OUT]},
-        {"name": "BRAM_MLP_1",     "dims": [SEQ_LENGTH, 4 * DIM_OUT]},
-        {"name": "BRAM_MLP_2",     "dims": [SEQ_LENGTH, 4 * DIM_OUT]},
-        {"name": "BRAM_layer_norm_weights_1",     "dims": [2, DIM_OUT]},
-        {"name": "FF_weights_1",     "dims": [4 * DIM_OUT, DIM_OUT]},
-        {"name": "FF_weights_2",     "dims": [DIM_OUT, 4 * DIM_OUT]},
-        {"name": "BRAM_layer_norm_weights_2",     "dims": [2, DIM_OUT]},
-        
+        # Define DRAM configuration (for input/output).
+    drams = [
+        {"name": "DRAM_attn_input",  "dims": [SEQ_LENGTH, DIM_IN],  "bundle": "mem1"},
+        {"name": "DRAM_weights_q",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
+        {"name": "DRAM_weights_k",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
+        {"name": "DRAM_weights_v",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
+        {"name": "DRAM_layer_norm_weights_1",  "dims": [2, DIM_OUT],  "bundle": "mem1"},
+        {"name": "DRAM_FF_weights_1",  "dims": [4 * DIM_OUT, DIM_OUT],  "bundle": "mem1"},
+        {"name": "DRAM_FF_weights_2",  "dims": [DIM_OUT, 4 * DIM_OUT],  "bundle": "mem1"},
+        {"name": "DRAM_layer_norm_weights_2",  "dims": [2, DIM_OUT],  "bundle": "mem1"},
+        {"name": "DRAM_output", "dims": [SEQ_LENGTH, DIM_OUT], "bundle": "mem2"}
     ]
 
-    # Define DRAM configuration (for input/output).
-drams = [
-    {"name": "DRAM_attn_input",  "dims": [SEQ_LENGTH, DIM_IN],  "bundle": "mem1"},
-    {"name": "DRAM_weights_q",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
-    {"name": "DRAM_weights_k",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
-    {"name": "DRAM_weights_v",  "dims": [DIM_IN, DIM_IN],  "bundle": "mem1"},
-    {"name": "DRAM_layer_norm_weights_1",  "dims": [2, DIM_OUT],  "bundle": "mem1"},
-    {"name": "DRAM_FF_weights_1",  "dims": [4 * DIM_OUT, DIM_OUT],  "bundle": "mem1"},
-    {"name": "DRAM_FF_weights_2",  "dims": [DIM_OUT, 4 * DIM_OUT],  "bundle": "mem1"},
-    {"name": "DRAM_layer_norm_weights_2",  "dims": [2, DIM_OUT],  "bundle": "mem1"},
-    {"name": "DRAM_output", "dims": [SEQ_LENGTH, DIM_OUT], "bundle": "mem2"}
-]
 
 
-
-# Build the ops dictionary.
-ops = {
-    "load_1": {
-        "func_name": "load",
-        "dims": [SEQ_LENGTH, DIM_IN],
-        "args": ["DRAM_attn_input", "BRAM_attn_input"]
-    },
-    "load_2": {
-        "func_name": "load",
-        "dims": [DIM_IN, DIM_IN],
-        "args": ["DRAM_weights_q", "BRAM_weights_q"]
-    },
-    "load_3": {
-        "func_name": "load",
-        "dims": [DIM_IN, DIM_IN],
-        "args": ["DRAM_weights_k", "BRAM_weights_k"]
-    },
-    "load_4": {
-        "func_name": "load",
-        "dims": [DIM_IN, DIM_IN],
-        "args": ["DRAM_weights_v", "BRAM_weights_v"]
-    },
-    "load_5": {
-        "func_name": "load",
-        "dims": [2, DIM_OUT],
-        "args": ["DRAM_layer_norm_weights_1", "BRAM_layer_norm_weights_1"]
-    },
-    "load_6": {
-        "func_name": "load",
-        "dims": [4 * DIM_OUT, DIM_OUT],
-        "args": ["DRAM_FF_weights_1", "FF_weights_1"]
-    },
-    "load_7": {
-        "func_name": "load",
-        "dims": [DIM_OUT, 4 * DIM_OUT],
-        "args": ["DRAM_FF_weights_2", "FF_weights_2"]
-    },
-    "load_8": {
-        "func_name": "load",
-        "dims": [2, DIM_OUT],
-        "args": ["DRAM_layer_norm_weights_2", "BRAM_layer_norm_weights_2"]
-    },
-    "mha": {
-        "func_name": "mha",
-        "dims": [SEQ_LENGTH, DIM_IN, NUM_HEAD, int(DIM_IN/NUM_HEAD)],
-        "func_info": ["grouped_mha_rope_template.cpp", False],
-        "args": ["BRAM_attn_input", "BRAM_weights_q", "BRAM_weights_k", "BRAM_weights_v", "BRAM_1", "8"]
-    },
-    "dropout": {
-        "func_name": "dropout",
-        "dims": [SEQ_LENGTH, DIM_OUT],
-        "func_info": ["dropout_template.cpp"],
-        "args": ["BRAM_1", "BRAM_2", "0.5", "47"]
-    },
-    "layernorm_1": {
-        "func_name": "layernorm",
-        "dims": [SEQ_LENGTH, DIM_OUT, 1e-2],
-        "func_info": ["layer_norm_template.cpp"],
-        "args": ["BRAM_2", "BRAM_layer_norm_weights_1[0]", "BRAM_layer_norm_weights_1[1]", "BRAM_1"]
-    },
-    "matmul_1": {
-        "func_name": "matmul",
-        "dims": [SEQ_LENGTH, DIM_OUT, 4 * DIM_OUT],
-        "func_info": ["matmul_template.cpp", False],
-        "args": ["BRAM_1", "FF_weights_1", "BRAM_MLP_1"]
-    },
-    "activation": {
-            "func_name": "activation",
-            "dims": [SEQ_LENGTH, 4 * DIM_OUT],
-            "func_info":["activation_template.cpp", "gelu"],
-            "args": ["BRAM_MLP_1", "BRAM_MLP_2"]
+    # Build the ops dictionary.
+    ops = {
+        "load_1": {
+            "func_name": "load",
+            "dims": [SEQ_LENGTH, DIM_IN],
+            "args": ["DRAM_attn_input", "BRAM_attn_input"]
         },
-    "matmul_2": {
-        "func_name": "matmul",
-        "dims": [SEQ_LENGTH, 4 * DIM_OUT, DIM_OUT],
-        "func_info": ["matmul_template.cpp", False],
-        "args": ["BRAM_MLP_2", "FF_weights_2", "BRAM_2"]
-    },
-    "dropout_2": {
-        "func_name": "dropout",
-        "dims": [SEQ_LENGTH, DIM_OUT],
-        "func_info": ["dropout_template.cpp"],
-        "args": ["BRAM_2", "BRAM_1", "0.5", "47"]
-    },
-    "layernorm_2": {
-        "func_name": "layernorm",
-        "dims": [SEQ_LENGTH, DIM_OUT, 1e-2],
-        "func_info": ["layer_norm_template.cpp"],
-        "args": ["BRAM_1", "BRAM_layer_norm_weights_2[0]", "BRAM_layer_norm_weights_2[1]", "BRAM_2"]
-    },
-    "matrix_add": {
-        "func_name": "matrix_add",
-        "dims": [SEQ_LENGTH, DIM_OUT, 1e-2],
-        "func_info": ["matrix_add_template.cpp"],
-        "args": ["BRAM_1", "BRAM_2", "BRAM_2"]
-    },
-    "store": {
-        "func_name": "store",
-        "dims": [SEQ_LENGTH, DIM_OUT],
-        "args": ["BRAM_2", "DRAM_output"]
+        "load_2": {
+            "func_name": "load",
+            "dims": [DIM_IN, DIM_IN],
+            "args": ["DRAM_weights_q", "BRAM_weights_q"]
+        },
+        "load_3": {
+            "func_name": "load",
+            "dims": [DIM_IN, DIM_IN],
+            "args": ["DRAM_weights_k", "BRAM_weights_k"]
+        },
+        "load_4": {
+            "func_name": "load",
+            "dims": [DIM_IN, DIM_IN],
+            "args": ["DRAM_weights_v", "BRAM_weights_v"]
+        },
+        "load_5": {
+            "func_name": "load",
+            "dims": [2, DIM_OUT],
+            "args": ["DRAM_layer_norm_weights_1", "BRAM_layer_norm_weights_1"]
+        },
+        "load_6": {
+            "func_name": "load",
+            "dims": [4 * DIM_OUT, DIM_OUT],
+            "args": ["DRAM_FF_weights_1", "FF_weights_1"]
+        },
+        "load_7": {
+            "func_name": "load",
+            "dims": [DIM_OUT, 4 * DIM_OUT],
+            "args": ["DRAM_FF_weights_2", "FF_weights_2"]
+        },
+        "load_8": {
+            "func_name": "load",
+            "dims": [2, DIM_OUT],
+            "args": ["DRAM_layer_norm_weights_2", "BRAM_layer_norm_weights_2"]
+        },
+        "mha": {
+            "func_name": "mha",
+            "dims": [SEQ_LENGTH, DIM_IN, NUM_HEAD, int(DIM_IN/NUM_HEAD)],
+            "func_info": ["grouped_mha_rope_template.cpp", False],
+            "args": ["BRAM_attn_input", "BRAM_weights_q", "BRAM_weights_k", "BRAM_weights_v", "BRAM_1", "8"]
+        },
+        "dropout": {
+            "func_name": "dropout",
+            "dims": [SEQ_LENGTH, DIM_OUT],
+            "func_info": ["dropout_template.cpp"],
+            "args": ["BRAM_1", "BRAM_2", "0.5", "47"]
+        },
+        "layernorm_1": {
+            "func_name": "layernorm",
+            "dims": [SEQ_LENGTH, DIM_OUT, 1e-2],
+            "func_info": ["layer_norm_template.cpp"],
+            "args": ["BRAM_2", "BRAM_layer_norm_weights_1[0]", "BRAM_layer_norm_weights_1[1]", "BRAM_1"]
+        },
+        "matmul_1": {
+            "func_name": "matmul",
+            "dims": [SEQ_LENGTH, DIM_OUT, 4 * DIM_OUT],
+            "func_info": ["matmul_template.cpp", False],
+            "args": ["BRAM_1", "FF_weights_1", "BRAM_MLP_1"]
+        },
+        "activation": {
+                "func_name": "activation",
+                "dims": [SEQ_LENGTH, 4 * DIM_OUT],
+                "func_info":["activation_template.cpp", "gelu"],
+                "args": ["BRAM_MLP_1", "BRAM_MLP_2"]
+            },
+        "matmul_2": {
+            "func_name": "matmul",
+            "dims": [SEQ_LENGTH, 4 * DIM_OUT, DIM_OUT],
+            "func_info": ["matmul_template.cpp", False],
+            "args": ["BRAM_MLP_2", "FF_weights_2", "BRAM_2"]
+        },
+        "dropout_2": {
+            "func_name": "dropout",
+            "dims": [SEQ_LENGTH, DIM_OUT],
+            "func_info": ["dropout_template.cpp"],
+            "args": ["BRAM_2", "BRAM_1", "0.5", "47"]
+        },
+        "layernorm_2": {
+            "func_name": "layernorm",
+            "dims": [SEQ_LENGTH, DIM_OUT, 1e-2],
+            "func_info": ["layer_norm_template.cpp"],
+            "args": ["BRAM_1", "BRAM_layer_norm_weights_2[0]", "BRAM_layer_norm_weights_2[1]", "BRAM_2"]
+        },
+        "matrix_add": {
+            "func_name": "matrix_add",
+            "dims": [SEQ_LENGTH, DIM_OUT, 1e-2],
+            "func_info": ["matrix_add_template.cpp"],
+            "args": ["BRAM_1", "BRAM_2", "BRAM_2"]
+        },
+        "store": {
+            "func_name": "store",
+            "dims": [SEQ_LENGTH, DIM_OUT],
+            "args": ["BRAM_2", "DRAM_output"]
+        }
     }
-}
 
-output_dram_names = ["DRAM_output"]
-    
-F        {"name": "BRAM_MLP_1", "dims": [8, 128]},
-PGA_name = "xczu9eg-ffvb1156-2-e"
-clock_period = 10
-task = ["csim", "csynth", "cosim", "export_ip"]
-#task = ["csynth"]
-# Generate the complete HLS C code for the top function.
-top_code = generate_top_function(brams, drams, ops, data_type="ap_fixed<16, 5>", top_func_name="top")
+    output_dram_names = ["DRAM_output"]
+        
+    FPGA_name = "xczu9eg-ffvb1156-2-e"
+    clock_period = 10
+    task = ["csim", "csynth", "cosim", "export_ip"]
+    #task = ["csynth"]
+    # Generate the complete HLS C code for the top function.
+    top_code = generate_top_function(brams, drams, ops, data_type="ap_fixed<16, 5>", top_func_name="top")
 
-# Write the generated code to a file, for example "top.cpp"
-output_filename = "top.cpp"
-with open(output_filename, "w") as f:
-    f.write(top_code)
-print("Generated top.cpp:")    
+    # Write the generated code to a file, for example "top.cpp"
+    output_filename = "top.cpp"
+    with open(output_filename, "w") as f:
+        f.write(top_code)
+    print("Generated top.cpp:")    
 
-top_h_code = generate_top_h(drams, data_type="ap_fixed<16, 5>", top_func_name="top")
-with open("top.h", "w") as f:
-    f.write(top_h_code)
-print("Generated top.h:")
+    top_h_code = generate_top_h(drams, data_type="ap_fixed<16, 5>", top_func_name="top")
+    with open("top.h", "w") as f:
+        f.write(top_h_code)
+    print("Generated top.h:")
 
-tb_code = generate_testbench_code(drams, output_dram_names, data_type="ap_fixed<16, 5>", top_func_name="top")
-with open("tb_top.cpp", "w") as f:
-    f.write(tb_code)
-print("Generated tb_top.cpp:")
+    tb_code = generate_testbench_code(drams, output_dram_names, data_type="ap_fixed<16, 5>", top_func_name="top")
+    with open("tb_top.cpp", "w") as f:
+        f.write(tb_code)
+    print("Generated tb_top.cpp:")
 
-generate_dram_txt_files(drams, seed=42)
-print("Generated dram initialization.")
+    generate_dram_txt_files(drams, seed=42)
+    print("Generated dram initialization.")
 
-generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="run_hls.tcl")
-print("Generated tcl file to launch tasks.")
+    generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="run_hls.tcl")
+    print("Generated tcl file to launch tasks.")
 
 
 

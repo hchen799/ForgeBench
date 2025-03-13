@@ -1,0 +1,2 @@
+clock_period,min_cycles,BRAM,DSP,FF,LUT,BRAM_util,DSP_util,FF_util,LUT_util,run_name
+10.0,,,,,,,,,,testing_impl
