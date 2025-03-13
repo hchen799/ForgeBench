@@ -35,7 +35,7 @@
         "load_8": {"func_name": "load", "dims": [2, 32], "args": ["DRAM_layer_norm_weights_2", "BRAM_layer_norm_weights_2"]},
         
         "layernorm_1": {"func_name": "layernorm", "dims": [8, 32, 1e-2], "func_info": ["layer_norm_template.cpp"], "args": ["BRAM_attn_input", "BRAM_layer_norm_weights_1[0]", "BRAM_layer_norm_weights_1[1]", "BRAM_2"]},
-        "mha": {"func_name": "mha", "dims": [8, 32, 4, 8], "func_info": ["grouped_mha_rope_template.cpp", false], "args": ["BRAM_2", "BRAM_weights_q", "BRAM_weights_k", "BRAM_weights_v", "BRAM_1", "8"]},
+        "mha": {"func_name": "mha", "dims": [8, 32, 8, 4], "func_info": ["grouped_mha_rope_template.cpp", false], "args": ["BRAM_2", "BRAM_weights_q", "BRAM_weights_k", "BRAM_weights_v", "BRAM_1", "8"]},
         "dropout": {"func_name": "dropout", "dims": [8, 32], "func_info": ["dropout_template.cpp"], "args": ["BRAM_1", "BRAM_2", "0.5", "47"]},
         "matrix_add": {"func_name": "matrix_add", "dims": [8, 32], "func_info": ["matrix_add_template.cpp"], "args": ["BRAM_attn_input", "BRAM_2", "BRAM_1"]},
         
