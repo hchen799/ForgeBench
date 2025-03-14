@@ -36,8 +36,8 @@
 
 #define EPSILON 1e-5
 
-#define MAX_H_IN  256   // Maximum input height
-#define MAX_W_IN  256   // Maximum input width
+#define MAX_H_IN  56   // Maximum input height
+#define MAX_W_IN  56   // Maximum input width
 
 // Pooling parameters.
 #define K_H       2     // Kernel height
@@ -68,3 +68,4 @@ int min_value (int x, int y) {
 }
 
 #endif // COMMON_H
+
