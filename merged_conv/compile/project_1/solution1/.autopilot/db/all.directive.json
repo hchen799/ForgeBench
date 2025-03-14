@@ -1,0 +1,23 @@
+[
+  {
+    "functionLabel": "",
+    "functionName": "conv_via_tiling",
+    "id": 0,
+    "ifcond": "",
+    "insert_position": "",
+    "label": "",
+    "pragma": {
+      "name": "TOP",
+      "option": [
+        {
+          "name": "name",
+          "value": "conv_via_tiling"
+        }
+      ]
+    },
+    "slx": false,
+    "sourceFile": "/export/hdd/scratch/hchen799/hls_benchmark/merged_conv/compile/run_hls.tcl",
+    "sourceLine": 18,
+    "success": true
+  }
+]

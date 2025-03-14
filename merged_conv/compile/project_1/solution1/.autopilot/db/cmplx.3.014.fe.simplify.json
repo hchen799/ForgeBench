@@ -1,0 +1,33 @@
+{
+  "0": {
+    "basicblocks": 145,
+    "calls": "1",
+    "file": "merged_conv_top.cpp",
+    "fileloc": 45,
+    "instructions": 862,
+    "loads": {
+      "L": 1,
+      "T": 3
+    },
+    "name": "conv_via_tiling",
+    "stores": {
+      "L": 38
+    },
+    "total_instructions": 1145
+  },
+  "1": {
+    "basicblocks": 11,
+    "calls": "",
+    "file": "merged_conv_top.cpp",
+    "fileloc": 14,
+    "instructions": 283,
+    "loads": {
+      "L": 91
+    },
+    "name": "conv_kernel",
+    "stores": {
+      "L": 1
+    },
+    "total_instructions": 283
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "0": {
+    "basicblocks": 186,
+    "calls": "4 4 1 1 1 1 3 3 2",
+    "file": "merged_conv_top.cpp",
+    "fileloc": 45,
+    "instructions": 446,
+    "loads": {
+      "L": 1,
+      "T": 4
+    },
+    "name": "conv_via_tiling",
+    "stores": {
+      "L": 6,
+      "T": 2
+    },
+    "total_instructions": 574
+  },
+  "1": {
+    "basicblocks": 1,
+    "calls": "",
+    "file": "common.h",
+    "fileloc": 32,
+    "instructions": 4,
+    "name": "ceil_div",
+    "total_instructions": 4
+  },
+  "2": {
+    "basicblocks": 37,
+    "calls": "",
+    "file": "merged_conv_top.cpp",
+    "fileloc": 14,
+    "instructions": 88,
+    "loads": {
+      "L": 3
+    },
+    "name": "conv_kernel",
+    "stores": {
+      "L": 1
+    },
+    "total_instructions": 88
+  },
+  "3": {
+    "basicblocks": 4,
+    "calls": "",
+    "file": "common.h",
+    "fileloc": 36,
+    "instructions": 6,
+    "name": "min_value",
+    "total_instructions": 6
+  },
+  "4": {
+    "basicblocks": 1,
+    "calls": "",
+    "file": "common.h",
+    "fileloc": 28,
+    "instructions": 6,
+    "name": "out_dim",
+    "total_instructions": 6
+  }
+}

@@ -1,0 +1,201 @@
+{
+    "1": {
+        "name": "conv_via_tiling_Pipeline_VITIS_LOOP_109_7_VITIS_LOOP_111_8_VITIS_LOOP_113_9",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "109",
+        "instructions": "57",
+        "total_instructions": "57",
+        "calls": "",
+        "basicblocks": "4",
+        "loads": {
+            "L": "5"
+        },
+        "stores": {
+            "L": "11"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "2": {
+        "name": "conv_kernel_Pipeline_VITIS_LOOP_26_2_VITIS_LOOP_27_3_VITIS_LOOP_28_4",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "26",
+        "instructions": "376",
+        "total_instructions": "376",
+        "calls": "",
+        "basicblocks": "4",
+        "loads": {
+            "L": "96"
+        },
+        "stores": {
+            "L": "11"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "3": {
+        "name": "conv_via_tiling_Pipeline_VITIS_LOOP_119_10_VITIS_LOOP_120_11",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "119",
+        "instructions": "73",
+        "total_instructions": "73",
+        "calls": "",
+        "basicblocks": "4",
+        "loads": {
+            "L": "3"
+        },
+        "stores": {
+            "L": "7"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "4": {
+        "name": "conv_via_tiling_Pipeline_VITIS_LOOP_136_13_VITIS_LOOP_138_14_VITIS_LOOP_140_15_V",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "136",
+        "instructions": "102",
+        "total_instructions": "102",
+        "calls": "",
+        "basicblocks": "20",
+        "loads": {
+            "L": "7"
+        },
+        "stores": {
+            "L": "23"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "5": {
+        "name": "conv_via_tiling_Pipeline_VITIS_LOOP_174_24_VITIS_LOOP_175_25_VITIS_LOOP_176_26",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "174",
+        "instructions": "143",
+        "total_instructions": "143",
+        "calls": "",
+        "basicblocks": "22",
+        "loads": {
+            "L": "5"
+        },
+        "stores": {
+            "L": "19"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "6": {
+        "name": "conv_via_tiling_Pipeline_VITIS_LOOP_75_1_VITIS_LOOP_76_2_VITIS_LOOP_77_3",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "75",
+        "instructions": "97",
+        "total_instructions": "97",
+        "calls": "",
+        "basicblocks": "12",
+        "loads": {
+            "L": "6"
+        },
+        "stores": {
+            "L": "11"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "0": {
+        "name": "conv_via_tiling",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "45",
+        "instructions": "255",
+        "total_instructions": "1488",
+        "calls": "6 1 3 10 4 8 7 5 9",
+        "basicblocks": "13",
+        "loads": {
+            "L": "1"
+        },
+        "stores": {
+            "L": "2"
+        },
+        "loops": {
+            "L": "1",
+            "N": "3"
+        }
+    },
+    "7": {
+        "name": "conv_via_tiling_Pipeline_VITIS_LOOP_164_21_VITIS_LOOP_166_22_VITIS_LOOP_168_23",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "164",
+        "instructions": "95",
+        "total_instructions": "95",
+        "calls": "",
+        "basicblocks": "20",
+        "loads": {
+            "L": "5"
+        },
+        "stores": {
+            "L": "19"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "8": {
+        "name": "conv_via_tiling_Pipeline_VITIS_LOOP_150_17_VITIS_LOOP_151_18_VITIS_LOOP_152_19_V",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "150",
+        "instructions": "144",
+        "total_instructions": "144",
+        "calls": "",
+        "basicblocks": "26",
+        "loads": {
+            "L": "7"
+        },
+        "stores": {
+            "L": "23"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "9": {
+        "name": "conv_kernel",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "25",
+        "instructions": "22",
+        "total_instructions": "398",
+        "calls": "2",
+        "basicblocks": "4",
+        "loads": {
+            "L": "1"
+        },
+        "stores": {
+            "L": "2"
+        },
+        "loops": {
+            "L": "1"
+        }
+    },
+    "10": {
+        "name": "conv_via_tiling_Pipeline_VITIS_LOOP_192_27_VITIS_LOOP_193_28_VITIS_LOOP_194_29",
+        "file": "merged_conv_top.cpp",
+        "fileloc": "192",
+        "instructions": "124",
+        "total_instructions": "124",
+        "calls": "",
+        "basicblocks": "8",
+        "loads": {
+            "L": "6"
+        },
+        "stores": {
+            "L": "10"
+        },
+        "loops": {
+            "L": "1"
+        }
+    }
+}

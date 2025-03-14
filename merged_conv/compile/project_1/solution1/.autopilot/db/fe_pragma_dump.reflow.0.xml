@@ -1,0 +1,14 @@
+<pragmas>
+<pragma file="merged_conv_top.cpp" line="0" pragmaType="inline" parentfunction="conv_kernel" off="1" region="0" recursive="0"/>
+<pragma file="merged_conv_top.cpp" line="60" pragmaType="interface" parentfunction="conv_via_tiling" mode="s_axilite" port="in_ch" bundle="" offset="-1" name="" clock="" impl="" register="0"/>
+<pragma file="merged_conv_top.cpp" line="61" pragmaType="interface" parentfunction="conv_via_tiling" mode="s_axilite" port="out_ch" bundle="" offset="-1" name="" clock="" impl="" register="0"/>
+<pragma file="merged_conv_top.cpp" line="62" pragmaType="interface" parentfunction="conv_via_tiling" mode="s_axilite" port="H" bundle="" offset="-1" name="" clock="" impl="" register="0"/>
+<pragma file="merged_conv_top.cpp" line="63" pragmaType="interface" parentfunction="conv_via_tiling" mode="s_axilite" port="W" bundle="" offset="-1" name="" clock="" impl="" register="0"/>
+<pragma file="merged_conv_top.cpp" line="64" pragmaType="interface" parentfunction="conv_via_tiling" mode="m_axi" port="input" bundle="mem1" offset="slave" name="" depth="-1" num_read_outstanding="-1" num_write_outstanding="-1" max_burst_read_length="-1" max_burst_write_length="-1" latency="-1" max_widen_bitwidth="-1" channel=""/>
+<pragma file="merged_conv_top.cpp" line="65" pragmaType="interface" parentfunction="conv_via_tiling" mode="m_axi" port="weight" bundle="mem1" offset="slave" name="" depth="-1" num_read_outstanding="-1" num_write_outstanding="-1" max_burst_read_length="-1" max_burst_write_length="-1" latency="-1" max_widen_bitwidth="-1" channel=""/>
+<pragma file="merged_conv_top.cpp" line="66" pragmaType="interface" parentfunction="conv_via_tiling" mode="m_axi" port="bias" bundle="mem1" offset="slave" name="" depth="-1" num_read_outstanding="-1" num_write_outstanding="-1" max_burst_read_length="-1" max_burst_write_length="-1" latency="-1" max_widen_bitwidth="-1" channel=""/>
+<pragma file="merged_conv_top.cpp" line="67" pragmaType="interface" parentfunction="conv_via_tiling" mode="m_axi" port="output" bundle="mem2" offset="slave" name="" depth="-1" num_read_outstanding="-1" num_write_outstanding="-1" max_burst_read_length="-1" max_burst_write_length="-1" latency="-1" max_widen_bitwidth="-1" channel=""/>
+<pragma file="merged_conv_top.cpp" line="68" pragmaType="interface" parentfunction="conv_via_tiling" mode="s_axilite" port="stride" bundle="" offset="-1" name="" clock="" impl="" register="0"/>
+<pragma file="merged_conv_top.cpp" line="69" pragmaType="interface" parentfunction="conv_via_tiling" mode="s_axilite" port="pad" bundle="" offset="-1" name="" clock="" impl="" register="0"/>
+<pragma file="merged_conv_top.cpp" line="70" pragmaType="allocation" parentfunction="conv_via_tiling" type="function" limit="1" instances="conv_kernel"/>
+</pragmas>
