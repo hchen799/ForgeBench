@@ -12,12 +12,7 @@ using namespace std;
 
 typedef ap_fixed<16, 5> data_t;
 
-data_t BRAM_1[16][64];
-data_t BRAM_2[64];
-data_t BRAM_3[16];
-data_t BRAM_4[16];
-
-void load_16_64_ap_fixed_16_5_(data_t input[16][64], data_t output[16][64])
+void load_16_64_ap_fixed_16_5_(data_t input[16][64], data_t output[64][64])
 {
     for (int idx0 = 0; idx0 < 16; idx0++) {
         for (int idx1 = 0; idx1 < 64; idx1++) {
@@ -40,12 +35,33 @@ void load_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
     }
 }
 
+void load_64_16_ap_fixed_16_5_(data_t input[64][16], data_t output[64][64])
+{
+    for (int idx0 = 0; idx0 < 64; idx0++) {
+        for (int idx1 = 0; idx1 < 16; idx1++) {
+            output[idx0][idx1] = input[idx0][idx1];
+        }
+    }
+}
+
+
+void transpose(
+    ap_fixed<16, 5> input[64][64],
+)
+{
+for (int i = 0; i < 64; i++) {
+for (int j = 0; j < 64; j++) {
+    input[i][j] = input[j][i];
+}
+}
+}
+
 //////////////////////////////////////////
 // Begin: MMV_IJ FUNCTION
 //////////////////////////////////////////
 /*==== MMV_IJ FUNCTION START ====*/
 void mmv_ij(
-    ap_fixed<16, 5> input_A[16][64],
+    ap_fixed<16, 5> input_A[64][64],
     ap_fixed<16, 5> input_B[64],
     ap_fixed<16, 5> output[16]
 )
@@ -68,6 +84,16 @@ for (int j = 0; j < 64; j++) {
 // END: MMV_IJ FUNCTION
 //////////////////////////////////////////
 
+void vmm_with_mmv_ij(
+    ap_fixed<16, 5> input_A[64][64],
+    ap_fixed<16, 5> input_B[64],
+    ap_fixed<16, 5> output[16]
+)
+{
+    transpose(input_A); // Transpose the input matrix A
+    mmv_ij(input_A, input_B, output); // Call the MMV_IJ function
+}
+
 
 void store_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
 {
@@ -76,12 +102,17 @@ void store_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
     }
 }
 
-void top(data_t DRAM_1[16][64], data_t DRAM_2[64], data_t DRAM_3[16], data_t DRAM_4[16])
+void top_A(data_t DRAM_1[16][64], data_t DRAM_2[64], data_t DRAM_3[16], data_t DRAM_4[16])
 {
     #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
+
+    data_t BRAM_1[64][64];
+    data_t BRAM_2[64];
+    data_t BRAM_3[16];
+    data_t BRAM_4[16];
 
     load_16_64_ap_fixed_16_5_(DRAM_1, BRAM_1);
     load_64_ap_fixed_16_5_(DRAM_2, BRAM_2);
@@ -89,21 +120,40 @@ void top(data_t DRAM_1[16][64], data_t DRAM_2[64], data_t DRAM_3[16], data_t DRA
     //////////////////////////////////////////
 // Begin: Inline implementation of MMV_IJ
 //////////////////////////////////////////
-for (int i = 0; i < 16; i++) {
-for (int j = 0; j < 64; j++) {
-    BRAM_4[i] = 0;
-}
-}
+mmv_ij(BRAM_1, BRAM_2, BRAM_4); // Call the MMV_IJ function
 
-
-for (int i = 0; i < 16; i++) {
-for (int j = 0; j < 64; j++) {
-    BRAM_4[i] += BRAM_1[i][j] * BRAM_2[j];
-}
-}
+    // The output of MMV_IJ is stored in BRAM_3, which is then written to DRAM_4
 //////////////////////////////////////////
 // End: Inline implementation of MMV_IJ
 //////////////////////////////////////////
 
     store_16_ap_fixed_16_5_(BRAM_4, DRAM_4);
+}
+
+void top_B(data_t DRAM_1[64][16], data_t DRAM_2[64], data_t DRAM_3[16], data_t DRAM_4[16])
+{
+    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
+
+    data_t BRAM_1[64][64];
+    data_t BRAM_2[64];
+    data_t BRAM_3[16];
+    data_t BRAM_4[16];
+
+    load_64_16_ap_fixed_16_5_(DRAM_1, BRAM_1);
+    load_64_ap_fixed_16_5_(DRAM_2, BRAM_2);
+    load_16_ap_fixed_16_5_(DRAM_3, BRAM_3);
+    /////////////////////////////////////////
+vmm_with_mmv_ij(BRAM_1, BRAM_2, BRAM_4); // Call the VMM_IJ function
+
+    store_16_ap_fixed_16_5_(BRAM_4, DRAM_4); // Store the result in DRAM_4
+}
+
+void top(data_t DRAM_A1[16][64], data_t DRAM_A2[64], data_t DRAM_A3[16], data_t DRAM_A4[16],
+          data_t DRAM_B1[64][16], data_t DRAM_B2[64], data_t DRAM_B3[16], data_t DRAM_B4[16])
+{
+    top_A(DRAM_A1, DRAM_A2, DRAM_A3, DRAM_A4); // Call the top function for A
+    top_B(DRAM_B1, DRAM_B2, DRAM_B3, DRAM_B4); // Call the top function for B
 }
