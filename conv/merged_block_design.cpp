@@ -32,6 +32,7 @@ void conv_kernel_3x3(
 )
 {
     #pragma HLS inline off
+    #pragma HLS allocation function instances= conv_kernel_3x3 limit=1
     // Loop only over the valid output tile region.
     for (int ic = 0; ic < BLOCK_IN_CH; ic++) {
         for (int oc = 0; oc < BLOCK_OUT_CH; oc++) {
@@ -66,6 +67,7 @@ void conv_via_tiling_3x3(
 )
 {
     #pragma HLS inline off
+    #pragma HLS allocation function instances= conv_via_tiling_3x3 limit=1
     int out_h = out_dim(H, pad, stride, KSIZE);
     int out_w = out_dim(W, pad, stride, KSIZE);
 
@@ -834,16 +836,16 @@ void top_A(data_t input [MAX_C][MAX_H][MAX_W],
 
     load_weights(conv_weight_3, weight_buffer, 256, 256, 3);
     load_bias(conv_bias_3, bias_buffer, 256);
-    conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_1, 1, 1);
-    relu_tiled(256, 56, 56, FM_buffer_1, FM_buffer_2);
+    conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
 
     load_weights(conv_weight_4, weight_buffer, 256, 256, 3);
     load_bias(conv_bias_4, bias_buffer, 256);
-    conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_2, weight_buffer, bias_buffer, FM_buffer_1, 1, 1);
-    relu_tiled(256, 56, 56, FM_buffer_1, FM_buffer_2);
+    conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
 
-    maxpool_tiled(256, 56, 56, FM_buffer_2, 28, 28, FM_buffer_1);
-    store_feature_map(FM_buffer_1, output, 256, 28, 28);
+    maxpool_tiled(256, 56, 56, FM_buffer_1, 28, 28, FM_buffer_2);
+    store_feature_map(FM_buffer_2, output, 256, 28, 28);
 }
 
 void top_B(
@@ -883,7 +885,7 @@ void top_B(
 
 
 void top_C(
-    #pragma HLS inline off
+    
     data_t input [MAX_C][MAX_H][MAX_W], 
     data_t conv_weight_1[MAX_C][MAX_C][1][1],
     data_t conv_bias_1[MAX_C], 
@@ -898,6 +900,7 @@ void top_C(
 )
 
 {
+    #pragma HLS inline off
     load_feature_map(input, FM_buffer_3, 256, 56, 56);
 
     load_weights_1x1(conv_weight_1, weight_buffer_1x1, 64, 256, 1);
@@ -1003,7 +1006,100 @@ void top(
     
     #pragma HLS interface m_axi port=output_C offset=slave bundle=mem2
 
-    top_A(input_A, conv_weight_1_A, conv_bias_1_A, conv_weight_2_A, conv_bias_2_A, conv_weight_3_A, conv_bias_3_A, conv_weight_4_A, conv_bias_4_A, output_A);
-    top_B(input_B, conv_weight_1_B, conv_bias_1_B, batch_norm_weight_1_B, conv_weight_2_B, conv_bias_2_B, batch_norm_weight_2_B, output_B);
-    top_C(input_C, conv_weight_1_C, conv_bias_1_C, batch_norm_weight_1_C, conv_weight_2_C, conv_bias_2_C, batch_norm_weight_2_C, conv_weight_3_C,conv_bias_3_C, batch_norm_weight_3_C, output_C);
+    #pragma HLS allocation function instances= load_feature_map limit=1
+    #pragma HLS allocation function instances= load_weights_1x1 limit=1
+    #pragma HLS allocation function instances= load_weights limit=1
+    #pragma HLS allocation function instances= load_bias limit=1
+    #pragma HLS allocation function instances= load_batch_norm_weights limit=1
+    #pragma HLS allocation function instances= conv_via_tiling_1x1 limit=1
+    #pragma HLS allocation function instances= conv_via_tiling_3x3 limit=1
+    #pragma HLS allocation function instances= batch_norm_tiled limit=1
+    #pragma HLS allocation function instances= relu_tiled limit=1
+    #pragma HLS allocation function instances= matrix_add_tiled limit=1
+    #pragma HLS allocation function instances= maxpool_tiled limit=1
+
+    #pragma HLS allocation function instances= maxpool_tiled limit=1
+
+    #pragma HLS allocation function instances= store_feature_map limit=1
+
+    #pragma HLS allocation function instances= conv_kernel_3x3 limit=1
+    
+    //func_A
+    load_feature_map(input_A, FM_buffer_1, 128, 56, 56);
+
+    load_weights(conv_weight_1_A, weight_buffer, 256, 128, 3);
+    load_bias(conv_bias_1_A, bias_buffer, 256);
+    conv_via_tiling_3x3(128, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
+    
+    load_weights(conv_weight_2_A, weight_buffer, 256, 256, 3);
+    load_bias(conv_bias_2_A, bias_buffer, 256);
+    conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
+
+    load_weights(conv_weight_3_A, weight_buffer, 256, 256, 3);
+    load_bias(conv_bias_3_A, bias_buffer, 256);
+    conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
+
+    load_weights(conv_weight_4_A, weight_buffer, 256, 256, 3);
+    load_bias(conv_bias_4_A, bias_buffer, 256);
+    conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
+
+    maxpool_tiled(256, 56, 56, FM_buffer_1, 28, 28, FM_buffer_2);
+    store_feature_map(FM_buffer_2, output_A, 256, 28, 28);
+
+    //func_B
+    load_feature_map(input_B, FM_buffer_3, 256, 14, 14);
+
+    load_weights(conv_weight_1_B, weight_buffer, 256, 256, 3);
+    load_bias(conv_bias_1_B, bias_buffer, 256);
+    load_batch_norm_weights(batch_norm_weight_1_B, batch_norm_weight_buffer, 256);
+    conv_via_tiling_3x3(256, 256, 14, 14, FM_buffer_3, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    batch_norm_tiled(256, 14, 14, FM_buffer_2, batch_norm_weight_buffer, FM_buffer_1);
+    relu_tiled(256, 14, 14, FM_buffer_1, FM_buffer_2);
+
+    load_weights(conv_weight_2_B, weight_buffer, 256, 256, 3);
+    load_bias(conv_bias_2_B, bias_buffer, 256);
+    load_batch_norm_weights(batch_norm_weight_2_B, batch_norm_weight_buffer, 256);
+    conv_via_tiling_3x3(256, 256, 14, 14, FM_buffer_2, weight_buffer, bias_buffer, FM_buffer_1, 1, 1);
+    batch_norm_tiled(256, 14, 14, FM_buffer_1, batch_norm_weight_buffer, FM_buffer_2);
+
+    matrix_add_tiled(256, 14, 14, FM_buffer_3, FM_buffer_2, FM_buffer_1);
+
+    relu_tiled(256, 14, 14, FM_buffer_1, FM_buffer_2);
+    store_feature_map(FM_buffer_2, output_B, 256, 14, 14);
+
+    //func_C
+    load_feature_map(input_C, FM_buffer_3, 256, 56, 56);
+
+    load_weights_1x1(conv_weight_1_C, weight_buffer_1x1, 64, 256, 1);
+    load_bias(conv_bias_1_C, bias_buffer, 64);
+    load_batch_norm_weights(batch_norm_weight_1_C, batch_norm_weight_buffer, 64);
+    conv_via_tiling_1x1(256, 64, 56, 56, FM_buffer_3, weight_buffer_1x1, bias_buffer, FM_buffer_2, 1, 0);
+    batch_norm_tiled(64, 56, 56, FM_buffer_2, batch_norm_weight_buffer, FM_buffer_1);
+    relu_tiled(64, 56, 56, FM_buffer_1, FM_buffer_2);
+
+    load_weights(conv_weight_2_C, weight_buffer, 64, 64, 1);
+    load_bias(conv_bias_2_C, bias_buffer, 64);
+    load_batch_norm_weights(batch_norm_weight_2_C, batch_norm_weight_buffer, 64);
+    conv_via_tiling_3x3(64, 64, 56, 56, FM_buffer_2, weight_buffer, bias_buffer, FM_buffer_1, 1, 1);
+    batch_norm_tiled(64, 56, 56, FM_buffer_1, batch_norm_weight_buffer, FM_buffer_2);
+    relu_tiled(64, 56, 56, FM_buffer_2, FM_buffer_1);
+
+    load_weights_1x1(conv_weight_3_C, weight_buffer_1x1, 256, 64, 1);
+    load_bias(conv_bias_3_C, bias_buffer, 256);
+    load_batch_norm_weights(batch_norm_weight_3_C, batch_norm_weight_buffer, 256);
+    conv_via_tiling_1x1(64, 256, 56, 56, FM_buffer_1, weight_buffer_1x1, bias_buffer, FM_buffer_2, 1, 0);
+    batch_norm_tiled(256, 56, 56, FM_buffer_2, batch_norm_weight_buffer, FM_buffer_1);
+
+    matrix_add_tiled(256, 56, 56, FM_buffer_3, FM_buffer_1, FM_buffer_2);
+    relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
+    store_feature_map(FM_buffer_1, output_C, 256, 56, 56);
+
+    
+    // top_A(input_A, conv_weight_1_A, conv_bias_1_A, conv_weight_2_A, conv_bias_2_A, conv_weight_3_A, conv_bias_3_A, conv_weight_4_A, conv_bias_4_A, output_A);
+    // top_B(input_B, conv_weight_1_B, conv_bias_1_B, batch_norm_weight_1_B, conv_weight_2_B, conv_bias_2_B, batch_norm_weight_2_B, output_B);
+    // top_C(input_C, conv_weight_1_C, conv_bias_1_C, batch_norm_weight_1_C, conv_weight_2_C, conv_bias_2_C, batch_norm_weight_2_C, conv_weight_3_C,conv_bias_3_C, batch_norm_weight_3_C, output_C);
 }
