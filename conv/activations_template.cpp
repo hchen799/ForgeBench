@@ -85,7 +85,7 @@ void rrelu(
                 if (input[c][i][j] >= 0) {{
                     output[c][i][j] = input[c][i][j];
                 }} else {{
-                    data_t ralpha = (lower + upper) / 2; // fixed value for demonstration
+                    data_t ralpha = (lower + upper) / (data_t)2; // fixed value for demonstration
                     output[c][i][j] = ralpha * input[c][i][j];
                 }}
             }}
@@ -138,7 +138,7 @@ void sigmoid(
     for (int c = 0; c < {C}; c++) {{
         for (int i = 0; i < {H}; i++) {{
             for (int j = 0; j < {W}; j++) {{
-                output[c][i][j] = (data_t)1 / ((data_t)1 + exp(-input[c][i][j]));
+                output[c][i][j] = (data_t)1 / ((data_t)1 + hls::exp(-input[c][i][j]));
             }}
         }}
     }}
@@ -154,7 +154,7 @@ void tanh_act(
     for (int c = 0; c < {C}; c++) {{
         for (int i = 0; i < {H}; i++) {{
             for (int j = 0; j < {W}; j++) {{
-                output[c][i][j] = tanh(input[c][i][j]);
+                output[c][i][j] = hls::tanh(input[c][i][j]);
             }}
         }}
     }}
@@ -174,7 +174,7 @@ void elu(
                 if (input[c][i][j] >= 0) {{
                     output[c][i][j] = input[c][i][j];
                 }} else {{
-                    output[c][i][j] = alpha * (exp(input[c][i][j]) - 1);
+                    output[c][i][j] = alpha * (hls::exp(input[c][i][j]) - 1);
                 }}
             }}
         }}
@@ -196,7 +196,7 @@ void selu(
                 if (input[c][i][j] >= 0) {{
                     output[c][i][j] = lambda * input[c][i][j];
                 }} else {{
-                    output[c][i][j] = lambda * alpha * (exp(input[c][i][j]) - 1);
+                    output[c][i][j] = lambda * alpha * (hls::exp(input[c][i][j]) - 1);
                 }}
             }}
         }}
@@ -211,14 +211,14 @@ void gelu(
 )
 {{
     // Approximation: 0.5 * x * (1 + tanh(sqrt(2/pi)*(x + 0.044715*x^3)))
-    const data_t sqrt_2_over_pi = sqrt((data_t)2/(data_t)3.141592653589793);
+    const data_t sqrt_2_over_pi = hls::sqrt((data_t)2/(data_t)3.141592653589793);
     for (int c = 0; c < {C}; c++) {{
         for (int i = 0; i < {H}; i++) {{
             for (int j = 0; j < {W}; j++) {{
                 data_t x = input[c][i][j];
                 data_t x_cube = x * x * x;
                 data_t tanh_arg = sqrt_2_over_pi * (x + 0.044715 * x_cube);
-                output[c][i][j] = 0.5 * x * (1 + tanh(tanh_arg));
+                output[c][i][j] = 0.5 * x * (1 + hls::tanh(tanh_arg));
             }}
         }}
     }}
@@ -235,7 +235,7 @@ void swish(
     for (int c = 0; c < {C}; c++) {{
         for (int i = 0; i < {H}; i++) {{
             for (int j = 0; j < {W}; j++) {{
-                data_t sig = (data_t)1 / ((data_t)1 + exp(-input[c][i][j]));
+                data_t sig = (data_t)1 / ((data_t)1 + hls::exp(-input[c][i][j]));
                 output[c][i][j] = input[c][i][j] * sig;
             }}
         }}
@@ -255,7 +255,7 @@ void softmax(
             data_t sum = 0;
             // First pass: compute exponentials and sum
             for (int c = 0; c < {C}; c++) {{
-                output[c][i][j] = exp(input[c][i][j]);
+                output[c][i][j] = hls::exp(input[c][i][j]);
                 sum += output[c][i][j];
             }}
             // Second pass: normalize
