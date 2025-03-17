@@ -95,20 +95,22 @@ void rope(
 {
     // Apply RoPE to each sequence element.
     #pragma HLS inline off
-    for (int i = 0; i < SEQ_LENGTH; i++) {
-        for (int k = 0; k < DIM; k += 2) {
-            // Compute frequency scaling factor for this pair.
-            // Here we use: freq = 10000^(- (2*k) / HIDDEN_DIM ).
-            data_t freq = (data_t)hls::powf(10000.0f, -((float)k) / (float)DIM);
-            data_t angle = i * freq;
-            data_t cos_val = hls::cos(angle);
-            data_t sin_val = hls::sin(angle);
-            // Retrieve the pair of values.
-            data_t x0 = input[i][k];
-            data_t x1 = input[i][k+1];
-            // Apply the rotation.
-            output[i][k]   = x0 * cos_val - x1 * sin_val;
-            output[i][k+1] = x0 * sin_val + x1 * cos_val;
+
+    for (int seq = 0; seq < SEQ_LENGTH; seq++) {
+        for (int h = 0; h < NUM_HEAD; h++) {
+            for (int d = 0; d < HEAD_DIM; d += 2) {
+                int idx = h * HEAD_DIM + d;
+                data_t theta = (data_t)hls::powf(10000.0f, -((float)d) / (float) HEAD_DIM);
+                data_t angle = seq * theta;
+                data_t cos_val = hls::cos(angle);
+                data_t sin_val = hls::sin(angle);
+
+                // Apply RoPE to Q
+                data_t q0 = input[seq][idx];
+                data_t q1 = input[seq][idx + 1];
+                output[seq][idx]     = q0 * cos_val - q1 * sin_val;
+                output[seq][idx + 1] = q0 * sin_val + q1 * cos_val;
+            }
         }
     }
 }
