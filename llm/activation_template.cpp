@@ -30,19 +30,17 @@ void leaky_relu(
 
 /*==== PRELU FUNCTION START ====*/
 void prelu(
-    data_t input[{C}][{H}][{W}],
-    data_t output[{C}][{H}][{W}],
-    data_t alpha[{C}]
+    data_t input[{SEQ_LENGTH}][{HIDDEN_DIM}],
+    data_t output[{SEQ_LENGTH}][{HIDDEN_DIM}],
+    data_t alpha[{HIDDEN_DIM}]
 )
-{
-    for (int c = 0; c < {C}; c++) {
-        for (int i = 0; i < {H}; i++) {
-            for (int j = 0; j < {W}; j++) {
-                output[c][i][j] = (input[c][i][j] >= 0) ? input[c][i][j] : alpha[c] * input[c][i][j];
-            }
-        }
-    }
-}
+{{
+    for (int i = 0; i < {SEQ_LENGTH}; i++) {{
+        for (int j = 0; j < {HIDDEN_DIM}; j++) {{
+            output[i][j] = (input[i][j] >= 0) ? input[i][j] : alpha[j] * input[i][j];
+        }}
+    }}
+}}
 /*==== PRELU FUNCTION END ====*/
 
 /*==== RRELU FUNCTION START ====*/
