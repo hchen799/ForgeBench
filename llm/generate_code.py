@@ -431,10 +431,10 @@ def generate_grouped_mha_code(
         for (int h = 0; h < {NUM_HEADS}; h++) {{
             for (int d = 0; d < {HEAD_DIM}; d += 2) {{
                 int idx = h * {HEAD_DIM} + d;
-                data_t theta = pow(10000.0, -(data_t)d / {HEAD_DIM});
+                data_t theta = (data_t)hls::powf(10000.0f, -((float)d) / (float){HEAD_DIM});
                 data_t angle = seq * theta;
-                data_t cos_val = cos(angle);
-                data_t sin_val = sin(angle);
+                data_t cos_val = hls::cos(angle);
+                data_t sin_val = hls::sin(angle);
 
                 // Apply RoPE to Q
                 data_t q0 = Q[seq][idx];
