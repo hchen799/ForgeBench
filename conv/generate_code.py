@@ -762,7 +762,31 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     return "\n".join(code_lines)
 
 
-def generate_dram_txt_files(drams, path, seed=None):
+# def generate_dram_txt_files(drams, path, seed=None):
+#     """
+#     For each DRAM in the configuration, generate a .txt file containing random numbers
+#     between 0 and 1, one per line.
+    
+#     Parameters:
+#       - drams: a list of dictionaries. Each dictionary should have:
+#            "name": string, e.g., "DRAM_1"
+#            "dims": list of integers, e.g., [2, 4, 4]
+#       - seed: optional integer seed for reproducibility.
+#     """
+#     if seed is not None:
+#         random.seed(seed)
+    
+#     for dram in drams:
+#         total_elements = prod(dram["dims"])
+#         filename = path + f"{dram['name']}.txt"
+#         with open(filename, "w") as f:
+#             # Generate random numbers between 0 and 1.
+#             numbers = [str(random.random()) for _ in range(total_elements)]
+#             # Write each number on a new line.
+#             f.write("\n".join(numbers))
+#         print(f"Generated {filename} with {total_elements} random numbers.")
+
+def generate_dram_txt_files(drams, seed=None):
     """
     For each DRAM in the configuration, generate a .txt file containing random numbers
     between 0 and 1, one per line.
@@ -778,11 +802,13 @@ def generate_dram_txt_files(drams, path, seed=None):
     
     for dram in drams:
         total_elements = prod(dram["dims"])
-        filename = path + f"{dram['name']}.txt"
+        filename = f"{dram['name']}.txt"
         with open(filename, "w") as f:
             # Generate random numbers between 0 and 1.
-            numbers = [str(random.random()) for _ in range(total_elements)]
+            #numbers = [str(random.random()) for _ in range(total_elements)]
+            numbers = [str(0) for _ in range(total_elements)]
             # Write each number on a new line.
+            #f.write("\n".join(numbers))
             f.write("\n".join(numbers))
         print(f"Generated {filename} with {total_elements} random numbers.")
         
@@ -890,42 +916,9 @@ if __name__ == "__main__":
     print(f"Generated {output_files['tb_top_cpp']}")
     
     # Generate DRAM initialization files (assumes a seed value is needed)
-    generate_dram_txt_files(drams, path, seed=42)
+    generate_dram_txt_files(drams, seed=42)
     print("Generated DRAM initialization files.")
     
     # Generate the TCL file to launch HLS tasks
     generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename=output_files["run_hls_tcl"])
     print(f"Generated TCL file: {output_files['run_hls_tcl']}")
-    
-    
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
