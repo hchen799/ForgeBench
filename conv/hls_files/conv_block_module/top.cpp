@@ -1022,7 +1022,7 @@ void top(
 
     #pragma HLS allocation function instances= conv_kernel_3x3 limit=1
     
-    //func_A
+    //func_A: VGG19_block2
     load_feature_map(input_A, FM_buffer_1, 128, 56, 56);
 
     load_weights(conv_weight_1_A, weight_buffer, 256, 128, 3);
@@ -1048,7 +1048,7 @@ void top(
     maxpool_tiled(256, 56, 56, FM_buffer_1, 28, 28, FM_buffer_2);
     store_feature_map(FM_buffer_2, output_A, 256, 28, 28);
 
-    //func_B
+    //func_B:resnet18_block3
     load_feature_map(input_B, FM_buffer_3, 256, 14, 14);
 
     load_weights(conv_weight_1_B, weight_buffer, 256, 256, 3);
@@ -1069,7 +1069,7 @@ void top(
     relu_tiled(256, 14, 14, FM_buffer_1, FM_buffer_2);
     store_feature_map(FM_buffer_2, output_B, 256, 14, 14);
 
-    //func_C
+    //func_C: resnet50_block1
     load_feature_map(input_C, FM_buffer_3, 256, 56, 56);
 
     load_weights_1x1(conv_weight_1_C, weight_buffer_1x1, 64, 256, 1);
