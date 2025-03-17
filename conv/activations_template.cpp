@@ -60,15 +60,15 @@ void prelu(
     data_t output[{C}][{H}][{W}],
     data_t alpha[{C}]
 )
-{
-    for (int c = 0; c < {C}; c++) {
-        for (int i = 0; i < {H}; i++) {
-            for (int j = 0; j < {W}; j++) {
+{{
+    for (int c = 0; c < {C}; c++) {{
+        for (int i = 0; i < {H}; i++) {{
+            for (int j = 0; j < {W}; j++) {{
                 output[c][i][j] = (input[c][i][j] >= 0) ? input[c][i][j] : alpha[c] * input[c][i][j];
-            }
-        }
-    }
-}
+            }}
+        }}
+    }}
+}}
 /*==== PRELU FUNCTION END ====*/
 
 /*==== RRELU FUNCTION START ====*/
