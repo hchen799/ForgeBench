@@ -30,17 +30,19 @@ void leaky_relu(
 
 /*==== PRELU FUNCTION START ====*/
 void prelu(
-    data_t input[{SEQ_LENGTH}][{HIDDEN_DIM}],
-    data_t output[{SEQ_LENGTH}][{HIDDEN_DIM}],
-    data_t alpha
+    data_t input[{C}][{H}][{W}],
+    data_t output[{C}][{H}][{W}],
+    data_t alpha[{C}]
 )
-{{
-    for (int i = 0; i < {SEQ_LENGTH}; i++) {{
-        for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            output[i][j] = (input[i][j] >= 0) ? input[i][j] : alpha * input[i][j];
-        }}
-    }}
-}}
+{
+    for (int c = 0; c < {C}; c++) {
+        for (int i = 0; i < {H}; i++) {
+            for (int j = 0; j < {W}; j++) {
+                output[c][i][j] = (input[c][i][j] >= 0) ? input[c][i][j] : alpha[c] * input[c][i][j];
+            }
+        }
+    }
+}
 /*==== PRELU FUNCTION END ====*/
 
 /*==== RRELU FUNCTION START ====*/
@@ -56,7 +58,7 @@ void rrelu(
             if (input[i][j] >= 0) {{
                 output[i][j] = input[i][j];
             }} else {{
-                data_t ralpha = (lower + upper) / 2; // fixed value for demonstration
+                data_t ralpha = (lower + upper) / (data_t)2; // fixed value for demonstration
                 output[i][j] = ralpha * input[i][j];
             }}
         }}
@@ -103,7 +105,7 @@ void sigmoid(
 {{
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            output[i][j] = (data_t)1 / ((data_t)1 + exp(-input[i][j]));
+            output[i][j] = (data_t)1 / ((data_t)1 + hls::exp(-input[i][j]));
         }}
     }}
 }}
@@ -117,7 +119,7 @@ void tanh_act(
 {{
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            output[i][j] = tanh(input[i][j]);
+            output[i][j] = hls::tanh(input[i][j]);
         }}
     }}
 }}
@@ -135,7 +137,7 @@ void elu(
             if (input[i][j] >= 0) {{
                 output[i][j] = input[i][j];
             }} else {{
-                output[i][j] = alpha * (exp(input[i][j]) - 1);
+                output[i][j] = alpha * (hls::exp(input[i][j]) - 1);
             }}
         }}
     }}
@@ -155,7 +157,7 @@ void selu(
             if (input[i][j] >= 0) {{
                 output[i][j] = lambda * input[i][j];
             }} else {{
-                output[i][j] = lambda * alpha * (exp(input[i][j]) - 1);
+                output[i][j] = lambda * alpha * (hls::exp(input[i][j]) - 1);
             }}
         }}
     }}
@@ -190,7 +192,7 @@ void swish(
     // Swish: x * sigmoid(x)
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            data_t sig = (data_t)1 / ((data_t)1 + exp(-input[i][j]));
+            data_t sig = (data_t)1 / ((data_t)1 + hls::exp(-input[i][j]));
             output[i][j] = input[i][j] * sig;
         }}
     }}
@@ -207,7 +209,7 @@ void softmax(
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         data_t sum = 0;
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            output[i][j] = exp(input[i][j]);
+            output[i][j] = hls::exp(input[i][j]);
             sum += output[i][j];
         }}
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
