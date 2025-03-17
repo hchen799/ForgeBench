@@ -171,25 +171,25 @@ void layer_norm_8_32_ap_fixed_16_5_(
     if (is_rope == 1)
     {
         for (int seq = 0; seq < SEQ_LENGTH; seq++) {
-        for (int h = 0; h < SEQ_LENGTH; h++) {
-            for (int d = 0; d < DIM; d += 2) {
-                
-                data_t theta = (data_t)hls::powf(10000.0f, -((float)d) / 4.0f);
+        for (int h = 0; h < num_heads; h++) {
+            for (int d = 0; d < head_dim; d += 2) {
+                int idx = h * head_dim + d;
+                data_t theta = (data_t)hls::powf(10000.0f, -((float)d) / (float) head_dim);
                 data_t angle = seq * theta;
                 data_t cos_val = hls::cos(angle);
                 data_t sin_val = hls::sin(angle);
 
                 // Apply RoPE to Q
-                data_t q0 = Q[seq][d];
-                data_t q1 = Q[seq][d + 1];
-                Q[seq][d]     = q0 * cos_val - q1 * sin_val;
-                Q[seq][d + 1] = q0 * sin_val + q1 * cos_val;
+                data_t q0 = Q[seq][idx];
+                data_t q1 = Q[seq][idx + 1];
+                Q[seq][idx]     = q0 * cos_val - q1 * sin_val;
+                Q[seq][idx + 1] = q0 * sin_val + q1 * cos_val;
 
                 // Apply RoPE to K
-                data_t k0 = K[seq][d];
-                data_t k1 = K[seq][d + 1];
-                K[seq][d]     = k0 * cos_val - k1 * sin_val;
-                K[seq][d + 1] = k0 * sin_val + k1 * cos_val;
+                data_t k0 = K[seq][idx];
+                data_t k1 = K[seq][idx + 1];
+                K[seq][idx]     = k0 * cos_val - k1 * sin_val;
+                K[seq][idx + 1] = k0 * sin_val + k1 * cos_val;
             }
         }
     }
