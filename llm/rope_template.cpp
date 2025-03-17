@@ -9,7 +9,7 @@ void rope(
         for (int k = 0; k < {HIDDEN_DIM}; k += 2) {{
             // Compute frequency scaling factor for this pair.
             // Here we use: freq = 10000^(- (2*k) / HIDDEN_DIM ).
-            data_t freq = hls::pow((data_t)10000, - ((data_t)k / (data_t){HIDDEN_DIM}));
+            data_t freq = (data_t)hls::powf(10000.0f, -((float)k) / (float){HIDDEN_DIM});
             data_t angle = i * freq;
             data_t cos_val = hls::cos(angle);
             data_t sin_val = hls::sin(angle);
