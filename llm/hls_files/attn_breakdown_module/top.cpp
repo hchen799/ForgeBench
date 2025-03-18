@@ -270,7 +270,7 @@ void top(data_t input_dram_A[SEQ_LENGTH][DIM], data_t Q_weight_dram_A[DIM][DIM],
     #pragma HLS allocation function instances= matmul_small_2 limit=1
     #pragma HLS allocation function instances= store_embedding limit=1
 
-    //top_A attn in Llama
+    //top_A attn in GPT
     const int groups_A = NUM_HEAD;
     const int heads_per_group_A = NUM_HEAD / groups_A;
     load_embedding(input_dram_A, embedding_buffer_1);
