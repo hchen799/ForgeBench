@@ -202,7 +202,7 @@ void softmax_256_16_ap_fixed_16_5_(
     for (int i = 0; i < 256; i++) {
         data_t sum = 0; // compute softmax rowise
         for (int j = 0; j < 16; j++) {
-            output[i][j] = exp(input[i][j]);
+            output[i][j] = hls::exp(input[i][j]);
             sum += output[i][j];
         }
 

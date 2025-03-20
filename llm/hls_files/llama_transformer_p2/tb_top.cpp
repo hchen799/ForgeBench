@@ -9,10 +9,10 @@ data_t DRAM_attn_input[8][32];
 data_t DRAM_weights_q[32][32];
 data_t DRAM_weights_k[32][32];
 data_t DRAM_weights_v[32][32];
-data_t BRAM_rms_norm_weights_1[2][32];
+data_t DRAM_rms_norm_weights_1[2][32];
 data_t DRAM_FF_weights_1[128][32];
 data_t DRAM_FF_weights_2[32][128];
-data_t BRAM_rms_norm_weights_2[2][32];
+data_t DRAM_rms_norm_weights_2[2][32];
 data_t DRAM_output[8][32];
 
 void load_txt_to_array(const char *filename, data_t *array, int total_size) {
@@ -34,13 +34,13 @@ int main() {
     load_txt_to_array("DRAM_weights_q.txt", (data_t*)DRAM_weights_q, 1024);
     load_txt_to_array("DRAM_weights_k.txt", (data_t*)DRAM_weights_k, 1024);
     load_txt_to_array("DRAM_weights_v.txt", (data_t*)DRAM_weights_v, 1024);
-    load_txt_to_array("BRAM_rms_norm_weights_1.txt", (data_t*)BRAM_rms_norm_weights_1, 64);
+    load_txt_to_array("DRAM_rms_norm_weights_1.txt", (data_t*)DRAM_rms_norm_weights_1, 64);
     load_txt_to_array("DRAM_FF_weights_1.txt", (data_t*)DRAM_FF_weights_1, 4096);
     load_txt_to_array("DRAM_FF_weights_2.txt", (data_t*)DRAM_FF_weights_2, 4096);
-    load_txt_to_array("BRAM_rms_norm_weights_2.txt", (data_t*)BRAM_rms_norm_weights_2, 64);
+    load_txt_to_array("DRAM_rms_norm_weights_2.txt", (data_t*)DRAM_rms_norm_weights_2, 64);
     load_txt_to_array("DRAM_output.txt", (data_t*)DRAM_output, 256);
 
-    top(DRAM_attn_input, DRAM_weights_q, DRAM_weights_k, DRAM_weights_v, BRAM_rms_norm_weights_1, DRAM_FF_weights_1, DRAM_FF_weights_2, BRAM_rms_norm_weights_2, DRAM_output);
+    top(DRAM_attn_input, DRAM_weights_q, DRAM_weights_k, DRAM_weights_v, DRAM_rms_norm_weights_1, DRAM_FF_weights_1, DRAM_FF_weights_2, DRAM_rms_norm_weights_2, DRAM_output);
 
     // Write contents of DRAM_output to DRAM_output_output.txt
     {

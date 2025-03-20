@@ -10,7 +10,7 @@ void rms_norm(
         for (int j = 0; j < {DIM}; j++) {{
             sum_sq += input[i][j] * input[i][j];
         }}
-        data_t rms = hls::sqrt(sum_sq / {DIM} + {EPSILON});
+        data_t rms = hls::sqrt(sum_sq / (data_t){DIM} + (data_t){EPSILON});
         for (int j = 0; j < {DIM}; j++) {{
             output[i][j] = gamma[j] * input[i][j] / rms;
         }}

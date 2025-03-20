@@ -21,11 +21,9 @@ data_t BRAM_2[8][32];
 data_t BRAM_MLP_1[8][128];
 data_t BRAM_MLP_2[8][128];
 data_t BRAM_SWISH[8][128];
-data_t BRAM_MLP_3[8][128];
 data_t BRAM_rms_norm_weights_1[2][32];
 data_t FF_weights_1[128][32];
-data_t FF_weights_2[128][32];
-data_t FF_weights_3[32][128];
+data_t FF_weights_2[32][128];
 data_t BRAM_rms_norm_weights_2[2][32];
 
 void load_8_32_ap_fixed_16_5_(data_t input[8][32], data_t output[8][32])
@@ -85,7 +83,7 @@ void rms_norm_8_32_ap_fixed_16_5_(
         for (int j = 0; j < 32; j++) {
             sum_sq += input[i][j] * input[i][j];
         }
-        data_t rms = sqrt(sum_sq / 32 + 0.01);
+        data_t rms = hls::sqrt(sum_sq / (data_t)32 + (data_t)0.01);
         for (int j = 0; j < 32; j++) {
             output[i][j] = gamma[j] * input[i][j] / rms;
         }
@@ -144,10 +142,10 @@ void rms_norm_8_32_ap_fixed_16_5_(
         for (int h = 0; h < 8; h++) {
             for (int d = 0; d < 4; d += 2) {
                 int idx = h * 4 + d;
-                data_t theta = pow(10000.0, -(data_t)d / 4);
+                data_t theta = (data_t)hls::powf(10000.0f, -((float)d) / (float)4);
                 data_t angle = seq * theta;
-                data_t cos_val = cos(angle);
-                data_t sin_val = sin(angle);
+                data_t cos_val = hls::cos(angle);
+                data_t sin_val = hls::sin(angle);
 
                 // Apply RoPE to Q
                 data_t q0 = Q[seq][idx];
@@ -269,17 +267,16 @@ void matrix_add_8_32_ap_fixed_16_5_(
 
 
 
-void matmul_8_32_128_bias_ap_fixed_16_5_(
+void matmul_8_32_128_ap_fixed_16_5_(
     data_t input[8][32],
     data_t weights[128][32],
-    data_t bias[128],
     data_t output[8][128]
 )
 {
-    // Initialize output to bias[j]
+    // Initialize output to ((data_t)0)
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 128; j++) {
-            output[i][j] = bias[j];
+            output[i][j] = ((data_t)0);
         }
     }
 
@@ -296,16 +293,14 @@ void matmul_8_32_128_bias_ap_fixed_16_5_(
 
 
 
-void swish_8_128_ap_fixed_16_5_(
+void relu_8_128_ap_fixed_16_5_(
     data_t input[8][128],
     data_t output[8][128]
 )
 {
-    // Swish: x * sigmoid(x)
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 128; j++) {
-            data_t sig = (data_t)1 / ((data_t)1 + exp(-input[i][j]));
-            output[i][j] = input[i][j] * sig;
+            output[i][j] = (input[i][j] > 0) ? input[i][j] : (data_t)0;
         }
     }
 }
@@ -367,36 +362,35 @@ void store_8_32_ap_fixed_16_5_(data_t input[8][32], data_t output[8][32])
     }
 }
 
-void top(data_t DRAM_attn_input[8][32], data_t DRAM_weights_q[32][32], data_t DRAM_weights_k[32][32], data_t DRAM_weights_v[32][32], data_t BRAM_rms_norm_weights_1[2][32], data_t DRAM_FF_weights_1[128][32], data_t DRAM_FF_weights_2[32][128], data_t BRAM_rms_norm_weights_2[2][32], data_t DRAM_output[8][32])
+void top(data_t DRAM_attn_input[8][32], data_t DRAM_weights_q[32][32], data_t DRAM_weights_k[32][32], data_t DRAM_weights_v[32][32], data_t DRAM_rms_norm_weights_1[2][32], data_t DRAM_FF_weights_1[128][32], data_t DRAM_FF_weights_2[32][128], data_t DRAM_rms_norm_weights_2[2][32], data_t DRAM_output[8][32])
 {
     #pragma HLS interface m_axi port=DRAM_attn_input offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_weights_q offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_weights_k offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_weights_v offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=BRAM_rms_norm_weights_1 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_rms_norm_weights_1 offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_FF_weights_1 offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_FF_weights_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=BRAM_rms_norm_weights_2 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_rms_norm_weights_2 offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_output offset=slave bundle=mem2
 
     load_8_32_ap_fixed_16_5_(DRAM_attn_input, BRAM_attn_input);
     load_32_32_ap_fixed_16_5_(DRAM_weights_q, BRAM_weights_q);
     load_32_32_ap_fixed_16_5_(DRAM_weights_k, BRAM_weights_k);
     load_32_32_ap_fixed_16_5_(DRAM_weights_v, BRAM_weights_v);
-    load_2_32_ap_fixed_16_5_(DRAM_layer_norm_weights_1, BRAM_layer_norm_weights_1);
+    load_2_32_ap_fixed_16_5_(DRAM_rms_norm_weights_1, BRAM_rms_norm_weights_1);
     load_128_32_ap_fixed_16_5_(DRAM_FF_weights_1, FF_weights_1);
     load_32_128_ap_fixed_16_5_(DRAM_FF_weights_2, FF_weights_2);
-    load_2_32_ap_fixed_16_5_(DRAM_layer_norm_weights_2, BRAM_layer_norm_weights_2);
-    rms_norm_8_32_ap_fixed_16_5_(BRAM_attn_input, BRAM_rms_norm_weights_1[0], BRAM_rms_norm_weights_1[1], BRAM_2);
+    load_2_32_ap_fixed_16_5_(DRAM_rms_norm_weights_2, BRAM_rms_norm_weights_2);
+    rms_norm_8_32_ap_fixed_16_5_(BRAM_attn_input, BRAM_rms_norm_weights_1[0], BRAM_2);
     grouped_multihead_attention_8_32_8_4_rope_ap_fixed_16_5_(BRAM_2, BRAM_weights_q, BRAM_weights_k, BRAM_weights_v, BRAM_1, 4);
     dropout_8_32_ap_fixed_16_5_(BRAM_1, BRAM_2, 0.5, 47);
     matrix_add_8_32_ap_fixed_16_5_(BRAM_attn_input, BRAM_2, BRAM_1);
-    rms_norm_8_32_ap_fixed_16_5_(BRAM_1, BRAM_rms_norm_weights_2[0], BRAM_rms_norm_weights_2[1], BRAM_2);
-    matmul_8_32_128_bias_ap_fixed_16_5_(BRAM_2, FF_weights_1, BRAM_MLP_1);
-    matmul_8_32_128_bias_ap_fixed_16_5_(BRAM_2, FF_weights_2, BRAM_MLP_2);
-    swish_8_128_ap_fixed_16_5_(BRAM_MLP_2, BRAM_SWISH);
-    elementwise_mult_8_128_ap_fixed_16_5_(BRAM_SWISH, BRAM_MLP_1, BRAM_MLP_3);
-    matmul_8_128_32_ap_fixed_16_5_(BRAM_MLP_3, FF_weights_3, BRAM_1);
+    rms_norm_8_32_ap_fixed_16_5_(BRAM_1, BRAM_rms_norm_weights_2[0], BRAM_2);
+    matmul_8_32_128_ap_fixed_16_5_(BRAM_2, FF_weights_1, BRAM_MLP_1);
+    relu_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
+    elementwise_mult_8_128_ap_fixed_16_5_(BRAM_SWISH, BRAM_MLP_1, BRAM_MLP_2);
+    matmul_8_128_32_ap_fixed_16_5_(BRAM_MLP_2, FF_weights_2, BRAM_1);
     dropout_8_32_ap_fixed_16_5_(BRAM_1, BRAM_2, 0.5, 47);
     matrix_add_8_32_ap_fixed_16_5_(BRAM_2, BRAM_1, BRAM_2);
     store_8_32_ap_fixed_16_5_(BRAM_2, DRAM_output);

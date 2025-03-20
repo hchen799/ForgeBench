@@ -60,4 +60,5 @@ if __name__ == "__main__":
     for file in os.listdir(test_case_dir):
         if file.endswith(".json"):
             config_path = os.path.join(test_case_dir, file)
-            run_hls_flow(config_path, base_output_dir)
+            task = ["csynth", "export_ip"]
+            run_hls_flow(config_path, base_output_dir, task=task)

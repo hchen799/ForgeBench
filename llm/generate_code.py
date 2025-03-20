@@ -943,7 +943,7 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
         lines.append("cosim_design")
         lines.append("")
     if "export_ip" in task:
-        lines.append("export_design -format ip_catalog")
+        lines.append("export_design -format ip_catalog -flow impl")
         lines.append("")
         
     lines.append("exit")

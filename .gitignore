@@ -1,3 +1,6 @@
 gemm/generator_tests
 gemm/hls_files/*/project_1
+conv/hls_files/*/project_1
+llm/hls_files/*/project_1
+*.log
 */__pycache__

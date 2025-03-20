@@ -14,6 +14,7 @@ typedef ap_fixed<16, 5> data_t;
 // LOADS A
 void load_16_64_ap_fixed_16_5_(data_t input[16][64], data_t output[16][64])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 16; idx0++) {
         for (int idx1 = 0; idx1 < 64; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -23,6 +24,7 @@ void load_16_64_ap_fixed_16_5_(data_t input[16][64], data_t output[16][64])
 
 void load_64_32_ap_fixed_16_5_(data_t input[64][32], data_t output[64][64])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 64; idx0++) {
         for (int idx1 = 0; idx1 < 32; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -32,6 +34,7 @@ void load_64_32_ap_fixed_16_5_(data_t input[64][32], data_t output[64][64])
 
 void load_16_32_ap_fixed_16_5_(data_t input[16][32], data_t output[32][32])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 16; idx0++) {
         for (int idx1 = 0; idx1 < 32; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -41,6 +44,7 @@ void load_16_32_ap_fixed_16_5_(data_t input[16][32], data_t output[32][32])
 
 void load_64_ap_fixed_16_5_(data_t input[64], data_t output[64])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 64; idx0++) {
         output[idx0] = input[idx0];
     }
@@ -48,6 +52,7 @@ void load_64_ap_fixed_16_5_(data_t input[64], data_t output[64])
 
 void load_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 16; idx0++) {
         output[idx0] = input[idx0];
     }
@@ -55,6 +60,7 @@ void load_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
 
 void load_1_ap_fixed_16_5_(data_t input[1], data_t output[1])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 1; idx0++) {
         output[idx0] = input[idx0];
     }
@@ -67,6 +73,7 @@ void gemm_ijk(
 )
 
 {
+    #pragma HLS inline off
 for (int i = 0; i < 16; i++) {
 for (int j = 0; j < 64; j++) {
 for (int k = 0; k < 32; k++) {
@@ -91,6 +98,7 @@ void mmv_ij(
     ap_fixed<16, 5> output[16]
 )
 {
+    #pragma HLS inline off
 for (int i = 0; i < 16; i++) {
 for (int j = 0; j < 64; j++) {
     output[i] = 0;
@@ -111,6 +119,7 @@ void dot_product(
     ap_fixed<16, 5> output[1]
 )
 {
+    #pragma HLS inline off
 for (int i = 0; i < 64; i++) {
     output[0] = 0;
 }
@@ -122,11 +131,24 @@ for (int i = 0; i < 64; i++) {
 }
 
 void transpose(
-    ap_fixed<16, 5> input[64][64],
+    ap_fixed<16, 5> input[64][64]
 )
 {
+    #pragma HLS inline off
 for (int i = 0; i < 64; i++) {
 for (int j = 0; j < 64; j++) {
+    input[i][j] = input[j][i];
+}
+}
+}
+
+void transpose_32(
+    ap_fixed<16, 5> input[32][32]
+)
+{
+    #pragma HLS inline off
+for (int i = 0; i < 32; i++) {
+for (int j = 0; j < 32; j++) {
     input[i][j] = input[j][i];
 }
 }
@@ -136,16 +158,17 @@ for (int j = 0; j < 64; j++) {
 void gemm_ijk_with_dot(
     ap_fixed<16, 5> input_A[16][64],
     ap_fixed<16, 5> input_B[64][64],
-    ap_fixed<16, 5> output[16][32],
+    ap_fixed<16, 5> output[16][32]
 )
 
 {
+    #pragma HLS inline off
     data_t dot_out[1];
     transpose(input_B);
     
     for (int i = 0; i < 16; i++) {
         for (int k = 0; k < 32; k++) {
-            dot_prouct(input_A[i], input_B[k], dot_out);
+            dot_product(input_A[i], input_B[k], dot_out);
             output[i][k] = dot_out[0];
         }
     }
@@ -157,9 +180,10 @@ void mmv_ij_with_dot(
     ap_fixed<16, 5> output[16]
 )
 {
+    #pragma HLS inline off
     data_t dot_out[1];
     for (int i = 0; i < 16; i++) {
-        dot_prouct(input_A[i], input_B, dot_out);
+        dot_product(input_A[i], input_B, dot_out);
         output[i] = dot_out[0];
     }
 }
@@ -167,16 +191,17 @@ void mmv_ij_with_dot(
 void gemm_ijk_with_mmv(
     ap_fixed<16, 5> input_A[16][64],
     ap_fixed<16, 5> input_B[64][64],
-    ap_fixed<16, 5> output[32][32],
+    ap_fixed<16, 5> output[32][32]
 )
 
 {
-    tranpose (input_B);
+    #pragma HLS inline off
+    transpose(input_B);
     data_t v_out[32][32];
     for (int k = 0; k < 32; k++) {
         mmv_ij(input_A, input_B[k], v_out[k]);
     }
-    transpose(v_out);
+    transpose_32(v_out);
     output = v_out;
 
 }
@@ -188,18 +213,23 @@ void dot_with_mmv(
 )
 
 {
+    #pragma HLS inline off
     data_t mat_in[16][64];
     data_t out[16];
-    mat_in[0] = input_A;
+    // mat_in[0] = input_A;
+    for (int i = 0; i < 16; i++) {
+        mat_in[0][i] = input_A[i];
+    }
     
-    mmv(mat_in, input_B, out);
-    output = out[0];
+    mmv_ij(mat_in, input_B, out);
+    output[0] = out[0];
 }
 
 
 // STORES A
 void store_16_32_ap_fixed_16_5_(data_t input[32][32], data_t output[16][32])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 16; idx0++) {
         for (int idx1 = 0; idx1 < 32; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -210,6 +240,7 @@ void store_16_32_ap_fixed_16_5_(data_t input[32][32], data_t output[16][32])
 // STORES B
 void store_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 16; idx0++) {
         output[idx0] = input[idx0];
     }
@@ -218,6 +249,7 @@ void store_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
 // STORES C
 void store_1_ap_fixed_16_5_(data_t input[1], data_t output[1])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 1; idx0++) {
         output[idx0] = input[idx0];
     }
@@ -306,7 +338,65 @@ void top(
     data_t DRAM_B1[16][64], data_t DRAM_B2[64], data_t DRAM_B3[16], data_t DRAM_B4[16],
     data_t DRAM_C1[64], data_t DRAM_C2[64], data_t DRAM_C3[1], data_t DRAM_C4[1]
 ){
-    top_A(DRAM_A1, DRAM_A2, DRAM_A3, DRAM_A4);
-    top_B(DRAM_B1, DRAM_B2, DRAM_B3, DRAM_B4);
-    top_C(DRAM_C1, DRAM_C2, DRAM_C3, DRAM_C4);
+
+    #pragma HLS allocation function instances=load_16_64_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=load_64_32_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=load_16_32_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=gemm_ijk_with_mmv limit=1
+    #pragma HLS allocation function instances=mmv_ij limit=1
+    #pragma HLS allocation function instances=dot_with_mmv limit=1
+    #pragma HLS allocation function instances=store_16_32_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=store_16_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=store_1_ap_fixed_16_5_ limit=1
+
+    #pragma HLS interface m_axi port=DRAM_A1 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_A2 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_A3 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_A4 offset=slave bundle=mem2
+
+    #pragma HLS interface m_axi port=DRAM_B1 offset=slave bundle=mem1 
+    #pragma HLS interface m_axi port=DRAM_B2 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_B3 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_B4 offset=slave bundle=mem2
+
+    #pragma HLS interface m_axi port=DRAM_C1 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_C2 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_C3 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_C4 offset=slave bundle=mem2
+
+    //TOP_A
+    data_t BRAM_A1[16][64];
+    data_t BRAM_A2[64][64];
+    data_t BRAM_A3[16][32];
+    data_t BRAM_A4[32][32];
+
+    load_16_64_ap_fixed_16_5_(DRAM_A1, BRAM_A1);
+    load_64_32_ap_fixed_16_5_(DRAM_A2, BRAM_A2);
+    load_16_32_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
+    gemm_ijk_with_mmv(BRAM_A1, BRAM_A2, BRAM_A4);
+    store_16_32_ap_fixed_16_5_(BRAM_A4, DRAM_A4);
+
+    //TOP_B
+    data_t BRAM_B1[16][64];
+    data_t BRAM_B2[64];
+    data_t BRAM_B3[16];
+    data_t BRAM_B4[16];
+
+    load_16_64_ap_fixed_16_5_(DRAM_B1, BRAM_B1);
+    load_64_ap_fixed_16_5_(DRAM_B2, BRAM_B2);
+    load_16_ap_fixed_16_5_(DRAM_B3, BRAM_B3);
+    mmv_ij(BRAM_B1, BRAM_B2, BRAM_B4);
+    store_16_ap_fixed_16_5_(BRAM_B4, DRAM_B4);
+
+    //TOP_C
+    data_t BRAM_C1[64];
+    data_t BRAM_C2[64];
+    data_t BRAM_C3[1];
+    data_t BRAM_C4[1];
+
+    load_64_ap_fixed_16_5_(DRAM_C1, BRAM_C1);
+    load_64_ap_fixed_16_5_(DRAM_C2, BRAM_C2);
+    load_1_ap_fixed_16_5_(DRAM_C3, BRAM_C3);
+    dot_with_mmv(BRAM_C1, BRAM_C2, BRAM_C4);
+    store_1_ap_fixed_16_5_(BRAM_C4, DRAM_C4);
 }

@@ -20,6 +20,7 @@ data_t BRAM_1[8][64];
 
 void load_8_256_ap_fixed_16_5_(data_t input[8][256], data_t output[8][256])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 8; idx0++) {
         for (int idx1 = 0; idx1 < 256; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -29,6 +30,7 @@ void load_8_256_ap_fixed_16_5_(data_t input[8][256], data_t output[8][256])
 
 void load_64_256_ap_fixed_16_5_(data_t input[64][256], data_t output[64][256])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 64; idx0++) {
         for (int idx1 = 0; idx1 < 256; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -38,6 +40,7 @@ void load_64_256_ap_fixed_16_5_(data_t input[64][256], data_t output[64][256])
 
 void load_256_256_ap_fixed_16_5_(data_t input[256][256], data_t output[256][256])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 256; idx0++) {
         for (int idx1 = 0; idx1 < 256; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -58,9 +61,10 @@ void load_256_256_ap_fixed_16_5_(data_t input[256][256], data_t output[256][256]
  */
 
  void transpose_64(
-    ap_fixed<16, 5> input[64][64],
+    ap_fixed<16, 5> input[64][64]
 )
 {
+    #pragma HLS inline off
 for (int i = 0; i < 64; i++) {
 for (int j = 0; j < 64; j++) {
     input[i][j] = input[j][i];
@@ -69,9 +73,10 @@ for (int j = 0; j < 64; j++) {
 }
 
 void transpoe_256(
-    ap_fixed<16, 5> input[256][256],
+    ap_fixed<16, 5> input[256][256]
 )
 {
+    #pragma HLS inline off
 for (int i = 0; i < 256; i++) {
 for (int j = 0; j < 256; j++) {
     input[i][j] = input[j][i];
@@ -85,9 +90,10 @@ for (int j = 0; j < 256; j++) {
     data_t W_q[64][256],
     data_t W_k[64][256],
     data_t W_v[64][256],
-    data_t output[64][64], // for trasose purposes
+    data_t output[8][64]  // for trasose purposes
 )
 {
+    #pragma HLS inline off
     const int groups = 4;
     const int num_heads = 4;   // total number of heads (must equal DIM_OUT / HEAD_DIM)
     const int head_dim = 16;       // dimension per head
@@ -170,9 +176,10 @@ void grouped_multihead_attention_8_256_16_16_ap_fixed_16_5_(
     data_t W_q[256][256],
     data_t W_k[256][256],
     data_t W_v[256][256],
-    data_t output[8][256],
+    data_t output[8][256]
 )
 {
+    #pragma HLS inline off
     const int groups = 16; // number of groups (must divide num_heads evenly)
     const int num_heads = 16;   // total number of heads (must equal DIM_OUT / HEAD_DIM)
     const int head_dim = 16;       // dimension per head
@@ -255,12 +262,13 @@ void grouped_mha_8_256_16_16_with_mha_4(
     data_t W_q[256][256],
     data_t W_k[256][256],
     data_t W_v[256][256],
-    data_t output[8][256],
+    data_t output[8][256]
 )
 {
-    data_t out_t[256][64]; // temporary output for transposing
 
 
+    #pragma HLS inline off
+    #pragma HLS allocation instances=grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_ limit=1 function
     for (int i=0; i<4; i++){
         data_t split_wq[64][256];
         data_t split_wk[64][256];
@@ -268,34 +276,29 @@ void grouped_mha_8_256_16_16_with_mha_4(
 
         // Copy rows directly
         for (int r = 0; r < 64; r++) {
-            split_wq[r] = W_q[i * 64 + r];
-            split_wk[r] = W_k[i * 64 + r];
-            split_wv[r] = W_v[i * 64 + r];
+            for (int c = 0; c < 256; c++) {
+            split_wq[r][c] = W_q[i * 64 + r][c];
+            split_wk[r][c] = W_k[i * 64 + r][c];
+            split_wv[r][c] = W_v[i * 64 + r][c];
+            }
         }
 
-        data_t split_out[64][64]; // temporary output for each group
+        data_t split_out[8][64]; // temporary output for each group
 
         grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_(input, split_wq, split_wk, split_wv, split_out); 
         // Transpose the output for concatenation
-        transpose_64(split_out); // Transpose the output to get [64][8] for concatenation
         
         for (int r=0; r<8; r++){
-            out_t[i * 64 + r] = split_out[r]
-        }
-    }
-
-    // Concatenate the outputs from the 4 groups into the final output
-    for (int i=0; i<4; i++){
-        for (int r=0; r<64; r++){
-            for (int c=0; c<8; c++){
-                output[c][i * 64 + r] = out_t[r][c]
+            for (int c=0; c<64; c++){
+                output[c][i * 64 + r] = split_out[c][r];
             }
         }
     }
 }
 
-void store_8_64_ap_fixed_16_5_(data_t input[64][64], data_t output[8][64])
+void store_8_64_ap_fixed_16_5_(data_t input[8][64], data_t output[8][64])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 8; idx0++) {
         for (int idx1 = 0; idx1 < 64; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -305,6 +308,7 @@ void store_8_64_ap_fixed_16_5_(data_t input[64][64], data_t output[8][64])
 
 void store_8_256_ap_fixed_16_5_(data_t input[8][256], data_t output[8][256])
 {
+    #pragma HLS inline off
     for (int idx0 = 0; idx0 < 8; idx0++) {
         for (int idx1 = 0; idx1 < 256; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
@@ -312,7 +316,8 @@ void store_8_256_ap_fixed_16_5_(data_t input[8][256], data_t output[8][256])
     }
 }
 
-void top_A(data_t DRAM_attn_input[8][256], data_t DRAM_weights_q[256][256], data_t DRAM_weights_k[256][256], data_t DRAM_weights_v[256][256], data_t DRAM_output[8][256])
+void top_A(data_t DRAM_attn_input[8][256], data_t DRAM_weights_q[256][256], 
+    data_t DRAM_weights_k[256][256], data_t DRAM_weights_v[256][256], data_t DRAM_output[8][256])
 {
     #pragma HLS interface m_axi port=DRAM_attn_input offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_weights_q offset=slave bundle=mem1
@@ -348,7 +353,7 @@ void top_B(data_t DRAM_attn_input[8][256], data_t DRAM_weights_q[64][256], data_
     data_t BRAM_weights_q[64][256];
     data_t BRAM_weights_k[64][256];
     data_t BRAM_weights_v[64][256];
-    data_t BRAM_1[64][64];
+    data_t BRAM_1[8][64];
 
     load_8_256_ap_fixed_16_5_(DRAM_attn_input, BRAM_attn_input);
     load_64_256_ap_fixed_16_5_(DRAM_weights_q, BRAM_weights_q);
@@ -362,9 +367,56 @@ void top_B(data_t DRAM_attn_input[8][256], data_t DRAM_weights_q[64][256], data_
 
 
 
-void top( data_t DRAM_A1[8][256], data_t DRAM_A2[256][256], data_t DRAM_A3[256][256], data_t DRAM_A4[256][256],
-          data_t DRAM_B1[8][256], data_t DRAM_B2[64][256], data_t DRAM_B3[64][256], data_t DRAM_B4[64][256])
+void top( data_t DRAM_A1[8][256], data_t DRAM_A2[256][256], data_t DRAM_A3[256][256], data_t DRAM_A4[256][256], data_t DRAM_A5[8][256],
+          data_t DRAM_B1[8][256], data_t DRAM_B2[64][256], data_t DRAM_B3[64][256], data_t DRAM_B4[64][256], data_t DRAM_B5[8][64])
 {
-    top_A(DRAM_A1, DRAM_A2, DRAM_A3, DRAM_A4); // Call the top function for A
-    top_B(DRAM_B1, DRAM_B2, DRAM_B3, DRAM_B4); // Call the top function for B
+    
+    #pragma HLS allocation function instances=load_8_256_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=load_256_256_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=grouped_mha_8_256_16_16_with_mha_4 limit=1
+    #pragma HLS allocation function instances=grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=load_64_256_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=store_8_256_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances=store_8_64_ap_fixed_16_5_ limit=1
+
+    #pragma HLS interface m_axi port=DRAM_A1 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_A2 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_A3 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_A4 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_A5 offset=slave bundle=mem2
+    
+    #pragma HLS interface m_axi port=DRAM_B1 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_B2 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_B3 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_B4 offset=slave bundle=mem1
+    #pragma HLS interface m_axi port=DRAM_B5 offset=slave bundle=mem2
+
+    //TOP_A
+    data_t BRAM_A1[8][256];
+    data_t BRAM_A2[256][256];
+    data_t BRAM_A3[256][256];
+    data_t BRAM_A4[256][256];
+    data_t BRAM_A5[8][256];
+
+    load_8_256_ap_fixed_16_5_(DRAM_A1, BRAM_A1);
+    load_256_256_ap_fixed_16_5_(DRAM_A2, BRAM_A2);
+    load_256_256_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
+    load_256_256_ap_fixed_16_5_(DRAM_A4, BRAM_A4);
+    grouped_mha_8_256_16_16_with_mha_4(BRAM_A1, BRAM_A2, BRAM_A3, BRAM_A4, BRAM_A5);
+    store_8_256_ap_fixed_16_5_(BRAM_A5, DRAM_A5);
+
+    //TOP_B
+    data_t BRAM_B1[8][256];
+    data_t BRAM_B2[64][256];
+    data_t BRAM_B3[64][256];
+    data_t BRAM_B4[64][256];
+    data_t BRAM_B5[8][64];
+
+    load_8_256_ap_fixed_16_5_(DRAM_B1, BRAM_B1);
+    load_64_256_ap_fixed_16_5_(DRAM_B2, BRAM_B2);
+    load_64_256_ap_fixed_16_5_(DRAM_B3, BRAM_B3);
+    load_64_256_ap_fixed_16_5_(DRAM_B4, BRAM_B4);
+    grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_(BRAM_B1, BRAM_B2, BRAM_B3, BRAM_B4, BRAM_B5);
+    store_8_64_ap_fixed_16_5_(BRAM_B5, DRAM_B5);
 }

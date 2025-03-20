@@ -125,7 +125,7 @@ void sigmoid(
 {{
     for (int i = 0; i < {H}; i++) {{
         for (int j = 0; j < {W}; j++) {{
-            output[i][j] = (data_t)1 / ((data_t)1 + exp(-input[i][j]));
+            output[i][j] = (data_t)1 / ((data_t)1 + hls::exp(-input[i][j]));
         }}
     }}
 }}
@@ -139,7 +139,7 @@ void tanh_act(
 {{
     for (int i = 0; i < {H}; i++) {{
         for (int j = 0; j < {W}; j++) {{
-            output[i][j] = tanh(input[i][j]);
+            output[i][j] = hls::tanh(input[i][j]);
         }}
     }}
 }}
@@ -157,7 +157,7 @@ void elu(
             if (input[i][j] >= 0) {{
                 output[i][j] = input[i][j];
             }} else {{
-                output[i][j] = alpha * (exp(input[i][j]) - 1);
+                output[i][j] = alpha * (hls::exp(input[i][j]) - 1);
             }}
         }}
     }}
@@ -177,7 +177,7 @@ void selu(
             if (input[i][j] >= 0) {{
                 output[i][j] = lambda * input[i][j];
             }} else {{
-                output[i][j] = lambda * alpha * (exp(input[i][j]) - 1);
+                output[i][j] = lambda * alpha * (hls::exp(input[i][j]) - 1);
             }}
         }}
     }}
@@ -191,13 +191,13 @@ void gelu(
 )
 {{
     // Approximation: 0.5 * x * (1 + tanh(sqrt(2/pi)*(x + 0.044715*x^3)))
-    const data_t sqrt_2_over_pi = sqrt((data_t)2/(data_t)3.141592653589793);
+    const data_t sqrt_2_over_pi = hls::sqrt((data_t)2/(data_t)3.141592653589793);
     for (int i = 0; i < {H}; i++) {{
         for (int j = 0; j < {W}; j++) {{
             data_t x = input[i][j];
             data_t x_cube = x * x * x;
             data_t tanh_arg = sqrt_2_over_pi * (x + 0.044715 * x_cube);
-            output[i][j] = 0.5 * x * (1 + tanh(tanh_arg));
+            output[i][j] = 0.5 * x * (1 + hls::tanh(tanh_arg));
         }}
     }}
 }}
@@ -212,7 +212,7 @@ void swish(
     // Swish: x * sigmoid(x)
     for (int i = 0; i < {H}; i++) {{
         for (int j = 0; j < {W}; j++) {{
-            data_t sig = (data_t)1 / ((data_t)1 + exp(-input[i][j]));
+            data_t sig = (data_t)1 / ((data_t)1 + hls::exp(-input[i][j]));
             output[i][j] = input[i][j] * sig;
         }}
     }}
@@ -229,7 +229,7 @@ void softmax(
     for (int i = 0; i < {H}; i++) {{
         data_t sum = 0; // compute softmax rowise
         for (int j = 0; j < {W}; j++) {{
-            output[i][j] = exp(input[i][j]);
+            output[i][j] = hls::exp(input[i][j]);
             sum += output[i][j];
         }}
 
