@@ -1402,7 +1402,7 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
     # You can add a header if needed.
     lines = []
     lines.append("# Auto-generated TCL file for HLS")
-    lines.append("open_project project_1")
+    lines.append("open_project -reset project_1")
     lines.append("")
     lines.append("set_top top")
     lines.append("")

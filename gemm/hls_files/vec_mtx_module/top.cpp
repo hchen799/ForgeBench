@@ -12,6 +12,16 @@ using namespace std;
 
 typedef ap_fixed<16, 5> data_t;
 
+data_t BRAM_A1[64][64];
+data_t BRAM_A2[64];
+data_t BRAM_A3[16];
+data_t BRAM_A4[16];
+
+data_t BRAM_B1[64][64];
+data_t BRAM_B2[64];
+data_t BRAM_B3[16];
+data_t BRAM_B4[16];
+
 void load_16_64_ap_fixed_16_5_(data_t input[16][64], data_t output[64][64])
 {
     #pragma HLS inline off
@@ -112,11 +122,6 @@ void store_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
 
 void top_A(data_t DRAM_1[16][64], data_t DRAM_2[64], data_t DRAM_3[16], data_t DRAM_4[16])
 {
-    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
-
     data_t BRAM_1[64][64];
     data_t BRAM_2[64];
     data_t BRAM_3[16];
@@ -140,11 +145,6 @@ mmv_ij(BRAM_1, BRAM_2, BRAM_4); // Call the MMV_IJ function
 
 void top_B(data_t DRAM_1[64][16], data_t DRAM_2[64], data_t DRAM_3[16], data_t DRAM_4[16])
 {
-    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
-
     data_t BRAM_1[64][64];
     data_t BRAM_2[64];
     data_t BRAM_3[16];
@@ -182,22 +182,12 @@ void top(data_t DRAM_A1[16][64], data_t DRAM_A2[64], data_t DRAM_A3[16], data_t 
     #pragma HLS interface m_axi port=DRAM_B3 offset=slave bundle=mem1
     #pragma HLS interface m_axi port=DRAM_B4 offset=slave bundle=mem2
 
-    data_t BRAM_A1[64][64];
-    data_t BRAM_A2[64];
-    data_t BRAM_A3[16];
-    data_t BRAM_A4[16];
-
     //TOP_A
     load_16_64_ap_fixed_16_5_(DRAM_A1, BRAM_A1);
     load_64_ap_fixed_16_5_(DRAM_A2, BRAM_A2);
     load_16_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
     mmv_ij(BRAM_A1, BRAM_A2, BRAM_A4);
     store_16_ap_fixed_16_5_(BRAM_A4, DRAM_A4);
-
-    data_t BRAM_B1[64][64];
-    data_t BRAM_B2[64];
-    data_t BRAM_B3[16];
-    data_t BRAM_B4[16];
 
     //TOP_B
     load_64_16_ap_fixed_16_5_(DRAM_B1, BRAM_B1);

@@ -319,12 +319,6 @@ void store_8_256_ap_fixed_16_5_(data_t input[8][256], data_t output[8][256])
 void top_A(data_t DRAM_attn_input[8][256], data_t DRAM_weights_q[256][256], 
     data_t DRAM_weights_k[256][256], data_t DRAM_weights_v[256][256], data_t DRAM_output[8][256])
 {
-    #pragma HLS interface m_axi port=DRAM_attn_input offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_weights_q offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_weights_k offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_weights_v offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_output offset=slave bundle=mem2
-
     data_t BRAM_attn_input[8][256];
     data_t BRAM_weights_q[256][256];
     data_t BRAM_weights_k[256][256];
@@ -343,12 +337,6 @@ void top_A(data_t DRAM_attn_input[8][256], data_t DRAM_weights_q[256][256],
 
 void top_B(data_t DRAM_attn_input[8][256], data_t DRAM_weights_q[64][256], data_t DRAM_weights_k[64][256], data_t DRAM_weights_v[64][256], data_t DRAM_output[8][64])
 {
-    #pragma HLS interface m_axi port=DRAM_attn_input offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_weights_q offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_weights_k offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_weights_v offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_output offset=slave bundle=mem2
-
     data_t BRAM_attn_input[8][256];
     data_t BRAM_weights_q[64][256];
     data_t BRAM_weights_k[64][256];

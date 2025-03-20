@@ -200,11 +200,6 @@ void store_256_192_ap_fixed_16_5_(data_t input[256][192], data_t output[256][192
 
 void top_A(data_t DRAM_1[96][512], data_t DRAM_2[512][128], data_t DRAM_3[96][128], data_t DRAM_4[96][128])
 {
-    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
-
     data_t BRAM_1[256][512];
     data_t BRAM_2[512][192];
     data_t BRAM_3[256][192];
@@ -227,11 +222,6 @@ void top_A(data_t DRAM_1[96][512], data_t DRAM_2[512][128], data_t DRAM_3[96][12
 
 void top_B(data_t DRAM_1[128][256], data_t DRAM_2[256][64], data_t DRAM_3[128][64], data_t DRAM_4[128][64])
 {
-    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
-
     data_t BRAM_1[256][512];
     data_t BRAM_2[512][192];
     data_t BRAM_3[256][192];
@@ -257,11 +247,6 @@ void top_B(data_t DRAM_1[128][256], data_t DRAM_2[256][64], data_t DRAM_3[128][6
 
 void top_C(data_t DRAM_1[256][128], data_t DRAM_2[128][192], data_t DRAM_3[256][192], data_t DRAM_4[256][192])
 {
-    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
-
     data_t BRAM_1[256][512];
     data_t BRAM_2[512][192];
     data_t BRAM_3[256][192];

@@ -217,11 +217,6 @@ void store_1_ap_fixed_16_5_(data_t input[1], data_t output[1])
 
 void top_A(data_t DRAM_1[16][64], data_t DRAM_2[64][32], data_t DRAM_3[16][32], data_t DRAM_4[16][32])
 {
-    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
-
     data_t BRAM_1[16][64];
     data_t BRAM_2[64][32];
     data_t BRAM_3[16][32];
@@ -243,11 +238,6 @@ gemm_ijk(BRAM_1, BRAM_2, BRAM_4);
 
 void top_B(data_t DRAM_1[16][64], data_t DRAM_2[64], data_t DRAM_3[16], data_t DRAM_4[16])
 {
-    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
-
     data_t BRAM_1[16][64];
     data_t BRAM_2[64][32];
     data_t BRAM_3[16];
@@ -269,11 +259,6 @@ mmv_with_gemm(BRAM_1, BRAM_2, BRAM_4);
 
 void top_C(data_t DRAM_1[64], data_t DRAM_2[64], data_t DRAM_3[1], data_t DRAM_4[1])
 {
-    #pragma HLS interface m_axi port=DRAM_1 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_2 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_3 offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=DRAM_4 offset=slave bundle=mem2
-
     data_t BRAM_1[64];
     data_t BRAM_2[64][32];
     data_t BRAM_3[1];

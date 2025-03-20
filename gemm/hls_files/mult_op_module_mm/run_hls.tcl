@@ -1,5 +1,5 @@
 # Auto-generated TCL file for HLS
-open_project project_1
+open_project -resset project_1
 
 set_top top
 
