@@ -1,6 +1,7 @@
 import os
 import subprocess
 import concurrent.futures
+import time
 
 def run_hls(run_path):
     tcl_script = os.path.join(run_path, "run_hls.tcl")
@@ -15,18 +16,22 @@ def run_hls(run_path):
     else:
         print(f"No 'run_hls.tcl' found in {run_path}, skipping...")
 
-def run_hls_on_dirs(base_dir="hls_files", num_workers=4):
+def run_hls_on_dirs(base_dir="hls_files"):
     if not os.path.exists(base_dir):
         print(f"Base directory '{base_dir}' does not exist. Nothing to run.")
         return
     
     run_dirs = [os.path.join(base_dir, d) for d in sorted(os.listdir(base_dir))]
     run_dirs = [d for d in run_dirs if os.path.isdir(d)]
-    run_dirs = [os.path.join(base_dir, d) for d in ["tiled_attn_module"]]
-    
+    # run_dirs = [os.path.join(base_dir, d) for d in ["tiled_attn_module"]]
+    num_workers = len(run_dirs)
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
         executor.map(run_hls, run_dirs)
 
 if __name__ == "__main__":
-    run_hls_on_dirs(num_workers=16)
+    start = time.time()
+    run_hls_on_dirs()
+    end = time.time()
+    print(f"Total time taken: {end - start} seconds.")
 
