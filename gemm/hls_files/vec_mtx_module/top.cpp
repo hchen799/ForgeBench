@@ -193,6 +193,8 @@ void top(data_t DRAM_A1[16][64], data_t DRAM_A2[64], data_t DRAM_A3[16], data_t 
     load_64_16_ap_fixed_16_5_(DRAM_B1, BRAM_B1);
     load_64_ap_fixed_16_5_(DRAM_B2, BRAM_B2);
     load_16_ap_fixed_16_5_(DRAM_B3, BRAM_B3);
-    vmm_with_mmv_ij(BRAM_B1, BRAM_B2, BRAM_B4);
+    // vmm_with_mmv_ij(BRAM_B1, BRAM_B2, BRAM_B4);
+    transpose(BRAM_B1); // Transpose the input matrix A
+    mmv_ij(BRAM_B1, BRAM_B2, output); // Call the MMV_IJ function
     store_16_ap_fixed_16_5_(BRAM_B4, DRAM_B4);
 }

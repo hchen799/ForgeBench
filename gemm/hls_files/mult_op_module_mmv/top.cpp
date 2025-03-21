@@ -358,7 +358,13 @@ void top(
     load_16_64_ap_fixed_16_5_(DRAM_A1, BRAM_A1);
     load_64_32_ap_fixed_16_5_(DRAM_A2, BRAM_A2);
     load_16_32_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
-    gemm_ijk_with_mmv(BRAM_A1, BRAM_A2, BRAM_A4);
+    // gemm_ijk_with_mmv(BRAM_A1, BRAM_A2, BRAM_A4);
+    transpose(BRAM_A2);
+    data_t v_out[32][32];
+    for (int k = 0; k < 32; k++) {
+        mmv_ij(BRAM_A1, BRAM_A2[k], BRAM_A4[k]);
+    }
+    transpose_32(BRAM_A4);
     store_16_32_ap_fixed_16_5_(BRAM_A4, DRAM_A4);
 
     //TOP_B
@@ -382,6 +388,15 @@ void top(
     load_64_ap_fixed_16_5_(DRAM_C1, BRAM_C1);
     load_64_ap_fixed_16_5_(DRAM_C2, BRAM_C2);
     load_1_ap_fixed_16_5_(DRAM_C3, BRAM_C3);
-    dot_with_mmv(BRAM_C1, BRAM_C2, BRAM_C4);
+    // dot_with_mmv(BRAM_C1, BRAM_C2, BRAM_C4);
+    data_t mat_in[16][64];
+    data_t out_C[16];
+    // mat_in[0] = input_A;
+    for (int i = 0; i < 16; i++) {
+        mat_in[0][i] = BRAM_C1[i];
+    }
+    
+    mmv_ij(mat_in, BRAM_C2, out_C);
+    BRAM_C4[0] = out_C[0];
     store_1_ap_fixed_16_5_(BRAM_C4, DRAM_C4);
 }

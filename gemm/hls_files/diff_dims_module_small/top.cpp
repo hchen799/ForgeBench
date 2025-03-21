@@ -333,7 +333,7 @@ void top(
     data_t BRAM_A4[256][192];
 
     load_96_512_ap_fixed_16_5_(DRAM_A1, BRAM_A1);
-    load_512_128_ap_fixed_16_5_(DRAM_2A, BRAM_A2);
+    load_512_128_ap_fixed_16_5_(DRAM_A2, BRAM_A2);
     load_96_128_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
     
     for (int ii = 0; ii < 96; ii+=32) {

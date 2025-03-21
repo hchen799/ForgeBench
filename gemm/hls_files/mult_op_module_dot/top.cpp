@@ -316,7 +316,14 @@ void top(
     load_16_64_ap_fixed_16_5_(DRAM_A1, BRAM_A1);
     load_64_32_ap_fixed_16_5_(DRAM_A2, BRAM_A2);
     load_16_32_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
-    gemm_ijk_with_dot(BRAM_A1, BRAM_A2, BRAM_A4);
+    data_t dot_out[1];
+    transpose(BRAM_A2);
+    for (int i = 0; i < 16; i++) {
+        for (int k = 0; k < 32; k++) {
+            dot_product(BRAM_A1[i], BRAM_A2[k], dot_out);
+            BRAM_A4[i][k] = dot_out[0];
+        }
+    }
     store_16_32_ap_fixed_16_5_(BRAM_A4, DRAM_A4);
 
     // TOP B
@@ -328,7 +335,11 @@ void top(
     load_16_64_ap_fixed_16_5_(DRAM_B1, BRAM_B1);
     load_64_ap_fixed_16_5_(DRAM_B2, BRAM_B2);
     load_16_ap_fixed_16_5_(DRAM_B3, BRAM_B3);
-    mmv_ij_with_dot(BRAM_B1, BRAM_B2, BRAM_B4);
+    data_t dot_out_B[1];
+    for (int i = 0; i < 16; i++) {
+        dot_product(BRAM_B1[i], BRAM_B2, dot_out);
+        BRAM_B4[i] = dot_out_B[0];
+    }
     store_16_ap_fixed_16_5_(BRAM_B4, DRAM_B4);
 
     // TOP C
