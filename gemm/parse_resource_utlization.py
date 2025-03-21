@@ -42,8 +42,8 @@ def parse_utilization(xml_path, function_name=None, project_name=None):
     utilization = {
         "Project": project_name,
         "Function": "Overall",
-        "DSP_Utilization": overall_dsp / total_dsp if total_dsp else 0,
-        "LUT_Utilization": overall_lut / total_lut if total_lut else 0,
+        "DSP_Utilization": (overall_dsp / total_dsp) * 100 if total_dsp else 0,
+        "LUT_Utilization": (overall_lut / total_lut) * 100 if total_lut else 0,
     }
 
     results = [utilization]
@@ -61,8 +61,8 @@ def parse_utilization(xml_path, function_name=None, project_name=None):
                         results.append({
                             "Project": project_name,
                             "Function": function_name,
-                            "DSP_Utilization": func_dsp / total_dsp if total_dsp else 0,
-                            "LUT_Utilization": func_lut / total_lut if total_lut else 0,
+                            "DSP_Utilization": (func_dsp / total_dsp) * 100 if total_dsp else 0,
+                            "LUT_Utilization": (func_lut / total_lut) * 100 if total_lut else 0,
                         })
                     break
 
@@ -105,6 +105,10 @@ data = process_all_hls_projects(HLS_DIR, function_mappings)
 
 # Convert to DataFrame
 df = pd.DataFrame(data)
+
+# Round numeric columns to 2 decimal places
+df['DSP_Utilization'] = df['DSP_Utilization'].round(2)
+df['LUT_Utilization'] = df['LUT_Utilization'].round(2)
 
 # Save to CSV
 df.to_csv(OUTPUT_CSV, index=False)

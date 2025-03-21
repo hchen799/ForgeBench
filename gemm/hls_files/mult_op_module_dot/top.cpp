@@ -50,6 +50,14 @@ void load_64_ap_fixed_16_5_(data_t input[64], data_t output[64])
     }
 }
 
+void load_1_64_ap_fixed_16_5_(data_t input[64], data_t output[1][64])
+{
+    #pragma HLS inline off
+    for (int idx0 = 0; idx0 < 64; idx0++) {
+        output[0][idx0] = input[idx0];
+    }
+}
+
 void load_16_ap_fixed_16_5_(data_t input[16], data_t output[16])
 {
     #pragma HLS inline off
@@ -317,6 +325,7 @@ void top(
     load_64_32_ap_fixed_16_5_(DRAM_A2, BRAM_A2);
     load_16_32_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
     data_t dot_out[1];
+
     transpose(BRAM_A2);
     for (int i = 0; i < 16; i++) {
         for (int k = 0; k < 32; k++) {
@@ -328,29 +337,29 @@ void top(
 
     // TOP B
     data_t BRAM_B1[16][64];
-    data_t BRAM_B2[64];
+    data_t BRAM_B2[1][64];
     data_t BRAM_B3[16];
     data_t BRAM_B4[16];
 
     load_16_64_ap_fixed_16_5_(DRAM_B1, BRAM_B1);
-    load_64_ap_fixed_16_5_(DRAM_B2, BRAM_B2);
+    load_1_64_ap_fixed_16_5_(DRAM_B2, BRAM_B2);
     load_16_ap_fixed_16_5_(DRAM_B3, BRAM_B3);
     data_t dot_out_B[1];
     for (int i = 0; i < 16; i++) {
-        dot_product(BRAM_B1[i], BRAM_B2, dot_out);
+        dot_product(BRAM_B1[i], BRAM_B2[0], dot_out);
         BRAM_B4[i] = dot_out_B[0];
     }
     store_16_ap_fixed_16_5_(BRAM_B4, DRAM_B4);
 
     // TOP C
-    data_t BRAM_C1[64];
-    data_t BRAM_C2[64];
+    data_t BRAM_C1[1][64];
+    data_t BRAM_C2[1][64];
     data_t BRAM_C3[1];
     data_t BRAM_C4[1];
 
-    load_64_ap_fixed_16_5_(DRAM_C1, BRAM_C1);
-    load_64_ap_fixed_16_5_(DRAM_C2, BRAM_C2);
+    load_1_64_ap_fixed_16_5_(DRAM_C1, BRAM_C1);
+    load_1_64_ap_fixed_16_5_(DRAM_C2, BRAM_C2);
     load_1_ap_fixed_16_5_(DRAM_C3, BRAM_C3);
-    dot_product(BRAM_C1, BRAM_C2, BRAM_C4);
+    dot_product(BRAM_C1[0], BRAM_C2[0], BRAM_C4);
     store_1_ap_fixed_16_5_(BRAM_C4, DRAM_C4);
 }
