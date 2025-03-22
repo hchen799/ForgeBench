@@ -343,6 +343,12 @@ def generate_activation_function(
     elif func_name == "softmax":
         marker_start = "/*==== SOFTMAX FUNCTION START ====*/"
         marker_end = "/*==== SOFTMAX FUNCTION END ====*/"
+    elif func_name == "hardsigmoid":
+        marker_start = "/*==== HARDSIGMOID FUNCTION START ====*/"
+        marker_end = "/*==== HARDSIGMOID FUNCTION END ====*/"
+    elif func_name == "hardswish":
+        marker_start = "/*==== HARDSWISH FUNCTION START ====*/"
+        marker_end = "/*==== HARDSWISH FUNCTION END ====*/"
     else:
         raise ValueError("Invalid function name. Choose from: relu, leaky_relu, prelu, rrelu, thresholded_relu, relu6, sigmoid, tanh_act, elu, selu, gelu, swish, softmax.")
     

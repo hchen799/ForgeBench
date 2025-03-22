@@ -75,6 +75,9 @@ def generate_activation_function(
     elif func_name == "gelu":
         marker_start = "/*==== GELU FUNCTION START ====*/"
         marker_end = "/*==== GELU FUNCTION END ====*/"
+    elif func_name == "geglu":
+        marker_start = "/*==== GEGLU FUNCTION START ====*/"
+        marker_end = "/*==== GEGLU FUNCTION END ====*/"
     elif func_name == "swish":
         marker_start = "/*==== SWISH FUNCTION START ====*/"
         marker_end = "/*==== SWISH FUNCTION END ====*/"
@@ -485,6 +488,78 @@ def generate_grouped_mha_code(
     return new_generated_code, func_name
 
 
+def generate_sliding_window_attention_code(
+    template_path,
+    DATA_TYPE="float",
+    SEQ_LENGTH=128,
+    DIM_IN=512,
+    NUM_HEADS=8,
+    HEAD_DIM=64,
+    use_rope=True
+):
+    DIM_OUT = NUM_HEADS * HEAD_DIM
+
+    if use_rope:
+        rope_inline = f"""
+    // Inline RoPE logic
+    for (int seq = 0; seq < {SEQ_LENGTH}; seq++) {{
+        for (int h = 0; h < {NUM_HEADS}; h++) {{
+            for (int d = 0; d < {HEAD_DIM}; d += 2) {{
+                int idx = h * {HEAD_DIM} + d;
+                data_t theta = (data_t)hls::powf(10000.0f, -((float)d) / (float){HEAD_DIM});
+                data_t angle = seq * theta;
+                data_t cos_val = hls::cos(angle);
+                data_t sin_val = hls::sin(angle);
+
+                // Apply RoPE to Q
+                data_t q0 = Q[seq][idx];
+                data_t q1 = Q[seq][idx + 1];
+                Q[seq][idx]     = q0 * cos_val - q1 * sin_val;
+                Q[seq][idx + 1] = q0 * sin_val + q1 * cos_val;
+
+                // Apply RoPE to K
+                data_t k0 = K[seq][idx];
+                data_t k1 = K[seq][idx + 1];
+                K[seq][idx]     = k0 * cos_val - k1 * sin_val;
+                K[seq][idx + 1] = k0 * sin_val + k1 * cos_val;
+            }}
+        }}
+    }}"""
+    else:
+        rope_inline = ''
+
+    # Read template
+    with open(template_path, "r") as f:
+        template_code = f.read()
+
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        SEQ_LENGTH=SEQ_LENGTH,
+        DIM_IN=DIM_IN,
+        DIM_OUT=DIM_OUT,
+        NUM_HEADS=NUM_HEADS,
+        HEAD_DIM=HEAD_DIM,
+        ROPE_INLINE=rope_inline
+    )
+
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    if use_rope == True:
+        dim_suffix = f"_{SEQ_LENGTH}_{DIM_IN}_{NUM_HEADS}_{HEAD_DIM}_rope_{DATA_TYPE}"
+    else:
+        dim_suffix = f"_{SEQ_LENGTH}_{DIM_IN}_{NUM_HEADS}_{HEAD_DIM}_{DATA_TYPE}"
+    func_name = "sliding_window_attention" + dim_suffix
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+sliding_window_attention)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    return new_generated_code, func_name
+
+
 def generate_matrix_add_code(
     template_path,    # Path to matrix_add_template.cpp
     DATA_TYPE="float",
@@ -595,6 +670,8 @@ def generate_func_def(op_info, data_type):
         code_line, full_func_name = generate_matmul_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'mha':
         code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
+    elif op_info['func_name'] == 'swa':
+        code_line, full_func_name = generate_sliding_window_attention_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
     elif op_info['func_name'] == 'layernorm':
         code_line, full_func_name = generate_layer_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     elif op_info['func_name'] == 'rmsnorm':
@@ -634,6 +711,8 @@ def generate_operator_call(op_info, data_type):
         code_line, full_func_name = generate_matmul_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'mha':
         code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
+    elif op_info['func_name'] == 'swa':
+        code_line, full_func_name = generate_sliding_window_attention_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
     elif op_info['func_name'] == 'layernorm':
         code_line, full_func_name = generate_layer_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     elif op_info['func_name'] == 'rmsnorm':
@@ -1050,6 +1129,12 @@ if __name__ == "__main__":
             "func_name": "mha",
             "dims": [SEQ_LENGTH, DIM_IN, NUM_HEAD, int(DIM_IN/NUM_HEAD)],
             "func_info": ["grouped_mha_rope_template.cpp", False],
+            "args": ["BRAM_attn_input", "BRAM_weights_q", "BRAM_weights_k", "BRAM_weights_v", "BRAM_1", "8"]
+        },
+        "swa": {
+            "func_name": "swa",
+            "dims": [SEQ_LENGTH, DIM_IN, NUM_HEAD, int(DIM_IN/NUM_HEAD)],
+            "func_info": ["sliding_window_attention_template.cpp", False],
             "args": ["BRAM_attn_input", "BRAM_weights_q", "BRAM_weights_k", "BRAM_weights_v", "BRAM_1", "8"]
         },
         "dropout": {

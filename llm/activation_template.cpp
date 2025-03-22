@@ -181,6 +181,22 @@ void gelu(
 }}
 /*==== GELU FUNCTION END ====*/
 
+/*==== GEGLU FUNCTION START ====*/
+void geglu(
+    data_t input[{SEQ_LENGTH}][{HIDDEN_DIM}],
+    data_t output[{SEQ_LENGTH}][{HIDDEN_DIM}]
+)
+{{
+    for (int i = 0; i < {SEQ_LENGTH}; i++) {{
+        for (int j = 0; j < {HIDDEN_DIM}; j++) {{
+            data_t x = input[i][j];
+            data_t sig = (data_t)1 / ((data_t)1 + hls::exp(-x));  // sigmoid(x)
+            output[i][j] = ((data_t)1 - sig) * x + sig * hls::exp(x);
+        }}
+    }}
+}}
+/*==== GEGLU FUNCTION END ====*/
+
 /*==== SWISH FUNCTION START ====*/
 void swish(
     data_t input[{SEQ_LENGTH}][{HIDDEN_DIM}],
