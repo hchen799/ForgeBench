@@ -438,6 +438,52 @@ def generate_maxpool_code(
     
     return new_generated_code, func_name
 
+def generate_adaptive_avgpool_code(
+    template_path,   # Path to adaptive_avgpool_template.cpp
+    DATA_TYPE="float",
+    C=3,
+    H_IN=64,
+    W_IN=64,
+    H_OUT=1,
+    W_OUT=1
+):
+    """
+    Reads the AdaptiveAvgPool template and substitutes placeholders:
+      {DATA_TYPE}, {C}, {H_IN}, {W_IN}, {H_OUT}, {W_OUT}.
+    
+    The generated function has the signature:
+      void adaptive_avgpool(data_t input[C][H_IN][W_IN], data_t output[C][H_OUT][W_OUT])
+    
+    It computes each output element as the average over a corresponding region in the input.
+    """
+    with open(template_path, "r") as f:
+        template_code = f.read()
+    
+    generated_code = template_code.format(
+        DATA_TYPE=DATA_TYPE,
+        C=C,
+        H_IN=H_IN,
+        W_IN=W_IN,
+        H_OUT=H_OUT,
+        W_OUT=W_OUT
+    )
+    
+    DATA_TYPE = replace_data_type(DATA_TYPE)
+    dim_suffix = f"_{C}_{H_IN}_{W_IN}_{H_OUT}_{W_OUT}_{DATA_TYPE}"
+    
+    # Use regex to capture the function signature of maxpool.
+    # We assume the template defines the function starting with "void maxpool(".
+    new_generated_code = re.sub(
+        r"(void\s+adaptive_avgpool)\s*\(",
+        lambda m: m.group(1) + dim_suffix + "(",
+        generated_code,
+        count=1
+    )
+    
+    func_name = "adaptive_avgpool" + dim_suffix
+    
+    return new_generated_code, func_name
+
 def generate_matrix_add_code(
     template_path,    # Path to matrix_add_template.cpp
     DATA_TYPE="float",
@@ -885,7 +931,7 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
 
 
 if __name__ == "__main__":
-    with open("vgg19_256_block2.json", "r") as f:
+    with open("./test_case_configs/vgg19_block1.json", "r") as f:
         config = json.load(f)
     
     # Extract configuration parameters
