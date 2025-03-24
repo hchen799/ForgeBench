@@ -23,23 +23,33 @@ void conv_kernel_3x3(
     int localInH, int localInW,
     int stride
 )
-{
+{   
     #pragma HLS inline off
-    #pragma HLS allocation function instances= conv_kernel_3x3 limit=1
-    // Loop only over the valid output tile region.
-    for (int ic = 0; ic < BLOCK_IN_CH; ic++) {
-        for (int oc = 0; oc < BLOCK_OUT_CH; oc++) {
-            for (int oh = 0; oh < outTileH; oh++) {
-                for (int ow = 0; ow < outTileW; ow++) {
-                    data_t sum_val = (data_t) 0;
-                    for (int kh = 0; kh < KSIZE; kh++) {
-                        for (int kw = 0; kw < KSIZE; kw++) {
-                            int in_r = oh * stride + kh;
-                            int in_c = ow * stride + kw;
-                            sum_val += inData[ic][in_r][in_c] * weight[oc][ic][kh][kw];
+    #pragma HLS array_partition variable=inData type=cyclic  factor=8  dim=1
+    #pragma HLS array_partition variable=weight type=cyclic  factor=64  dim=1
+    #pragma HLS array_partition variable=weight type=cyclic  factor=8  dim=2
+    #pragma HLS array_partition variable=outData type=cyclic  factor=64  dim=1
+    // Only loop over the valid output tile region
+    for (int oh = 0; oh < outTileH; oh++) {
+        for (int ow = 0; ow < outTileW; ow++) {
+            // 3×3 kernel loops
+            for (int kh = 0; kh < KSIZE; kh++) {
+                for (int kw = 0; kw < KSIZE; kw++) {
+                    // Input channel loop (now second innermost)
+                    int in_r = oh * stride + kh;
+                    int in_c = ow * stride + kw;
+                    for (int ic = 0; ic < BLOCK_IN_CH; ic++) {
+                        #pragma HLS unroll factor = 8
+                        
+                        data_t in_val = inData[ic][in_r][in_c];
+
+                        // Output channel loop (now the innermost)
+                        for (int oc = 0; oc < BLOCK_OUT_CH; oc++) {
+                        #pragma HLS unroll factor = 64
+                            outData[oc][oh][ow] 
+                                += in_val * weight[oc][ic][kh][kw];
                         }
                     }
-                    outData[oc][oh][ow] += sum_val;
                 }
             }
         }
@@ -65,13 +75,16 @@ void conv_via_tiling_3x3(
     int out_w = out_dim(W, pad, stride, KSIZE);
 
     // (A) Initialize the full 3‑D output with bias.
-    for (int oc = 0; oc < out_ch; oc++) {
+    #pragma HLS array_partition variable=bias type=cyclic  factor=64  dim=1
+    for (int ow = 0; ow < out_w; ow++) {
         for (int oh = 0; oh < out_h; oh++) {
-            for (int ow = 0; ow < out_w; ow++) {
+            for (int oc = 0; oc < out_ch; oc++) {
+            #pragma HLS unroll factor = 64
                 output[oc][oh][ow] = bias[oc];
             }
         }
     }
+
 
     // Tiling parameters.
     int tile_rows = ceil_div(out_h, BLOCK_OUT_H);

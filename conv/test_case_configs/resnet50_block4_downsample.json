@@ -73,7 +73,7 @@
 
         "conv_1": {
             "func_name": "conv",
-            "dims": [1024, 512, 14, 14, 14, 14, 1, 1, 1],
+            "dims": [1024, 512, 14, 14, 14, 14, 1, 1, 1, 8, 64, 8, 64, 64, 8, 64],
             "func_info": ["conv_template.cpp", "conv2d", false],
             "args": ["BRAM_image_input", "BRAM_conv_weight_1", "BRAM_buffer_1"]
         },
@@ -92,7 +92,7 @@
 
         "conv_2": {
             "func_name": "conv",
-            "dims": [512, 512, 14, 14, 7, 7, 3, 1, 2],
+            "dims": [512, 512, 14, 14, 7, 7, 3, 1, 2, 8, 64, 8, 64, 64, 8, 64],
             "func_info": ["conv_template.cpp", "conv2d", false],
             "args": ["BRAM_buffer_1", "BRAM_conv_weight_2", "BRAM_buffer_3"]
         },
@@ -111,7 +111,7 @@
 
         "conv_3": {
             "func_name": "conv",
-            "dims": [512, 2048, 7, 7, 7, 7, 1, 1, 1],
+            "dims": [512, 2048, 7, 7, 7, 7, 1, 1, 1, 8, 64, 8, 64, 64, 8, 64],
             "func_info": ["conv_template.cpp", "conv2d", false],
             "args": ["BRAM_buffer_3", "BRAM_conv_weight_3", "BRAM_buffer_5"]
         },
@@ -124,7 +124,7 @@
 
         "conv_downsample": {
             "func_name": "conv",
-            "dims": [1024, 2048, 14, 14, 7, 7, 1, 0, 2],
+            "dims": [1024, 2048, 14, 14, 7, 7, 1, 0, 2, 8, 64, 8, 64, 64, 8, 64],
             "func_info": ["conv_template.cpp", "conv2d", false],
             "args": ["BRAM_image_input", "BRAM_conv_weight_downsample", "BRAM_buffer_downsample"]
         },

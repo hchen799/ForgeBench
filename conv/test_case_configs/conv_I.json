@@ -30,7 +30,7 @@
         },
         "conv_1": {
             "func_name": "conv",
-            "dims": [64, 64, 28, 28, 13, 13, 3, 0, 2],  
+            "dims": [64, 64, 28, 28, 13, 13, 3, 0, 2, 8, 64, 8, 64, 64, 8, 64],  
             "func_info": ["conv_template.cpp", "conv2d", true],
             "args": ["BRAM_image_input", "BRAM_conv_weight", "BRAM_conv_bias", "BRAM_buffer_1"]
         },
