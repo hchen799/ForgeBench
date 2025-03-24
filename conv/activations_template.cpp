@@ -267,6 +267,54 @@ void softmax(
 }}
 /*==== SOFTMAX FUNCTION END ====*/
 
+/*==== HARDSIGMOID FUNCTION START ====*/
+void hardsigmoid(
+    data_t input[{C}][{H}][{W}],
+    data_t output[{C}][{H}][{W}]
+)
+{{
+    for (int c = 0; c < {C}; c++) {{
+        for (int i = 0; i < {H}; i++) {{
+            for (int j = 0; j < {W}; j++) {{
+                data_t x = input[c][i][j];
+                if (x <= (data_t)-3) {{
+                    output[c][i][j] = (data_t)0;
+                }} else if (x >= (data_t)3) {{
+                    output[c][i][j] = (data_t)1;
+                }} else {{
+                    output[c][i][j] = (x + (data_t)3) / (data_t)6;
+                }}
+            }}
+        }}
+    }}
+}}
+/*==== HARDSIGMOID FUNCTION END ====*/
 
+/*==== HARDSWISH FUNCTION START ====*/
+void hardswish(
+    data_t input[{C}][{H}][{W}],
+    data_t output[{C}][{H}][{W}]
+)
+{{
+    for (int c = 0; c < {C}; c++) {{
+        for (int i = 0; i < {H}; i++) {{
+            for (int j = 0; j < {W}; j++) {{
+                data_t x = input[c][i][j];
+                // inline HardSigmoid
+                data_t hsig = (data_t)0;
+                if (x <= (data_t)-3) {{
+                    hsig = (data_t)0;
+                }} else if (x >= (data_t)3) {{
+                    hsig = (data_t)1;
+                }} else {{
+                    hsig = (x + (data_t)3) / (data_t)6;
+                }}
+                // HardSwish(x) = x * HardSigmoid(x)
+                output[c][i][j] = x * hsig;
+            }}
+        }}
+    }}
+}}
+/*==== HARDSWISH FUNCTION END ====*/
 
 
