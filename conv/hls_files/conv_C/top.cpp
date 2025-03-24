@@ -67,7 +67,7 @@ void load_128_ap_fixed_16_5_(data_t input[128], data_t output[128])
 // Use a typedef for the data type
 
 //////////////////////////////////////////
-// Begin: CONV2D FUNCTION (Standard)
+// Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
 void conv2d_128_128_14_14_14_14_3_1_1_ap_fixed_16_5__bias(
@@ -77,25 +77,33 @@ void conv2d_128_128_14_14_14_14_3_1_1_ap_fixed_16_5__bias(
     data_t output[128][14][14]
 )
 {
-    // Initialize output to bias[co]
-    for (int co = 0; co < 128; co++) {
-        for (int i = 0; i < 14; i++) {
-            for (int j = 0; j < 14; j++) {
+    #pragma HLS array_partition variable=input  type=cyclic factor=8  dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=64 dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=8 dim=2
+    #pragma HLS array_partition variable=bias   type=cyclic factor=64   dim=1
+    #pragma HLS array_partition variable=output type=cyclic factor=64  dim=1
+    // Initialize output to bias[co], with co in the innermost loop
+    for (int i = 0; i < 14; i++) {
+        for (int j = 0; j < 14; j++) {
+            for (int co = 0; co < 128; co++) {
+            #pragma HLS unroll factor=64
                 output[co][i][j] = bias[co];
             }
         }
     }
 
-    // Perform convolution with padding and stride.
-    for (int co = 0; co < 128; co++) {
-        for (int ci = 0; ci < 128; ci++) {
-            for (int i = 0; i < 14; i++) {
-                for (int j = 0; j < 14; j++) {
-                    for (int kh = 0; kh < 3; kh++) {
-                        for (int kw = 0; kw < 3; kw++) {
-                            int in_row = i * 1 - 1 + kh;
-                            int in_col = j * 1 - 1 + kw;
-                            if (in_row >= 0 && in_row < 14 && in_col >= 0 && in_col < 14) {
+    // Perform convolution (co in the innermost loop)
+    for (int i = 0; i < 14; i++) {
+        for (int j = 0; j < 14; j++) {
+            for (int kh = 0; kh < 3; kh++) {
+                for (int kw = 0; kw < 3; kw++) {
+                    int in_row = i * 1 - 1 + kh;
+                    int in_col = j * 1 - 1 + kw;
+                    if (in_row >= 0 && in_row < 14 && in_col >= 0 && in_col < 14) {
+                        for (int ci = 0; ci < 128; ci++) {
+                        #pragma HLS unroll factor=8
+                            for (int co = 0; co < 128; co++) {
+                                #pragma HLS unroll factor=64
                                 output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
                             }
                         }
