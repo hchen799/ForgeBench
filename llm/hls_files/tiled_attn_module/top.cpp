@@ -391,7 +391,34 @@ void top( data_t DRAM_A1[8][256], data_t DRAM_A2[256][256], data_t DRAM_A3[256][
     load_256_256_ap_fixed_16_5_(DRAM_A2, BRAM_A2);
     load_256_256_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
     load_256_256_ap_fixed_16_5_(DRAM_A4, BRAM_A4);
-    grouped_mha_8_256_16_16_with_mha_4(BRAM_A1, BRAM_A2, BRAM_A3, BRAM_A4, BRAM_A5);
+    // grouped_mha_8_256_16_16_with_mha_4(BRAM_A1, BRAM_A2, BRAM_A3, BRAM_A4, BRAM_A5);
+
+    for (int i=0; i<4; i++){
+        data_t split_wq[64][256];
+        data_t split_wk[64][256];
+        data_t split_wv[64][256];
+
+        // Copy rows directly
+        for (int r = 0; r < 64; r++) {
+            for (int c = 0; c < 256; c++) {
+            split_wq[r][c] = BRAM_A2[i * 64 + r][c];
+            split_wk[r][c] = BRAM_A3[i * 64 + r][c];
+            split_wv[r][c] = BRAM_A4[i * 64 + r][c];
+            }
+        }
+
+        data_t split_out[8][64]; // temporary output for each group
+
+        grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_(BRAM_A1, split_wq, split_wk, split_wv, split_out); 
+        // Transpose the output for concatenation
+        
+        for (int r=0; r<8; r++){
+            for (int c=0; c<64; c++){
+                BRAM_A5[c][i * 64 + r] = split_out[c][r];
+            }
+        }
+    }
+
     store_8_256_ap_fixed_16_5_(BRAM_A5, DRAM_A5);
 
     //TOP_B

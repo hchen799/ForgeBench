@@ -95,15 +95,19 @@ def process_all_hls_projects(base_dir, function_dict=None):
 
 # Define function names for specific subdirectories if needed
 function_mappings = {
-"tiled_attn_module": "grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_",
+"tiled_attn_module": "grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_s",
 
-"Llama_GPT_module": "grouped_multihead_attention_8_32_8_4_rope_ap_fixed_16_5_",
-# "Llama_GPT_module": "dropout_8_32_ap_fixed_16_5_",
-# "Llama_GPT_module": "matrix_add_8_32_ap_fixed_16_5_",
-# "Llama_GPT_module": "matmul_8_32_128_ap_fixed_16_5_",
-# "Llama_GPT_module": "matmul_8_128_32_ap_fixed_16_5_",
+# "Llama_GPT_module": "grouped_multihead_attention_8_32_8_4_rope_ap_fixed_16_5_s",
+# "Llama_GPT_module": "dropout_8_32_ap_fixed_16_5_s",
+# "Llama_GPT_module": "matrix_add_8_32_ap_fixed_16_5_s",
+# "Llama_GPT_module": "matmul_8_32_128_ap_fixed_16_5_s",
+"Llama_GPT_module": "matmul_8_128_32_ap_fixed_16_5_s",
 
-"attn_breakdown_module": "grouped_multihead_attention_8_32_8_4_rope_ap_fixed_16_5_",
+# "attn_breakdown_module": "matmul_large",
+# "attn_breakdown_module": "matmul_small_1",
+# "attn_breakdown_module": "calculate_scale",
+# "attn_breakdown_module": "softmax",
+"attn_breakdown_module": "matmul_small_2",
 
 }
 

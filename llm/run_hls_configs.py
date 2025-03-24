@@ -23,7 +23,7 @@ def run_hls_on_dirs(base_dir="hls_files"):
     
     run_dirs = [os.path.join(base_dir, d) for d in sorted(os.listdir(base_dir))]
     run_dirs = [d for d in run_dirs if os.path.isdir(d)]
-    # run_dirs = [os.path.join(base_dir, d) for d in ["tiled_attn_module"]]
+    run_dirs = [os.path.join(base_dir, d) for d in ["tiled_attn_module"]]
     num_workers = len(run_dirs)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:

@@ -15,6 +15,6 @@ create_clock -period 10 -name default
 
 csynth_design
 
-export_design -format ip_catalog -flow impl
+# export_design -format ip_catalog -flow impl
 
 exit

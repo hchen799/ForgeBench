@@ -1,0 +1,16 @@
+Project,Function,LUT_Utilization,DSP_Utilization
+gpt_transformer_p1,Overall,33.63,9.44
+llama_transformer_p2,Overall,15.3,7.94
+attention_op_p1,Overall,7.16,1.31
+attention_op_p2,Overall,10.79,9.05
+attention_op_p3,Overall,10.79,9.05
+tiled_attn_p1,Overall,7.16,1.31
+tiled_attn_p2,Overall,7.14,1.31
+Llama_GPT_module,Overall,36.72,9.6
+Llama_GPT_module,matmul_8_128_32_ap_fixed_16_5_s,0.21,0.04
+attn_breakdown_module,Overall,25.69,3.89
+attn_breakdown_module,matmul_small_2,0.12,0.32
+attn_breakdown_op1,Overall,21.87,3.25
+attn_breakdown_op2,Overall,23.49,2.62
+tiled_attn_module,Overall,7.99,1.31
+tiled_attn_module,grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_s,5.88,1.31
