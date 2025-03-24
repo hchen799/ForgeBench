@@ -251,9 +251,11 @@ void load_bias(data_t bias_dram[MAX_C], data_t bias_buffer[MAX_C], int C)
 }
 // conv: output channel, input channel, kernel, kernel, stride, padding
 // basic unified logic input: 64, 7, 7 conv: 64, 64, 3, 3 output 64, 7, 7
+
 // A: input: 64, 14, 14 conv: 64, 64, 3, 3, 1, 1 output: 64, 14, 14
 // B: input: 128, 7, 7 conv: 128, 128, 3, 3, 1, 1 output: 128, 7, 7
 // C: input: 128, 14, 14 conv: 128, 128, 3, 3, 1, 1 output: 128, 14, 14
+
 // D: input: 64, 14, 14 conv: 64, 128, 3, 3, 1, 1 output: 128, 14, 14
 // E: input: 128, 7, 7 conv: 128, 64, 3, 3, 1, 1 output: 64, 7, 7
 // F: input: 128, 14, 14 conv: 128, 64, 3, 3, 1, 1 output 64, 14, 14
@@ -408,37 +410,37 @@ void top(
     data_t input_C [MAX_C][MAX_H][MAX_W], 
     data_t conv_weight_C[MAX_C][MAX_C][KSIZE][KSIZE], 
     data_t conv_bias_C[MAX_C],
-    data_t output_C[MAX_C][MAX_H][MAX_W],
+    data_t output_C[MAX_C][MAX_H][MAX_W]
 
-    data_t input_D [MAX_C][MAX_H][MAX_W], 
-    data_t conv_weight_D[MAX_C][MAX_C][KSIZE][KSIZE], 
-    data_t conv_bias_D[MAX_C],
-    data_t output_D[MAX_C][MAX_H][MAX_W],
+    // data_t input_D [MAX_C][MAX_H][MAX_W], 
+    // data_t conv_weight_D[MAX_C][MAX_C][KSIZE][KSIZE], 
+    // data_t conv_bias_D[MAX_C],
+    // data_t output_D[MAX_C][MAX_H][MAX_W],
 
-    data_t input_E [MAX_C][MAX_H][MAX_W], 
-    data_t conv_weight_E[MAX_C][MAX_C][KSIZE][KSIZE], 
-    data_t conv_bias_E[MAX_C],
-    data_t output_E[MAX_C][MAX_H][MAX_W],
+    // data_t input_E [MAX_C][MAX_H][MAX_W], 
+    // data_t conv_weight_E[MAX_C][MAX_C][KSIZE][KSIZE], 
+    // data_t conv_bias_E[MAX_C],
+    // data_t output_E[MAX_C][MAX_H][MAX_W],
 
-    data_t input_F [MAX_C][MAX_H][MAX_W], 
-    data_t conv_weight_F[MAX_C][MAX_C][KSIZE][KSIZE], 
-    data_t conv_bias_F[MAX_C],
-    data_t output_F[MAX_C][MAX_H][MAX_W],
+    // data_t input_F [MAX_C][MAX_H][MAX_W], 
+    // data_t conv_weight_F[MAX_C][MAX_C][KSIZE][KSIZE], 
+    // data_t conv_bias_F[MAX_C],
+    // data_t output_F[MAX_C][MAX_H][MAX_W],
 
-    data_t input_G [MAX_C][MAX_H][MAX_W], 
-    data_t conv_weight_G[MAX_C][MAX_C][KSIZE][KSIZE], 
-    data_t conv_bias_G[MAX_C],
-    data_t output_G[MAX_C][MAX_H][MAX_W],
+    // data_t input_G [MAX_C][MAX_H][MAX_W], 
+    // data_t conv_weight_G[MAX_C][MAX_C][KSIZE][KSIZE], 
+    // data_t conv_bias_G[MAX_C],
+    // data_t output_G[MAX_C][MAX_H][MAX_W],
 
-    data_t input_H [MAX_C][MAX_H][MAX_W], 
-    data_t conv_weight_H[MAX_C][MAX_C][KSIZE][KSIZE], 
-    data_t conv_bias_H[MAX_C],
-    data_t output_H[MAX_C][MAX_H][MAX_W],
+    // data_t input_H [MAX_C][MAX_H][MAX_W], 
+    // data_t conv_weight_H[MAX_C][MAX_C][KSIZE][KSIZE], 
+    // data_t conv_bias_H[MAX_C],
+    // data_t output_H[MAX_C][MAX_H][MAX_W],
 
-    data_t input_I [MAX_C][MAX_H][MAX_W], 
-    data_t conv_weight_I[MAX_C][MAX_C][KSIZE][KSIZE], 
-    data_t conv_bias_I[MAX_C],
-    data_t output_I[MAX_C][MAX_H][MAX_W]
+    // data_t input_I [MAX_C][MAX_H][MAX_W], 
+    // data_t conv_weight_I[MAX_C][MAX_C][KSIZE][KSIZE], 
+    // data_t conv_bias_I[MAX_C],
+    // data_t output_I[MAX_C][MAX_H][MAX_W]
 
 
 )
@@ -458,35 +460,35 @@ void top(
     #pragma HLS interface m_axi port=conv_bias_C offset=slave bundle=mem1
     #pragma HLS interface m_axi port=output_C offset=slave bundle=mem2
 
-    #pragma HLS interface m_axi port=input_D offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_weight_D offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_bias_D offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=output_D offset=slave bundle=mem2
+    // #pragma HLS interface m_axi port=input_D offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_weight_D offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_bias_D offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=output_D offset=slave bundle=mem2
 
-    #pragma HLS interface m_axi port=input_E offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_weight_E offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_bias_E offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=output_E offset=slave bundle=mem2
+    // #pragma HLS interface m_axi port=input_E offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_weight_E offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_bias_E offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=output_E offset=slave bundle=mem2
 
-    #pragma HLS interface m_axi port=input_F offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_weight_F offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_bias_F offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=output_F offset=slave bundle=mem2
+    // #pragma HLS interface m_axi port=input_F offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_weight_F offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_bias_F offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=output_F offset=slave bundle=mem2
 
-    #pragma HLS interface m_axi port=input_G offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_weight_G offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_bias_G offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=output_G offset=slave bundle=mem2
+    // #pragma HLS interface m_axi port=input_G offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_weight_G offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_bias_G offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=output_G offset=slave bundle=mem2
 
-    #pragma HLS interface m_axi port=input_H offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_weight_H offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_bias_H offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=output_H offset=slave bundle=mem2
+    // #pragma HLS interface m_axi port=input_H offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_weight_H offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_bias_H offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=output_H offset=slave bundle=mem2
 
-    #pragma HLS interface m_axi port=input_I offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_weight_I offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=conv_bias_I offset=slave bundle=mem1
-    #pragma HLS interface m_axi port=output_I offset=slave bundle=mem2
+    // #pragma HLS interface m_axi port=input_I offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_weight_I offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=conv_bias_I offset=slave bundle=mem1
+    // #pragma HLS interface m_axi port=output_I offset=slave bundle=mem2
 
 
 
@@ -518,47 +520,47 @@ void top(
     conv_via_tiling_3x3(128, 128, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
     store_feature_map(FM_buffer_2, output_C, 128, 14, 14);
 
-    //top_D
-    load_feature_map(input_D, FM_buffer_1, 64, 14, 14);
-    load_weights(conv_weight_D, weight_buffer, 128, 64, 3);
-    load_bias(conv_bias_D, bias_buffer, 128);
-    conv_via_tiling_3x3(64, 128, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
-    store_feature_map(FM_buffer_2, output_D, 128, 14, 14);
+    // //top_D
+    // load_feature_map(input_D, FM_buffer_1, 64, 14, 14);
+    // load_weights(conv_weight_D, weight_buffer, 128, 64, 3);
+    // load_bias(conv_bias_D, bias_buffer, 128);
+    // conv_via_tiling_3x3(64, 128, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    // store_feature_map(FM_buffer_2, output_D, 128, 14, 14);
 
-    //top_E
-    load_feature_map(input_E, FM_buffer_1, 128, 7, 7);
-    load_weights(conv_weight_E, weight_buffer, 64, 128, 3);
-    load_bias(conv_bias_E, bias_buffer, 64);
-    conv_via_tiling_3x3(128, 64, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
-    store_feature_map(FM_buffer_2, output_E, 64, 14, 14);
+    // //top_E
+    // load_feature_map(input_E, FM_buffer_1, 128, 7, 7);
+    // load_weights(conv_weight_E, weight_buffer, 64, 128, 3);
+    // load_bias(conv_bias_E, bias_buffer, 64);
+    // conv_via_tiling_3x3(128, 64, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    // store_feature_map(FM_buffer_2, output_E, 64, 14, 14);
 
-    //top_F
-    load_feature_map(input_F, FM_buffer_1, 128, 14, 14);
-    load_weights(conv_weight_F, weight_buffer, 64, 128, 3);
-    load_bias(conv_bias_F, bias_buffer, 64);
-    conv_via_tiling_3x3(128, 64, 7, 7, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
-    store_feature_map(FM_buffer_2, output_F, 64, 7, 7);
+    // //top_F
+    // load_feature_map(input_F, FM_buffer_1, 128, 14, 14);
+    // load_weights(conv_weight_F, weight_buffer, 64, 128, 3);
+    // load_bias(conv_bias_F, bias_buffer, 64);
+    // conv_via_tiling_3x3(128, 64, 7, 7, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    // store_feature_map(FM_buffer_2, output_F, 64, 7, 7);
 
-    //top_G
-    load_feature_map(input_G, FM_buffer_1, 64, 14, 14);
-    load_weights(conv_weight_G, weight_buffer, 64, 64, 3);
-    load_bias(conv_bias_G, bias_buffer, 64);
-    conv_via_tiling_3x3(64, 64, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 0);
-    store_feature_map(FM_buffer_2, output_G, 64, 12, 12);
+    // //top_G
+    // load_feature_map(input_G, FM_buffer_1, 64, 14, 14);
+    // load_weights(conv_weight_G, weight_buffer, 64, 64, 3);
+    // load_bias(conv_bias_G, bias_buffer, 64);
+    // conv_via_tiling_3x3(64, 64, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 0);
+    // store_feature_map(FM_buffer_2, output_G, 64, 12, 12);
 
-    //top_H
-    load_feature_map(input_H, FM_buffer_1, 64, 14, 14);
-    load_weights(conv_weight_H, weight_buffer, 64, 64, 3);
-    load_bias(conv_bias_H, bias_buffer, 64);
-    conv_via_tiling_3x3(64, 64, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 2, 1);
-    store_feature_map(FM_buffer_2, output_H, 64, 7, 7);
+    // //top_H
+    // load_feature_map(input_H, FM_buffer_1, 64, 14, 14);
+    // load_weights(conv_weight_H, weight_buffer, 64, 64, 3);
+    // load_bias(conv_bias_H, bias_buffer, 64);
+    // conv_via_tiling_3x3(64, 64, 14, 14, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 2, 1);
+    // store_feature_map(FM_buffer_2, output_H, 64, 7, 7);
 
-    //top_I
-    load_feature_map(input_I, FM_buffer_1, 64, 28, 28);
-    load_weights(conv_weight_I, weight_buffer, 64, 64, 3);
-    load_bias(conv_bias_I, bias_buffer, 64);
-    conv_via_tiling_3x3(64, 64, 28, 28, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 2, 0);
-    store_feature_map(FM_buffer_2, output_I, 64, 13, 13);
+    // //top_I
+    // load_feature_map(input_I, FM_buffer_1, 64, 28, 28);
+    // load_weights(conv_weight_I, weight_buffer, 64, 64, 3);
+    // load_bias(conv_bias_I, bias_buffer, 64);
+    // conv_via_tiling_3x3(64, 64, 28, 28, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 2, 0);
+    // store_feature_map(FM_buffer_2, output_I, 64, 13, 13);
 
     // top_A(input_A, conv_weight_A, conv_bias_A, output_A);
     // top_B(input_B, conv_weight_B, conv_bias_B, output_B);

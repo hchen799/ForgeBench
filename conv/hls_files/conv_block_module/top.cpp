@@ -1028,16 +1028,19 @@ void top(
     load_weights(conv_weight_1_A, weight_buffer, 256, 128, 3);
     load_bias(conv_bias_1_A, bias_buffer, 256);
     conv_via_tiling_3x3(128, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    
     relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
     
     load_weights(conv_weight_2_A, weight_buffer, 256, 256, 3);
     load_bias(conv_bias_2_A, bias_buffer, 256);
     conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    
     relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
 
     load_weights(conv_weight_3_A, weight_buffer, 256, 256, 3);
     load_bias(conv_bias_3_A, bias_buffer, 256);
     conv_via_tiling_3x3(256, 256, 56, 56, FM_buffer_1, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    
     relu_tiled(256, 56, 56, FM_buffer_2, FM_buffer_1);
 
     load_weights(conv_weight_4_A, weight_buffer, 256, 256, 3);
@@ -1055,6 +1058,7 @@ void top(
     load_bias(conv_bias_1_B, bias_buffer, 256);
     load_batch_norm_weights(batch_norm_weight_1_B, batch_norm_weight_buffer, 256);
     conv_via_tiling_3x3(256, 256, 14, 14, FM_buffer_3, weight_buffer, bias_buffer, FM_buffer_2, 1, 1);
+    
     batch_norm_tiled(256, 14, 14, FM_buffer_2, batch_norm_weight_buffer, FM_buffer_1);
     relu_tiled(256, 14, 14, FM_buffer_1, FM_buffer_2);
 
@@ -1062,6 +1066,7 @@ void top(
     load_bias(conv_bias_2_B, bias_buffer, 256);
     load_batch_norm_weights(batch_norm_weight_2_B, batch_norm_weight_buffer, 256);
     conv_via_tiling_3x3(256, 256, 14, 14, FM_buffer_2, weight_buffer, bias_buffer, FM_buffer_1, 1, 1);
+    
     batch_norm_tiled(256, 14, 14, FM_buffer_1, batch_norm_weight_buffer, FM_buffer_2);
 
     matrix_add_tiled(256, 14, 14, FM_buffer_3, FM_buffer_2, FM_buffer_1);
@@ -1083,6 +1088,7 @@ void top(
     load_bias(conv_bias_2_C, bias_buffer, 64);
     load_batch_norm_weights(batch_norm_weight_2_C, batch_norm_weight_buffer, 64);
     conv_via_tiling_3x3(64, 64, 56, 56, FM_buffer_2, weight_buffer, bias_buffer, FM_buffer_1, 1, 1);
+    
     batch_norm_tiled(64, 56, 56, FM_buffer_1, batch_norm_weight_buffer, FM_buffer_2);
     relu_tiled(64, 56, 56, FM_buffer_2, FM_buffer_1);
 
