@@ -129,11 +129,12 @@ GEMM JSON FORM:
 {
     "func_name": "gemm",
     "dims": [M, N, K],
-    "func_info":[order, with_bias, inline],  
+    "func_info":[order, unroll, with_bias, inline],  
     "args": [input_A, input_B, bias, output] 
 },
 
 order is ['i', 'j', 'k'] or a permutation of it
+unroll is [factor_i, factor_j, factor_k] each factor is an int 
 with_bias is bool
 inline is bool
 
@@ -144,6 +145,7 @@ def generate_gemm_function(
         func_type="gemm",
         M=16, N=16, K=16,
         order=['i', 'j', 'k'],
+        unroll=[1,1,1],
         with_bias=False,
 ):
     """
@@ -156,6 +158,7 @@ def generate_gemm_function(
         N (int): Second matrix dimension
         K (int): Third matrix dimension
         order (list): Order of loops (permutation of 'i', 'j', 'k')
+        unroll (list): Unrolling + Array Partition factors for each loop - always i,j,k
         with_bias (bool): Whether to include bias in the computation
         
     Returns:
@@ -185,18 +188,52 @@ def generate_gemm_function(
 )"""
         init_out = "output[i][k] = 0;"
 
+    partitioning = ""
+    for idx, var in enumerate(unroll):
+        if var > 1:
+            if idx == 0:
+                partition_pragma = f"""#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}
+#pragma HLS array_partition variable=output cyclic factor={var} dim={idx + 1}\n"""
+                if with_bias:
+                    partition_pragma += f"#pragma HLS array_partition variable=bias cyclic factor={var} dim={idx + 1}\n"
+            elif idx == 1:
+                partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx}
+#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}\n"""
+            elif idx == 2:
+                partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx}
+#pragma HLS array_partition variable=output cyclic factor={var} dim={idx}\n"""
+                if with_bias:
+                    partition_pragma += f"#pragma HLS array_partition variable=bias cyclic factor={var} dim={idx}\n"
+            partitioning += partition_pragma
+
+
     computation = "output[i][k] += input_A[i][j] * input_B[j][k];"
     
     # Create the loop structure based on specified order
+    bias_loop_starts = ""
+    bias_loop_ends = ""
+
     loop_starts = ""
     loop_ends = ""
     
     loop_vars = {'i': M, 'j': N, 'k': K}
-    
+    unroll_factors = {'i': unroll[0], 'j': unroll[1], 'k': unroll[2]}
+
     for var in order:
         limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
         loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
         loop_ends = "}\n" + loop_ends
+    
+    for var in order:
+        if var == 'j':
+            continue
+        limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
+        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_ends = "}\n" + bias_loop_ends
     
     # Create the complete function
     function =  f"""//////////////////////////////////////////
@@ -206,8 +243,9 @@ def generate_gemm_function(
 {function_signature}
 
 {{
-{loop_starts}    {init_out}
-{loop_ends}
+{partitioning}
+{bias_loop_starts}    {init_out}
+{bias_loop_ends}
 
 {loop_starts}    {computation}
 {loop_ends}}}
@@ -223,6 +261,7 @@ def call_gemm(
         func_type="gemm",
         M=16, N=16, K=16,
         order=['i', 'j', 'k'],
+        unroll=[1,1,1],
         with_bias=False,
         input_A_var="input_A",
         input_B_var="input_B",
@@ -273,6 +312,7 @@ def call_gemm_inline(
         func_type="gemm",
         M=16, N=16, K=16,
         order=['i', 'j', 'k'],
+        unroll=[1,1,1],
         with_bias=False,
         input_A_var="input_A",
         input_B_var="input_B",
@@ -286,9 +326,10 @@ def call_gemm_inline(
         func_type (str): Used for naming in comments only
         M, N, K (int): Matrix dimensions
         order (list): Order of loops (permutation of 'i', 'j', 'k')
+        unroll (list): Unrolling + Array Partition factors for each loop - must align with order
         with_bias (bool): Whether to include bias in the computation
         input_A_var (str): Variable name for input A
-        input_B_var (str): Variable name for input B
+        input_B_vaKr (str): Variable name for input B
         bias_var (str): Variable name for bias
         output_var (str): Variable name for output
         
@@ -309,23 +350,57 @@ def call_gemm_inline(
     
     computation = f"{output_var}[i][k] += {input_A_var}[i][j] * {input_B_var}[j][k];"
     
+    partitioning = ""
+    for idx, var in enumerate(unroll):
+        if var > 1:
+            if idx == 0:
+                partition_pragma = f"""#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}
+#pragma HLS array_partition variable={output_var} cyclic factor={var} dim={idx + 1}\n"""
+                if with_bias:
+                    partition_pragma += f"#pragma HLS array_partition variable={bias_var} cyclic factor={var} dim={idx + 1}\n"
+            elif idx == 1:
+                partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx}
+#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}\n"""
+            elif idx == 2:
+                partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx}
+#pragma HLS array_partition variable={output_var} cyclic factor={var} dim={idx}\n"""
+                if with_bias:
+                    partition_pragma += f"#pragma HLS array_partition variable={bias_var} cyclic factor={var} dim={idx}\n"
+            partitioning += partition_pragma
+
     # Create the loop structure based on specified order
+    bias_loop_starts = ""
+    bias_loop_ends = ""
+
     loop_starts = ""
     loop_ends = ""
     
     loop_vars = {'i': M, 'j': N, 'k': K}
-    
+    unroll_factors = {'i': unroll[0], 'j': unroll[1], 'k': unroll[2]}
+
     for var in order:
         limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
         loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
         loop_ends = "}\n" + loop_ends
+    
+    for var in order:
+        if var == 'j':
+            continue
+        limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
+        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_ends = "}\n" + bias_loop_ends
     
     # Create the complete inline implementation
     inline_code =   f"""//////////////////////////////////////////
 // Begin: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
-{loop_starts}    {init_out}
-{loop_ends}
+{partitioning}
+{bias_loop_starts}    {init_out}
+{bias_loop_ends}
 
 {loop_starts}    {computation}
 {loop_ends}//////////////////////////////////////////
@@ -342,11 +417,12 @@ MM-V JSON FORM:
 {
     "func_name": "mmv",
     "dims": [M, N],
-    "func_info":[order, with_bias, inline],  
+    "func_info":[order, unroll, with_bias, inline],  
     "args": [input_A, input_B, bias, output] 
 },
 
 order is ['i', 'j'] or a permutation of it
+unroll is [factor_i, factor_j] each factor is an int corresponding
 with_bias is bool
 inline is bool
 
@@ -357,6 +433,7 @@ def generate_mmv_function(
         func_type="mmv",
         M=16, N=16,
         order=['i', 'j',],
+        unroll=[1,1],
         with_bias=False,
 ):
     """
@@ -368,6 +445,7 @@ def generate_mmv_function(
         M (int): First matrix dimension
         N (int): Second matrix dimension
         order (list): Order of loops (permutation of 'i', 'j',) leading dim determines if output is row or column vector, i -> column, j -> row
+        unroll (list): Unrolling + Array Partition factors for each loop - must align with order
         with_bias (bool): Whether to include bias in the computation
         
     Returns:
@@ -398,19 +476,50 @@ def generate_mmv_function(
 )"""
         init_out = "output[i] = 0;"
     
+    
+    partitioning = ""
+    for idx, var in enumerate(unroll):
+        if var > 1:
+            if idx == 0:
+                partition_pragma = f"""#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}
+#pragma HLS array_partition variable=output cyclic factor={var} dim={idx + 1}\n"""
+                if with_bias:
+                    partition_pragma += f"#pragma HLS array_partition variable=bias cyclic factor={var} dim={idx + 1}\n"
+            elif idx == 1:
+                partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx}
+#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}\n"""
+                
+            partitioning += partition_pragma
+
     computation = "output[i] += input_A[i][j] * input_B[j];"
     
+    bias_loop_starts = ""
+    bias_loop_ends = ""
+
     # Create the loop structure based on specified order
     loop_starts = ""
     loop_ends = ""
     
-    loop_vars = {'i': M, 'j': N,}
-    
+    loop_vars = {'i': M, 'j': N}
+    unroll_factors = {'i': unroll[0], 'j': unroll[1]}
+
     for var in order:
         limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
         loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
         loop_ends = "}\n" + loop_ends
     
+    for var in order:
+        if var == 'j':
+            continue
+        limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
+        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_ends = "}\n" + bias_loop_ends
+
+
     # Create the complete function
     function =  f"""//////////////////////////////////////////
 // Begin: {function_name.upper()} FUNCTION{' with BIAS' if with_bias else ''}
@@ -418,8 +527,9 @@ def generate_mmv_function(
 /*==== {function_name.upper()} FUNCTION START ====*/
 {function_signature}
 {{
-{loop_starts}    {init_out}
-{loop_ends}
+{partitioning}
+{bias_loop_starts}    {init_out}
+{bias_loop_ends}
 
 {loop_starts}    {computation}
 {loop_ends}}}
@@ -435,6 +545,7 @@ def call_mmv(
         func_type="mmv",
         M=16, N=16,
         order=['i', 'j',],
+        unroll=[1,1],
         with_bias=False,  
         input_A_var="input_A",
         input_B_var="input_B",
@@ -486,6 +597,7 @@ def call_mmv_inline(
         func_type="mmv",
         M=16, N=16,
         order=['i', 'j',],
+        unroll=[1,1],
         with_bias=False,  
         input_A_var="input_A",
         input_B_var="input_B",
@@ -499,6 +611,7 @@ def call_mmv_inline(
         func_type (str): Function name prefix
         M, N (int): Matrix dimensions
         order (list): Order of loops (permutation of 'i', 'j',)
+        unroll (list): Unrolling + Array Partition factors for each loop - must align with order
         with_bias (bool): Whether to include bias in the computation
         input_A_var (str): Variable name for input A
         input_B_var (str): Variable name for input B
@@ -521,24 +634,53 @@ def call_mmv_inline(
         function_name = f"{func_type}_{''.join(order)}"
         init_out = f"{output_var}[i] = 0;"
     
+    partitioning = ""
+    for idx, var in enumerate(unroll):
+        if var > 1:
+            if idx == 0:
+                partition_pragma = f"""#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}
+#pragma HLS array_partition variable={output_var} cyclic factor={var} dim={idx + 1}\n"""
+                if with_bias:
+                    partition_pragma += f"#pragma HLS array_partition variable={bias_var} cyclic factor={var} dim={idx + 1}\n"
+            elif idx == 1:
+                partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx}
+#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}\n"""
+            partitioning += partition_pragma
+            
     computation = f"{output_var}[i] += {input_A_var}[i][j] * {input_B_var}[j];"
     
+    bias_loop_starts = ""
+    bias_loop_ends = ""
+
     loop_starts = ""
     loop_ends = ""
     
-    loop_vars = {'i': M, 'j': N,}
-    
+    loop_vars = {'i': M, 'j': N}
+    unroll_factors = {'i': unroll[0], 'j': unroll[1]}
+
     for var in order:
         limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
         loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
         loop_ends = "}\n" + loop_ends
     
+    for var in order:
+        if var == 'j':
+            continue
+        limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
+        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_ends = "}\n" + bias_loop_ends
+
     # Create the complete inline implementation
     inline_code =   f"""//////////////////////////////////////////
 // Begin: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
-{loop_starts}    {init_out}
-{loop_ends}
+{partitioning}
+{bias_loop_starts}    {init_out}
+{bias_loop_ends}
 
 {loop_starts}    {computation}
 {loop_ends}//////////////////////////////////////////
@@ -555,11 +697,12 @@ V-MM JSON FORM:
 {
     "func_name": "vmm",
     "dims": [M, N],
-    "func_info":[order, with_bias, inline],  
+    "func_info":[order, unroll, with_bias, inline],  
     "args": [input_A, input_B, bias, output] 
 },
 
-order is ['i', 'j'] or a permutation of it, 
+order is ['i', 'j'] or a permutation of it,
+unroll is [factor_i, factor_j] each factor is an int corresponding to the loop of the same index in order 
 with_bias is bool
 inline is bool
 
@@ -570,6 +713,7 @@ def generate_vmm_function(
         func_type="vmm",
         M=16, N=16,
         order=['i', 'j',],
+        unroll=[1,1],
         with_bias=False,
 ):
     """
@@ -610,19 +754,49 @@ def generate_vmm_function(
 )"""
         init_out = "output[j] = 0;"
 
+    partitioning = ""
+    for idx, var in enumerate(unroll):
+        if var > 1:
+            if idx == 0:
+                partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx+1}
+#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}\n"""
+            elif idx == 1:
+                partition_pragma = f"""#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}
+#pragma HLS array_partition variable=output cyclic factor={var} dim={idx}\n"""
+                if with_bias:
+                    partition_pragma += f"#pragma HLS array_partition variable=bias cyclic factor={var} dim={idx}\n"
+                
+            partitioning += partition_pragma
+
+
     computation = "output[j] += input_A[i][j] * input_B[i];"
 
     
     # Create the loop structure based on specified order
+    bias_loop_starts = ""
+    bias_loop_ends = ""
+
     loop_starts = ""
     loop_ends = ""
     
     loop_vars = {'i': M, 'j': N,}
-    
+    unroll_factors = {'i': unroll[0], 'j': unroll[1]}
+
     for var in order:
         limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
         loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
         loop_ends = "}\n" + loop_ends
+    
+    for var in order:
+        if var == 'i':
+            continue
+        limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
+        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_ends = "}\n" + bias_loop_ends
     
     # Create the complete function
     function =  f"""//////////////////////////////////////////
@@ -631,8 +805,9 @@ def generate_vmm_function(
 /*==== {function_name.upper()} FUNCTION START ====*/
 {function_signature}
 {{
-{loop_starts}    {init_out}
-{loop_ends}
+{partitioning}
+{bias_loop_starts}    {init_out}
+{bias_loop_ends}
 
 {loop_starts}    {computation}
 {loop_ends}}}
@@ -650,6 +825,7 @@ def call_vmm(
         func_type="vmm",
         M=16, N=16,
         order=['i', 'j',],
+        unroll=[1,1],
         with_bias=False,  
         input_A_var="input_A",
         input_B_var="input_B",
@@ -701,6 +877,7 @@ def call_vmm_inline(
         func_type="vmm",
         M=16, N=16,
         order=['i', 'j',],
+        unroll=[1,1],
         with_bias=False,  
         input_A_var="input_A",
         input_B_var="input_B",
@@ -715,6 +892,7 @@ def call_vmm_inline(
         func_type (str): Function name prefix
         M, N (int): Matrix dimensions
         order (list): Order of loops (permutation of 'i', 'j',)
+        unroll (list): Unrolling + Array Partition factors for each loop - must align with order
         with_bias (bool): Whether to include bias in the computation
         input_A_var (str): Variable name for input A
         input_B_var (str): Variable name for input B
@@ -737,24 +915,54 @@ def call_vmm_inline(
         function_name = f"{func_type}_{''.join(order)}"
         init_out = f"{output_var}[j] = 0;"
 
+    partitioning = ""
+    for idx, var in enumerate(unroll):
+        if var > 1:
+            if idx == 0:
+                partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx+1}
+#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}\n"""
+            elif idx == 1:
+                partition_pragma = f"""#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}
+#pragma HLS array_partition variable={output_var} cyclic factor={var} dim={idx}\n"""
+                if with_bias:
+                    partition_pragma += f"""#pragma HLS array_partition variable={bias_var} cyclic factor={var} dim={idx}\n"""
+                
+            partitioning += partition_pragma
+
     computation = f"{output_var}[j] += {input_A_var}[i][j] * {input_B_var}[i];"
+
+    bias_loop_starts = ""
+    bias_loop_ends = ""
 
     loop_starts = ""
     loop_ends = ""
     
     loop_vars = {'i': M, 'j': N,}
-    
+    unroll_factors = {'i': unroll[0], 'j': unroll[1]}
+
     for var in order:
         limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
         loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
         loop_ends = "}\n" + loop_ends
     
+    for var in order:
+        if var == 'i':
+            continue
+        limit = loop_vars[var]
+        unroll_factor = unroll_factors[var]
+        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
+        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_ends = "}\n" + bias_loop_ends
+        
     # Create the complete inline implementation
     inline_code =   f"""//////////////////////////////////////////
 // Begin: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
-{loop_starts}    {init_out}
-{loop_ends}
+{partitioning}
+{bias_loop_starts}    {init_out}
+{bias_loop_ends}
 
 {loop_starts}    {computation}
 {loop_ends}//////////////////////////////////////////
@@ -771,10 +979,11 @@ DOT PRODUCT JSON FORM:
 {
     "func_name": "dot_product",
     "dims": [M],
-    "func_info":[with_bias, inline],  
+    "func_info":[unroll, with_bias, inline],  
     "args": [input_A, input_B, bias, output] 
 },
 
+unroll is int
 with_bias is bool
 inline is bool
 
@@ -784,6 +993,7 @@ def generate_dot_function(
         data_type="int",
         func_type="dot_product",
         M=16,
+        unroll=1,
         with_bias=False,
 ):
     """
@@ -792,6 +1002,7 @@ def generate_dot_function(
     Args:
         data_type (str): Data type to use (e.g., "float", "int", "data_t")
         func_type (str): Function name
+        unroll (int): Unrolling + Array Partition factors
         M (int): Vector dimension
         with_bias (bool): Whether to include bias in the computation
         
@@ -818,14 +1029,22 @@ def generate_dot_function(
 )"""
         init_out = "output[0] = 0;"
     
+    partitioning = ""
+    if unroll > 1:
+        partitioning = f"#pragma HLS array_partition variable=input_A cyclic factor={unroll} dim=1\n"
+        partitioning += f"#pragma HLS array_partition variable=input_B cyclic factor={unroll} dim=1\n"
+
     computation = "output[0] += input_A[i] * input_B[i];"
     
     # Create the loop structure based on specified order
+
+
     loop_starts = ""
     loop_ends = ""
     
     for var in ['i']:
         loop_starts += f"for (int {var} = 0; {var} < {M}; {var}++) {{\n"
+        loop_starts += f"#pragma HLS unroll factor={unroll}\n"
         loop_ends = "}\n" + loop_ends
     
     # Create the complete function
@@ -835,8 +1054,8 @@ def generate_dot_function(
 /*==== {function_name.upper()} FUNCTION START ====*/
 {function_signature}
 {{
-{loop_starts}    {init_out}
-{loop_ends}
+{partitioning}
+{init_out}
 
 {loop_starts}    {computation}
 {loop_ends}}}
@@ -851,6 +1070,7 @@ def generate_dot_function(
 def call_dot(
         func_type="dot_product",
         M=16,
+        unroll=1,
         with_bias=False,  
         input_A_var="input_A",
         input_B_var="input_B",
@@ -896,6 +1116,7 @@ def call_dot(
 def call_dot_inline(
         func_type="dot_product",
         M=16,
+        unroll=1,
         with_bias=False,  
         input_A_var="input_A",
         input_B_var="input_B",
@@ -908,6 +1129,7 @@ def call_dot_inline(
     Args:
         func_type (str): Function name
         M (int): Vector dimension
+        unroll (int): Unrolling + Array Partition factor
         with_bias (bool): Whether to include bias in the computation
         input_A_var (str): Variable name for input A
         input_B_var (str): Variable name for input B
@@ -926,6 +1148,11 @@ def call_dot_inline(
         function_name = f"{func_type}"
         init_out = f"{output_var}[0] = 0;"
 
+    partitioning = ""
+    if unroll > 1:
+        partitioning = f"#pragma HLS array_partition variable={input_A_var} cyclic factor={unroll} dim=1\n"
+        partitioning += f"#pragma HLS array_partition variable={input_B_var} cyclic factor={unroll} dim=1\n"
+
     computation = f"{output_var}[0] += {input_A_var}[i] * {input_B_var}[i];"
     
     loop_starts = ""
@@ -933,14 +1160,15 @@ def call_dot_inline(
     
     for var in ['i']:
         loop_starts += f"for (int {var} = 0; {var} < {M}; {var}++) {{\n"
+        loop_starts += f"#pragma HLS unroll factor={unroll}\n"
         loop_ends = "}\n" + loop_ends
     
     # Create the complete inline implementation
     inline_code =   f"""//////////////////////////////////////////
 // Begin: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
-{loop_starts}    {init_out}
-{loop_ends}
+{partitioning}
+{init_out}
 
 {loop_starts}    {computation}
 {loop_ends}//////////////////////////////////////////
@@ -1064,13 +1292,13 @@ def generate_func_def(op_info, data_type):
     elif op_info['func_name'] == 'store':
         code_line, full_func_name = generate_store_function(op_info["dims"], data_type, func_prefix="store")
     elif op_info['func_name'] == 'gemm':
-        code_line, full_func_name = generate_gemm_function(data_type, "gemm", op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][0], op_info["func_info"][1])
+        code_line, full_func_name = generate_gemm_function(data_type, "gemm", op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][0], op_info["func_info"][1], op_info["func_info"][2])
     elif op_info['func_name'] == 'vmm':
-        code_line, full_func_name = generate_vmm_function(data_type, "vmm", op_info["dims"][0], op_info["dims"][1], op_info["func_info"][0], op_info["func_info"][1])
+        code_line, full_func_name = generate_vmm_function(data_type, "vmm", op_info["dims"][0], op_info["dims"][1], op_info["func_info"][0], op_info["func_info"][1], op_info["func_info"][2])
     elif op_info['func_name'] == 'mmv':
-        code_line, full_func_name = generate_mmv_function(data_type, "mmv", op_info["dims"][0], op_info["dims"][1], op_info["func_info"][0], op_info["func_info"][1])
+        code_line, full_func_name = generate_mmv_function(data_type, "mmv", op_info["dims"][0], op_info["dims"][1], op_info["func_info"][0], op_info["func_info"][1], op_info["func_info"][2])
     elif op_info['func_name'] == 'dot_product':
-        code_line, full_func_name = generate_dot_function(data_type, "dot_product", op_info["dims"][0], op_info["func_info"][0])
+        code_line, full_func_name = generate_dot_function(data_type, "dot_product", op_info["dims"][0], op_info["func_info"][0], op_info["func_info"][1])
     elif op_info['func_name'] == 'activation':
         code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1])
     else:
@@ -1107,38 +1335,38 @@ def generate_operator_call(op_info, data_type):
     elif op_info['func_name'] == 'gemm':
         if op_info["func_info"][-1]: # inline
             call_str = call_gemm_inline(func_type="gemm", M=op_info["dims"][0], N=op_info["dims"][1], K=op_info["dims"][2], 
-                        order=op_info["func_info"][0], with_bias=op_info["func_info"][1], 
+                        order=op_info["func_info"][0], unroll=op_info["func_info"][1], with_bias=op_info["func_info"][2], 
                         input_A_var=op_info["args"][0], input_B_var=op_info["args"][1], bias_var=op_info["args"][2], output_var=op_info["args"][3])
         else:
             call_str = call_gemm(func_type="gemm", M=op_info["dims"][0], N=op_info["dims"][1], K=op_info["dims"][2], 
-                        order=op_info["func_info"][0], with_bias=op_info["func_info"][1], 
+                        order=op_info["func_info"][0], unroll=op_info["func_info"][1], with_bias=op_info["func_info"][2], 
                         input_A_var=op_info["args"][0], input_B_var=op_info["args"][1], bias_var=op_info["args"][2], output_var=op_info["args"][3])
     elif op_info['func_name'] == 'vmm':
         if op_info["func_info"][-1]:
             call_str = call_vmm_inline(func_type="vmm", M=op_info["dims"][0], N=op_info["dims"][1], 
-                        order=op_info["func_info"][0], with_bias=op_info["func_info"][1], 
+                        order=op_info["func_info"][0], unroll=op_info["func_info"][1], with_bias=op_info["func_info"][2], 
                         input_A_var=op_info["args"][0], input_B_var=op_info["args"][1], bias_var=op_info["args"][2], output_var=op_info["args"][3])
         else:
             call_str = call_vmm(func_type="vmm", M=op_info["dims"][0], N=op_info["dims"][1], 
-                        order=op_info["func_info"][0], with_bias=op_info["func_info"][1], 
+                        order=op_info["func_info"][0], unroll=op_info["func_info"][1], with_bias=op_info["func_info"][2], 
                         input_A_var=op_info["args"][0], input_B_var=op_info["args"][1], bias_var=op_info["args"][2], output_var=op_info["args"][3])
     elif op_info['func_name'] == 'mmv':
         if op_info["func_info"][-1]:
             call_str = call_mmv_inline(func_type="mmv", M=op_info["dims"][0], N=op_info["dims"][1], 
-                        order=op_info["func_info"][0], with_bias=op_info["func_info"][1], 
+                        order=op_info["func_info"][0], unroll=op_info["func_info"][1], with_bias=op_info["func_info"][2], 
                         input_A_var=op_info["args"][0], input_B_var=op_info["args"][1], bias_var=op_info["args"][2], output_var=op_info["args"][3])
         else:
             call_str = call_mmv(func_type="mmv", M=op_info["dims"][0], N=op_info["dims"][1], 
-                        order=op_info["func_info"][0], with_bias=op_info["func_info"][1], 
+                        order=op_info["func_info"][0], unroll=op_info["func_info"][1], with_bias=op_info["func_info"][2], 
                         input_A_var=op_info["args"][0], input_B_var=op_info["args"][1], bias_var=op_info["args"][2], output_var=op_info["args"][3])
     elif op_info['func_name'] == 'dot_product':
         if op_info["func_info"][-1]:
             call_str = call_dot_inline(func_type="dot_product", M=op_info["dims"][0], 
-                        with_bias=op_info["func_info"][0], 
+                        unroll=op_info["func_info"][0], with_bias=op_info["func_info"][1],
                         input_A_var=op_info["args"][0], input_B_var=op_info["args"][1], bias_var=op_info["args"][2], output_var=op_info["args"][3])
         else:
             call_str = call_dot(func_type="dot_product", M=op_info["dims"][0], 
-                        with_bias=op_info["func_info"][0], 
+                        unroll=op_info["func_info"][0], with_bias=op_info["func_info"][1], 
                         input_A_var=op_info["args"][0], input_B_var=op_info["args"][1], bias_var=op_info["args"][2], output_var=op_info["args"][3])
     else:
         print("the operator we do not support!")

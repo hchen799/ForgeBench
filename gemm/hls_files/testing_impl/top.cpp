@@ -64,18 +64,30 @@ void gemm_ijk_bias(
 )
 
 {
+#pragma HLS array_partition variable=input_A cyclic factor=4 dim=1
+#pragma HLS array_partition variable=output cyclic factor=4 dim=1
+#pragma HLS array_partition variable=bias cyclic factor=4 dim=1
+#pragma HLS array_partition variable=input_B cyclic factor=4 dim=1
+#pragma HLS array_partition variable=input_A cyclic factor=4 dim=2
+#pragma HLS array_partition variable=input_B cyclic factor=4 dim=2
+#pragma HLS array_partition variable=output cyclic factor=4 dim=2
+#pragma HLS array_partition variable=bias cyclic factor=4 dim=2
+
 for (int i = 0; i < 16; i++) {
-for (int j = 0; j < 8; j++) {
+#pragma HLS unroll factor=4
 for (int k = 0; k < 32; k++) {
+#pragma HLS unroll factor=4
     output[i][k] = bias[i][k];
 }
 }
-}
 
 
 for (int i = 0; i < 16; i++) {
+#pragma HLS unroll factor=4
 for (int j = 0; j < 8; j++) {
+#pragma HLS unroll factor=4
 for (int k = 0; k < 32; k++) {
+#pragma HLS unroll factor=4
     output[i][k] += input_A[i][j] * input_B[j][k];
 }
 }
@@ -107,12 +119,13 @@ void dot_product_bias(
     ap_fixed<16, 5> output[1]
 )
 {
-for (int i = 0; i < 16; i++) {
-    output[0] = bias[0];
-}
+#pragma HLS array_partition variable=input_A cyclic factor=4 dim=1
+#pragma HLS array_partition variable=input_B cyclic factor=4 dim=1
 
+output[0] = bias[0];
 
 for (int i = 0; i < 16; i++) {
+#pragma HLS unroll factor=4
     output[0] += input_A[i] * input_B[i];
 }
 }
@@ -146,18 +159,30 @@ void top(data_t DRAM_1[16][8], data_t DRAM_2[8][32], data_t DRAM_3[16][32], data
     //////////////////////////////////////////
 // Begin: Inline implementation of GEMM_IJK_BIAS
 //////////////////////////////////////////
+#pragma HLS array_partition variable=BRAM_1 cyclic factor=4 dim=1
+#pragma HLS array_partition variable=BRAM_4 cyclic factor=4 dim=1
+#pragma HLS array_partition variable=BRAM_3 cyclic factor=4 dim=1
+#pragma HLS array_partition variable=BRAM_2 cyclic factor=4 dim=1
+#pragma HLS array_partition variable=BRAM_1 cyclic factor=4 dim=2
+#pragma HLS array_partition variable=BRAM_2 cyclic factor=4 dim=2
+#pragma HLS array_partition variable=BRAM_4 cyclic factor=4 dim=2
+#pragma HLS array_partition variable=BRAM_3 cyclic factor=4 dim=2
+
 for (int i = 0; i < 16; i++) {
-for (int j = 0; j < 8; j++) {
+#pragma HLS unroll factor=4
 for (int k = 0; k < 32; k++) {
+#pragma HLS unroll factor=4
     BRAM_4[i][k] = BRAM_3[i][k];
 }
 }
-}
 
 
 for (int i = 0; i < 16; i++) {
+#pragma HLS unroll factor=4
 for (int j = 0; j < 8; j++) {
+#pragma HLS unroll factor=4
 for (int k = 0; k < 32; k++) {
+#pragma HLS unroll factor=4
     BRAM_4[i][k] += BRAM_1[i][j] * BRAM_2[j][k];
 }
 }
@@ -168,18 +193,11 @@ for (int k = 0; k < 32; k++) {
 
     store_16_32_ap_fixed_16_5_(BRAM_4, DRAM_4);
     //////////////////////////////////////////
-// Begin: Inline implementation of DOT_PRODUCT_BIAS
+    // Begin: Call to DOT_PRODUCT_BIAS
 //////////////////////////////////////////
-for (int i = 0; i < 16; i++) {
-    BRAM_12[0] = BRAM_11[0];
-}
-
-
-for (int i = 0; i < 16; i++) {
-    BRAM_12[0] += BRAM_9[i] * BRAM_10[i];
-}
+dot_product_bias(BRAM_9, BRAM_10, BRAM_11, BRAM_12);
 //////////////////////////////////////////
-// End: Inline implementation of DOT_PRODUCT_BIAS
+// End: Call to DOT_PRODUCT_BIAS
 //////////////////////////////////////////
 
     store_1_ap_fixed_16_5_(BRAM_12, DRAM_12);

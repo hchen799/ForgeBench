@@ -50,15 +50,21 @@ void mmv_ij(
     ap_fixed<16, 5> output[16]
 )
 {
+#pragma HLS array_partition variable=input_A cyclic factor=16 dim=1
+#pragma HLS array_partition variable=output cyclic factor=16 dim=1
+#pragma HLS array_partition variable=input_B cyclic factor=16 dim=1
+#pragma HLS array_partition variable=input_A cyclic factor=16 dim=2
+
 for (int i = 0; i < 16; i++) {
-for (int j = 0; j < 64; j++) {
+#pragma HLS unroll factor=16
     output[i] = 0;
 }
-}
 
 
 for (int i = 0; i < 16; i++) {
+#pragma HLS unroll factor=16
 for (int j = 0; j < 64; j++) {
+#pragma HLS unroll factor=16
     output[i] += input_A[i][j] * input_B[j];
 }
 }

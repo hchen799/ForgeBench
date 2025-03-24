@@ -56,18 +56,30 @@ void gemm_ijk_bias(
 )
 
 {
+#pragma HLS array_partition variable=input_A cyclic factor=16 dim=1
+#pragma HLS array_partition variable=output cyclic factor=16 dim=1
+#pragma HLS array_partition variable=bias cyclic factor=16 dim=1
+#pragma HLS array_partition variable=input_B cyclic factor=4 dim=1
+#pragma HLS array_partition variable=input_A cyclic factor=4 dim=2
+#pragma HLS array_partition variable=input_B cyclic factor=8 dim=2
+#pragma HLS array_partition variable=output cyclic factor=8 dim=2
+#pragma HLS array_partition variable=bias cyclic factor=8 dim=2
+
 for (int i = 0; i < 256; i++) {
-for (int j = 0; j < 128; j++) {
+#pragma HLS unroll factor=16
 for (int k = 0; k < 192; k++) {
+#pragma HLS unroll factor=8
     output[i][k] = bias[i][k];
 }
 }
-}
 
 
 for (int i = 0; i < 256; i++) {
+#pragma HLS unroll factor=16
 for (int j = 0; j < 128; j++) {
+#pragma HLS unroll factor=4
 for (int k = 0; k < 192; k++) {
+#pragma HLS unroll factor=8
     output[i][k] += input_A[i][j] * input_B[j][k];
 }
 }
@@ -101,18 +113,30 @@ void top(data_t DRAM_1[256][128], data_t DRAM_2[128][192], data_t DRAM_3[256][19
     //////////////////////////////////////////
 // Begin: Inline implementation of GEMM_IJK_BIAS
 //////////////////////////////////////////
+#pragma HLS array_partition variable=BRAM_1 cyclic factor=16 dim=1
+#pragma HLS array_partition variable=BRAM_4 cyclic factor=16 dim=1
+#pragma HLS array_partition variable=BRAM_3 cyclic factor=16 dim=1
+#pragma HLS array_partition variable=BRAM_2 cyclic factor=4 dim=1
+#pragma HLS array_partition variable=BRAM_1 cyclic factor=4 dim=2
+#pragma HLS array_partition variable=BRAM_2 cyclic factor=8 dim=2
+#pragma HLS array_partition variable=BRAM_4 cyclic factor=8 dim=2
+#pragma HLS array_partition variable=BRAM_3 cyclic factor=8 dim=2
+
 for (int i = 0; i < 256; i++) {
-for (int j = 0; j < 128; j++) {
+#pragma HLS unroll factor=16
 for (int k = 0; k < 192; k++) {
+#pragma HLS unroll factor=8
     BRAM_4[i][k] = BRAM_3[i][k];
 }
 }
-}
 
 
 for (int i = 0; i < 256; i++) {
+#pragma HLS unroll factor=16
 for (int j = 0; j < 128; j++) {
+#pragma HLS unroll factor=4
 for (int k = 0; k < 192; k++) {
+#pragma HLS unroll factor=8
     BRAM_4[i][k] += BRAM_1[i][j] * BRAM_2[j][k];
 }
 }

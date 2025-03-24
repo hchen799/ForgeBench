@@ -151,23 +151,37 @@ void tiled_gemm(
 )
 
 {
+    #pragma HLS array_partition variable=input_A cyclic factor=2 dim=1
+    #pragma HLS array_partition variable=output cyclic factor=2 dim=1
+    #pragma HLS array_partition variable=bias cyclic factor=2 dim=1
+    #pragma HLS array_partition variable=input_B cyclic factor=4 dim=1
+    #pragma HLS array_partition variable=input_A cyclic factor=4 dim=2
+    #pragma HLS array_partition variable=input_B cyclic factor=2 dim=2
+    #pragma HLS array_partition variable=output cyclic factor=2 dim=2
+    #pragma HLS array_partition variable=bias cyclic factor=2 dim=2
+
     #pragma HLS inline off
+    
     for (int i = 0; i < 32; i++) {
-    for (int j = 0; j < 128; j++) {
-    for (int k = 0; k < 64; k++) {
-        output[i+i_offset][k+k_offset] = bias[i+i_offset][k+k_offset];
-    }
-    }
+    #pragma HLS unroll factor=2
+        for (int k = 0; k < 64; k++) {
+        #pragma HLS unroll factor=2
+            output[i+i_offset][k+k_offset] = bias[i+i_offset][k+k_offset];
+        }
     }
     
     
     for (int i = 0; i < 32; i++) {
-    for (int j = 0; j < 128; j++) {
-    for (int k = 0; k < 64; k++) {
-        output[i+i_offset][k+k_offset] += input_A[i+i_offset][j+j_offset] * input_B[j+j_offset][k_offset];
+    #pragma HLS unroll factor=2
+        for (int j = 0; j < 128; j++) {
+        #pragma HLS unroll factor=4
+            for (int k = 0; k < 64; k++) {
+            #pragma HLS unroll factor=2
+                output[i+i_offset][k+k_offset] += input_A[i+i_offset][j+j_offset] * input_B[j+j_offset][k+k_offset];
+            }
+        }
     }
-    }
-    }
+
 }
 
 void store_96_128_ap_fixed_16_5_(data_t input[256][192], data_t output[96][128])

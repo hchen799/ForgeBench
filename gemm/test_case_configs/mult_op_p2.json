@@ -18,7 +18,7 @@
         "mmv_1": {
             "func_name": "mmv",
             "dims": [16, 64],
-            "func_info": [["i", "j"], false, false],
+            "func_info": [["i", "j"], [16, 16], false, false],
             "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
         },
         "store_1": {"func_name": "store", "dims": [16], "args": ["BRAM_4", "DRAM_4"]}

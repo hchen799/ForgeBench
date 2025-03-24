@@ -37,7 +37,7 @@
         "layer_1": {
             "func_name": "gemm",
             "dims": [256, 64, 128],
-            "func_info": [["i", "j", "k"], true, false],
+            "func_info": [["i", "j", "k"], [16, 16, 16], true, false],
             "args": ["INPUT_BATCH", "LAYER_1", "BIAS_1", "ITM_BATCH"]
         },
 
@@ -51,7 +51,7 @@
         "layer_2": {
             "func_name": "gemm",
             "dims": [256, 128, 16],
-            "func_info": [["i", "j", "k"], true, false],
+            "func_info": [["i", "j", "k"], [16, 16, 16], true, false],
             "args": ["RELU_BATCH", "LAYER_2", "BIAS_2", "ITM_2_BATCH"]
         },
 

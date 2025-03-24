@@ -98,16 +98,22 @@ void mmv_ij(
     ap_fixed<16, 5> output[16]
 )
 {
-    #pragma HLS inline off
+#pragma HLS array_partition variable=input_A cyclic factor=8 dim=1
+#pragma HLS array_partition variable=output cyclic factor=8 dim=1
+#pragma HLS array_partition variable=input_B cyclic factor=16 dim=1
+#pragma HLS array_partition variable=input_A cyclic factor=16 dim=2
+
+#pragma HLS inline off
 for (int i = 0; i < 16; i++) {
-for (int j = 0; j < 64; j++) {
+#pragma HLS unroll factor=8
     output[i] = 0;
 }
-}
 
 
 for (int i = 0; i < 16; i++) {
+#pragma HLS unroll factor=8
 for (int j = 0; j < 64; j++) {
+#pragma HLS unroll factor=16
     output[i] += input_A[i][j] * input_B[j];
 }
 }
@@ -360,7 +366,6 @@ void top(
     load_16_32_ap_fixed_16_5_(DRAM_A3, BRAM_A3);
     // gemm_ijk_with_mmv(BRAM_A1, BRAM_A2, BRAM_A4);
     transpose(BRAM_A2);
-    data_t v_out[32][32];
     for (int k = 0; k < 32; k++) {
         mmv_ij(BRAM_A1, BRAM_A2[k], BRAM_A4[k]);
     }

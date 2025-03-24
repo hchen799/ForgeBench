@@ -18,7 +18,7 @@
         "dot_product_1": {
             "func_name": "dot_product",
             "dims": [64],
-            "func_info": [false, false],
+            "func_info": [16, false, false],
             "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
         },
         "store_1": {"func_name": "store", "dims": [1], "args": ["BRAM_4", "DRAM_4"]}

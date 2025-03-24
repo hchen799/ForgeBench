@@ -27,20 +27,37 @@
         "load_1": {"func_name": "load", "dims": [16, 8], "args": ["DRAM_1", "BRAM_1"]},
         "load_2": {"func_name": "load", "dims": [8, 32], "args": ["DRAM_2", "BRAM_2"]},
         "load_3": {"func_name": "load", "dims": [16, 32], "args": ["DRAM_3", "BRAM_3"]},
+        
         "gemm_1": {
             "func_name": "gemm",
             "dims": [16, 8, 32],
-            "func_info": [["i", "j", "k"], [4,4,4], true, true],
+            "func_info": [["i", "j", "k"], [1, 2, 16], true, true],
             "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
         },
-        "store_1": {"func_name": "store", "dims": [16, 32], "args": ["BRAM_4", "DRAM_4"]},
-        "dot_product": {
-            "func_name": "dot_product",
-            "dims": [16],
-            "func_info": [4, true, false],
-            "args": ["BRAM_9", "BRAM_10", "BRAM_11", "BRAM_12"]
+
+        "gemm_2": {
+            "func_name": "gemm",
+            "dims": [16, 8, 32],
+            "func_info": [["i", "j", "k"], [1, 1, 1], true, false],
+            "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
         },
-        "store_2": {"func_name": "store", "dims": [1], "args": ["BRAM_12", "DRAM_12"]}
+
+        "gemm_3": {
+            "func_name": "gemm",
+            "dims": [16, 8, 32],
+            "func_info": [["k", "i", "j"], [8, 2, 1], true, false],
+            "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
+        },
+
+        "gemm_4": {
+            "func_name": "gemm",
+            "dims": [16, 8, 32],
+            "func_info": [["k", "i", "j"], [8, 4, 16], true, true],
+            "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
+        },
+
+
+        "store_1": {"func_name": "store", "dims": [16, 32], "args": ["BRAM_4", "DRAM_4"]}
     },
     "output_dram_names": ["DRAM_4", "DRAM_12"]
 }

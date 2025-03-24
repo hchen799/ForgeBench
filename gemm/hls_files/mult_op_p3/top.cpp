@@ -41,12 +41,13 @@ void dot_product(
     ap_fixed<16, 5> output[1]
 )
 {
-for (int i = 0; i < 64; i++) {
-    output[0] = 0;
-}
+#pragma HLS array_partition variable=input_A cyclic factor=16 dim=1
+#pragma HLS array_partition variable=input_B cyclic factor=16 dim=1
 
+output[0] = 0;
 
 for (int i = 0; i < 64; i++) {
+#pragma HLS unroll factor=16
     output[0] += input_A[i] * input_B[i];
 }
 }

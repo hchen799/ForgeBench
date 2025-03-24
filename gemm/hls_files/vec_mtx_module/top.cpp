@@ -81,20 +81,26 @@ void mmv_ij(
     ap_fixed<16, 5> output[16]
 )
 {
+    #pragma HLS array_partition variable=input_A cyclic factor=16 dim=1
+    #pragma HLS array_partition variable=output cyclic factor=16 dim=1
+    #pragma HLS array_partition variable=input_B cyclic factor=16 dim=1
+    #pragma HLS array_partition variable=input_A cyclic factor=16 dim=2
+    
     #pragma HLS inline off
-for (int i = 0; i < 16; i++) {
-for (int j = 0; j < 64; j++) {
-    output[i] = 0;
-}
-}
-
-
-for (int i = 0; i < 16; i++) {
-for (int j = 0; j < 64; j++) {
-    output[i] += input_A[i][j] * input_B[j];
-}
-}
-}
+    for (int i = 0; i < 16; i++) {
+    #pragma HLS unroll factor=16
+        output[i] = 0;
+    }
+    
+    
+    for (int i = 0; i < 16; i++) {
+    #pragma HLS unroll factor=16
+    for (int j = 0; j < 64; j++) {
+    #pragma HLS unroll factor=16
+        output[i] += input_A[i][j] * input_B[j];
+    }
+    }
+    }
 /*==== MMV_IJ FUNCTION END ====*/
 //////////////////////////////////////////
 // END: MMV_IJ FUNCTION
@@ -195,6 +201,6 @@ void top(data_t DRAM_A1[16][64], data_t DRAM_A2[64], data_t DRAM_A3[16], data_t 
     load_16_ap_fixed_16_5_(DRAM_B3, BRAM_B3);
     // vmm_with_mmv_ij(BRAM_B1, BRAM_B2, BRAM_B4);
     transpose(BRAM_B1); // Transpose the input matrix A
-    mmv_ij(BRAM_B1, BRAM_B2, output); // Call the MMV_IJ function
+    mmv_ij(BRAM_B1, BRAM_B2, BRAM_B4); // Call the MMV_IJ function
     store_16_ap_fixed_16_5_(BRAM_B4, DRAM_B4);
 }

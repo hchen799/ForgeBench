@@ -43,15 +43,21 @@ void vmm_ij(
     ap_fixed<16, 5> output[16]
 )
 {
-for (int i = 0; i < 64; i++) {
+#pragma HLS array_partition variable=input_B cyclic factor=16 dim=1
+#pragma HLS array_partition variable=input_A cyclic factor=16 dim=1
+#pragma HLS array_partition variable=input_A cyclic factor=16 dim=2
+#pragma HLS array_partition variable=output cyclic factor=16 dim=1
+
 for (int j = 0; j < 16; j++) {
+#pragma HLS unroll factor=16
     output[j] = 0;
 }
-}
 
 
 for (int i = 0; i < 64; i++) {
+#pragma HLS unroll factor=16
 for (int j = 0; j < 16; j++) {
+#pragma HLS unroll factor=16
     output[j] += input_A[i][j] * input_B[i];
 }
 }
@@ -82,15 +88,21 @@ void top(data_t DRAM_1[64][16], data_t DRAM_2[64], data_t DRAM_3[16], data_t DRA
     //////////////////////////////////////////
 // Begin: Inline implementation of VMM_IJ
 //////////////////////////////////////////
-for (int i = 0; i < 64; i++) {
+#pragma HLS array_partition variable=BRAM_2 cyclic factor=16 dim=1
+#pragma HLS array_partition variable=BRAM_1 cyclic factor=16 dim=1
+#pragma HLS array_partition variable=BRAM_1 cyclic factor=16 dim=2
+#pragma HLS array_partition variable=BRAM_4 cyclic factor=16 dim=1
+
 for (int j = 0; j < 16; j++) {
+#pragma HLS unroll factor=16
     BRAM_4[j] = 0;
 }
-}
 
 
 for (int i = 0; i < 64; i++) {
+#pragma HLS unroll factor=16
 for (int j = 0; j < 16; j++) {
+#pragma HLS unroll factor=16
     BRAM_4[j] += BRAM_1[i][j] * BRAM_2[i];
 }
 }

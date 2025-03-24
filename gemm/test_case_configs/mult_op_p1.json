@@ -18,7 +18,7 @@
         "gemm_1": {
             "func_name": "gemm",
             "dims": [16, 64, 32],
-            "func_info": [["i", "j", "k"], false, false],
+            "func_info": [["i", "j", "k"], [8, 16, 16], false, false],
             "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
         },
         "store_1": {"func_name": "store", "dims": [16, 32], "args": ["BRAM_4", "DRAM_4"]}
