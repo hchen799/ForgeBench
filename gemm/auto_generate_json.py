@@ -2,27 +2,28 @@
 import itertools
 import os
 
-# Computing xABy + C
+# Computing xABy
 
 # option 1
-# Compute t = xA, s = yB
-# compute ts + C
+# ((xA)B)y
 
 # option 2
-# Compue T = AB
-# compute s = Ty + C
-# compute xs
+# (x(AB))y
 
-# x -- 1 X M
-# A -- M X K
-# B -- K X N
-# y -- N X 1
+# option 3
+# x((AB)y)
+
+# option 4
+# x(A(By))
+
+# option 5
+# (xA)(By)
 
 def generate_config_text(
     M, K, N,
     unroll_M, unroll_K, unroll_N,
     order, 
-    DATA_TYPE, intermediate_bias, inline, test_all_ops = True
+    DATA_TYPE, intermediate_bias, inline, computation_order = "option_1",
 ):
     """
     Returns a string of the JSON config in exactly the format requested,
@@ -30,6 +31,9 @@ def generate_config_text(
     in the conv_1 op.
     """
 
+    if computation_order not in ["option_1", "option_2", "option_3", "option_4", "option_5"]:
+        raise ValueError(f"Invalid computation_order_option: {computation_order}")
+    
     order_vm = [f"{x}" for x in order if x in ['i', 'j']]
     order_gmm = [f"{x}"  for x in order if x in ['i', 'k', 'j']]
 
@@ -43,14 +47,36 @@ def generate_config_text(
         {"name": "BRAM_result",        "dims": [1]},
     ]
 
-    if test_all_ops:
+
+    if computation_order == "option_1":
+        brams.extend([
+            {"name": "BRAM_xA_bias",        "dims": [K]},
+            {"name": "BRAM_xA",        "dims": [K]},
+            {"name": "BRAM_xAB_bias",        "dims": [N]},
+            {"name": "BRAM_xAB",        "dims": [N]},
+        ])
+    elif computation_order == "option_2":
+        brams.extend([
+            {"name": "BRAM_gemm_bias",        "dims": [M, N]},
+            {"name": "BRAM_gemm",        "dims": [M, N]},
+            {"name": "BRAM_vmm_bias",        "dims": [N]},
+            {"name": "BRAM_vmm",        "dims": [N]},
+        ])
+    elif computation_order == "option_3":
         brams.extend([
             {"name": "BRAM_gemm_bias",        "dims": [M, N]},
             {"name": "BRAM_gemm",        "dims": [M, N]},
             {"name": "BRAM_mmv_bias",        "dims": [M]},
             {"name": "BRAM_mmv",        "dims": [M]},
         ])
-    else:
+    elif computation_order == "option_4":
+        brams.extend([
+            {"name": "BRAM_By_bias",        "dims": [K]},
+            {"name": "BRAM_By",        "dims": [K]},
+            {"name": "BRAM_ABy_bias",        "dims": [M]},
+            {"name": "BRAM_ABy",        "dims": [M]},
+        ])
+    elif computation_order == "option_5":
         brams.extend([
             {"name": "BRAM_xt_bias",        "dims": [K]},
             {"name": "BRAM_xt",        "dims": [K]},
@@ -93,14 +119,63 @@ def generate_config_text(
     def quoted_list(lst):
         return "[" + ", ".join(f'"{item}"' for item in lst) + "]"
 
-    if test_all_ops:
-        ops_order = [
-            ("load_1", {"func_name": "load", "dims": [M], "args": ["DRAM_x", "BRAM_x"]}),
-            ("load_2", {"func_name": "load", "dims": [M, K], "args": ["DRAM_A", "BRAM_A"]}),
-            ("load_3", {"func_name": "load", "dims": [K, N], "args": ["DRAM_B", "BRAM_B"]}),
-            ("load_4", {"func_name": "load", "dims": [N], "args": ["DRAM_y", "BRAM_y"]}),
-            ("load_5", {"func_name": "load", "dims": [1], "args": ["DRAM_bias", "BRAM_bias"]}),
+    ops_order = [
+        ("load_1", {"func_name": "load", "dims": [M], "args": ["DRAM_x", "BRAM_x"]}),
+        ("load_2", {"func_name": "load", "dims": [M, K], "args": ["DRAM_A", "BRAM_A"]}),
+        ("load_3", {"func_name": "load", "dims": [K, N], "args": ["DRAM_B", "BRAM_B"]}),
+        ("load_4", {"func_name": "load", "dims": [N], "args": ["DRAM_y", "BRAM_y"]}),
+        ("load_5", {"func_name": "load", "dims": [1], "args": ["DRAM_bias", "BRAM_bias"]}),
+    ]
+    if computation_order == "option_1":
+        ops_order.extend([
+            ("vmm_1", {
+                "func_name": "vmm",
+                "dims": [M, K],
+                "args": ["BRAM_A", "BRAM_x", "BRAM_xA_bias", "BRAM_xA"],
+                "func_info": [order_vm, [unroll_M, unroll_K], intermediate_bias, inline]
+            }),
+
+            ("vmm_2", {
+                "func_name": "vmm",
+                "dims": [K, N],
+                "args": ["BRAM_B", "BRAM_y", "BRAM_xAB_bias", "BRAM_xAB"],
+                "func_info": [order_vm, [unroll_K, unroll_N], intermediate_bias, inline]
+            }),
+
+            ("dot_1", {
+                "func_name": "dot_product",
+                "dims": [N],
+                "args": ["BRAM_xA", "BRAM_mmv", "BRAM_bias", "BRAM_result"],
+                "func_info": [unroll_N, intermediate_bias, inline]
+            }),
+        ])
+    elif computation_order == "option_2":
+        ops_order.extend([
             
+            ("gemm_1", {
+                "func_name": "gemm",
+                "dims": [M, K, N],
+                "args": ["BRAM_A", "BRAM_B", "BRAM_gemm_bias", "BRAM_gemm"],
+                "func_info": [order_gmm, [unroll_M, unroll_K, unroll_N], intermediate_bias, inline]
+            }),
+
+            ("vmm_1", {
+                "func_name": "vmm",
+                "dims": [M, N],
+                "args": ["BRAM_gemm", "BRAM_x", "BRAM_vmm_bias", "BRAM_vmm"],
+                "func_info": [order_vm, [unroll_M, unroll_N], intermediate_bias, inline]
+            }),
+
+            ("dot_1", {
+                "func_name": "dot_product",
+                "dims": [N],
+                "args": ["BRAM_x", "BRAM_vmm", "BRAM_bias", "BRAM_result"],
+                "func_info": [unroll_N, intermediate_bias, inline]
+            }),
+        ])
+    elif computation_order == "option_3":
+        ops_order.extend([
+
             ("gemm_1", {
                 "func_name": "gemm",
                 "dims": [M, K, N],
@@ -121,12 +196,32 @@ def generate_config_text(
                 "args": ["BRAM_x", "BRAM_mmv", "BRAM_bias", "BRAM_result"],
                 "func_info": [unroll_M, intermediate_bias, inline]
             }),
+        ])
+    elif computation_order == "option_4":
+        ops_order.extend([
+            ("vmm_1", {
+                "func_name": "vmm",
+                "dims": [K, N],
+                "args": ["BRAM_B", "BRAM_y", "BRAM_By_bias", "BRAM_By"],
+                "func_info": [order_vm, [unroll_K, unroll_N], intermediate_bias, inline]
+            }),
 
-            ("store", {"func_name": "store", "dims": [1], "args": ["BRAM_result", "DRAM_result"]}),
-        ]
+            ("vmm_2", {
+                "func_name": "vmm",
+                "dims": [M, K],
+                "args": ["BRAM_A", "BRAM_By", "BRAM_ABy_bias", "BRAM_ABy"],
+                "func_info": [order_vm, [unroll_M, unroll_K], intermediate_bias, inline]
+            }),
 
-    else:
-        ops_order = [
+            ("dot_1", {
+                "func_name": "dot_product",
+                "dims": [M],
+                "args": ["BRAM_x", "BRAM_ABy", "BRAM_bias", "BRAM_result"],
+                "func_info": [unroll_M, intermediate_bias, inline]
+            }),
+        ])
+    elif computation_order == "option_5":
+        ops_order.extend([
             ("load_1", {"func_name": "load", "dims": [M], "args": ["DRAM_x", "BRAM_x"]}),
             ("load_2", {"func_name": "load", "dims": [M, K], "args": ["DRAM_A", "BRAM_A"]}),
             ("load_3", {"func_name": "load", "dims": [K, N], "args": ["DRAM_B", "BRAM_B"]}),
@@ -153,9 +248,9 @@ def generate_config_text(
                 "args": ["BRAM_xt", "BRAM_yt", "BRAM_bias", "BRAM_result"],
                 "func_info": [unroll_M, intermediate_bias, inline]
             }),
-
-            ("store", {"func_name": "store", "dims": [1], "args": ["BRAM_result", "DRAM_result"]}),
-        ]
+        ])
+    
+    ops_order.append(("store", {"func_name": "store", "dims": [1], "args": ["BRAM_result", "DRAM_result"]})),
 
     ops_lines = []
     for i, (op_name, op_data) in enumerate(ops_order):
@@ -225,7 +320,7 @@ def main():
     vals_unroll_K = [1, 8]
     vals_unroll_N = [1, 8]
     vals_order = [x for x in itertools.permutations(["i", "j", "k"])]
-    test_all_ops = [True, False]
+    comp_order_list = ["option_1", "option_2", "option_3", "option_4", "option_5"]
 
     # Static parameters
     need_bias_list = [False]
@@ -236,7 +331,7 @@ def main():
         vals_M, vals_K, vals_N,
         vals_unroll_M, vals_unroll_K, vals_unroll_N,
         vals_order,
-        test_all_ops,
+        comp_order_list,
         need_bias_list,
         inline_list,
         data_type_list
@@ -246,17 +341,17 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
 
     # Now iterate over the base combos, conv_type, (groups if needed), and data_type.
-    for (m, k, n, unroll_m, unroll_k, unroll_n, ord, all_ops, with_bias, inline, data_type) in combinations:
+    for (m, k, n, unroll_m, unroll_k, unroll_n, ord, comp_order, with_bias, inline, data_type) in combinations:
         config_text = generate_config_text(
             m, k, n,
             unroll_m, unroll_k, unroll_n,
             ord,
-            data_type, with_bias, inline, all_ops
+            data_type, with_bias, inline, comp_order
         )
         naming_dtype = data_type.replace('<','_').replace('>','_').replace(',','_')
         filename = (
             f"GEMM_config_M{m}_K{k}_N{n}_UM{unroll_m}_UK{unroll_k}_UN{unroll_n}_"
-            f"{ord[0]}{ord[1]}{ord[2]}_BIAS{with_bias}_INLINE{inline}_ALLOPS_{all_ops}_"
+            f"{ord[0]}{ord[1]}{ord[2]}_BIAS_{with_bias}_INLINE_{inline}_COMPORDER_{comp_order}_"
             f"{naming_dtype}.json"
         )
         filepath = os.path.join(output_dir, filename)
@@ -265,7 +360,7 @@ def main():
         print(f"Generated {filepath}")
 
 
-    num_combos = len(vals_M) * len(vals_K) * len(vals_N) * len(vals_unroll_M) * len(vals_unroll_K) * len(vals_unroll_N) * len(vals_order) * len(test_all_ops) * len(need_bias_list) * len(inline_list) * len(data_type_list)
+    num_combos = len(vals_M) * len(vals_K) * len(vals_N) * len(vals_unroll_M) * len(vals_unroll_K) * len(vals_unroll_N) * len(vals_order) * len(comp_order_list) * len(need_bias_list) * len(inline_list) * len(data_type_list)
     print("Total number of combos:", num_combos)
 
 if __name__ == "__main__":
