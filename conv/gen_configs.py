@@ -58,7 +58,7 @@ if __name__ == "__main__":
     os.makedirs(base_output_dir, exist_ok=True)
     
     # for file in os.listdir(test_case_dir):
-    for file in ["conv_A.json", "conv_B.json", "conv_C.json"]:
+    for file in ["conv_A.json", "conv_B.json", "conv_C.json", "config_CIN16_HIN28_WIN28_COUT16_K1_IPF1_KPF11_KPF21_BPF1_OPF1_UFCIN1_UFCOU1_ap_fixed_16_5_.json"]:
         if file.endswith(".json"):
             config_path = os.path.join(test_case_dir, file)
             task = ["csynth"]
