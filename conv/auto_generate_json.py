@@ -203,7 +203,7 @@ def main():
     # Data type list
     data_type_list = ["ap_fixed<16,5>"]
 
-    output_dir = "auto_generated_json"
+    output_dir = "auto_generated_configs"
     os.makedirs(output_dir, exist_ok=True)
 
     # Create base combinations for parameters except conv_type and groups

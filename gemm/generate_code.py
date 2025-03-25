@@ -189,7 +189,8 @@ def generate_gemm_function(
         init_out = "output[i][k] = 0;"
 
     partitioning = ""
-    for idx, var in enumerate(unroll):
+    for idx, v in enumerate(unroll):
+        var = int(v)
         if var > 1:
             if idx == 0:
                 partition_pragma = f"""#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}
@@ -351,7 +352,8 @@ def call_gemm_inline(
     computation = f"{output_var}[i][k] += {input_A_var}[i][j] * {input_B_var}[j][k];"
     
     partitioning = ""
-    for idx, var in enumerate(unroll):
+    for idx, v in enumerate(unroll):
+        var = int(v)
         if var > 1:
             if idx == 0:
                 partition_pragma = f"""#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}
@@ -478,7 +480,8 @@ def generate_mmv_function(
     
     
     partitioning = ""
-    for idx, var in enumerate(unroll):
+    for idx, v in enumerate(unroll):
+        var = int(v)
         if var > 1:
             if idx == 0:
                 partition_pragma = f"""#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}
@@ -635,7 +638,8 @@ def call_mmv_inline(
         init_out = f"{output_var}[i] = 0;"
     
     partitioning = ""
-    for idx, var in enumerate(unroll):
+    for idx, v in enumerate(unroll):
+        var = int(v)
         if var > 1:
             if idx == 0:
                 partition_pragma = f"""#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}
@@ -755,7 +759,8 @@ def generate_vmm_function(
         init_out = "output[j] = 0;"
 
     partitioning = ""
-    for idx, var in enumerate(unroll):
+    for idx, v in enumerate(unroll):
+        var = int(v)
         if var > 1:
             if idx == 0:
                 partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx+1}
@@ -916,7 +921,8 @@ def call_vmm_inline(
         init_out = f"{output_var}[j] = 0;"
 
     partitioning = ""
-    for idx, var in enumerate(unroll):
+    for idx, v in enumerate(unroll):
+        var = int(v)
         if var > 1:
             if idx == 0:
                 partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx+1}
@@ -1030,6 +1036,7 @@ def generate_dot_function(
         init_out = "output[0] = 0;"
     
     partitioning = ""
+    unroll = int(unroll)
     if unroll > 1:
         partitioning = f"#pragma HLS array_partition variable=input_A cyclic factor={unroll} dim=1\n"
         partitioning += f"#pragma HLS array_partition variable=input_B cyclic factor={unroll} dim=1\n"
@@ -1149,6 +1156,7 @@ def call_dot_inline(
         init_out = f"{output_var}[0] = 0;"
 
     partitioning = ""
+    unroll = int(unroll)
     if unroll > 1:
         partitioning = f"#pragma HLS array_partition variable={input_A_var} cyclic factor={unroll} dim=1\n"
         partitioning += f"#pragma HLS array_partition variable={input_B_var} cyclic factor={unroll} dim=1\n"
