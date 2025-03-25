@@ -98,9 +98,9 @@ function_mappings = {
 "conv_module": "conv_via_tiling_3x3",
 "activation_module": "compute_exp",
 
-"conv_block_module" : "conv_via_tiling_3x3",
+# "conv_block_module" : "conv_via_tiling_3x3_1",
 # "conv_block_module" : "batch_norm_tiled",
-# "conv_block_module" : "relu_tiled",
+"conv_block_module" : "relu_tiled",
     # Add more mappings as needed
 }
 # Run processing for all projects

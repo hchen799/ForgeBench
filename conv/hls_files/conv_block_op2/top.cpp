@@ -84,7 +84,7 @@ void conv_via_tiling_3x3(
     for (int ow = 0; ow < out_w; ow++) {
         for (int oh = 0; oh < out_h; oh++) {
             for (int oc = 0; oc < out_ch; oc++) {
-            //#pragma HLS unroll factor = 64
+            #pragma HLS unroll factor = 64
                 output[oc][oh][ow] = bias[oc];
             }
         }
