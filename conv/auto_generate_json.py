@@ -13,7 +13,7 @@ def generate_config_text(
     unroll_factor_cin, unroll_factor_cout,
     DATA_TYPE, need_bias,
     PAD, STRIDE,
-    conv_type, groups=None
+    conv_type, activations, groups=None
 ):
     """
     Returns a string of the JSON config in exactly the format requested,
@@ -116,7 +116,7 @@ def generate_config_text(
         ("activation_1", {
             "func_name": "activation",
             "dims": [C_OUT, H_OUT, W_OUT],
-            "func_info": ["activations_template.cpp", "relu"],
+            "func_info": ["activations_template.cpp", activations],
             "args": ["BRAM_buffer_2", "BRAM_buffer_1"]
         }),
         ("store", {
@@ -195,6 +195,7 @@ def main():
     PAD_list               = [1]
     STRIDE_list            = [1]
     need_bias_list         = [True, False]
+    activations_list       = ['relu', 'sigmoid', 'tanh']
 
     # New sweeping parameters
     conv_type_list = ["conv2d", "group_conv2d"]
@@ -217,12 +218,14 @@ def main():
         unroll_factor_cout_list,
         PAD_list,
         STRIDE_list,
-        need_bias_list
+        activations_list, 
+        need_bias_list,
+        
     ))
 
     # Now iterate over the base combos, conv_type, (groups if needed), and data_type.
     for (C_IN, H_IN, W_IN, C_OUT, K,
-         unroll_factor_cin, unroll_factor_cout, PAD, STRIDE, need_bias) in base_combos:
+         unroll_factor_cin, unroll_factor_cout, PAD, STRIDE, need_bias, activations) in base_combos:
         for conv_type in conv_type_list:
             if conv_type == "conv2d_group":
                 for groups in groups_list:
@@ -232,13 +235,13 @@ def main():
                             unroll_factor_cin, unroll_factor_cout,
                             DATA_TYPE, need_bias,
                             PAD, STRIDE,
-                            conv_type, groups
+                            conv_type, activations, groups 
                         )
                         safe_dtype = DATA_TYPE.replace('<','_').replace('>','_').replace(',','_')
                         filename = (
                             f"config_CIN{C_IN}_HIN{H_IN}_WIN{W_IN}_COUT{C_OUT}_K{K}_"
                             f"UFCIN{unroll_factor_cin}_UFCOU{unroll_factor_cout}_PAD{PAD}_STRIDE{STRIDE}_BIAS{need_bias}_"
-                            f"{conv_type}_GROUPS{groups}_{safe_dtype}.json"
+                            f"{conv_type}_GROUPS{groups}_ACTIVATION{activations}_{safe_dtype}.json"
                         )
                         filepath = os.path.join(output_dir, filename)
                         with open(filepath, "w") as f:
@@ -252,13 +255,13 @@ def main():
                         unroll_factor_cin, unroll_factor_cout,
                         DATA_TYPE, need_bias,
                         PAD, STRIDE,
-                        conv_type, groups
+                        conv_type, activations, groups
                     )
                     safe_dtype = DATA_TYPE.replace('<','_').replace('>','_').replace(',','_')
                     filename = (
                         f"config_CIN{C_IN}_HIN{H_IN}_WIN{W_IN}_COUT{C_OUT}_K{K}_"
                         f"UFCIN{unroll_factor_cin}_UFCOU{unroll_factor_cout}_PAD{PAD}_STRIDE{STRIDE}_BIAS{need_bias}_"
-                        f"{conv_type}_{safe_dtype}.json"
+                        f"{conv_type}_ACTIVATION{activations}_{safe_dtype}.json"
                     )
                     filepath = os.path.join(output_dir, filename)
                     with open(filepath, "w") as f:
