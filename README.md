@@ -2,10 +2,9 @@
 
 ## Auto Generation Framework
 
-In the conv folder, run the following command to generate all of the code you need to run the HLS, including the top function design, the testbench, the .tcl script and data file. 
-``` sh
-python generate_code.py
-```
+In the conv/gemm/llm folders, `generate_code.py` generates HLS designs from JSON config files - building the top function design, the testbench, the .tcl script and data files. 
+
+To build test cases, follow these steps:
 
 Step 1: Write the .json file based on your model structure and dataflow, put them under the folder test_case_configs
 
@@ -13,9 +12,9 @@ Step 2: Run the following command to generate the C code for HLS synthesis
 ``` sh
 python generate_configs.py
 ```
-You will see the code generated under hls_files folder
+You will see the code generated under hls_files directory
 
-Step 3: Run the following command to lauch the HLS synthesis
+Step 3: Run the following command to lauch the HLS synthesis on all data in hls_files/
 ``` sh
 python run_hls_configs.py
 ```
