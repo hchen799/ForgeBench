@@ -2,5 +2,6 @@
     "files.associations": {
         "cmath": "cpp",
         "complex": "cpp"
-    }
+    },
+    "git.ignoreLimitWarning": true
 }

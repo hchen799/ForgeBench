@@ -438,7 +438,7 @@ def generate_activation_function(
     elif func_name == "sigmoid":
         marker_start = "/*==== SIGMOID FUNCTION START ====*/"
         marker_end = "/*==== SIGMOID FUNCTION END ====*/"
-    elif func_name == "tanh_act":
+    elif func_name == "tanh":
         marker_start = "/*==== TANH FUNCTION START ====*/"
         marker_end = "/*==== TANH FUNCTION END ====*/"
     elif func_name == "elu":

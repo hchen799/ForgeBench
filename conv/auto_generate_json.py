@@ -225,7 +225,7 @@ def main():
 
     # Now iterate over the base combos, conv_type, (groups if needed), and data_type.
     for (C_IN, H_IN, W_IN, C_OUT, K,
-         unroll_factor_cin, unroll_factor_cout, PAD, STRIDE, need_bias, activations) in base_combos:
+         unroll_factor_cin, unroll_factor_cout, PAD, STRIDE, activations, need_bias) in base_combos:
         for conv_type in conv_type_list:
             if conv_type == "conv2d_group":
                 for groups in groups_list:

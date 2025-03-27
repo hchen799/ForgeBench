@@ -1,4 +1,6 @@
-# HLS_ML_benchmark
+# ForgeBench
+
+## Auto Generation Framework
 
 In the conv folder, run the following command to generate all of the code you need to run the HLS, including the top function design, the testbench, the .tcl script and data file. 
 ``` sh
@@ -17,3 +19,30 @@ Step 3: Run the following command to lauch the HLS synthesis
 ``` sh
 python run_hls_configs.py
 ```
+
+## Ready-To-Go BenchMark Suites
+
+### ML BenchMarks
+We provide an ML oriented benchmark suite with 6000+ testcases - 1920 GEMM, 2304 DNN, 1944 LLM. The file is compressed and split for uploading. 
+First merge the split files:
+
+```sh
+cat ML_testsuite_part_* > ML_testsuite.tar.gz
+```
+
+Then extract:
+
+```sh
+tar -xvzf ML_testsuite.tar.gz
+```
+
+### Modular HLS BenchMarks
+
+The Modular HLS benchmark suite includes 13 testcases across GEMM, DNN and LLM domains. Each testcase has 2--3 input programs generated with ForgeBench with an ideal modularized implementation
+
+Extract with:
+
+```sh
+tar -xvzf ModularHLS_testsuite.tar.gz
+```
+

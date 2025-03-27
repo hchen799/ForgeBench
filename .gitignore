@@ -1,13 +1,16 @@
 gemm/generator_tests
 gemm/hls_files/*/project_1
-gemm/auto_generated_configs
-gemm/large_hls_files
+
 conv/hls_files/*/project_1
 llm/hls_files/*/project_1
-llm/auto_generated_configs
-llm/large_hls_files
 
+*/auto_generated_configs
+*/large_hls_files
+
+ML_testsuite/*
+ModularHLS_testsuite/*
 
 
 *.log
 */__pycache__
+ML_testsuite.tar.gz
