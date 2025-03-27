@@ -58,8 +58,8 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
 
 
 if __name__ == "__main__":
-    test_case_dir = "auto_generated_configs"
-    base_output_dir = "large_hls_files"
+    test_case_dir = "test_case_configs"
+    base_output_dir = "hls_files"
     os.makedirs(base_output_dir, exist_ok=True)
     
     for file in os.listdir(test_case_dir):
