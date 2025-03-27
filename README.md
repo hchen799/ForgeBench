@@ -2,7 +2,7 @@
 
 ## Auto Generation Framework
 
-In the conv/gemm/llm folders, [generate_code.py] generates HLS designs from JSON config files - building the top function design, the testbench, the .tcl script and data files. 
+In the conv/gemm/llm folders, `generate_code.py` generates HLS designs from JSON config files - building the top function design, the testbench, the .tcl script and data files. 
 
 To build test cases, follow these steps:
 
