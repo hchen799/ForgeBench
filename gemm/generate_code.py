@@ -1648,8 +1648,8 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
     lines.append("")
 
     # Generate add_files lines for each DRAM based on user configuration.
-    for dram in drams:
-        lines.append(f"add_files -tb {dram['name']}.txt")
+    # for dram in drams:
+    #     lines.append(f"add_files -tb {dram['name']}.txt")
     
     lines.append('open_solution "solution1"')
     lines.append("")

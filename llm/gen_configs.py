@@ -27,7 +27,7 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     drams = config["drams"]
     ops = config["ops"]
     output_dram_names = config["output_dram_names"]
-    data_type = config.get("data_type", "ap_fixed<16, 5>")
+    data_type = config.get("data_type", "ap_fixed<32, 10>")
     top_func_name = config.get("top_func_name", "top")
     fpga_name = config.get("FPGA_name", FPGA_name)
     clock= config.get("clock_period", clock_period)
@@ -47,19 +47,19 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     with open(os.path.join(run_dir, "tb_top.cpp"), "w") as f:
         f.write(tb_code)
     
-    generate_dram_txt_files(drams, seed=42)
-    for dram in drams:
-        dram_txt = f"{dram['name']}.txt"
-        if os.path.exists(dram_txt):
-            shutil.move(dram_txt, os.path.join(run_dir, dram_txt))
+    # generate_dram_txt_files(drams, seed=42)
+    # for dram in drams:
+    #     dram_txt = f"{dram['name']}.txt"
+    #     if os.path.exists(dram_txt):
+    #         shutil.move(dram_txt, os.path.join(run_dir, dram_txt))
     
     generate_full_tcl_file(drams, fpga_name, clock, tasks, output_filename=os.path.join(run_dir, "run_hls.tcl"))
     print(f"Generated files for {run_name} in {run_dir}")
 
 
 if __name__ == "__main__":
-    test_case_dir = "test_case_configs"
-    base_output_dir = "hls_files"
+    test_case_dir = "auto_generated_configs"
+    base_output_dir = "hls_files_FPT"
     os.makedirs(base_output_dir, exist_ok=True)
     
     for file in os.listdir(test_case_dir):

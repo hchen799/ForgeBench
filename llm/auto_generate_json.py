@@ -19,7 +19,7 @@ import os
 
 def generate_config_text(
         SEQ_LEN, DIM_IN, NUM_HEADS, HEAD_DIM, NUM_GROUPS,
-        DATA_TYPE, with_rope=False, norm_type='layer_norm', with_dropout=True, dropout_prob=0.1, seed=47, norm_eps=1e-2
+        DATA_TYPE, with_rope=False, norm_type='layer_norm', unroll_factor_qkv = 1, unroll_factor_qk = 1, unroll_factor_v = 1, unroll_factor_qkv_out = 1, with_dropout=True, dropout_prob=0.1, seed=47, norm_eps=1e-2
 ):
     """
     Returns a string of the JSON config of an Attentoin/Norm block with the given parameters.
@@ -27,14 +27,27 @@ def generate_config_text(
     DIM_OUT = NUM_HEADS * HEAD_DIM
 
     # 1) Build the lines for brams
-    brams = [
-        {"name": "BRAM_attn_input",        "dims": [SEQ_LEN, DIM_IN]},
-        {"name": "BRAM_WQ",        "dims": [DIM_IN, DIM_IN]},
-        {"name": "BRAM_WK",        "dims": [DIM_IN, DIM_IN]},
-        {"name": "BRAM_WV",        "dims": [DIM_IN, DIM_IN]},
-        {"name": "BRAM_attn_output",        "dims": [SEQ_LEN, DIM_OUT]},
-        {"name": "BRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT]},
-    ]
+    if norm_type == 'layer_norm':
+        brams = [
+            {"name": "BRAM_attn_input",        "dims": [SEQ_LEN, DIM_IN]},
+            {"name": "BRAM_WQ",        "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_WK",        "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_WV",        "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_gamma",        "dims": [DIM_OUT]},
+            {"name": "BRAM_beta",        "dims": [DIM_OUT]},
+            {"name": "BRAM_attn_output",        "dims": [SEQ_LEN, DIM_OUT]},
+            {"name": "BRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT]},
+        ]
+    elif norm_type == 'rms_norm': 
+        brams = [
+            {"name": "BRAM_attn_input",        "dims": [SEQ_LEN, DIM_IN]},
+            {"name": "BRAM_WQ",        "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_WK",        "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_WV",        "dims": [DIM_IN, DIM_IN]},
+            {"name": "BRAM_gamma",        "dims": [DIM_OUT]},
+            {"name": "BRAM_attn_output",        "dims": [SEQ_LEN, DIM_OUT]},
+            {"name": "BRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT]},
+        ]
 
     if with_dropout:
         brams.extend([
@@ -50,13 +63,25 @@ def generate_config_text(
     brams_str = "\n".join(brams_lines)
 
     # 2) Build the lines for drams
-    drams = [
-        {"name": "DRAM_attn_input",        "dims": [SEQ_LEN, DIM_IN], "bundle": "mem1"},
-        {"name": "DRAM_WQ",        "dims": [DIM_IN, DIM_IN], "bundle": "mem2"},
-        {"name": "DRAM_WK",        "dims": [DIM_IN, DIM_IN], "bundle": "mem3"},
-        {"name": "DRAM_WV",        "dims": [DIM_IN, DIM_IN], "bundle": "mem4"},
-        {"name": "DRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT], "bundle": "mem6"}
-    ]
+    if norm_type == 'layer_norm':
+        drams = [
+            {"name": "DRAM_attn_input",        "dims": [SEQ_LEN, DIM_IN], "bundle": "mem1"},
+            {"name": "DRAM_WQ",        "dims": [DIM_IN, DIM_IN], "bundle": "mem2"},
+            {"name": "DRAM_WK",        "dims": [DIM_IN, DIM_IN], "bundle": "mem3"},
+            {"name": "DRAM_WV",        "dims": [DIM_IN, DIM_IN], "bundle": "mem4"},
+            {"name": "DRAM_gamma",        "dims": [DIM_OUT], "bundle": "mem5"},
+            {"name": "DRAM_beta",        "dims": [DIM_OUT], "bundle": "mem5"},
+            {"name": "DRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT], "bundle": "mem6"}
+        ]
+    elif norm_type == 'rms_norm':
+        drams = [
+            {"name": "DRAM_attn_input",        "dims": [SEQ_LEN, DIM_IN], "bundle": "mem1"},
+            {"name": "DRAM_WQ",        "dims": [DIM_IN, DIM_IN], "bundle": "mem2"},
+            {"name": "DRAM_WK",        "dims": [DIM_IN, DIM_IN], "bundle": "mem3"},
+            {"name": "DRAM_WV",        "dims": [DIM_IN, DIM_IN], "bundle": "mem4"},
+            {"name": "DRAM_gamma",        "dims": [DIM_OUT], "bundle": "mem5"},
+            {"name": "DRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT], "bundle": "mem6"}
+        ]
 
     drams_lines = []
     for i, d in enumerate(drams):
@@ -74,19 +99,37 @@ def generate_config_text(
     def quoted_list(lst):
         return "[" + ", ".join(f'"{item}"' for item in lst) + "]"
     
-    ops_order = [
-        ("load_1", {"func_name": "load", "dims": [SEQ_LEN, DIM_IN], "args": ["DRAM_attn_input", "BRAM_attn_input"]}),
-        ("load_2", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WQ", "BRAM_WQ"]}),
-        ("load_3", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WK", "BRAM_WK"]}),
-        ("load_4", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WV", "BRAM_WV"]}),
-        
-        ("attn", {
-            "func_name": "mha", 
-            "dims": [SEQ_LEN, DIM_IN, NUM_HEADS, HEAD_DIM], 
-            "args": ["BRAM_attn_input", "BRAM_WQ", "BRAM_WK", "BRAM_WV", "BRAM_attn_output", f"{NUM_GROUPS}"],
-            "func_info": ["grouped_mha_rope_template.cpp", with_rope]
-        }),
-    ]
+    if norm_type == 'layer_norm':
+        ops_order = [
+            ("load_1", {"func_name": "load", "dims": [SEQ_LEN, DIM_IN], "args": ["DRAM_attn_input", "BRAM_attn_input"]}),
+            ("load_2", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WQ", "BRAM_WQ"]}),
+            ("load_3", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WK", "BRAM_WK"]}),
+            ("load_4", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WV", "BRAM_WV"]}),
+            ("load_5", {"func_name": "load", "dims": [DIM_OUT], "args": ["DRAM_gamma", "BRAM_gamma"]}),
+            ("load_6", {"func_name": "load", "dims": [DIM_OUT], "args": ["DRAM_beta", "BRAM_beta"]}),
+            
+            ("attn", {
+                "func_name": "mha", 
+                "dims": [SEQ_LEN, DIM_IN, NUM_HEADS, HEAD_DIM, unroll_factor_qkv, unroll_factor_qkv, unroll_factor_qkv, unroll_factor_qkv, unroll_factor_qkv_out, unroll_factor_qkv_out, unroll_factor_qkv_out, unroll_factor_qkv_out, unroll_factor_qk, unroll_factor_qk, unroll_factor_v, unroll_factor_qkv_out, unroll_factor_qkv_out, unroll_factor_qkv, unroll_factor_v, unroll_factor_qk, unroll_factor_qkv_out, unroll_factor_v], 
+                "args": ["BRAM_attn_input", "BRAM_WQ", "BRAM_WK", "BRAM_WV", "BRAM_attn_output", f"{NUM_GROUPS}"],
+                "func_info": ["grouped_mha_rope_template.cpp", with_rope]
+            }),
+        ]
+    elif norm_type == 'rms_norm':
+        ops_order = [
+            ("load_1", {"func_name": "load", "dims": [SEQ_LEN, DIM_IN], "args": ["DRAM_attn_input", "BRAM_attn_input"]}),
+            ("load_2", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WQ", "BRAM_WQ"]}),
+            ("load_3", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WK", "BRAM_WK"]}),
+            ("load_4", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WV", "BRAM_WV"]}),
+            ("load_5", {"func_name": "load", "dims": [DIM_OUT], "args": ["DRAM_gamma", "BRAM_gamma"]}),
+            
+            ("attn", {
+                "func_name": "mha", 
+                "dims": [SEQ_LEN, DIM_IN, NUM_HEADS, HEAD_DIM, unroll_factor_qkv, unroll_factor_qkv, unroll_factor_qkv, unroll_factor_qkv, unroll_factor_qkv_out, unroll_factor_qkv_out, unroll_factor_qkv_out, unroll_factor_qkv_out, unroll_factor_qk, unroll_factor_qk, unroll_factor_v, unroll_factor_qkv_out, unroll_factor_qkv_out, unroll_factor_qkv, unroll_factor_v, unroll_factor_qk, unroll_factor_qkv_out, unroll_factor_v], 
+                "args": ["BRAM_attn_input", "BRAM_WQ", "BRAM_WK", "BRAM_WV", "BRAM_attn_output", f"{NUM_GROUPS}"],
+                "func_info": ["grouped_mha_rope_template.cpp", with_rope]
+            }),
+        ]    
 
     input_bram = "BRAM_attn_output" 
     if with_dropout:
@@ -105,7 +148,7 @@ def generate_config_text(
             ("norm", {
                 "func_name": "layernorm", 
                 "dims": [SEQ_LEN, DIM_OUT, norm_eps], 
-                "args": [input_bram, "BRAM_norm_output"],
+                "args": [input_bram, "BRAM_gamma", "BRAM_beta", "BRAM_norm_output"],
                 "func_info": ["layer_norm_template.cpp"]
             }),
         ])
@@ -114,7 +157,7 @@ def generate_config_text(
             ("rms_norm", {
                 "func_name": "rmsnorm", 
                 "dims": [SEQ_LEN, DIM_OUT, norm_eps], 
-                "args": [input_bram, "BRAM_norm_output"],
+                "args": [input_bram, "BRAM_gamma", "BRAM_norm_output"],
                 "func_info": ["rms_norm_template.cpp"]
             }),
         ])
@@ -176,7 +219,7 @@ f'''{{
     "output_dram_names": ["DRAM_norm_output"],
     "FPGA_name": "xczu9eg-ffvb1156-2-e",
     "clock_period": 10,
-    "task": ["csim", "csynth", "cosim", "export_ip"],
+    "task": ["csynth"],
     "data_type": "{DATA_TYPE}",
     "top_func_name": "top"
 }}'''
@@ -185,41 +228,125 @@ f'''{{
 
 def main():
     # Define parameter ranges (adjust as needed)
-    vals_seq_len = [8, 16, 32]
-    vals_dim_in = [128, 256, 512]
-    vals_num_heads = [8, 16, 32]
-    vals_head_dim = [16, 32, 64]
-    vals_num_groups = [1, 4]
-    vals_with_rope = [True, False]
-    vals_norm_type = ['layer_norm', 'rms_norm']
-    vals_with_dropout = [True, False]
-    vals_dropout_prob = [0.1, 0.5]
+    # vals_seq_len = [96, 160]
+    # vals_dim_in = [96, 160]
+    # #vals_num_heads = [8]
+    # vals_head_dim = [32, 64, 96]
+    # vals_num_groups = [1]
+    # vals_with_rope = [True]
+    # vals_norm_type = ['rms_norm']
+    # vals_with_dropout = [True]
+    # vals_dropout_prob = [0.1]
+    # unroll_factor_qkv_list = [16, 32]  #dim_in
+    # unroll_factor_v_list = [16, 32]    #seq_length
+    # unroll_factor_qkv_out_list = [16, 32] #head_dim
+    
+    # vals_seq_len = [96, 192]
+    # vals_dim_in = [96, 192]
+    # #vals_num_heads = [8]
+    # vals_head_dim = [32, 64, 96]
+    # vals_num_groups = [1]
+    # vals_with_rope = [True]
+    # vals_norm_type = ['rms_norm']
+    # vals_with_dropout = [True]
+    # vals_dropout_prob = [0.1]
+    # unroll_factor_qkv_list = [16, 32]  #dim_in
+    # unroll_factor_v_list = [16, 32]    #seq_length
+    # unroll_factor_qkv_out_list = [16, 32] #head_dim
+    
+    # vals_seq_len = [96, 120, 192]
+    # vals_dim_in = [96, 120, 192]
+    # #vals_num_heads = [8]
+    # vals_head_dim = [32, 64]
+    # vals_num_groups = [1]
+    # vals_with_rope = [True]
+    # vals_norm_type = ['rms_norm']
+    # vals_with_dropout = [True]
+    # vals_dropout_prob = [0.1]
+    # unroll_factor_qkv_list = [8, 24, 32]  #dim_in
+    # unroll_factor_v_list = [8, 24, 32]    #seq_length
+    # unroll_factor_qkv_out_list = [8, 32] #head_dim
+    
+    # vals_seq_len = [64, 96, 128]
+    # vals_dim_in = [64, 96, 128]
+    # #vals_num_heads = [8]
+    # vals_head_dim = [32, 64]
+    # vals_num_groups = [1]
+    # vals_with_rope = [True]
+    # vals_norm_type = ['rms_norm']
+    # vals_with_dropout = [True]
+    # vals_dropout_prob = [0.1]
+    # unroll_factor_qkv_list = [2, 4, 8]  #dim_in
+    # unroll_factor_v_list = [2, 4, 8]    #seq_length
+    # unroll_factor_qkv_out_list = [2, 4, 8] #head_dim
+    
+    # vals_seq_len = [16, 32, 64]
+    # vals_dim_in = [16, 32, 64]
+    # #vals_num_heads = [8]
+    # vals_head_dim = [16]
+    # vals_num_groups = [1]
+    # vals_with_rope = [True]
+    # vals_norm_type = ['rms_norm']
+    # vals_with_dropout = [True]
+    # vals_dropout_prob = [0.1]
+    # unroll_factor_qkv_list = [1, 4, 8]  #dim_in
+    # unroll_factor_v_list = [1, 4, 8]    #seq_length
+    # unroll_factor_qkv_out_list = [1, 4, 8] #head_dim
+    
+    
+    # vals_seq_len = [256, 512]
+    # vals_dim_in = [256, 512]
+    # #vals_num_heads = [8]
+    # vals_head_dim = [64, 256]
+    # vals_num_groups = [1]
+    # vals_with_rope = [True]
+    # vals_norm_type = ['rms_norm']
+    # vals_with_dropout = [True]
+    # vals_dropout_prob = [0.1]
+    # unroll_factor_qkv_list = [1, 16, 64, 128, 256]  #dim_in
+    # unroll_factor_qkv_out_list = [1, 16, 64]   #head_dim
+    # unroll_factor_v_list = [1, 16, 64, 128, 256]    #seq_length
+    
+    vals_seq_len = [16, 32, 64]
+    vals_dim_in = [16, 32, 64]
+    #vals_num_heads = [8]
+    vals_head_dim = [16]
+    vals_num_groups = [1]
+    vals_with_rope = [True]
+    vals_norm_type = ['rms_norm']
+    vals_with_dropout = [True]
+    vals_dropout_prob = [0.1]
+    unroll_factor_qkv_list = [1, 4, 8]  #dim_in
+    unroll_factor_v_list = [1, 4, 8]    #seq_length
+    unroll_factor_qkv_out_list = [1, 4, 8] #head_dim
+    
 
     # Static parameters
-    data_type_list = ["ap_fixed<16,5>"]
+    data_type_list = ["ap_fixed<32,10>"]
     # seed_list = [47]    
 
     combinations = itertools.product(
-        vals_seq_len, vals_dim_in, vals_num_heads, vals_head_dim, vals_num_groups,
-        vals_with_rope, vals_norm_type, vals_with_dropout, data_type_list
+        vals_seq_len, vals_dim_in, vals_head_dim, vals_num_groups,
+        vals_with_rope, vals_norm_type, vals_with_dropout, data_type_list,
+        unroll_factor_qkv_list, unroll_factor_v_list, unroll_factor_qkv_out_list 
     )
 
     output_dir = "auto_generated_configs"
     os.makedirs(output_dir, exist_ok=True)
 
     # Now iterate over the base combos, conv_type, (groups if needed), and data_type.
-    for (seq, d_in, heads, d_head, groups, with_rope, norm, with_dropout, data_type) in combinations:
+    for (seq, d_in, d_head, groups, with_rope, norm, with_dropout, data_type, unroll_factor_qkv,  unroll_factor_v, unroll_factor_qkv_out) in combinations:
         if with_dropout:
             for dropout_prob in vals_dropout_prob:
                 config_text = generate_config_text(
-                    seq, d_in, heads, d_head, groups,
-                    data_type_list[0], with_rope, norm, with_dropout, dropout_prob
+                    seq, d_in, int(d_in/d_head), d_head, groups,
+                    data_type_list[0], with_rope, norm, unroll_factor_qkv, unroll_factor_qkv_out, unroll_factor_v, unroll_factor_qkv_out, with_dropout,  dropout_prob, 
                 )
                 naming_dtype = data_type.replace('<','_').replace('>','_').replace(',','_')
                 filename = (
-                    f"ATTN_config_{seq}_{d_in}_{heads}_{d_head}_{groups}_"
+                    f"ATTN_config_{seq}_{d_in}_{int(d_in/d_head)}_{d_head}_{groups}_"
                     f"{norm}_{with_rope}_DROP{with_dropout}_{dropout_prob}_"
-                    f"{naming_dtype}.json"
+                    f"{naming_dtype}_{unroll_factor_qkv}_{unroll_factor_v}_{unroll_factor_qkv_out}.json"
                 )
                 filepath = os.path.join(output_dir, filename)
                 with open(filepath, "w") as f:
@@ -227,22 +354,22 @@ def main():
                 print(f"Generated {filepath}")
         else:
             config_text = generate_config_text(
-                seq, d_in, heads, d_head, groups,
-                data_type_list[0], with_rope, norm, with_dropout
+                seq, d_in, int(d_in/d_head), d_head, groups,
+                data_type_list[0], with_rope, norm, unroll_factor_qkv, unroll_factor_qkv_out, unroll_factor_v, unroll_factor_qkv_out, with_dropout 
             )
             naming_dtype = data_type.replace('<','_').replace('>','_').replace(',','_')
             filename = (
-                f"ATTN_config_{seq}_{d_in}_{heads}_{d_head}_{groups}_"
+                f"ATTN_config_{seq}_{d_in}_{int(d_in/d_head)}_{d_head}_{groups}_"
                 f"{norm}_ROPE_{with_rope}_DROP_{with_dropout}_"
-                f"{naming_dtype}.json"
+                f"{naming_dtype}_{unroll_factor_qkv}__{unroll_factor_v}_{unroll_factor_qkv_out}.json"
             )
             filepath = os.path.join(output_dir, filename)
             with open(filepath, "w") as f:
                 f.write(config_text)
             print(f"Generated {filepath}")
 
-    num_combos = len(vals_seq_len) * len(vals_dim_in) * len(vals_num_heads) * len(vals_head_dim) * len(vals_num_groups) * len(vals_with_rope) * len(vals_norm_type) * len(data_type_list)
-    num_combos *= (len(vals_dropout_prob) + 1)
+    num_combos = len(vals_seq_len) * len(vals_dim_in)  * len(vals_head_dim) * len(vals_num_groups) * len(vals_with_rope) * len(vals_norm_type) * len(data_type_list) * len(unroll_factor_qkv_list) * len(unroll_factor_v_list) * len(unroll_factor_qkv_out_list)
+    num_combos *= (len(vals_dropout_prob))
     print("Total number of combos:", num_combos)
 
 if __name__ == "__main__":

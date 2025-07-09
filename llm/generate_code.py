@@ -423,7 +423,25 @@ def generate_grouped_mha_code(
     DIM_IN=512,
     NUM_HEADS=8,
     HEAD_DIM=64,
-    use_rope=True
+    use_rope=True,
+    ARRAY_FACTOR_input = 1,
+    ARRAY_FACTOR_W_q = 1,
+    ARRAY_FACTOR_W_k = 1,
+    ARRAY_FACTOR_W_v = 1,
+    ARRAY_FACTOR_W_q_dout = 1,
+    ARRAY_FACTOR_W_k_dout = 1,
+    ARRAY_FACTOR_W_v_dout = 1,
+    ARRAY_FACTOR_output = 1, 
+    ARRAY_FACTOR_Q = 1,
+    ARRAY_FACTOR_K = 1,
+    ARRAY_FACTOR_V = 1,
+    ARRAY_FACTOR_V_dout = 1,
+    UNROLL_FACTOR_QKV_OUT = 1,
+    UNROLL_FACTOR_QKV = 1,
+    ARRAY_FACTOR_scores = 1,
+    UNROLL_FACTOR_QK = 1,
+    UNROLL_FACTOR_output = 1,
+    UNROLL_FACTOR_V = 1  
 ):
     DIM_OUT = NUM_HEADS * HEAD_DIM
 
@@ -467,7 +485,25 @@ def generate_grouped_mha_code(
         DIM_OUT=DIM_OUT,
         NUM_HEADS=NUM_HEADS,
         HEAD_DIM=HEAD_DIM,
-        ROPE_INLINE=rope_inline
+        ROPE_INLINE=rope_inline,
+        ARRAY_FACTOR_input = ARRAY_FACTOR_input,
+        ARRAY_FACTOR_W_q = ARRAY_FACTOR_W_q,
+        ARRAY_FACTOR_W_k = ARRAY_FACTOR_W_k,
+        ARRAY_FACTOR_W_v = ARRAY_FACTOR_W_v,
+        ARRAY_FACTOR_W_q_dout = ARRAY_FACTOR_W_q_dout,
+        ARRAY_FACTOR_W_k_dout = ARRAY_FACTOR_W_k_dout,
+        ARRAY_FACTOR_W_v_dout = ARRAY_FACTOR_W_v_dout,
+        ARRAY_FACTOR_output = ARRAY_FACTOR_output, 
+        ARRAY_FACTOR_Q = ARRAY_FACTOR_Q,
+        ARRAY_FACTOR_K = ARRAY_FACTOR_K,
+        ARRAY_FACTOR_V = ARRAY_FACTOR_V,
+        ARRAY_FACTOR_V_dout = ARRAY_FACTOR_V_dout,
+        UNROLL_FACTOR_QKV_OUT = UNROLL_FACTOR_QKV_OUT,
+        UNROLL_FACTOR_QKV = UNROLL_FACTOR_QKV,
+        ARRAY_FACTOR_scores = ARRAY_FACTOR_scores,
+        UNROLL_FACTOR_QK = UNROLL_FACTOR_QK,
+        UNROLL_FACTOR_output = UNROLL_FACTOR_output,
+        UNROLL_FACTOR_V = UNROLL_FACTOR_V  
     )
 
     DATA_TYPE = replace_data_type(DATA_TYPE)
@@ -669,7 +705,7 @@ def generate_func_def(op_info, data_type):
     elif op_info['func_name'] == 'matmul':
         code_line, full_func_name = generate_matmul_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'mha':
-        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
+        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8], op_info["dims"][9], op_info["dims"][10], op_info["dims"][11], op_info["dims"][12], op_info["dims"][13], op_info["dims"][14], op_info["dims"][15], op_info["dims"][16], op_info["dims"][17], op_info["dims"][18], op_info["dims"][19], op_info["dims"][20], op_info["dims"][21])
     elif op_info['func_name'] == 'swa':
         code_line, full_func_name = generate_sliding_window_attention_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
     elif op_info['func_name'] == 'layernorm':
@@ -710,7 +746,7 @@ def generate_operator_call(op_info, data_type):
     elif op_info['func_name'] == 'matmul':
         code_line, full_func_name = generate_matmul_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'mha':
-        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
+        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8], op_info["dims"][9], op_info["dims"][10], op_info["dims"][11], op_info["dims"][12], op_info["dims"][13], op_info["dims"][14], op_info["dims"][15], op_info["dims"][16], op_info["dims"][17], op_info["dims"][18], op_info["dims"][19], op_info["dims"][20], op_info["dims"][21])
     elif op_info['func_name'] == 'swa':
         code_line, full_func_name = generate_sliding_window_attention_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
     elif op_info['func_name'] == 'layernorm':
@@ -1002,8 +1038,8 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
     lines.append("")
 
     # Generate add_files lines for each DRAM based on user configuration.
-    for dram in drams:
-        lines.append(f"add_files -tb {dram['name']}.txt")
+    # for dram in drams:
+    #     lines.append(f"add_files -tb {dram['name']}.txt")
     
     lines.append('open_solution "solution1"')
     lines.append("")

@@ -145,7 +145,7 @@ def generate_config_text(
             ("dot_1", {
                 "func_name": "dot_product",
                 "dims": [N],
-                "args": ["BRAM_xA", "BRAM_mmv", "BRAM_bias", "BRAM_result"],
+                "args": ["BRAM_xA", "BRAM_xAB", "BRAM_bias", "BRAM_result"],
                 "func_info": [unroll_N, intermediate_bias, inline]
             }),
         ])
@@ -305,7 +305,7 @@ f'''{{
     "output_dram_names": ["DRAM_result"],
     "FPGA_name": "xczu9eg-ffvb1156-2-e",
     "clock_period": 10,
-    "task": ["csim", "csynth", "cosim", "export_ip"],
+    "task": ["csynth"],
     "data_type": "{DATA_TYPE}",
     "top_func_name": "top"
 }}'''
@@ -313,19 +313,27 @@ f'''{{
 
 def main():
     # Define parameter ranges (adjust as needed)
-    vals_M = [64, 128]
-    vals_K = [64, 128]
-    vals_N = [64, 128]
-    vals_unroll_M = [1, 8]
-    vals_unroll_K = [1, 8]
-    vals_unroll_N = [1, 8]
-    vals_order = [x for x in itertools.permutations(["i", "j", "k"])]
-    comp_order_list = ["option_1", "option_2", "option_3", "option_4", "option_5"]
-
+    # vals_M = [512, 768, 1024, 1440]
+    # vals_K = [512, 768, 1024, 1440]
+    # vals_N = [512, 768, 1024, 1440]
+    # vals_unroll_M = [8, 16]
+    # vals_unroll_K = [8, 16]
+    # vals_unroll_N = [8, 16]
+    vals_M = [256, 512, 768, 1024]
+    vals_K = [256, 512, 768, 1024]
+    vals_N = [256, 512, 768, 1024]
+    vals_unroll_M = [8, 16]
+    vals_unroll_K = [8, 16]
+    vals_unroll_N = [8, 16]
+    vals_order_temp = [x for x in itertools.permutations(["i", "j", "k"])]
+    #print("the value of vals_order_temp is:", vals_order_temp)
+    vals_order = [vals_order_temp[0]]
+    #comp_order_list = ["option_1", "option_2", "option_3", "option_4", "option_5"]
+    comp_order_list = ["option_1"]
     # Static parameters
     need_bias_list = [False]
     inline_list = [True]
-    data_type_list = ["ap_fixed<16,5>"]
+    data_type_list = ["ap_fixed<32,10>"]
 
     combinations = itertools.product(
         vals_M, vals_K, vals_N,
