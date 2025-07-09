@@ -703,8 +703,9 @@ def generate_operator_call(op_info, data_type):
         code_line, full_func_name = generate_matrix_add_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     else:
         print("the operator we do not support!")
-        
-    args_str = ", ".join(op_info["args"])
+    #print("the value of op_info is:", op_info["args"])    
+    args_str = ", ".join((op_info["args"]))
+    #print("the value of args_str is:", args_str)
     return f"{full_func_name}({args_str});"
 
 
@@ -1003,8 +1004,8 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
     lines.append("")
 
     # Generate add_files lines for each DRAM based on user configuration.
-    for dram in drams:
-        lines.append(f"add_files -tb {dram['name']}.txt")
+    # for dram in drams:
+    #     lines.append(f"add_files -tb {dram['name']}.txt")
     
     lines.append('open_solution "solution1"')
     lines.append("")

@@ -16,18 +16,23 @@ def run_hls(run_path):
     else:
         print(f"No 'run_hls.tcl' found in {run_path}, skipping...")
 
-def run_hls_on_dirs(base_dir="hls_files"):
+def run_hls_on_dirs(base_dir="hls_files_FPT"):
     if not os.path.exists(base_dir):
         print(f"Base directory '{base_dir}' does not exist. Nothing to run.")
         return
     
-    run_dirs = [os.path.join(base_dir, d) for d in sorted(os.listdir(base_dir))]
-    # run_dirs = [d for d in run_dirs if os.path.isdir(d)]
-    run_dirs = [os.path.join(base_dir, d) for d in ['conv_block_module']]
-    num_workers = len(run_dirs)
+    run_dirs = [os.path.join(base_dir, d)
+                for d in sorted(os.listdir(base_dir))
+                if os.path.isdir(os.path.join(base_dir, d))]
+    
+    # cap the number of simultaneous workers at 64
+    max_workers = 8
+    num_workers = min(max_workers, len(run_dirs))
+    
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
+        # this will schedule all of run_dirs,
+        # but only run `num_workers` at a time
         executor.map(run_hls, run_dirs)
-
 if __name__ == "__main__":
     start = time.time()
     run_hls_on_dirs()

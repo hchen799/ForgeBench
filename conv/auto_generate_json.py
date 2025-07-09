@@ -70,7 +70,7 @@ def generate_config_text(
         return "[" + ", ".join(f'"{item}"' for item in lst) + "]"
 
     # Define ops in order. Update conv_1 per conv_type.
-    conv_args = (["BRAM_image_input", "BRAM_conv_weight", "BRAM_conv_bias", "BRAM_buffer_1", groups]
+    conv_args = (["BRAM_image_input", "BRAM_conv_weight", "BRAM_conv_bias", "BRAM_buffer_1", str(groups)]
                  if conv_type == "group_conv2d" else
                  ["BRAM_image_input", "BRAM_conv_weight", "BRAM_conv_bias", "BRAM_buffer_1"])
 
@@ -142,7 +142,7 @@ def generate_config_text(
             fi_str = "[" + ", ".join(fi_list) + "]"
             func_info_line = f'        "func_info": {fi_str},\n'
         dims_str = one_line_list(op_data["dims"])
-        args_str = quoted_list(op_data["args"]) if conv_type != "conv2d_group" else "[" + ", ".join(f'"{a}"' if not isinstance(a, int) else str(a) for a in op_data["args"]) + "]"
+        args_str = quoted_list(op_data["args"]) if conv_type != "group_conv2d" else "[" + ", ".join(f'"{a}"' if not isinstance(a, int) else str(a) for a in op_data["args"]) + "]"
         if func_info_line:
             op_block = (
 f'''{{
@@ -177,7 +177,7 @@ f'''{{
     "output_dram_names": ["DRAM_image_output"],
     "FPGA_name": "xczu9eg-ffvb1156-2-e",
     "clock_period": 10,
-    "task": ["csim", "csynth", "cosim", "export_ip"],
+    "task": ["csynth"],
     "data_type": "{DATA_TYPE}",
     "top_func_name": "top"
 }}'''
@@ -185,24 +185,36 @@ f'''{{
 
 def main():
     # Define parameter ranges (adjust as needed)
-    C_IN_list              = [16, 32]
-    H_IN_list              = [56, 28]
-    W_IN_list              = [56, 28]
-    C_OUT_list             = [16, 32]
+    # C_IN_list              = [16, 32, 48]
+    # H_IN_list              = [28, 56, 112]
+    # W_IN_list              = [28, 56, 112]
+    # C_OUT_list             = [16, 32, 48]
+    # K_list                 = [3]
+    # unroll_factor_cin_list = [1, 2, 4, 8]
+    # unroll_factor_cout_list= [1, 2, 4, 8]
+    # PAD_list               = [1]
+    # STRIDE_list            = [1]
+    # need_bias_list         = [True]
+    # activations_list       = ['relu']
+    
+    C_IN_list              = [120]
+    H_IN_list              = [14, 28, 36, 48]
+    W_IN_list              = [14, 28, 36, 48]
+    C_OUT_list             = [120]
     K_list                 = [1, 3]
-    unroll_factor_cin_list = [1, 4]
-    unroll_factor_cout_list= [1, 4]
+    unroll_factor_cin_list = [20, 24]
+    unroll_factor_cout_list= [20, 24]
     PAD_list               = [1]
     STRIDE_list            = [1]
-    need_bias_list         = [True, False]
-    activations_list       = ['relu', 'sigmoid', 'tanh']
+    need_bias_list         = [True]
+    activations_list       = ['relu']
 
     # New sweeping parameters
-    conv_type_list = ["conv2d", "group_conv2d"]
-    groups_list    = [2, 4]  # Only used when conv_type is "conv2d_group"
+    conv_type_list = ["conv2d"]
+    groups_list    = []  # Only used when conv_type is "group_conv2d"
 
     # Data type list
-    data_type_list = ["ap_fixed<16,5>"]
+    data_type_list = ["ap_fixed<32,10>"]
 
     output_dir = "auto_generated_configs"
     os.makedirs(output_dir, exist_ok=True)
@@ -227,7 +239,7 @@ def main():
     for (C_IN, H_IN, W_IN, C_OUT, K,
          unroll_factor_cin, unroll_factor_cout, PAD, STRIDE, activations, need_bias) in base_combos:
         for conv_type in conv_type_list:
-            if conv_type == "conv2d_group":
+            if conv_type == "group_conv2d":
                 for groups in groups_list:
                     for DATA_TYPE in data_type_list:
                         config_text = generate_config_text(
