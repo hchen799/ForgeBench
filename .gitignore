@@ -3,6 +3,7 @@ gemm/hls_files/*/project_1
 
 conv/hls_files/*/project_1
 llm/hls_files/*/project_1
+scale_models/hls_files/*/project_1
 
 */auto_generated_configs
 */large_hls_files

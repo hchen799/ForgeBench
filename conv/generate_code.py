@@ -125,104 +125,6 @@ def generate_store_function(
     
     return "\n".join(code_lines), func_name
 
-
-# def generate_conv_function(
-#     template_path,         # Path to conv_template.cpp
-#     func_type="conv2d",    # "conv2d" or "group_conv2d"
-#     DATA_TYPE="float",
-#     C_IN=16,
-#     C_OUT=32,
-#     H_IN=64,
-#     W_IN=64,
-#     H_OUT=64,
-#     W_OUT=64,
-#     K=3,
-#     PAD=1,             # Padding size (assumed same for height and width)
-#     STRIDE=2,          # Stride (assumed same for height and width)
-#     with_bias=False       # Whether bias is included in the function
-# ):
-#     """
-#     Reads the template file, substitutes placeholders, and extracts only the requested
-#     function block (either conv2d or group_conv2d), then writes the output to output_path.
-#     """
-#     # 1) Read the full template file
-#     with open(template_path, "r") as f:
-#         template_code = f.read()
-
-#     # 2) Set up bias-related placeholders based on with_bias flag.
-#     if with_bias:
-#         bias_arg = "    data_t bias[{C_OUT}],\n".format(C_OUT=C_OUT)
-#         bias_init_expr = "bias[co]"
-#     else:
-#         bias_arg = ""
-#         bias_init_expr = "((data_t)0)"
-
-#     # For the group function, use similar placeholders.
-#     group_bias_arg = bias_arg  # same as above
-#     group_bias_init_expr = bias_init_expr
-
-#     # 3) First, perform common placeholder substitution for header values.
-#     formatted_code = template_code.format(
-#         DATA_TYPE=DATA_TYPE,
-#         C_IN=C_IN,
-#         C_OUT=C_OUT,
-#         H_IN=H_IN,
-#         W_IN=W_IN,
-#         H_OUT=H_OUT,
-#         W_OUT=W_OUT,
-#         K=K,
-#         PAD = PAD,
-#         STRIDE = STRIDE,
-#         CONV_BIAS_ARG=bias_arg,
-#         BIAS_INIT_EXPR=bias_init_expr,
-#         GROUP_BIAS_ARG=group_bias_arg,
-#         GROUP_BIAS_INIT_EXPR=group_bias_init_expr
-#     )
-
-#     # 4) Now extract the requested function block.
-#     if func_type == "conv2d":
-#         start_marker = "/*==== CONV2D FUNCTION START ====*/"
-#         end_marker = "/*==== CONV2D FUNCTION END ====*/"
-#     elif func_type == "group_conv2d":
-#         start_marker = "/*==== GROUP_CONV2D FUNCTION START ====*/"
-#         end_marker = "/*==== GROUP_CONV2D FUNCTION END ====*/"
-#     else:
-#         raise ValueError("Invalid function type. Choose 'conv2d' or 'group_conv2d'.")
-
-#     start_index = formatted_code.find(start_marker)
-#     end_index = formatted_code.find(end_marker)
-#     if start_index == -1 or end_index == -1:
-#         raise ValueError("Could not find function markers in the template.")
-
-
-#     # Include the markers if desired or remove them.
-#     function_block = formatted_code[start_index + len(start_marker): end_index].strip()
-    
-#     DATA_TYPE = replace_data_type(DATA_TYPE)
-#     if with_bias == False:
-#         dim_suffix = f"_{C_IN}_{C_OUT}_{H_IN}_{W_IN}_{H_OUT}_{W_OUT}_{K}_{PAD}_{STRIDE}_{DATA_TYPE}"
-#     else:
-#         dim_suffix = f"_{C_IN}_{C_OUT}_{H_IN}_{W_IN}_{H_OUT}_{W_OUT}_{K}_{PAD}_{STRIDE}_{DATA_TYPE}_bias"
-#     # Use a regex to capture "void" followed by the function name
-#     function_block = re.sub(
-#         r"(void\s+(\w+))\s*\(",
-#         lambda m: m.group(1) + dim_suffix + "(", 
-#         function_block,
-#         count=1
-#     )
-#     # 5) Optionally, include the common header (everything before the first function marker).
-#     header_end = formatted_code.find("/*====")
-#     if header_end != -1:
-#         header = formatted_code[:header_end].strip() + "\n\n"
-#     else:
-#         header = ""
-
-#     # 6) Combine header and the requested function block.
-#     output_code = header + function_block
-#     function_name = func_type + dim_suffix
-    
-#     return output_code, function_name
-
 def generate_conv_function(
     template_path,         # Path to conv_template.cpp
     func_type="conv2d",    # "conv2d" or "group_conv2d"
@@ -665,6 +567,8 @@ def generate_func_def(op_info, data_type):
         code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     elif op_info['func_name'] == 'maxpool':
         code_line, full_func_name = generate_maxpool_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8])
+    elif op_info['func_name'] == 'adaptive_avgpool':
+        code_line, full_func_name = generate_adaptive_avgpool_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4])
     elif op_info['func_name'] == 'matrix_add':
         code_line, full_func_name = generate_matrix_add_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     else:
@@ -699,6 +603,8 @@ def generate_operator_call(op_info, data_type):
         code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     elif op_info['func_name'] == 'maxpool':
         code_line, full_func_name = generate_maxpool_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8])
+    elif op_info['func_name'] == 'adaptive_avgpool':
+        code_line, full_func_name = generate_adaptive_avgpool_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4])
     elif op_info['func_name'] == 'matrix_add':
         code_line, full_func_name = generate_matrix_add_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
     else:
