@@ -10,7 +10,7 @@ import pandas as pd
 
 
 
-HLS_DIR = "hls_files/"
+HLS_DIR = "large_hls_files/"
 OUTPUT_CSV = "hls_utilization.csv"
 
 def parse_utilization(xml_path, function_name=None, project_name=None):
@@ -34,17 +34,35 @@ def parse_utilization(xml_path, function_name=None, project_name=None):
         print(f"Warning: Resources or AvailableResources missing in '{xml_path}'.")
         return None
 
+    performance_report = root.find("PerformanceEstimates")
+    latency_summary = performance_report.find("SummaryOfOverallLatency")
+    latency_clock_cycle = latency_summary.find("Worst-caseLatency").text
+    latency_time = latency_summary.find("Worst-caseRealTimeLatency").text
+    
+    overall_bram = int(resources.find("BRAM_18K").text)
     overall_dsp = int(resources.find("DSP").text)
+    overall_ff = int(resources.find("FF").text)
     overall_lut = int(resources.find("LUT").text)
+    total_bram = int(available_resources.find("BRAM_18K").text)
     total_dsp = int(available_resources.find("DSP").text)
+    total_ff = int(available_resources.find("FF").text)
     total_lut = int(available_resources.find("LUT").text)
 
     utilization = {
         "Project": project_name,
-        "Function": "Overall",
-        "DSP_Utilization": (overall_dsp / total_dsp) * 100 if total_dsp else 0,
+        "Function": function_name if function_name else "Overall",
+        "CYCLE": latency_clock_cycle,
+        "LATENCY": latency_time,
+        "BRAM": overall_bram,
+        "DSP": overall_dsp,
+        "FF": overall_ff,
+        "LUT": overall_lut,
+        "BRAM_Utilization": (overall_bram / total_bram) * 100 if total_bram else 0,
         "LUT_Utilization": (overall_lut / total_lut) * 100 if total_lut else 0,
+        "FF_Utilization": (overall_ff / total_ff) * 100 if total_ff else 0,
+        "DSP_Utilization": (overall_dsp / total_dsp) * 100 if total_dsp else 0,
     }
+
 
     results = [utilization]
 

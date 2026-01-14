@@ -1,0 +1,11 @@
+[project]
+name = "hls-ml-benchmark"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.8",
+    "pandas>=2.3.3",
+    "tqdm>=4.67.1",
+]

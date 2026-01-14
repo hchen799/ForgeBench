@@ -12,214 +12,169 @@ using namespace std;
 
 typedef ap_fixed<16,5> data_t;
 
-data_t BRAM_img[224][224][3];
 data_t BRAM_tokens_0[196][768];
 data_t BRAM_tokens_1[196][768];
 data_t BRAM_tmp_0[196][768];
-data_t BRAM_ln1_0[768];
-data_t BRAM_ln2_0[768];
+data_t BRAM_tmp_2_0[196][3072];
+data_t BRAM_ln1_w_g0[768];
+data_t BRAM_ln1_w_b0[768];
+data_t BRAM_ln2_w_g0[768];
+data_t BRAM_ln2_w_b0[768];
 data_t BRAM_wq_0[768][768];
 data_t BRAM_wk_0[768][768];
 data_t BRAM_wv_0[768][768];
 data_t BRAM_wo_0[768][768];
-data_t BRAM_mlp_w1_0[768][3072];
-data_t BRAM_mlp_w2_0[3072][768];
+data_t BRAM_mlp_w1_0[3072][768];
+data_t BRAM_mlp_w2_0[768][3072];
 data_t BRAM_tokens_2[196][768];
 data_t BRAM_tmp_1[196][768];
-data_t BRAM_ln1_1[768];
-data_t BRAM_ln2_1[768];
+data_t BRAM_tmp_2_1[196][3072];
+data_t BRAM_ln1_w_g1[768];
+data_t BRAM_ln1_w_b1[768];
+data_t BRAM_ln2_w_g1[768];
+data_t BRAM_ln2_w_b1[768];
 data_t BRAM_wq_1[768][768];
 data_t BRAM_wk_1[768][768];
 data_t BRAM_wv_1[768][768];
 data_t BRAM_wo_1[768][768];
-data_t BRAM_mlp_w1_1[768][3072];
-data_t BRAM_mlp_w2_1[3072][768];
+data_t BRAM_mlp_w1_1[3072][768];
+data_t BRAM_mlp_w2_1[768][3072];
 data_t BRAM_tokens_3[196][768];
 data_t BRAM_tmp_2[196][768];
-data_t BRAM_ln1_2[768];
-data_t BRAM_ln2_2[768];
+data_t BRAM_tmp_2_2[196][3072];
+data_t BRAM_ln1_w_g2[768];
+data_t BRAM_ln1_w_b2[768];
+data_t BRAM_ln2_w_g2[768];
+data_t BRAM_ln2_w_b2[768];
 data_t BRAM_wq_2[768][768];
 data_t BRAM_wk_2[768][768];
 data_t BRAM_wv_2[768][768];
 data_t BRAM_wo_2[768][768];
-data_t BRAM_mlp_w1_2[768][3072];
-data_t BRAM_mlp_w2_2[3072][768];
+data_t BRAM_mlp_w1_2[3072][768];
+data_t BRAM_mlp_w2_2[768][3072];
 data_t BRAM_tokens_4[196][768];
 data_t BRAM_tmp_3[196][768];
-data_t BRAM_ln1_3[768];
-data_t BRAM_ln2_3[768];
+data_t BRAM_tmp_2_3[196][3072];
+data_t BRAM_ln1_w_g3[768];
+data_t BRAM_ln1_w_b3[768];
+data_t BRAM_ln2_w_g3[768];
+data_t BRAM_ln2_w_b3[768];
 data_t BRAM_wq_3[768][768];
 data_t BRAM_wk_3[768][768];
 data_t BRAM_wv_3[768][768];
 data_t BRAM_wo_3[768][768];
-data_t BRAM_mlp_w1_3[768][3072];
-data_t BRAM_mlp_w2_3[3072][768];
+data_t BRAM_mlp_w1_3[3072][768];
+data_t BRAM_mlp_w2_3[768][3072];
 data_t BRAM_tokens_5[196][768];
 data_t BRAM_tmp_4[196][768];
-data_t BRAM_ln1_4[768];
-data_t BRAM_ln2_4[768];
+data_t BRAM_tmp_2_4[196][3072];
+data_t BRAM_ln1_w_g4[768];
+data_t BRAM_ln1_w_b4[768];
+data_t BRAM_ln2_w_g4[768];
+data_t BRAM_ln2_w_b4[768];
 data_t BRAM_wq_4[768][768];
 data_t BRAM_wk_4[768][768];
 data_t BRAM_wv_4[768][768];
 data_t BRAM_wo_4[768][768];
-data_t BRAM_mlp_w1_4[768][3072];
-data_t BRAM_mlp_w2_4[3072][768];
+data_t BRAM_mlp_w1_4[3072][768];
+data_t BRAM_mlp_w2_4[768][3072];
 data_t BRAM_tokens_6[196][768];
 data_t BRAM_tmp_5[196][768];
-data_t BRAM_ln1_5[768];
-data_t BRAM_ln2_5[768];
+data_t BRAM_tmp_2_5[196][3072];
+data_t BRAM_ln1_w_g5[768];
+data_t BRAM_ln1_w_b5[768];
+data_t BRAM_ln2_w_g5[768];
+data_t BRAM_ln2_w_b5[768];
 data_t BRAM_wq_5[768][768];
 data_t BRAM_wk_5[768][768];
 data_t BRAM_wv_5[768][768];
 data_t BRAM_wo_5[768][768];
-data_t BRAM_mlp_w1_5[768][3072];
-data_t BRAM_mlp_w2_5[3072][768];
+data_t BRAM_mlp_w1_5[3072][768];
+data_t BRAM_mlp_w2_5[768][3072];
 data_t BRAM_tokens_7[196][768];
 data_t BRAM_tmp_6[196][768];
-data_t BRAM_ln1_6[768];
-data_t BRAM_ln2_6[768];
+data_t BRAM_tmp_2_6[196][3072];
+data_t BRAM_ln1_w_g6[768];
+data_t BRAM_ln1_w_b6[768];
+data_t BRAM_ln2_w_g6[768];
+data_t BRAM_ln2_w_b6[768];
 data_t BRAM_wq_6[768][768];
 data_t BRAM_wk_6[768][768];
 data_t BRAM_wv_6[768][768];
 data_t BRAM_wo_6[768][768];
-data_t BRAM_mlp_w1_6[768][3072];
-data_t BRAM_mlp_w2_6[3072][768];
+data_t BRAM_mlp_w1_6[3072][768];
+data_t BRAM_mlp_w2_6[768][3072];
 data_t BRAM_tokens_8[196][768];
 data_t BRAM_tmp_7[196][768];
-data_t BRAM_ln1_7[768];
-data_t BRAM_ln2_7[768];
+data_t BRAM_tmp_2_7[196][3072];
+data_t BRAM_ln1_w_g7[768];
+data_t BRAM_ln1_w_b7[768];
+data_t BRAM_ln2_w_g7[768];
+data_t BRAM_ln2_w_b7[768];
 data_t BRAM_wq_7[768][768];
 data_t BRAM_wk_7[768][768];
 data_t BRAM_wv_7[768][768];
 data_t BRAM_wo_7[768][768];
-data_t BRAM_mlp_w1_7[768][3072];
-data_t BRAM_mlp_w2_7[3072][768];
+data_t BRAM_mlp_w1_7[3072][768];
+data_t BRAM_mlp_w2_7[768][3072];
 data_t BRAM_tokens_9[196][768];
 data_t BRAM_tmp_8[196][768];
-data_t BRAM_ln1_8[768];
-data_t BRAM_ln2_8[768];
+data_t BRAM_tmp_2_8[196][3072];
+data_t BRAM_ln1_w_g8[768];
+data_t BRAM_ln1_w_b8[768];
+data_t BRAM_ln2_w_g8[768];
+data_t BRAM_ln2_w_b8[768];
 data_t BRAM_wq_8[768][768];
 data_t BRAM_wk_8[768][768];
 data_t BRAM_wv_8[768][768];
 data_t BRAM_wo_8[768][768];
-data_t BRAM_mlp_w1_8[768][3072];
-data_t BRAM_mlp_w2_8[3072][768];
+data_t BRAM_mlp_w1_8[3072][768];
+data_t BRAM_mlp_w2_8[768][3072];
 data_t BRAM_tokens_10[196][768];
 data_t BRAM_tmp_9[196][768];
-data_t BRAM_ln1_9[768];
-data_t BRAM_ln2_9[768];
+data_t BRAM_tmp_2_9[196][3072];
+data_t BRAM_ln1_w_g9[768];
+data_t BRAM_ln1_w_b9[768];
+data_t BRAM_ln2_w_g9[768];
+data_t BRAM_ln2_w_b9[768];
 data_t BRAM_wq_9[768][768];
 data_t BRAM_wk_9[768][768];
 data_t BRAM_wv_9[768][768];
 data_t BRAM_wo_9[768][768];
-data_t BRAM_mlp_w1_9[768][3072];
-data_t BRAM_mlp_w2_9[3072][768];
+data_t BRAM_mlp_w1_9[3072][768];
+data_t BRAM_mlp_w2_9[768][3072];
 data_t BRAM_tokens_11[196][768];
 data_t BRAM_tmp_10[196][768];
-data_t BRAM_ln1_10[768];
-data_t BRAM_ln2_10[768];
+data_t BRAM_tmp_2_10[196][3072];
+data_t BRAM_ln1_w_g10[768];
+data_t BRAM_ln1_w_b10[768];
+data_t BRAM_ln2_w_g10[768];
+data_t BRAM_ln2_w_b10[768];
 data_t BRAM_wq_10[768][768];
 data_t BRAM_wk_10[768][768];
 data_t BRAM_wv_10[768][768];
 data_t BRAM_wo_10[768][768];
-data_t BRAM_mlp_w1_10[768][3072];
-data_t BRAM_mlp_w2_10[3072][768];
+data_t BRAM_mlp_w1_10[3072][768];
+data_t BRAM_mlp_w2_10[768][3072];
 data_t BRAM_tokens_12[196][768];
 data_t BRAM_tmp_11[196][768];
-data_t BRAM_ln1_11[768];
-data_t BRAM_ln2_11[768];
+data_t BRAM_tmp_2_11[196][3072];
+data_t BRAM_ln1_w_g11[768];
+data_t BRAM_ln1_w_b11[768];
+data_t BRAM_ln2_w_g11[768];
+data_t BRAM_ln2_w_b11[768];
 data_t BRAM_wq_11[768][768];
 data_t BRAM_wk_11[768][768];
 data_t BRAM_wv_11[768][768];
 data_t BRAM_wo_11[768][768];
-data_t BRAM_mlp_w1_11[768][3072];
-data_t BRAM_mlp_w2_11[3072][768];
+data_t BRAM_mlp_w1_11[3072][768];
+data_t BRAM_mlp_w2_11[768][3072];
 
-void load_224_224_3_ap_fixed_16_5_(data_t input[224][224][3], data_t output[224][224][3])
+void load_196_768_ap_fixed_16_5_(data_t input[196][768], data_t output[196][768])
 {
-    for (int idx0 = 0; idx0 < 224; idx0++) {
-        for (int idx1 = 0; idx1 < 224; idx1++) {
-            for (int idx2 = 0; idx2 < 3; idx2++) {
-                output[idx0][idx1][idx2] = input[idx0][idx1][idx2];
-            }
-        }
-    }
-}
-
-void load_16_16_3_768_ap_fixed_16_5_(data_t input[16][16][3][768], data_t output[16][16][3][768])
-{
-    for (int idx0 = 0; idx0 < 16; idx0++) {
-        for (int idx1 = 0; idx1 < 16; idx1++) {
-            for (int idx2 = 0; idx2 < 3; idx2++) {
-                for (int idx3 = 0; idx3 < 768; idx3++) {
-                    output[idx0][idx1][idx2][idx3] = input[idx0][idx1][idx2][idx3];
-                }
-            }
-        }
-    }
-}
-
-/*
- * Auto-generated Convolution HLS Code (with optional bias and grouping)
- *
- * Dimensions:
- *   Input  : [3][224][224]
- *   Kernel : [768][3][16][16]
- *   Output : [768][196][768]
- *
- * Data type: ap_fixed<16,5>
- *
- * If bias is included, a 1D bias array of size [768] is expected.
- * For group convolution, we assume:
- *   3 % groups == 0
- *   768 % groups == 0
- */
-
-// Use a typedef for the data type
-
-//////////////////////////////////////////
-// Begin: CONV2D FUNCTION (co in the innermost loop)
-//////////////////////////////////////////
-
-void conv2d_3_768_224_224_196_768_16_0_1_ap_fixed_16_5_(
-    data_t input[3][224][224],
-    data_t kernel[768][3][16][16],
-    data_t output[768][196][768]
-)
-{
-    #pragma HLS array_partition variable=input  type=cyclic factor=8  dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=64 dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=8 dim=2
-    #pragma HLS array_partition variable=bias   type=cyclic factor=64   dim=1
-    #pragma HLS array_partition variable=output type=cyclic factor=64  dim=1
-    // Initialize output to ((data_t)0), with co in the innermost loop
-    for (int i = 0; i < 196; i++) {
-        for (int j = 0; j < 768; j++) {
-            for (int co = 0; co < 768; co++) {
-            #pragma HLS unroll factor=64
-                output[co][i][j] = ((data_t)0);
-            }
-        }
-    }
-
-    // Perform convolution (co in the innermost loop)
-    for (int i = 0; i < 196; i++) {
-        for (int j = 0; j < 768; j++) {
-            for (int kh = 0; kh < 16; kh++) {
-                for (int kw = 0; kw < 16; kw++) {
-                    int in_row = i * 1 - 0 + kh;
-                    int in_col = j * 1 - 0 + kw;
-                    if (in_row >= 0 && in_row < 224 && in_col >= 0 && in_col < 224) {
-                        for (int ci = 0; ci < 3; ci++) {
-                        #pragma HLS unroll factor=8
-                            for (int co = 0; co < 768; co++) {
-                                #pragma HLS unroll factor=64
-                                output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
-                            }
-                        }
-                    }
-                }
-            }
+    for (int idx0 = 0; idx0 < 196; idx0++) {
+        for (int idx1 = 0; idx1 < 768; idx1++) {
+            output[idx0][idx1] = input[idx0][idx1];
         }
     }
 }
@@ -240,19 +195,19 @@ void load_768_768_ap_fixed_16_5_(data_t input[768][768], data_t output[768][768]
     }
 }
 
-void load_768_3072_ap_fixed_16_5_(data_t input[768][3072], data_t output[768][3072])
+void load_3072_768_ap_fixed_16_5_(data_t input[3072][768], data_t output[3072][768])
 {
-    for (int idx0 = 0; idx0 < 768; idx0++) {
-        for (int idx1 = 0; idx1 < 3072; idx1++) {
+    for (int idx0 = 0; idx0 < 3072; idx0++) {
+        for (int idx1 = 0; idx1 < 768; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
         }
     }
 }
 
-void load_3072_768_ap_fixed_16_5_(data_t input[3072][768], data_t output[3072][768])
+void load_768_3072_ap_fixed_16_5_(data_t input[768][3072], data_t output[768][3072])
 {
-    for (int idx0 = 0; idx0 < 3072; idx0++) {
-        for (int idx1 = 0; idx1 < 768; idx1++) {
+    for (int idx0 = 0; idx0 < 768; idx0++) {
+        for (int idx1 = 0; idx1 < 3072; idx1++) {
             output[idx0][idx1] = input[idx0][idx1];
         }
     }
@@ -412,17 +367,16 @@ void matrix_add_196_768_ap_fixed_16_5_(
 
 
 
-void matmul_196_768_3072_bias_ap_fixed_16_5_(
+void matmul_196_768_3072_ap_fixed_16_5_(
     data_t input[196][768],
     data_t weights[3072][768],
-    data_t bias[3072],
     data_t output[196][3072]
 )
 {
-    // Initialize output to bias[j]
+    // Initialize output to ((data_t)0)
     for (int i = 0; i < 196; i++) {
         for (int j = 0; j < 3072; j++) {
-            output[i][j] = bias[j];
+            output[i][j] = ((data_t)0);
         }
     }
 
@@ -458,17 +412,16 @@ void gelu_196_3072_ap_fixed_16_5_(
 
 
 
-void matmul_196_3072_768_bias_ap_fixed_16_5_(
+void matmul_196_3072_768_ap_fixed_16_5_(
     data_t input[196][3072],
     data_t weights[768][3072],
-    data_t bias[768],
     data_t output[196][768]
 )
 {
-    // Initialize output to bias[j]
+    // Initialize output to ((data_t)0)
     for (int i = 0; i < 196; i++) {
         for (int j = 0; j < 768; j++) {
-            output[i][j] = bias[j];
+            output[i][j] = ((data_t)0);
         }
     }
 
@@ -492,100 +445,123 @@ void store_196_768_ap_fixed_16_5_(data_t input[196][768], data_t output[196][768
     }
 }
 
-void top(data_t DRAM_image[224][224][3], data_t DRAM_patch_w[16][16][3][768], data_t DRAM_ln1_0[768], data_t DRAM_ln2_0[768], data_t DRAM_wq_0[768][768], data_t DRAM_wk_0[768][768], data_t DRAM_wv_0[768][768], data_t DRAM_wo_0[768][768], data_t DRAM_mlp_w1_0[768][3072], data_t DRAM_mlp_w2_0[3072][768], data_t DRAM_ln1_1[768], data_t DRAM_ln2_1[768], data_t DRAM_wq_1[768][768], data_t DRAM_wk_1[768][768], data_t DRAM_wv_1[768][768], data_t DRAM_wo_1[768][768], data_t DRAM_mlp_w1_1[768][3072], data_t DRAM_mlp_w2_1[3072][768], data_t DRAM_ln1_2[768], data_t DRAM_ln2_2[768], data_t DRAM_wq_2[768][768], data_t DRAM_wk_2[768][768], data_t DRAM_wv_2[768][768], data_t DRAM_wo_2[768][768], data_t DRAM_mlp_w1_2[768][3072], data_t DRAM_mlp_w2_2[3072][768], data_t DRAM_ln1_3[768], data_t DRAM_ln2_3[768], data_t DRAM_wq_3[768][768], data_t DRAM_wk_3[768][768], data_t DRAM_wv_3[768][768], data_t DRAM_wo_3[768][768], data_t DRAM_mlp_w1_3[768][3072], data_t DRAM_mlp_w2_3[3072][768], data_t DRAM_ln1_4[768], data_t DRAM_ln2_4[768], data_t DRAM_wq_4[768][768], data_t DRAM_wk_4[768][768], data_t DRAM_wv_4[768][768], data_t DRAM_wo_4[768][768], data_t DRAM_mlp_w1_4[768][3072], data_t DRAM_mlp_w2_4[3072][768], data_t DRAM_ln1_5[768], data_t DRAM_ln2_5[768], data_t DRAM_wq_5[768][768], data_t DRAM_wk_5[768][768], data_t DRAM_wv_5[768][768], data_t DRAM_wo_5[768][768], data_t DRAM_mlp_w1_5[768][3072], data_t DRAM_mlp_w2_5[3072][768], data_t DRAM_ln1_6[768], data_t DRAM_ln2_6[768], data_t DRAM_wq_6[768][768], data_t DRAM_wk_6[768][768], data_t DRAM_wv_6[768][768], data_t DRAM_wo_6[768][768], data_t DRAM_mlp_w1_6[768][3072], data_t DRAM_mlp_w2_6[3072][768], data_t DRAM_ln1_7[768], data_t DRAM_ln2_7[768], data_t DRAM_wq_7[768][768], data_t DRAM_wk_7[768][768], data_t DRAM_wv_7[768][768], data_t DRAM_wo_7[768][768], data_t DRAM_mlp_w1_7[768][3072], data_t DRAM_mlp_w2_7[3072][768], data_t DRAM_ln1_8[768], data_t DRAM_ln2_8[768], data_t DRAM_wq_8[768][768], data_t DRAM_wk_8[768][768], data_t DRAM_wv_8[768][768], data_t DRAM_wo_8[768][768], data_t DRAM_mlp_w1_8[768][3072], data_t DRAM_mlp_w2_8[3072][768], data_t DRAM_ln1_9[768], data_t DRAM_ln2_9[768], data_t DRAM_wq_9[768][768], data_t DRAM_wk_9[768][768], data_t DRAM_wv_9[768][768], data_t DRAM_wo_9[768][768], data_t DRAM_mlp_w1_9[768][3072], data_t DRAM_mlp_w2_9[3072][768], data_t DRAM_ln1_10[768], data_t DRAM_ln2_10[768], data_t DRAM_wq_10[768][768], data_t DRAM_wk_10[768][768], data_t DRAM_wv_10[768][768], data_t DRAM_wo_10[768][768], data_t DRAM_mlp_w1_10[768][3072], data_t DRAM_mlp_w2_10[3072][768], data_t DRAM_ln1_11[768], data_t DRAM_ln2_11[768], data_t DRAM_wq_11[768][768], data_t DRAM_wk_11[768][768], data_t DRAM_wv_11[768][768], data_t DRAM_wo_11[768][768], data_t DRAM_mlp_w1_11[768][3072], data_t DRAM_mlp_w2_11[3072][768], data_t DRAM_output[196][768])
+void top(data_t DRAM_tokens_0[196][768], data_t DRAM_ln1_w_g0[768], data_t DRAM_ln1_w_b0[768], data_t DRAM_ln2_w_g0[768], data_t DRAM_ln2_w_b0[768], data_t DRAM_wq_0[768][768], data_t DRAM_wk_0[768][768], data_t DRAM_wv_0[768][768], data_t DRAM_wo_0[768][768], data_t DRAM_mlp_w1_0[3072][768], data_t DRAM_mlp_w2_0[768][3072], data_t DRAM_ln1_w_g1[768], data_t DRAM_ln1_w_b1[768], data_t DRAM_ln2_w_g1[768], data_t DRAM_ln2_w_b1[768], data_t DRAM_wq_1[768][768], data_t DRAM_wk_1[768][768], data_t DRAM_wv_1[768][768], data_t DRAM_wo_1[768][768], data_t DRAM_mlp_w1_1[3072][768], data_t DRAM_mlp_w2_1[768][3072], data_t DRAM_ln1_w_g2[768], data_t DRAM_ln1_w_b2[768], data_t DRAM_ln2_w_g2[768], data_t DRAM_ln2_w_b2[768], data_t DRAM_wq_2[768][768], data_t DRAM_wk_2[768][768], data_t DRAM_wv_2[768][768], data_t DRAM_wo_2[768][768], data_t DRAM_mlp_w1_2[3072][768], data_t DRAM_mlp_w2_2[768][3072], data_t DRAM_ln1_w_g3[768], data_t DRAM_ln1_w_b3[768], data_t DRAM_ln2_w_g3[768], data_t DRAM_ln2_w_b3[768], data_t DRAM_wq_3[768][768], data_t DRAM_wk_3[768][768], data_t DRAM_wv_3[768][768], data_t DRAM_wo_3[768][768], data_t DRAM_mlp_w1_3[3072][768], data_t DRAM_mlp_w2_3[768][3072], data_t DRAM_ln1_w_g4[768], data_t DRAM_ln1_w_b4[768], data_t DRAM_ln2_w_g4[768], data_t DRAM_ln2_w_b4[768], data_t DRAM_wq_4[768][768], data_t DRAM_wk_4[768][768], data_t DRAM_wv_4[768][768], data_t DRAM_wo_4[768][768], data_t DRAM_mlp_w1_4[3072][768], data_t DRAM_mlp_w2_4[768][3072], data_t DRAM_ln1_w_g5[768], data_t DRAM_ln1_w_b5[768], data_t DRAM_ln2_w_g5[768], data_t DRAM_ln2_w_b5[768], data_t DRAM_wq_5[768][768], data_t DRAM_wk_5[768][768], data_t DRAM_wv_5[768][768], data_t DRAM_wo_5[768][768], data_t DRAM_mlp_w1_5[3072][768], data_t DRAM_mlp_w2_5[768][3072], data_t DRAM_ln1_w_g6[768], data_t DRAM_ln1_w_b6[768], data_t DRAM_ln2_w_g6[768], data_t DRAM_ln2_w_b6[768], data_t DRAM_wq_6[768][768], data_t DRAM_wk_6[768][768], data_t DRAM_wv_6[768][768], data_t DRAM_wo_6[768][768], data_t DRAM_mlp_w1_6[3072][768], data_t DRAM_mlp_w2_6[768][3072], data_t DRAM_ln1_w_g7[768], data_t DRAM_ln1_w_b7[768], data_t DRAM_ln2_w_g7[768], data_t DRAM_ln2_w_b7[768], data_t DRAM_wq_7[768][768], data_t DRAM_wk_7[768][768], data_t DRAM_wv_7[768][768], data_t DRAM_wo_7[768][768], data_t DRAM_mlp_w1_7[3072][768], data_t DRAM_mlp_w2_7[768][3072], data_t DRAM_ln1_w_g8[768], data_t DRAM_ln1_w_b8[768], data_t DRAM_ln2_w_g8[768], data_t DRAM_ln2_w_b8[768], data_t DRAM_wq_8[768][768], data_t DRAM_wk_8[768][768], data_t DRAM_wv_8[768][768], data_t DRAM_wo_8[768][768], data_t DRAM_mlp_w1_8[3072][768], data_t DRAM_mlp_w2_8[768][3072], data_t DRAM_ln1_w_g9[768], data_t DRAM_ln1_w_b9[768], data_t DRAM_ln2_w_g9[768], data_t DRAM_ln2_w_b9[768], data_t DRAM_wq_9[768][768], data_t DRAM_wk_9[768][768], data_t DRAM_wv_9[768][768], data_t DRAM_wo_9[768][768], data_t DRAM_mlp_w1_9[3072][768], data_t DRAM_mlp_w2_9[768][3072], data_t DRAM_ln1_w_g10[768], data_t DRAM_ln1_w_b10[768], data_t DRAM_ln2_w_g10[768], data_t DRAM_ln2_w_b10[768], data_t DRAM_wq_10[768][768], data_t DRAM_wk_10[768][768], data_t DRAM_wv_10[768][768], data_t DRAM_wo_10[768][768], data_t DRAM_mlp_w1_10[3072][768], data_t DRAM_mlp_w2_10[768][3072], data_t DRAM_ln1_w_g11[768], data_t DRAM_ln1_w_b11[768], data_t DRAM_ln2_w_g11[768], data_t DRAM_ln2_w_b11[768], data_t DRAM_wq_11[768][768], data_t DRAM_wk_11[768][768], data_t DRAM_wv_11[768][768], data_t DRAM_wo_11[768][768], data_t DRAM_mlp_w1_11[3072][768], data_t DRAM_mlp_w2_11[768][3072], data_t DRAM_output[196][768])
 {
-    #pragma HLS interface m_axi port=DRAM_image offset=slave bundle=mem_image
-    #pragma HLS interface m_axi port=DRAM_patch_w offset=slave bundle=mem_patch
-    #pragma HLS interface m_axi port=DRAM_ln1_0 offset=slave bundle=mem_ln1_0
-    #pragma HLS interface m_axi port=DRAM_ln2_0 offset=slave bundle=mem_ln2_0
+    #pragma HLS interface m_axi port=DRAM_tokens_0 offset=slave bundle=mem_token_input
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g0 offset=slave bundle=mem_ln1_0
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b0 offset=slave bundle=mem_ln1_0
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g0 offset=slave bundle=mem_ln2_0
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b0 offset=slave bundle=mem_ln2_0
     #pragma HLS interface m_axi port=DRAM_wq_0 offset=slave bundle=mem_wq_0
     #pragma HLS interface m_axi port=DRAM_wk_0 offset=slave bundle=mem_wk_0
     #pragma HLS interface m_axi port=DRAM_wv_0 offset=slave bundle=mem_wv_0
     #pragma HLS interface m_axi port=DRAM_wo_0 offset=slave bundle=mem_wo_0
     #pragma HLS interface m_axi port=DRAM_mlp_w1_0 offset=slave bundle=mem_mlp1_0
     #pragma HLS interface m_axi port=DRAM_mlp_w2_0 offset=slave bundle=mem_mlp2_0
-    #pragma HLS interface m_axi port=DRAM_ln1_1 offset=slave bundle=mem_ln1_1
-    #pragma HLS interface m_axi port=DRAM_ln2_1 offset=slave bundle=mem_ln2_1
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g1 offset=slave bundle=mem_ln1_1
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b1 offset=slave bundle=mem_ln1_1
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g1 offset=slave bundle=mem_ln2_1
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b1 offset=slave bundle=mem_ln2_1
     #pragma HLS interface m_axi port=DRAM_wq_1 offset=slave bundle=mem_wq_1
     #pragma HLS interface m_axi port=DRAM_wk_1 offset=slave bundle=mem_wk_1
     #pragma HLS interface m_axi port=DRAM_wv_1 offset=slave bundle=mem_wv_1
     #pragma HLS interface m_axi port=DRAM_wo_1 offset=slave bundle=mem_wo_1
     #pragma HLS interface m_axi port=DRAM_mlp_w1_1 offset=slave bundle=mem_mlp1_1
     #pragma HLS interface m_axi port=DRAM_mlp_w2_1 offset=slave bundle=mem_mlp2_1
-    #pragma HLS interface m_axi port=DRAM_ln1_2 offset=slave bundle=mem_ln1_2
-    #pragma HLS interface m_axi port=DRAM_ln2_2 offset=slave bundle=mem_ln2_2
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g2 offset=slave bundle=mem_ln1_2
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b2 offset=slave bundle=mem_ln1_2
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g2 offset=slave bundle=mem_ln2_2
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b2 offset=slave bundle=mem_ln2_2
     #pragma HLS interface m_axi port=DRAM_wq_2 offset=slave bundle=mem_wq_2
     #pragma HLS interface m_axi port=DRAM_wk_2 offset=slave bundle=mem_wk_2
     #pragma HLS interface m_axi port=DRAM_wv_2 offset=slave bundle=mem_wv_2
     #pragma HLS interface m_axi port=DRAM_wo_2 offset=slave bundle=mem_wo_2
     #pragma HLS interface m_axi port=DRAM_mlp_w1_2 offset=slave bundle=mem_mlp1_2
     #pragma HLS interface m_axi port=DRAM_mlp_w2_2 offset=slave bundle=mem_mlp2_2
-    #pragma HLS interface m_axi port=DRAM_ln1_3 offset=slave bundle=mem_ln1_3
-    #pragma HLS interface m_axi port=DRAM_ln2_3 offset=slave bundle=mem_ln2_3
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g3 offset=slave bundle=mem_ln1_3
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b3 offset=slave bundle=mem_ln1_3
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g3 offset=slave bundle=mem_ln2_3
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b3 offset=slave bundle=mem_ln2_3
     #pragma HLS interface m_axi port=DRAM_wq_3 offset=slave bundle=mem_wq_3
     #pragma HLS interface m_axi port=DRAM_wk_3 offset=slave bundle=mem_wk_3
     #pragma HLS interface m_axi port=DRAM_wv_3 offset=slave bundle=mem_wv_3
     #pragma HLS interface m_axi port=DRAM_wo_3 offset=slave bundle=mem_wo_3
     #pragma HLS interface m_axi port=DRAM_mlp_w1_3 offset=slave bundle=mem_mlp1_3
     #pragma HLS interface m_axi port=DRAM_mlp_w2_3 offset=slave bundle=mem_mlp2_3
-    #pragma HLS interface m_axi port=DRAM_ln1_4 offset=slave bundle=mem_ln1_4
-    #pragma HLS interface m_axi port=DRAM_ln2_4 offset=slave bundle=mem_ln2_4
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g4 offset=slave bundle=mem_ln1_4
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b4 offset=slave bundle=mem_ln1_4
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g4 offset=slave bundle=mem_ln2_4
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b4 offset=slave bundle=mem_ln2_4
     #pragma HLS interface m_axi port=DRAM_wq_4 offset=slave bundle=mem_wq_4
     #pragma HLS interface m_axi port=DRAM_wk_4 offset=slave bundle=mem_wk_4
     #pragma HLS interface m_axi port=DRAM_wv_4 offset=slave bundle=mem_wv_4
     #pragma HLS interface m_axi port=DRAM_wo_4 offset=slave bundle=mem_wo_4
     #pragma HLS interface m_axi port=DRAM_mlp_w1_4 offset=slave bundle=mem_mlp1_4
     #pragma HLS interface m_axi port=DRAM_mlp_w2_4 offset=slave bundle=mem_mlp2_4
-    #pragma HLS interface m_axi port=DRAM_ln1_5 offset=slave bundle=mem_ln1_5
-    #pragma HLS interface m_axi port=DRAM_ln2_5 offset=slave bundle=mem_ln2_5
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g5 offset=slave bundle=mem_ln1_5
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b5 offset=slave bundle=mem_ln1_5
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g5 offset=slave bundle=mem_ln2_5
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b5 offset=slave bundle=mem_ln2_5
     #pragma HLS interface m_axi port=DRAM_wq_5 offset=slave bundle=mem_wq_5
     #pragma HLS interface m_axi port=DRAM_wk_5 offset=slave bundle=mem_wk_5
     #pragma HLS interface m_axi port=DRAM_wv_5 offset=slave bundle=mem_wv_5
     #pragma HLS interface m_axi port=DRAM_wo_5 offset=slave bundle=mem_wo_5
     #pragma HLS interface m_axi port=DRAM_mlp_w1_5 offset=slave bundle=mem_mlp1_5
     #pragma HLS interface m_axi port=DRAM_mlp_w2_5 offset=slave bundle=mem_mlp2_5
-    #pragma HLS interface m_axi port=DRAM_ln1_6 offset=slave bundle=mem_ln1_6
-    #pragma HLS interface m_axi port=DRAM_ln2_6 offset=slave bundle=mem_ln2_6
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g6 offset=slave bundle=mem_ln1_6
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b6 offset=slave bundle=mem_ln1_6
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g6 offset=slave bundle=mem_ln2_6
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b6 offset=slave bundle=mem_ln2_6
     #pragma HLS interface m_axi port=DRAM_wq_6 offset=slave bundle=mem_wq_6
     #pragma HLS interface m_axi port=DRAM_wk_6 offset=slave bundle=mem_wk_6
     #pragma HLS interface m_axi port=DRAM_wv_6 offset=slave bundle=mem_wv_6
     #pragma HLS interface m_axi port=DRAM_wo_6 offset=slave bundle=mem_wo_6
     #pragma HLS interface m_axi port=DRAM_mlp_w1_6 offset=slave bundle=mem_mlp1_6
     #pragma HLS interface m_axi port=DRAM_mlp_w2_6 offset=slave bundle=mem_mlp2_6
-    #pragma HLS interface m_axi port=DRAM_ln1_7 offset=slave bundle=mem_ln1_7
-    #pragma HLS interface m_axi port=DRAM_ln2_7 offset=slave bundle=mem_ln2_7
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g7 offset=slave bundle=mem_ln1_7
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b7 offset=slave bundle=mem_ln1_7
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g7 offset=slave bundle=mem_ln2_7
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b7 offset=slave bundle=mem_ln2_7
     #pragma HLS interface m_axi port=DRAM_wq_7 offset=slave bundle=mem_wq_7
     #pragma HLS interface m_axi port=DRAM_wk_7 offset=slave bundle=mem_wk_7
     #pragma HLS interface m_axi port=DRAM_wv_7 offset=slave bundle=mem_wv_7
     #pragma HLS interface m_axi port=DRAM_wo_7 offset=slave bundle=mem_wo_7
     #pragma HLS interface m_axi port=DRAM_mlp_w1_7 offset=slave bundle=mem_mlp1_7
     #pragma HLS interface m_axi port=DRAM_mlp_w2_7 offset=slave bundle=mem_mlp2_7
-    #pragma HLS interface m_axi port=DRAM_ln1_8 offset=slave bundle=mem_ln1_8
-    #pragma HLS interface m_axi port=DRAM_ln2_8 offset=slave bundle=mem_ln2_8
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g8 offset=slave bundle=mem_ln1_8
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b8 offset=slave bundle=mem_ln1_8
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g8 offset=slave bundle=mem_ln2_8
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b8 offset=slave bundle=mem_ln2_8
     #pragma HLS interface m_axi port=DRAM_wq_8 offset=slave bundle=mem_wq_8
     #pragma HLS interface m_axi port=DRAM_wk_8 offset=slave bundle=mem_wk_8
     #pragma HLS interface m_axi port=DRAM_wv_8 offset=slave bundle=mem_wv_8
     #pragma HLS interface m_axi port=DRAM_wo_8 offset=slave bundle=mem_wo_8
     #pragma HLS interface m_axi port=DRAM_mlp_w1_8 offset=slave bundle=mem_mlp1_8
     #pragma HLS interface m_axi port=DRAM_mlp_w2_8 offset=slave bundle=mem_mlp2_8
-    #pragma HLS interface m_axi port=DRAM_ln1_9 offset=slave bundle=mem_ln1_9
-    #pragma HLS interface m_axi port=DRAM_ln2_9 offset=slave bundle=mem_ln2_9
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g9 offset=slave bundle=mem_ln1_9
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b9 offset=slave bundle=mem_ln1_9
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g9 offset=slave bundle=mem_ln2_9
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b9 offset=slave bundle=mem_ln2_9
     #pragma HLS interface m_axi port=DRAM_wq_9 offset=slave bundle=mem_wq_9
     #pragma HLS interface m_axi port=DRAM_wk_9 offset=slave bundle=mem_wk_9
     #pragma HLS interface m_axi port=DRAM_wv_9 offset=slave bundle=mem_wv_9
     #pragma HLS interface m_axi port=DRAM_wo_9 offset=slave bundle=mem_wo_9
     #pragma HLS interface m_axi port=DRAM_mlp_w1_9 offset=slave bundle=mem_mlp1_9
     #pragma HLS interface m_axi port=DRAM_mlp_w2_9 offset=slave bundle=mem_mlp2_9
-    #pragma HLS interface m_axi port=DRAM_ln1_10 offset=slave bundle=mem_ln1_10
-    #pragma HLS interface m_axi port=DRAM_ln2_10 offset=slave bundle=mem_ln2_10
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g10 offset=slave bundle=mem_ln1_10
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b10 offset=slave bundle=mem_ln1_10
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g10 offset=slave bundle=mem_ln2_10
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b10 offset=slave bundle=mem_ln2_10
     #pragma HLS interface m_axi port=DRAM_wq_10 offset=slave bundle=mem_wq_10
     #pragma HLS interface m_axi port=DRAM_wk_10 offset=slave bundle=mem_wk_10
     #pragma HLS interface m_axi port=DRAM_wv_10 offset=slave bundle=mem_wv_10
     #pragma HLS interface m_axi port=DRAM_wo_10 offset=slave bundle=mem_wo_10
     #pragma HLS interface m_axi port=DRAM_mlp_w1_10 offset=slave bundle=mem_mlp1_10
     #pragma HLS interface m_axi port=DRAM_mlp_w2_10 offset=slave bundle=mem_mlp2_10
-    #pragma HLS interface m_axi port=DRAM_ln1_11 offset=slave bundle=mem_ln1_11
-    #pragma HLS interface m_axi port=DRAM_ln2_11 offset=slave bundle=mem_ln2_11
+    #pragma HLS interface m_axi port=DRAM_ln1_w_g11 offset=slave bundle=mem_ln1_11
+    #pragma HLS interface m_axi port=DRAM_ln1_w_b11 offset=slave bundle=mem_ln1_11
+    #pragma HLS interface m_axi port=DRAM_ln2_w_g11 offset=slave bundle=mem_ln2_11
+    #pragma HLS interface m_axi port=DRAM_ln2_w_b11 offset=slave bundle=mem_ln2_11
     #pragma HLS interface m_axi port=DRAM_wq_11 offset=slave bundle=mem_wq_11
     #pragma HLS interface m_axi port=DRAM_wk_11 offset=slave bundle=mem_wk_11
     #pragma HLS interface m_axi port=DRAM_wv_11 offset=slave bundle=mem_wv_11
@@ -594,200 +570,222 @@ void top(data_t DRAM_image[224][224][3], data_t DRAM_patch_w[16][16][3][768], da
     #pragma HLS interface m_axi port=DRAM_mlp_w2_11 offset=slave bundle=mem_mlp2_11
     #pragma HLS interface m_axi port=DRAM_output offset=slave bundle=mem_output
 
-    load_224_224_3_ap_fixed_16_5_(DRAM_image, BRAM_img);
-    load_16_16_3_768_ap_fixed_16_5_(DRAM_patch_w, BRAM_patch_w);
-    conv2d_3_768_224_224_196_768_16_0_1_ap_fixed_16_5_(BRAM_img, BRAM_patch_w, BRAM_tokens_0);
-    load_768_ap_fixed_16_5_(DRAM_ln1_0, BRAM_ln1_0);
-    load_768_ap_fixed_16_5_(DRAM_ln2_0, BRAM_ln2_0);
+    load_196_768_ap_fixed_16_5_(BRAM_tokens_0, DRAM_tokens_0);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g0, BRAM_ln1_w_g0);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b0, BRAM_ln1_w_b0);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g0, BRAM_ln2_w_g0);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b0, BRAM_ln2_w_b0);
     load_768_768_ap_fixed_16_5_(DRAM_wq_0, BRAM_wq_0);
     load_768_768_ap_fixed_16_5_(DRAM_wk_0, BRAM_wk_0);
     load_768_768_ap_fixed_16_5_(DRAM_wv_0, BRAM_wv_0);
     load_768_768_ap_fixed_16_5_(DRAM_wo_0, BRAM_wo_0);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_0, BRAM_mlp_w1_0);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_0, BRAM_mlp_w2_0);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_0, BRAM_ln1_0, BRAM_tokens_0);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_0, BRAM_wq_0, BRAM_wk_0, BRAM_wv_0, BRAM_wo_0, BRAM_tmp_0, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_0, BRAM_tokens_0, BRAM_tokens_0);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_0, BRAM_ln2_0, BRAM_tokens_0);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_0, BRAM_mlp_w1_0, BRAM_tmp_0);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_0, BRAM_tmp_0);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_0, BRAM_mlp_w2_0, BRAM_tmp_0);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_0, BRAM_tokens_0, BRAM_tokens_1);
-    load_768_ap_fixed_16_5_(DRAM_ln1_1, BRAM_ln1_1);
-    load_768_ap_fixed_16_5_(DRAM_ln2_1, BRAM_ln2_1);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_0, BRAM_mlp_w1_0);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_0, BRAM_mlp_w2_0);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g1, BRAM_ln1_w_g1);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b1, BRAM_ln1_w_b1);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g1, BRAM_ln2_w_g1);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b1, BRAM_ln2_w_b1);
     load_768_768_ap_fixed_16_5_(DRAM_wq_1, BRAM_wq_1);
     load_768_768_ap_fixed_16_5_(DRAM_wk_1, BRAM_wk_1);
     load_768_768_ap_fixed_16_5_(DRAM_wv_1, BRAM_wv_1);
     load_768_768_ap_fixed_16_5_(DRAM_wo_1, BRAM_wo_1);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_1, BRAM_mlp_w1_1);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_1, BRAM_mlp_w2_1);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_1, BRAM_ln1_1, BRAM_tokens_1);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_1, BRAM_wq_1, BRAM_wk_1, BRAM_wv_1, BRAM_wo_1, BRAM_tmp_1, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_1, BRAM_tokens_1, BRAM_tokens_1);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_1, BRAM_ln2_1, BRAM_tokens_1);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_1, BRAM_mlp_w1_1, BRAM_tmp_1);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_1, BRAM_tmp_1);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_1, BRAM_mlp_w2_1, BRAM_tmp_1);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_1, BRAM_tokens_1, BRAM_tokens_2);
-    load_768_ap_fixed_16_5_(DRAM_ln1_2, BRAM_ln1_2);
-    load_768_ap_fixed_16_5_(DRAM_ln2_2, BRAM_ln2_2);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_1, BRAM_mlp_w1_1);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_1, BRAM_mlp_w2_1);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g2, BRAM_ln1_w_g2);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b2, BRAM_ln1_w_b2);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g2, BRAM_ln2_w_g2);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b2, BRAM_ln2_w_b2);
     load_768_768_ap_fixed_16_5_(DRAM_wq_2, BRAM_wq_2);
     load_768_768_ap_fixed_16_5_(DRAM_wk_2, BRAM_wk_2);
     load_768_768_ap_fixed_16_5_(DRAM_wv_2, BRAM_wv_2);
     load_768_768_ap_fixed_16_5_(DRAM_wo_2, BRAM_wo_2);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_2, BRAM_mlp_w1_2);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_2, BRAM_mlp_w2_2);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_2, BRAM_ln1_2, BRAM_tokens_2);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_2, BRAM_wq_2, BRAM_wk_2, BRAM_wv_2, BRAM_wo_2, BRAM_tmp_2, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_2, BRAM_tokens_2, BRAM_tokens_2);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_2, BRAM_ln2_2, BRAM_tokens_2);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_2, BRAM_mlp_w1_2, BRAM_tmp_2);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2, BRAM_tmp_2);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_2, BRAM_mlp_w2_2, BRAM_tmp_2);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_2, BRAM_tokens_2, BRAM_tokens_3);
-    load_768_ap_fixed_16_5_(DRAM_ln1_3, BRAM_ln1_3);
-    load_768_ap_fixed_16_5_(DRAM_ln2_3, BRAM_ln2_3);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_2, BRAM_mlp_w1_2);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_2, BRAM_mlp_w2_2);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g3, BRAM_ln1_w_g3);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b3, BRAM_ln1_w_b3);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g3, BRAM_ln2_w_g3);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b3, BRAM_ln2_w_b3);
     load_768_768_ap_fixed_16_5_(DRAM_wq_3, BRAM_wq_3);
     load_768_768_ap_fixed_16_5_(DRAM_wk_3, BRAM_wk_3);
     load_768_768_ap_fixed_16_5_(DRAM_wv_3, BRAM_wv_3);
     load_768_768_ap_fixed_16_5_(DRAM_wo_3, BRAM_wo_3);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_3, BRAM_mlp_w1_3);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_3, BRAM_mlp_w2_3);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_3, BRAM_ln1_3, BRAM_tokens_3);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_3, BRAM_wq_3, BRAM_wk_3, BRAM_wv_3, BRAM_wo_3, BRAM_tmp_3, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_3, BRAM_tokens_3, BRAM_tokens_3);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_3, BRAM_ln2_3, BRAM_tokens_3);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_3, BRAM_mlp_w1_3, BRAM_tmp_3);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_3, BRAM_tmp_3);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_3, BRAM_mlp_w2_3, BRAM_tmp_3);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_3, BRAM_tokens_3, BRAM_tokens_4);
-    load_768_ap_fixed_16_5_(DRAM_ln1_4, BRAM_ln1_4);
-    load_768_ap_fixed_16_5_(DRAM_ln2_4, BRAM_ln2_4);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_3, BRAM_mlp_w1_3);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_3, BRAM_mlp_w2_3);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g4, BRAM_ln1_w_g4);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b4, BRAM_ln1_w_b4);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g4, BRAM_ln2_w_g4);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b4, BRAM_ln2_w_b4);
     load_768_768_ap_fixed_16_5_(DRAM_wq_4, BRAM_wq_4);
     load_768_768_ap_fixed_16_5_(DRAM_wk_4, BRAM_wk_4);
     load_768_768_ap_fixed_16_5_(DRAM_wv_4, BRAM_wv_4);
     load_768_768_ap_fixed_16_5_(DRAM_wo_4, BRAM_wo_4);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_4, BRAM_mlp_w1_4);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_4, BRAM_mlp_w2_4);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_4, BRAM_ln1_4, BRAM_tokens_4);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_4, BRAM_wq_4, BRAM_wk_4, BRAM_wv_4, BRAM_wo_4, BRAM_tmp_4, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_4, BRAM_tokens_4, BRAM_tokens_4);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_4, BRAM_ln2_4, BRAM_tokens_4);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_4, BRAM_mlp_w1_4, BRAM_tmp_4);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_4, BRAM_tmp_4);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_4, BRAM_mlp_w2_4, BRAM_tmp_4);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_4, BRAM_tokens_4, BRAM_tokens_5);
-    load_768_ap_fixed_16_5_(DRAM_ln1_5, BRAM_ln1_5);
-    load_768_ap_fixed_16_5_(DRAM_ln2_5, BRAM_ln2_5);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_4, BRAM_mlp_w1_4);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_4, BRAM_mlp_w2_4);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g5, BRAM_ln1_w_g5);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b5, BRAM_ln1_w_b5);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g5, BRAM_ln2_w_g5);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b5, BRAM_ln2_w_b5);
     load_768_768_ap_fixed_16_5_(DRAM_wq_5, BRAM_wq_5);
     load_768_768_ap_fixed_16_5_(DRAM_wk_5, BRAM_wk_5);
     load_768_768_ap_fixed_16_5_(DRAM_wv_5, BRAM_wv_5);
     load_768_768_ap_fixed_16_5_(DRAM_wo_5, BRAM_wo_5);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_5, BRAM_mlp_w1_5);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_5, BRAM_mlp_w2_5);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_5, BRAM_ln1_5, BRAM_tokens_5);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_5, BRAM_wq_5, BRAM_wk_5, BRAM_wv_5, BRAM_wo_5, BRAM_tmp_5, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_5, BRAM_tokens_5, BRAM_tokens_5);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_5, BRAM_ln2_5, BRAM_tokens_5);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_5, BRAM_mlp_w1_5, BRAM_tmp_5);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_5, BRAM_tmp_5);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_5, BRAM_mlp_w2_5, BRAM_tmp_5);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_5, BRAM_tokens_5, BRAM_tokens_6);
-    load_768_ap_fixed_16_5_(DRAM_ln1_6, BRAM_ln1_6);
-    load_768_ap_fixed_16_5_(DRAM_ln2_6, BRAM_ln2_6);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_5, BRAM_mlp_w1_5);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_5, BRAM_mlp_w2_5);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g6, BRAM_ln1_w_g6);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b6, BRAM_ln1_w_b6);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g6, BRAM_ln2_w_g6);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b6, BRAM_ln2_w_b6);
     load_768_768_ap_fixed_16_5_(DRAM_wq_6, BRAM_wq_6);
     load_768_768_ap_fixed_16_5_(DRAM_wk_6, BRAM_wk_6);
     load_768_768_ap_fixed_16_5_(DRAM_wv_6, BRAM_wv_6);
     load_768_768_ap_fixed_16_5_(DRAM_wo_6, BRAM_wo_6);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_6, BRAM_mlp_w1_6);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_6, BRAM_mlp_w2_6);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_6, BRAM_ln1_6, BRAM_tokens_6);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_6, BRAM_wq_6, BRAM_wk_6, BRAM_wv_6, BRAM_wo_6, BRAM_tmp_6, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_6, BRAM_tokens_6, BRAM_tokens_6);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_6, BRAM_ln2_6, BRAM_tokens_6);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_6, BRAM_mlp_w1_6, BRAM_tmp_6);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_6, BRAM_tmp_6);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_6, BRAM_mlp_w2_6, BRAM_tmp_6);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_6, BRAM_tokens_6, BRAM_tokens_7);
-    load_768_ap_fixed_16_5_(DRAM_ln1_7, BRAM_ln1_7);
-    load_768_ap_fixed_16_5_(DRAM_ln2_7, BRAM_ln2_7);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_6, BRAM_mlp_w1_6);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_6, BRAM_mlp_w2_6);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g7, BRAM_ln1_w_g7);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b7, BRAM_ln1_w_b7);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g7, BRAM_ln2_w_g7);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b7, BRAM_ln2_w_b7);
     load_768_768_ap_fixed_16_5_(DRAM_wq_7, BRAM_wq_7);
     load_768_768_ap_fixed_16_5_(DRAM_wk_7, BRAM_wk_7);
     load_768_768_ap_fixed_16_5_(DRAM_wv_7, BRAM_wv_7);
     load_768_768_ap_fixed_16_5_(DRAM_wo_7, BRAM_wo_7);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_7, BRAM_mlp_w1_7);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_7, BRAM_mlp_w2_7);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_7, BRAM_ln1_7, BRAM_tokens_7);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_7, BRAM_wq_7, BRAM_wk_7, BRAM_wv_7, BRAM_wo_7, BRAM_tmp_7, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_7, BRAM_tokens_7, BRAM_tokens_7);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_7, BRAM_ln2_7, BRAM_tokens_7);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_7, BRAM_mlp_w1_7, BRAM_tmp_7);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_7, BRAM_tmp_7);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_7, BRAM_mlp_w2_7, BRAM_tmp_7);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_7, BRAM_tokens_7, BRAM_tokens_8);
-    load_768_ap_fixed_16_5_(DRAM_ln1_8, BRAM_ln1_8);
-    load_768_ap_fixed_16_5_(DRAM_ln2_8, BRAM_ln2_8);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_7, BRAM_mlp_w1_7);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_7, BRAM_mlp_w2_7);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g8, BRAM_ln1_w_g8);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b8, BRAM_ln1_w_b8);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g8, BRAM_ln2_w_g8);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b8, BRAM_ln2_w_b8);
     load_768_768_ap_fixed_16_5_(DRAM_wq_8, BRAM_wq_8);
     load_768_768_ap_fixed_16_5_(DRAM_wk_8, BRAM_wk_8);
     load_768_768_ap_fixed_16_5_(DRAM_wv_8, BRAM_wv_8);
     load_768_768_ap_fixed_16_5_(DRAM_wo_8, BRAM_wo_8);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_8, BRAM_mlp_w1_8);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_8, BRAM_mlp_w2_8);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_8, BRAM_ln1_8, BRAM_tokens_8);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_8, BRAM_wq_8, BRAM_wk_8, BRAM_wv_8, BRAM_wo_8, BRAM_tmp_8, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_8, BRAM_tokens_8, BRAM_tokens_8);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_8, BRAM_ln2_8, BRAM_tokens_8);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_8, BRAM_mlp_w1_8, BRAM_tmp_8);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_8, BRAM_tmp_8);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_8, BRAM_mlp_w2_8, BRAM_tmp_8);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_8, BRAM_tokens_8, BRAM_tokens_9);
-    load_768_ap_fixed_16_5_(DRAM_ln1_9, BRAM_ln1_9);
-    load_768_ap_fixed_16_5_(DRAM_ln2_9, BRAM_ln2_9);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_8, BRAM_mlp_w1_8);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_8, BRAM_mlp_w2_8);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g9, BRAM_ln1_w_g9);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b9, BRAM_ln1_w_b9);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g9, BRAM_ln2_w_g9);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b9, BRAM_ln2_w_b9);
     load_768_768_ap_fixed_16_5_(DRAM_wq_9, BRAM_wq_9);
     load_768_768_ap_fixed_16_5_(DRAM_wk_9, BRAM_wk_9);
     load_768_768_ap_fixed_16_5_(DRAM_wv_9, BRAM_wv_9);
     load_768_768_ap_fixed_16_5_(DRAM_wo_9, BRAM_wo_9);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_9, BRAM_mlp_w1_9);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_9, BRAM_mlp_w2_9);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_9, BRAM_ln1_9, BRAM_tokens_9);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_9, BRAM_wq_9, BRAM_wk_9, BRAM_wv_9, BRAM_wo_9, BRAM_tmp_9, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_9, BRAM_tokens_9, BRAM_tokens_9);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_9, BRAM_ln2_9, BRAM_tokens_9);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_9, BRAM_mlp_w1_9, BRAM_tmp_9);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_9, BRAM_tmp_9);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_9, BRAM_mlp_w2_9, BRAM_tmp_9);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_9, BRAM_tokens_9, BRAM_tokens_10);
-    load_768_ap_fixed_16_5_(DRAM_ln1_10, BRAM_ln1_10);
-    load_768_ap_fixed_16_5_(DRAM_ln2_10, BRAM_ln2_10);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_9, BRAM_mlp_w1_9);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_9, BRAM_mlp_w2_9);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g10, BRAM_ln1_w_g10);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b10, BRAM_ln1_w_b10);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g10, BRAM_ln2_w_g10);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b10, BRAM_ln2_w_b10);
     load_768_768_ap_fixed_16_5_(DRAM_wq_10, BRAM_wq_10);
     load_768_768_ap_fixed_16_5_(DRAM_wk_10, BRAM_wk_10);
     load_768_768_ap_fixed_16_5_(DRAM_wv_10, BRAM_wv_10);
     load_768_768_ap_fixed_16_5_(DRAM_wo_10, BRAM_wo_10);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_10, BRAM_mlp_w1_10);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_10, BRAM_mlp_w2_10);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_10, BRAM_ln1_10, BRAM_tokens_10);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_10, BRAM_wq_10, BRAM_wk_10, BRAM_wv_10, BRAM_wo_10, BRAM_tmp_10, 64);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_10, BRAM_tokens_10, BRAM_tokens_10);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_10, BRAM_ln2_10, BRAM_tokens_10);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_10, BRAM_mlp_w1_10, BRAM_tmp_10);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_10, BRAM_tmp_10);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_10, BRAM_mlp_w2_10, BRAM_tmp_10);
-    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_10, BRAM_tokens_10, BRAM_tokens_11);
-    load_768_ap_fixed_16_5_(DRAM_ln1_11, BRAM_ln1_11);
-    load_768_ap_fixed_16_5_(DRAM_ln2_11, BRAM_ln2_11);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_10, BRAM_mlp_w1_10);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_10, BRAM_mlp_w2_10);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_g11, BRAM_ln1_w_g11);
+    load_768_ap_fixed_16_5_(DRAM_ln1_w_b11, BRAM_ln1_w_b11);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_g11, BRAM_ln2_w_g11);
+    load_768_ap_fixed_16_5_(DRAM_ln2_w_b11, BRAM_ln2_w_b11);
     load_768_768_ap_fixed_16_5_(DRAM_wq_11, BRAM_wq_11);
     load_768_768_ap_fixed_16_5_(DRAM_wk_11, BRAM_wk_11);
     load_768_768_ap_fixed_16_5_(DRAM_wv_11, BRAM_wv_11);
     load_768_768_ap_fixed_16_5_(DRAM_wo_11, BRAM_wo_11);
-    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w1_11, BRAM_mlp_w1_11);
-    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w2_11, BRAM_mlp_w2_11);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_11, BRAM_ln1_11, BRAM_tokens_11);
-    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_11, BRAM_wq_11, BRAM_wk_11, BRAM_wv_11, BRAM_wo_11, BRAM_tmp_11, 64);
+    load_3072_768_ap_fixed_16_5_(DRAM_mlp_w1_11, BRAM_mlp_w1_11);
+    load_768_3072_ap_fixed_16_5_(DRAM_mlp_w2_11, BRAM_mlp_w2_11);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_0, BRAM_ln1_w_g0, BRAM_ln1_w_b0, BRAM_tokens_0);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_0, BRAM_wq_0, BRAM_wk_0, BRAM_wv_0, BRAM_tmp_0, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_0, BRAM_tokens_0, BRAM_tokens_0);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_0, BRAM_ln2_w_g0, BRAM_ln2_w_b0, BRAM_tokens_0);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_0, BRAM_mlp_w1_0, BRAM_tmp_2_0);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_0, BRAM_tmp_2_0);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_0, BRAM_mlp_w2_0, BRAM_tmp_0);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_0, BRAM_tokens_0, BRAM_tokens_1);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_1, BRAM_ln1_w_g1, BRAM_ln1_w_b1, BRAM_tokens_1);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_1, BRAM_wq_1, BRAM_wk_1, BRAM_wv_1, BRAM_tmp_1, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_1, BRAM_tokens_1, BRAM_tokens_1);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_1, BRAM_ln2_w_g1, BRAM_ln2_w_b1, BRAM_tokens_1);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_1, BRAM_mlp_w1_1, BRAM_tmp_2_1);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_1, BRAM_tmp_2_1);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_1, BRAM_mlp_w2_1, BRAM_tmp_1);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_1, BRAM_tokens_1, BRAM_tokens_2);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_2, BRAM_ln1_w_g2, BRAM_ln1_w_b2, BRAM_tokens_2);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_2, BRAM_wq_2, BRAM_wk_2, BRAM_wv_2, BRAM_tmp_2, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_2, BRAM_tokens_2, BRAM_tokens_2);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_2, BRAM_ln2_w_g2, BRAM_ln2_w_b2, BRAM_tokens_2);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_2, BRAM_mlp_w1_2, BRAM_tmp_2_2);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_2, BRAM_tmp_2_2);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_2, BRAM_mlp_w2_2, BRAM_tmp_2);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_2, BRAM_tokens_2, BRAM_tokens_3);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_3, BRAM_ln1_w_g3, BRAM_ln1_w_b3, BRAM_tokens_3);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_3, BRAM_wq_3, BRAM_wk_3, BRAM_wv_3, BRAM_tmp_3, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_3, BRAM_tokens_3, BRAM_tokens_3);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_3, BRAM_ln2_w_g3, BRAM_ln2_w_b3, BRAM_tokens_3);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_3, BRAM_mlp_w1_3, BRAM_tmp_2_3);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_3, BRAM_tmp_2_3);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_3, BRAM_mlp_w2_3, BRAM_tmp_3);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_3, BRAM_tokens_3, BRAM_tokens_4);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_4, BRAM_ln1_w_g4, BRAM_ln1_w_b4, BRAM_tokens_4);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_4, BRAM_wq_4, BRAM_wk_4, BRAM_wv_4, BRAM_tmp_4, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_4, BRAM_tokens_4, BRAM_tokens_4);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_4, BRAM_ln2_w_g4, BRAM_ln2_w_b4, BRAM_tokens_4);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_4, BRAM_mlp_w1_4, BRAM_tmp_2_4);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_4, BRAM_tmp_2_4);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_4, BRAM_mlp_w2_4, BRAM_tmp_4);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_4, BRAM_tokens_4, BRAM_tokens_5);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_5, BRAM_ln1_w_g5, BRAM_ln1_w_b5, BRAM_tokens_5);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_5, BRAM_wq_5, BRAM_wk_5, BRAM_wv_5, BRAM_tmp_5, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_5, BRAM_tokens_5, BRAM_tokens_5);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_5, BRAM_ln2_w_g5, BRAM_ln2_w_b5, BRAM_tokens_5);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_5, BRAM_mlp_w1_5, BRAM_tmp_2_5);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_5, BRAM_tmp_2_5);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_5, BRAM_mlp_w2_5, BRAM_tmp_5);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_5, BRAM_tokens_5, BRAM_tokens_6);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_6, BRAM_ln1_w_g6, BRAM_ln1_w_b6, BRAM_tokens_6);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_6, BRAM_wq_6, BRAM_wk_6, BRAM_wv_6, BRAM_tmp_6, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_6, BRAM_tokens_6, BRAM_tokens_6);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_6, BRAM_ln2_w_g6, BRAM_ln2_w_b6, BRAM_tokens_6);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_6, BRAM_mlp_w1_6, BRAM_tmp_2_6);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_6, BRAM_tmp_2_6);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_6, BRAM_mlp_w2_6, BRAM_tmp_6);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_6, BRAM_tokens_6, BRAM_tokens_7);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_7, BRAM_ln1_w_g7, BRAM_ln1_w_b7, BRAM_tokens_7);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_7, BRAM_wq_7, BRAM_wk_7, BRAM_wv_7, BRAM_tmp_7, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_7, BRAM_tokens_7, BRAM_tokens_7);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_7, BRAM_ln2_w_g7, BRAM_ln2_w_b7, BRAM_tokens_7);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_7, BRAM_mlp_w1_7, BRAM_tmp_2_7);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_7, BRAM_tmp_2_7);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_7, BRAM_mlp_w2_7, BRAM_tmp_7);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_7, BRAM_tokens_7, BRAM_tokens_8);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_8, BRAM_ln1_w_g8, BRAM_ln1_w_b8, BRAM_tokens_8);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_8, BRAM_wq_8, BRAM_wk_8, BRAM_wv_8, BRAM_tmp_8, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_8, BRAM_tokens_8, BRAM_tokens_8);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_8, BRAM_ln2_w_g8, BRAM_ln2_w_b8, BRAM_tokens_8);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_8, BRAM_mlp_w1_8, BRAM_tmp_2_8);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_8, BRAM_tmp_2_8);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_8, BRAM_mlp_w2_8, BRAM_tmp_8);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_8, BRAM_tokens_8, BRAM_tokens_9);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_9, BRAM_ln1_w_g9, BRAM_ln1_w_b9, BRAM_tokens_9);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_9, BRAM_wq_9, BRAM_wk_9, BRAM_wv_9, BRAM_tmp_9, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_9, BRAM_tokens_9, BRAM_tokens_9);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_9, BRAM_ln2_w_g9, BRAM_ln2_w_b9, BRAM_tokens_9);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_9, BRAM_mlp_w1_9, BRAM_tmp_2_9);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_9, BRAM_tmp_2_9);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_9, BRAM_mlp_w2_9, BRAM_tmp_9);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_9, BRAM_tokens_9, BRAM_tokens_10);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_10, BRAM_ln1_w_g10, BRAM_ln1_w_b10, BRAM_tokens_10);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_10, BRAM_wq_10, BRAM_wk_10, BRAM_wv_10, BRAM_tmp_10, 64);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_10, BRAM_tokens_10, BRAM_tokens_10);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_10, BRAM_ln2_w_g10, BRAM_ln2_w_b10, BRAM_tokens_10);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_10, BRAM_mlp_w1_10, BRAM_tmp_2_10);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_10, BRAM_tmp_2_10);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_10, BRAM_mlp_w2_10, BRAM_tmp_10);
+    matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_10, BRAM_tokens_10, BRAM_tokens_11);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_11, BRAM_ln1_w_g11, BRAM_ln1_w_b11, BRAM_tokens_11);
+    grouped_multihead_attention_196_768_12_64_ap_fixed_16_5_(BRAM_tokens_11, BRAM_wq_11, BRAM_wk_11, BRAM_wv_11, BRAM_tmp_11, 64);
     matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_11, BRAM_tokens_11, BRAM_tokens_11);
-    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_11, BRAM_ln2_11, BRAM_tokens_11);
-    matmul_196_768_3072_bias_ap_fixed_16_5_(BRAM_tokens_11, BRAM_mlp_w1_11, BRAM_tmp_11);
-    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_11, BRAM_tmp_11);
-    matmul_196_3072_768_bias_ap_fixed_16_5_(BRAM_tmp_11, BRAM_mlp_w2_11, BRAM_tmp_11);
+    layer_norm_196_768_ap_fixed_16_5_(BRAM_tokens_11, BRAM_ln2_w_g11, BRAM_ln2_w_b11, BRAM_tokens_11);
+    matmul_196_768_3072_ap_fixed_16_5_(BRAM_tokens_11, BRAM_mlp_w1_11, BRAM_tmp_2_11);
+    gelu_196_3072_ap_fixed_16_5_(BRAM_tmp_2_11, BRAM_tmp_2_11);
+    matmul_196_3072_768_ap_fixed_16_5_(BRAM_tmp_2_11, BRAM_mlp_w2_11, BRAM_tmp_11);
     matrix_add_196_768_ap_fixed_16_5_(BRAM_tmp_11, BRAM_tokens_11, BRAM_tokens_12);
     store_196_768_ap_fixed_16_5_(BRAM_tokens_12, DRAM_output);
 }

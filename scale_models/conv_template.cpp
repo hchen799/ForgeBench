@@ -30,7 +30,7 @@ void conv2d(
     #pragma HLS array_partition variable=input  type=cyclic factor={ARRAY_FACTOR_INPUT}  dim=1
     #pragma HLS array_partition variable=kernel type=cyclic factor={ARRAY_FACTOR_KERNEL1} dim=1
     #pragma HLS array_partition variable=kernel type=cyclic factor={ARRAY_FACTOR_KERNEL2} dim=2
-    #pragma HLS array_partition variable=bias   type=cyclic factor={ARRAY_FACTOR_BIAS}   dim=1
+    // #pragma HLS array_partition variable=bias   type=cyclic factor={ARRAY_FACTOR_BIAS}   dim=1
     #pragma HLS array_partition variable=output type=cyclic factor={ARRAY_FACTOR_OUTPUT}  dim=1
     // Initialize output to {BIAS_INIT_EXPR}, with co in the innermost loop
     for (int i = 0; i < {H_OUT}; i++) {{
@@ -82,7 +82,7 @@ void group_conv2d(
     #pragma HLS array_partition variable=input  type=cyclic factor={ARRAY_FACTOR_INPUT}  dim=1
     #pragma HLS array_partition variable=kernel type=cyclic factor={ARRAY_FACTOR_KERNEL1} dim=1
     #pragma HLS array_partition variable=kernel type=cyclic factor={ARRAY_FACTOR_KERNEL2} dim=2
-    #pragma HLS array_partition variable=bias   type=cyclic factor={ARRAY_FACTOR_BIAS}   dim=1
+    // #pragma HLS array_partition variable=bias   type=cyclic factor={ARRAY_FACTOR_BIAS}   dim=1
     #pragma HLS array_partition variable=output type=cyclic factor={ARRAY_FACTOR_OUTPUT}  dim=1
     int c_in_per_group  = {C_IN} / groups;
     int c_out_per_group = {C_OUT} / groups;
