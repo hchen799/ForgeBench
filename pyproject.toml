@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "joblib>=1.5.3",
     "matplotlib>=3.10.8",
     "pandas>=2.3.3",
     "tqdm>=4.67.1",

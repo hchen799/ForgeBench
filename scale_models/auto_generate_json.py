@@ -12,28 +12,10 @@ import os
 ###### SWIGLU
 ###### Residual Add
 
-def generate_llama_decode_block (
-    mod_name, 
-    bram_in,
-
-    tmp_bram_1,
-    tmp_bram_2,
-    tmp_bram_3,
-
-    bram_rms_norm_weights_1,
-
-    bram_weights_q,
-    bram_weights_k,
-    bram_weights_v,
-
-    bram_rms_norm_weights_2,
-
-    bram_mm_weights_1,
-    bram_mm_weights_2,
-    bram_mm_weights_3,
-
-    bram_out,
-    SEQ_LEN,
+def generate_llama_decode_block (mod_name, bram_in,tmp_bram_1, tmp_bram_2, tmp_bram_3,
+bram_rms_norm_weights_1, bram_weights_q, bram_weights_k, bram_weights_v, bram_rms_norm_weights_2,
+bram_mm_weights_1, bram_mm_weights_2, bram_mm_weights_3, bram_out,
+SEQ_LEN,
 ):
 
     DIM_IN = 4096

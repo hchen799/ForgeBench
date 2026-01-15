@@ -197,96 +197,110 @@ def filter_dataframe(df, bram_min=18, bram_max=100, dsp_max=100, lut_max=100, cy
 df = build_dataframe_from_dirs(['gemm_data', 'conv_data', 'llm_data'])
 
 # Filter the combined DataFrame
-filtered_df, removed_indices = filter_dataframe(df, cycles_max=5e6)
+filtered_df, removed_indices = filter_dataframe(df, cycles_max=1e7)
 
 print(f"Total points: {len(df)}")
 print(f"Removed points: {len(removed_indices)}")
 print(f"Valid points: {len(filtered_df)}")
 
-# Define visualization parameters
-FIGSIZE = (9, 6)
-LABEL_FONT = 18
-TICK_FONT = 18
-TITLE_FONT = 18
 
-# Color and marker mapping for each directory
+# Define visualization parameters
+FIGSIZE = (36, 10) # Increased width and height for a 1x4 layout
+LABEL_FONT = 32
+TICK_FONT = 28
+TITLE_FONT = 32
+MARKER_SIZE = 30 # Kept as requested
+
 dir_config = {
-    'gemm_data': {'color': 'lightseagreen', 'marker': 'x', 'label': 'GEMM'},
-    'conv_data': {'color': 'coral', 'marker': 'o', 'label': 'CONV'},
-    'llm_data': {'color': 'mediumslateblue', 'marker': '^', 'label': 'LLM'},
+    'gemm_data': {'color': 'lightseagreen', 'marker': 's', 'label': 'GEMM'},
+    'conv_data': {'color': 'coral', 'marker': 's', 'label': 'CONV'},
+    'llm_data': {'color': 'mediumslateblue', 'marker': 's', 'label': 'LLM'},
 }
 
-# --- 1) BRAM Utilization vs DSP Utilization ---
-plt.figure(figsize=FIGSIZE)
-for source_dir in ['gemm_data', 'conv_data', 'llm_data']:
-    subset = filtered_df[filtered_df['source_dir'] == source_dir]
-    config = dir_config[source_dir]
-    plt.scatter(subset['bram_utils'], subset['dsp_utils'], 
-                marker=config['marker'], s=10, c=config['color'], 
-                label=config['label'], alpha=0.7)
-plt.xlabel('BRAM Utilization (%)', fontsize=LABEL_FONT)
-plt.ylabel('DSP Utilization (%)', fontsize=LABEL_FONT)
-plt.title('BRAM vs DSP Utilization', fontsize=TITLE_FONT)
-plt.xticks([0, 20, 40, 60, 80, 100], fontsize=TICK_FONT)
-plt.xlim(15, 105)
-plt.yticks([0, 20, 40, 60, 80, 100], fontsize=TICK_FONT)
-plt.ylim(-5, 105)
-plt.legend(fontsize=LABEL_FONT)
-plt.tight_layout()
-plt.savefig('bram_vs_dsp_utilization.png', dpi=300)
+x_vars = [
+'bram_utils', 
+'dsp_utils', 
+'lut_utils',
+    'bram_utils', 
+]
+y_vars = [
+'cycles',
+ 'cycles',
+ 'cycles',
+    'dsp_utils', 
+]
+titles = [
+'BRAM Util vs Cycles', 
+'DSP Util vs Cycles', 
+'LUT Util vs Cycles',
+    'BRAM vs DSP Util', 
+]
+x_labels = [
+'BRAM Utilization (%)', 
+'DSP Utilization (%)', 
+'LUT Utilization (%)',
+    'BRAM Utilization (%)', 
+]
 
-# --- 2) BRAM Utilization vs Cycles ---
-plt.figure(figsize=FIGSIZE)
-for source_dir in ['gemm_data', 'conv_data', 'llm_data']:
-    subset = filtered_df[filtered_df['source_dir'] == source_dir]
-    config = dir_config[source_dir]
-    plt.scatter(subset['bram_utils'], subset['cycles'], 
-                marker=config['marker'], s=10, c=config['color'], 
-                label=config['label'], alpha=0.7)
-plt.xlabel('BRAM Utilization (%)', fontsize=LABEL_FONT)
-plt.ylabel('Cycles', fontsize=LABEL_FONT)
-plt.title('BRAM Utilization vs Cycles', fontsize=TITLE_FONT)
-plt.xticks([0, 20, 40, 60, 80, 100], fontsize=TICK_FONT)
-plt.yticks(fontsize=TICK_FONT)
-plt.xlim(15, 105)
-plt.legend(fontsize=LABEL_FONT)
-plt.tight_layout()
-plt.savefig('bram_util_vs_cycles.png', dpi=300)
+fig, axes = plt.subplots(1, 4, figsize=FIGSIZE)
 
-# --- 3) DSP Utilization vs Cycles ---
-plt.figure(figsize=FIGSIZE)
-for source_dir in ['gemm_data', 'conv_data', 'llm_data']:
-    subset = filtered_df[filtered_df['source_dir'] == source_dir]
-    config = dir_config[source_dir]
-    plt.scatter(subset['dsp_utils'], subset['cycles'], 
-                marker=config['marker'], s=10, c=config['color'], 
-                label=config['label'], alpha=0.7)
-plt.xlabel('DSP Utilization (%)', fontsize=LABEL_FONT)
-plt.ylabel('Cycles', fontsize=LABEL_FONT)
-plt.title('DSP Utilization vs Cycles', fontsize=TITLE_FONT)
-plt.xticks([0, 20, 40, 60, 80, 100], fontsize=TICK_FONT)
-plt.yticks(fontsize=TICK_FONT)
-plt.xlim(-5, 105)
-plt.legend(fontsize=LABEL_FONT)
-plt.tight_layout()
-plt.savefig('dsp_util_vs_cycles.png', dpi=300)
+for i, ax in enumerate(axes):
+    x_col = x_vars[i]
+    y_col = y_vars[i]
+    
+    for source_dir in ['gemm_data', 'conv_data', 'llm_data']:
+        subset = filtered_df[filtered_df['source_dir'] == source_dir]
+        config = dir_config[source_dir]
+        ax.scatter(subset[x_col], subset[y_col], 
+                   marker=config['marker'], s=MARKER_SIZE, c=config['color'], 
+                   label=config['label'], alpha=0.7)
+    
+    # Text and Labels
+    ax.set_title(titles[i], fontsize=TITLE_FONT, fontweight='bold', pad=20)
+    ax.set_xlabel(x_labels[i], fontsize=LABEL_FONT, fontweight='bold')
+    ax.set_ylabel(y_col.replace('dsp_utils', 'DSP Utilization (%)').title(), fontsize=LABEL_FONT, fontweight='bold')
+    
+    # Tick Formatting
+    ax.set_xticks([0, 20, 40, 60, 80, 100])
+    ax.tick_params(axis='both', labelsize=TICK_FONT)
+    
+    # Offset Text Font Size (The 1e7)
+    ax.yaxis.get_offset_text().set_fontsize(TICK_FONT-4)
+    
+    # Axis Limits
+    ax.set_xlim(left=-5 if 'bram' not in x_col else 15, right=105)
+    if i == 3: ax.set_ylim(-5, 105)
 
-# --- 4) LUT Utilization vs Cycles ---
-plt.figure(figsize=FIGSIZE)
-for source_dir in ['gemm_data', 'conv_data', 'llm_data']:
-    subset = filtered_df[filtered_df['source_dir'] == source_dir]
-    config = dir_config[source_dir]
-    plt.scatter(subset['lut_utils'], subset['cycles'], 
-                marker=config['marker'], s=10, c=config['color'], 
-                label=config['label'], alpha=0.7)
-plt.xlabel('LUT Utilization (%)', fontsize=LABEL_FONT)
-plt.ylabel('Cycles', fontsize=LABEL_FONT)
-plt.title('LUT Utilization vs Cycles', fontsize=TITLE_FONT)
-plt.xticks([0, 20, 40, 60, 80, 100], fontsize=TICK_FONT)
-plt.yticks(fontsize=TICK_FONT)
-plt.xlim(-5, 105)
-plt.legend(fontsize=LABEL_FONT)
-plt.tight_layout()
-plt.savefig('lut_util_vs_cycles.png', dpi=300)
+# import fontmanager
+from matplotlib import font_manager as fm
 
-print(f"Plots saved successfully.")
+
+# Create a single legend at the bottom
+handles, labels = axes[0].get_legend_handles_labels()
+
+#set fm to bold
+prop = fm.FontProperties()
+prop.set_weight('bold')
+prop.set_size(LABEL_FONT)
+# make marker opacity 1.0 in legend
+# make marker sqaure in legend
+for handle in handles:
+    handle.set_alpha(1.0)
+
+
+fig.legend(handles, labels, 
+           loc='lower center', 
+           bbox_to_anchor=(0.5, -0.02), # Positioned below the axes
+           ncol=3, 
+           fontsize=LABEL_FONT,
+           markerscale=6.0, # This makes the legend markers 4x larger than the plot markers
+           frameon=True,
+           handletextpad=0.2,
+           prop=prop)
+
+# Adjust layout to make room for the bottom legend
+plt.tight_layout()
+plt.subplots_adjust(bottom=0.2) # Manually ensure space for the legend
+
+plt.savefig('combined_utilization_bottom_legend.png', dpi=300, bbox_inches='tight')
+plt.show()

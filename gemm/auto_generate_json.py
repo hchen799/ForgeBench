@@ -305,7 +305,7 @@ f'''{{
     "output_dram_names": ["DRAM_result"],
     "FPGA_name": "xczu9eg-ffvb1156-2-e",
     "clock_period": 10,
-    "task": ["csim", "csynth", "cosim", "export_ip"],
+    "task": ["csynth", "export_ip"],
     "data_type": "{DATA_TYPE}",
     "top_func_name": "top"
 }}'''
