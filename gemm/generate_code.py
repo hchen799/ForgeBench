@@ -1620,7 +1620,7 @@ def generate_dram_txt_files(drams, seed=None):
             numbers = [str(random.random()) for _ in range(total_elements)]
             # Write each number on a new line.
             f.write("\n".join(numbers))
-        print(f"Generated {filename} with {total_elements} random numbers.")
+        # print(f"Generated {filename} with {total_elements} random numbers.")
         
 def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="design.tcl"):
     """
@@ -1683,8 +1683,8 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
     with open(output_filename, "w") as f:
         f.write("\n".join(lines))
     
-    print(f"Generated TCL file '{output_filename}' with the following contents:")
-    print("\n".join(lines))
+    # print(f"Generated TCL file '{output_filename}' with the following contents:")
+    # print("\n".join(lines))
 
 if __name__ == "__main__":
     # Example BRAM configuration:
@@ -1822,23 +1822,23 @@ if __name__ == "__main__":
     output_filename = "top.cpp"
     with open(output_filename, "w") as f:
         f.write(top_code)
-    print("Generated top.cpp:")    
+    # print("Generated top.cpp:")
         
     top_h_code = generate_top_h(drams, data_type="ap_fixed<16, 5>", top_func_name="top")
     with open("top.h", "w") as f:
         f.write(top_h_code)
-    print("Generated top.h:")
+    # print("Generated top.h:")
     
     tb_code = generate_testbench_code(drams, output_dram_names, data_type="ap_fixed<16, 5>", top_func_name="top")
     with open("tb_top.cpp", "w") as f:
         f.write(tb_code)
-    print("Generated tb_top.cpp:")
+    # print("Generated tb_top.cpp:")
     
     generate_dram_txt_files(drams, seed=42)
-    print("Generated dram initialization.")
+    # print("Generated dram initialization.")
     
     generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="run_hls.tcl")
-    print("Generated tcl file to launch tasks.")
+    # print("Generated tcl file to launch tasks.")
     
     
 

@@ -11,7 +11,7 @@ import pandas as pd
 
 
 HLS_DIR = "large_hls_files/"
-OUTPUT_CSV = "hls_synth_utilization.csv"
+OUTPUT_CSV = "hls_synth_utilization_all.csv"
 
 def parse_utilization(xml_path, project_name=None, function_name=None):
     if not os.path.exists(xml_path):

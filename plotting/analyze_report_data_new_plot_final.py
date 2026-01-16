@@ -197,7 +197,7 @@ def filter_dataframe(df, bram_min=18, bram_max=100, dsp_max=100, lut_max=100, cy
 df = build_dataframe_from_dirs(['gemm_data', 'conv_data', 'llm_data'])
 
 # Filter the combined DataFrame
-filtered_df, removed_indices = filter_dataframe(df, cycles_max=1e7)
+filtered_df, removed_indices = filter_dataframe(df, bram_min=0, cycles_max=1e9)
 
 print(f"Total points: {len(df)}")
 print(f"Removed points: {len(removed_indices)}")
@@ -259,7 +259,8 @@ for i, ax in enumerate(axes):
     ax.set_title(titles[i], fontsize=TITLE_FONT, fontweight='bold', pad=20)
     ax.set_xlabel(x_labels[i], fontsize=LABEL_FONT, fontweight='bold')
     ax.set_ylabel(y_col.replace('dsp_utils', 'DSP Utilization (%)').title(), fontsize=LABEL_FONT, fontweight='bold')
-    
+    # make the y axis log
+
     # Tick Formatting
     ax.set_xticks([0, 20, 40, 60, 80, 100])
     ax.tick_params(axis='both', labelsize=TICK_FONT)
@@ -269,7 +270,11 @@ for i, ax in enumerate(axes):
     
     # Axis Limits
     ax.set_xlim(left=-5 if 'bram' not in x_col else 15, right=105)
-    if i == 3: ax.set_ylim(-5, 105)
+    if i == 3:
+        ax.set_ylim(-5, 105)
+    else:
+        ax.set_yscale('log')
+
 
 # import fontmanager
 from matplotlib import font_manager as fm
