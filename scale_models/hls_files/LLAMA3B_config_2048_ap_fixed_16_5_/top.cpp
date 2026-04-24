@@ -11,6 +11,7 @@
 using namespace std;
 
 typedef ap_fixed<16,5> data_t;
+typedef ap_fixed<32,10> acc_t;
 
 data_t BRAM_input_0[2048][4096];
 data_t BRAM_tmp_1[2048][4096];

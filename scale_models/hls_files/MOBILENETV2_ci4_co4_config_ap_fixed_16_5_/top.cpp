@@ -11,6 +11,7 @@
 using namespace std;
 
 typedef ap_fixed<16,5> data_t;
+typedef ap_fixed<32,10> acc_t;
 
 data_t BRAM_feat_0[3][224][224];
 data_t BRAM_feat_1[3][112][112];
@@ -162,16 +163,16 @@ void conv2d_3_32_224_224_112_112_3_1_2_ap_fixed_16_5_(
     data_t output[32][112][112]
 )
 {
-    #pragma HLS array_partition variable=input  type=cyclic factor=0  dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=8 dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=64 dim=2
-    // #pragma HLS array_partition variable=bias   type=cyclic factor=8   dim=1
-    #pragma HLS array_partition variable=output type=cyclic factor=64  dim=1
+    #pragma HLS array_partition variable=input  type=cyclic factor=4  dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=2
+    // #pragma HLS array_partition variable=bias   type=cyclic factor=4   dim=1
+    #pragma HLS array_partition variable=output type=cyclic factor=4  dim=1
     // Initialize output to ((data_t)0), with co in the innermost loop
     for (int i = 0; i < 112; i++) {
         for (int j = 0; j < 112; j++) {
             for (int co = 0; co < 32; co++) {
-            #pragma HLS unroll factor=8
+            #pragma HLS unroll factor=4
                 output[co][i][j] = ((data_t)0);
             }
         }
@@ -186,9 +187,9 @@ void conv2d_3_32_224_224_112_112_3_1_2_ap_fixed_16_5_(
                     int in_col = j * 2 - 1 + kw;
                     if (in_row >= 0 && in_row < 224 && in_col >= 0 && in_col < 224) {
                         for (int ci = 0; ci < 3; ci++) {
-                        #pragma HLS unroll factor=64
+                        #pragma HLS unroll factor=4
                             for (int co = 0; co < 32; co++) {
-                                #pragma HLS unroll factor=8
+                                #pragma HLS unroll factor=4
                                 output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
                             }
                         }
@@ -298,11 +299,11 @@ void group_conv2d_960_960_112_112_112_112_3_1_1_ap_fixed_16_5_(
     int groups
 )
 {
-    #pragma HLS array_partition variable=input  type=cyclic factor=0  dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=8 dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=64 dim=2
-    // #pragma HLS array_partition variable=bias   type=cyclic factor=8   dim=1
-    #pragma HLS array_partition variable=output type=cyclic factor=64  dim=1
+    #pragma HLS array_partition variable=input  type=cyclic factor=4  dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=2
+    // #pragma HLS array_partition variable=bias   type=cyclic factor=4   dim=1
+    #pragma HLS array_partition variable=output type=cyclic factor=4  dim=1
     int c_in_per_group  = 960 / groups;
     int c_out_per_group = 960 / groups;
 
@@ -310,7 +311,7 @@ void group_conv2d_960_960_112_112_112_112_3_1_1_ap_fixed_16_5_(
     for (int i = 0; i < 112; i++) {
         for (int j = 0; j < 112; j++) {
             for (int co = 0; co < 960; co++) {
-            #pragma HLS unroll factor=8
+            #pragma HLS unroll factor=4
                 output[co][i][j] = ((data_t)0);
             }
         }
@@ -332,9 +333,9 @@ void group_conv2d_960_960_112_112_112_112_3_1_1_ap_fixed_16_5_(
                         int in_col = j * 1 - 1 + kw;
                         if (in_row >= 0 && in_row < 112 && in_col >= 0 && in_col < 112) {
                             for (int ci = ci_start; ci < ci_end; ci++) {
-                            #pragma HLS unroll factor=64
+                            #pragma HLS unroll factor=4
                                 for (int co = co_start; co < co_end; co++) {
-                                #pragma HLS unroll factor=8
+                                #pragma HLS unroll factor=4
                                     output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
                                 }
                             }
@@ -444,16 +445,16 @@ void conv2d_960_320_112_112_112_112_1_0_1_ap_fixed_16_5_(
     data_t output[320][112][112]
 )
 {
-    #pragma HLS array_partition variable=input  type=cyclic factor=0  dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=8 dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=64 dim=2
-    // #pragma HLS array_partition variable=bias   type=cyclic factor=8   dim=1
-    #pragma HLS array_partition variable=output type=cyclic factor=64  dim=1
+    #pragma HLS array_partition variable=input  type=cyclic factor=4  dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=2
+    // #pragma HLS array_partition variable=bias   type=cyclic factor=4   dim=1
+    #pragma HLS array_partition variable=output type=cyclic factor=4  dim=1
     // Initialize output to ((data_t)0), with co in the innermost loop
     for (int i = 0; i < 112; i++) {
         for (int j = 0; j < 112; j++) {
             for (int co = 0; co < 320; co++) {
-            #pragma HLS unroll factor=8
+            #pragma HLS unroll factor=4
                 output[co][i][j] = ((data_t)0);
             }
         }
@@ -468,9 +469,9 @@ void conv2d_960_320_112_112_112_112_1_0_1_ap_fixed_16_5_(
                     int in_col = j * 1 - 0 + kw;
                     if (in_row >= 0 && in_row < 112 && in_col >= 0 && in_col < 112) {
                         for (int ci = 0; ci < 960; ci++) {
-                        #pragma HLS unroll factor=64
+                        #pragma HLS unroll factor=4
                             for (int co = 0; co < 320; co++) {
-                                #pragma HLS unroll factor=8
+                                #pragma HLS unroll factor=4
                                 output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
                             }
                         }
@@ -541,16 +542,16 @@ void conv2d_160_960_112_112_112_112_1_0_1_ap_fixed_16_5_(
     data_t output[960][112][112]
 )
 {
-    #pragma HLS array_partition variable=input  type=cyclic factor=0  dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=8 dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=64 dim=2
-    // #pragma HLS array_partition variable=bias   type=cyclic factor=8   dim=1
-    #pragma HLS array_partition variable=output type=cyclic factor=64  dim=1
+    #pragma HLS array_partition variable=input  type=cyclic factor=4  dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=2
+    // #pragma HLS array_partition variable=bias   type=cyclic factor=4   dim=1
+    #pragma HLS array_partition variable=output type=cyclic factor=4  dim=1
     // Initialize output to ((data_t)0), with co in the innermost loop
     for (int i = 0; i < 112; i++) {
         for (int j = 0; j < 112; j++) {
             for (int co = 0; co < 960; co++) {
-            #pragma HLS unroll factor=8
+            #pragma HLS unroll factor=4
                 output[co][i][j] = ((data_t)0);
             }
         }
@@ -565,9 +566,9 @@ void conv2d_160_960_112_112_112_112_1_0_1_ap_fixed_16_5_(
                     int in_col = j * 1 - 0 + kw;
                     if (in_row >= 0 && in_row < 112 && in_col >= 0 && in_col < 112) {
                         for (int ci = 0; ci < 160; ci++) {
-                        #pragma HLS unroll factor=64
+                        #pragma HLS unroll factor=4
                             for (int co = 0; co < 960; co++) {
-                                #pragma HLS unroll factor=8
+                                #pragma HLS unroll factor=4
                                 output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
                             }
                         }
@@ -628,16 +629,16 @@ void conv2d_320_1280_112_112_112_112_1_0_1_ap_fixed_16_5_(
     data_t output[1280][112][112]
 )
 {
-    #pragma HLS array_partition variable=input  type=cyclic factor=0  dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=8 dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=64 dim=2
-    // #pragma HLS array_partition variable=bias   type=cyclic factor=8   dim=1
-    #pragma HLS array_partition variable=output type=cyclic factor=64  dim=1
+    #pragma HLS array_partition variable=input  type=cyclic factor=4  dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=2
+    // #pragma HLS array_partition variable=bias   type=cyclic factor=4   dim=1
+    #pragma HLS array_partition variable=output type=cyclic factor=4  dim=1
     // Initialize output to ((data_t)0), with co in the innermost loop
     for (int i = 0; i < 112; i++) {
         for (int j = 0; j < 112; j++) {
             for (int co = 0; co < 1280; co++) {
-            #pragma HLS unroll factor=8
+            #pragma HLS unroll factor=4
                 output[co][i][j] = ((data_t)0);
             }
         }
@@ -652,9 +653,9 @@ void conv2d_320_1280_112_112_112_112_1_0_1_ap_fixed_16_5_(
                     int in_col = j * 1 - 0 + kw;
                     if (in_row >= 0 && in_row < 112 && in_col >= 0 && in_col < 112) {
                         for (int ci = 0; ci < 320; ci++) {
-                        #pragma HLS unroll factor=64
+                        #pragma HLS unroll factor=4
                             for (int co = 0; co < 1280; co++) {
-                                #pragma HLS unroll factor=8
+                                #pragma HLS unroll factor=4
                                 output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
                             }
                         }
@@ -804,16 +805,16 @@ void conv2d_1280_1000_1_1_1_1_1_0_1_ap_fixed_16_5_(
     data_t output[1000][1][1]
 )
 {
-    #pragma HLS array_partition variable=input  type=cyclic factor=0  dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=8 dim=1
-    #pragma HLS array_partition variable=kernel type=cyclic factor=64 dim=2
-    // #pragma HLS array_partition variable=bias   type=cyclic factor=8   dim=1
-    #pragma HLS array_partition variable=output type=cyclic factor=64  dim=1
+    #pragma HLS array_partition variable=input  type=cyclic factor=4  dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=1
+    #pragma HLS array_partition variable=kernel type=cyclic factor=4 dim=2
+    // #pragma HLS array_partition variable=bias   type=cyclic factor=4   dim=1
+    #pragma HLS array_partition variable=output type=cyclic factor=4  dim=1
     // Initialize output to ((data_t)0), with co in the innermost loop
     for (int i = 0; i < 1; i++) {
         for (int j = 0; j < 1; j++) {
             for (int co = 0; co < 1000; co++) {
-            #pragma HLS unroll factor=8
+            #pragma HLS unroll factor=4
                 output[co][i][j] = ((data_t)0);
             }
         }
@@ -828,9 +829,9 @@ void conv2d_1280_1000_1_1_1_1_1_0_1_ap_fixed_16_5_(
                     int in_col = j * 1 - 0 + kw;
                     if (in_row >= 0 && in_row < 1 && in_col >= 0 && in_col < 1) {
                         for (int ci = 0; ci < 1280; ci++) {
-                        #pragma HLS unroll factor=64
+                        #pragma HLS unroll factor=4
                             for (int co = 0; co < 1000; co++) {
-                                #pragma HLS unroll factor=8
+                                #pragma HLS unroll factor=4
                                 output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
                             }
                         }

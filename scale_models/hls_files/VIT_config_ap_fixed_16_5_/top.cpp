@@ -11,6 +11,7 @@
 using namespace std;
 
 typedef ap_fixed<16,5> data_t;
+typedef ap_fixed<32,10> acc_t;
 
 data_t BRAM_tokens_0[196][768];
 data_t BRAM_tokens_1[196][768];
