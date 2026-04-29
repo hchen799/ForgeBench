@@ -26,6 +26,160 @@ def normalize_conv_tile_dims(dims):
     return dims[:12]
 
 
+def normalize_attention_tile_dims(dims):
+    if len(dims) == 4:
+        return dims + [1, 1, 1]
+    if len(dims) == 5:
+        return dims + [1, 1]
+    if len(dims) < 5:
+        raise ValueError(f"attention tile expects at least 5 dims, got {len(dims)}: {dims}")
+    return dims[:7]
+
+
+def normalize_clear_matrix_tile_dims(dims):
+    if len(dims) == 2:
+        return dims + [1]
+    if len(dims) < 3:
+        raise ValueError(f"clear_matrix_tile expects at least 2 dims, got {len(dims)}: {dims}")
+    return dims[:3]
+
+
+def normalize_init_rowmax_tile_dims(dims):
+    if len(dims) == 2:
+        return dims + [1]
+    if len(dims) < 3:
+        raise ValueError(f"init_rowmax_tile expects at least 2 dims, got {len(dims)}: {dims}")
+    return dims[:3]
+
+
+def normalize_matrix_tile_dims(dims):
+    if len(dims) == 4:
+        return dims + [1]
+    if len(dims) < 5:
+        raise ValueError(f"matrix tile expects at least 4 dims, got {len(dims)}: {dims}")
+    return dims[:5]
+
+
+def normalize_vector_tile_dims(dims):
+    if len(dims) == 2:
+        return dims + [1]
+    if len(dims) < 3:
+        raise ValueError(f"vector tile expects at least 2 dims, got {len(dims)}: {dims}")
+    return dims[:3]
+
+
+def normalize_layer_vector_tile_dims(dims):
+    if len(dims) == 3:
+        return dims + [1]
+    if len(dims) < 4:
+        raise ValueError(f"layer vector tile expects at least 3 dims, got {len(dims)}: {dims}")
+    return dims[:4]
+
+
+def normalize_weight_tile_layered_dims(dims):
+    if len(dims) == 5:
+        return dims + [1, 1]
+    if len(dims) < 7:
+        raise ValueError(f"layered weight tile expects at least 5 dims, got {len(dims)}: {dims}")
+    return dims[:7]
+
+
+def normalize_weight_tile_2d_dims(dims):
+    if len(dims) == 4:
+        return dims + [1, 1]
+    if len(dims) < 6:
+        raise ValueError(f"2d weight tile expects at least 4 dims, got {len(dims)}: {dims}")
+    return dims[:6]
+
+
+def normalize_linear_tile_dims(dims):
+    if len(dims) == 3:
+        return dims + [1, 1]
+    if len(dims) < 5:
+        raise ValueError(f"linear_tile expects at least 3 dims, got {len(dims)}: {dims}")
+    return dims[:5]
+
+
+def normalize_matrix_2d_op_dims(dims):
+    if len(dims) == 2:
+        return dims + [1]
+    if len(dims) < 3:
+        raise ValueError(f"2d matrix op expects at least 2 dims, got {len(dims)}: {dims}")
+    return dims[:3]
+
+
+def normalize_embedding_lookup_chunk_dims(dims):
+    if len(dims) == 5:
+        return dims + [1]
+    if len(dims) < 6:
+        raise ValueError(f"embedding_lookup_chunk expects at least 5 dims, got {len(dims)}: {dims}")
+    return dims[:6]
+
+
+def normalize_rmsnorm_tile_dims(dims):
+    if len(dims) == 2:
+        return dims + [1]
+    if len(dims) < 3:
+        raise ValueError(f"rmsnorm tile expects at least 2 dims, got {len(dims)}: {dims}")
+    return dims[:3]
+
+
+def normalize_kv_cache_load_group_tile_dims(dims):
+    if len(dims) == 5:
+        return dims + [1]
+    if len(dims) < 6:
+        raise ValueError(f"kv_cache_load_group_tile expects at least 5 dims, got {len(dims)}: {dims}")
+    return dims[:6]
+
+
+def normalize_rope_tile_dims(dims):
+    if len(dims) == 3:
+        return dims + [1, 1]
+    if len(dims) < 5:
+        raise ValueError(f"apply_rope_tile expects at least 3 dims, got {len(dims)}: {dims}")
+    return dims[:5]
+
+
+def normalize_attention_rowmax_dims(dims):
+    if len(dims) == 3:
+        return dims + [1]
+    if len(dims) < 4:
+        raise ValueError(f"attention_rowmax_tile expects at least 3 dims, got {len(dims)}: {dims}")
+    return dims[:4]
+
+
+def normalize_attention_finalize_dims(dims):
+    if len(dims) == 3:
+        return dims + [1, 1]
+    if len(dims) < 5:
+        raise ValueError(f"attention_finalize_tile expects at least 3 dims, got {len(dims)}: {dims}")
+    return dims[:5]
+
+
+def effective_pragma_factor(requested_factor, concrete_dim):
+    requested_factor = int(requested_factor)
+    concrete_dim = int(concrete_dim)
+    if requested_factor <= 1 or concrete_dim <= 1:
+        return 1
+    return min(requested_factor, concrete_dim)
+
+
+def emit_array_partition(code_lines, variable, requested_factor, concrete_dim, dim, indent="    "):
+    factor = effective_pragma_factor(requested_factor, concrete_dim)
+    if factor > 1:
+        code_lines.append(
+            f"{indent}#pragma HLS array_partition variable={variable} type=cyclic factor={factor} dim={dim}"
+        )
+    return factor
+
+
+def emit_unroll(code_lines, requested_factor, concrete_dim, indent):
+    factor = effective_pragma_factor(requested_factor, concrete_dim)
+    if factor > 1:
+        code_lines.append(f"{indent}#pragma HLS unroll factor={factor}")
+    return factor
+
+
 def generate_activation_function(
     template_path,   # Path to the activation template file (e.g., activations_template_2d.cpp)
     func_name,       # The activation function to generate (e.g., "relu6", "sigmoid", "gelu", etc.)
@@ -626,41 +780,53 @@ def generate_clear_tile_function(dims, data_type="float", func_prefix="clear_til
     return "\n".join(code_lines), func_name
 
 
-def generate_clear_matrix_tile_function(rows, cols, data_type="float", func_prefix="clear_matrix_tile"):
+def generate_clear_matrix_tile_function(rows, cols, data_type="float", func_prefix="clear_matrix_tile", col_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"{func_prefix}_{rows}_{cols}_{data_type_tag}"
+    func_name = f"{func_prefix}_{rows}_{cols}_{col_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(data_t tile[{rows}][{cols}])",
         "{",
+    ]
+    emit_array_partition(code_lines, "tile", col_factor, cols, 2)
+    code_lines.extend([
         f"    for (int r = 0; r < {rows}; ++r) {{",
         f"        for (int c = 0; c < {cols}; ++c) {{",
+    ])
+    emit_unroll(code_lines, col_factor, cols, "            ")
+    code_lines.extend([
         "            tile[r][c] = (data_t)0;",
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_init_rowmax_tile_function(rows, cols, data_type="float"):
+def generate_init_rowmax_tile_function(rows, cols, data_type="float", col_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"init_rowmax_tile_{rows}_{cols}_{data_type_tag}"
+    func_name = f"init_rowmax_tile_{rows}_{cols}_{col_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(data_t tile[{rows}][{cols}])",
         "{",
+    ]
+    emit_array_partition(code_lines, "tile", col_factor, cols, 2)
+    code_lines.extend([
         f"    for (int r = 0; r < {rows}; ++r) {{",
         f"        for (int c = 0; c < {cols}; ++c) {{",
+    ])
+    emit_unroll(code_lines, col_factor, cols, "            ")
+    code_lines.extend([
         "            tile[r][c] = (data_t)(-8);",
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_load_matrix_tile_function(data_type="float", rows=2048, cols=4096, tile_rows=16, tile_cols=128):
+def generate_load_matrix_tile_function(data_type="float", rows=2048, cols=4096, tile_rows=16, tile_cols=128, col_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"load_matrix_tile_{rows}_{cols}_{tile_rows}_{tile_cols}_{data_type_tag}"
+    func_name = f"load_matrix_tile_{rows}_{cols}_{tile_rows}_{tile_cols}_{col_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t input[{rows}][{cols}],",
@@ -669,8 +835,14 @@ def generate_load_matrix_tile_function(data_type="float", rows=2048, cols=4096, 
         "    int col_base",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "output", col_factor, tile_cols, 2)
+    code_lines.extend([
         f"    for (int r = 0; r < {tile_rows}; ++r) {{",
         f"        for (int c = 0; c < {tile_cols}; ++c) {{",
+    ])
+    emit_unroll(code_lines, col_factor, tile_cols, "            ")
+    code_lines.extend([
         "            int src_r = row_base + r;",
         "            int src_c = col_base + c;",
         f"            if (src_r < {rows} && src_c < {cols}) {{",
@@ -681,13 +853,13 @@ def generate_load_matrix_tile_function(data_type="float", rows=2048, cols=4096, 
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_store_matrix_tile_function(data_type="float", rows=2048, cols=4096, tile_rows=16, tile_cols=128):
+def generate_store_matrix_tile_function(data_type="float", rows=2048, cols=4096, tile_rows=16, tile_cols=128, col_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"store_matrix_tile_{rows}_{cols}_{tile_rows}_{tile_cols}_{data_type_tag}"
+    func_name = f"store_matrix_tile_{rows}_{cols}_{tile_rows}_{tile_cols}_{col_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t input[{tile_rows}][{tile_cols}],",
@@ -698,13 +870,19 @@ def generate_store_matrix_tile_function(data_type="float", rows=2048, cols=4096,
         "    int valid_cols",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "input", col_factor, tile_cols, 2)
+    code_lines.extend([
         "    for (int r = 0; r < valid_rows; ++r) {",
         "        for (int c = 0; c < valid_cols; ++c) {",
+    ])
+    emit_unroll(code_lines, col_factor, tile_cols, "            ")
+    code_lines.extend([
         "            output[row_base + r][col_base + c] = input[r][c];",
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
@@ -726,9 +904,82 @@ def generate_load_layer_vector_function(data_type="float", layers=32, dim=4096):
     return "\n".join(code_lines), func_name
 
 
-def generate_load_weight_tile_layered_function(data_type="float", layers=32, out_dim=4096, in_dim=4096, out_tile=256, in_tile=128):
+def generate_clear_vector_tile_function(rows=16, data_type="float"):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"load_weight_tile_layered_{layers}_{out_dim}_{in_dim}_{out_tile}_{in_tile}_{data_type_tag}"
+    func_name = f"clear_vector_tile_{rows}_{data_type_tag}"
+    code_lines = [
+        f"void {func_name}(data_t output[{rows}])",
+        "{",
+        f"    for (int r = 0; r < {rows}; ++r) {{",
+        "        output[r] = (data_t)0;",
+        "    }",
+        "}",
+    ]
+    return "\n".join(code_lines), func_name
+
+
+def generate_load_vector_tile_function(data_type="float", dim=4096, tile_cols=128, col_factor=1):
+    data_type_tag = replace_data_type(data_type)
+    func_name = f"load_vector_tile_{dim}_{tile_cols}_{col_factor}_{data_type_tag}"
+    code_lines = [
+        f"void {func_name}(",
+        f"    data_t input[{dim}],",
+        f"    data_t output[{tile_cols}],",
+        "    int col_base",
+        ")",
+        "{",
+    ]
+    emit_array_partition(code_lines, "output", col_factor, tile_cols, 1)
+    code_lines.extend([
+        f"    for (int c = 0; c < {tile_cols}; ++c) {{",
+    ])
+    emit_unroll(code_lines, col_factor, tile_cols, "        ")
+    code_lines.extend([
+        "        int src_c = col_base + c;",
+        f"        if (src_c < {dim}) {{",
+        "            output[c] = input[src_c];",
+        "        } else {",
+        "            output[c] = (data_t)0;",
+        "        }",
+        "    }",
+        "}",
+    ])
+    return "\n".join(code_lines), func_name
+
+
+def generate_load_layer_vector_tile_function(data_type="float", layers=32, dim=4096, tile_cols=128, col_factor=1):
+    data_type_tag = replace_data_type(data_type)
+    func_name = f"load_layer_vector_tile_{layers}_{dim}_{tile_cols}_{col_factor}_{data_type_tag}"
+    code_lines = [
+        f"void {func_name}(",
+        f"    data_t input[{layers}][{dim}],",
+        f"    data_t output[{tile_cols}],",
+        "    int layer_idx,",
+        "    int col_base",
+        ")",
+        "{",
+    ]
+    emit_array_partition(code_lines, "output", col_factor, tile_cols, 1)
+    code_lines.extend([
+        f"    for (int c = 0; c < {tile_cols}; ++c) {{",
+    ])
+    emit_unroll(code_lines, col_factor, tile_cols, "        ")
+    code_lines.extend([
+        "        int src_c = col_base + c;",
+        f"        if (src_c < {dim}) {{",
+        "            output[c] = input[layer_idx][src_c];",
+        "        } else {",
+        "            output[c] = (data_t)0;",
+        "        }",
+        "    }",
+        "}",
+    ])
+    return "\n".join(code_lines), func_name
+
+
+def generate_load_weight_tile_layered_function(data_type="float", layers=32, out_dim=4096, in_dim=4096, out_tile=256, in_tile=128, out_factor=1, in_factor=1):
+    data_type_tag = replace_data_type(data_type)
+    func_name = f"load_weight_tile_layered_{layers}_{out_dim}_{in_dim}_{out_tile}_{in_tile}_{out_factor}_{in_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t input[{layers}][{out_dim}][{in_dim}],",
@@ -738,8 +989,15 @@ def generate_load_weight_tile_layered_function(data_type="float", layers=32, out
         "    int in_base",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "output", out_factor, out_tile, 1)
+    emit_array_partition(code_lines, "output", in_factor, in_tile, 2)
+    code_lines.extend([
         f"    for (int o = 0; o < {out_tile}; ++o) {{",
         f"        for (int i = 0; i < {in_tile}; ++i) {{",
+    ])
+    emit_unroll(code_lines, in_factor, in_tile, "            ")
+    code_lines.extend([
         "            int src_o = out_base + o;",
         "            int src_i = in_base + i;",
         f"            if (src_o < {out_dim} && src_i < {in_dim}) {{",
@@ -750,13 +1008,13 @@ def generate_load_weight_tile_layered_function(data_type="float", layers=32, out
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_load_weight_tile_2d_function(data_type="float", out_dim=128256, in_dim=4096, out_tile=256, in_tile=128):
+def generate_load_weight_tile_2d_function(data_type="float", out_dim=128256, in_dim=4096, out_tile=256, in_tile=128, out_factor=1, in_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"load_weight_tile_2d_{out_dim}_{in_dim}_{out_tile}_{in_tile}_{data_type_tag}"
+    func_name = f"load_weight_tile_2d_{out_dim}_{in_dim}_{out_tile}_{in_tile}_{out_factor}_{in_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t input[{out_dim}][{in_dim}],",
@@ -765,8 +1023,15 @@ def generate_load_weight_tile_2d_function(data_type="float", out_dim=128256, in_
         "    int in_base",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "output", out_factor, out_tile, 1)
+    emit_array_partition(code_lines, "output", in_factor, in_tile, 2)
+    code_lines.extend([
         f"    for (int o = 0; o < {out_tile}; ++o) {{",
         f"        for (int i = 0; i < {in_tile}; ++i) {{",
+    ])
+    emit_unroll(code_lines, in_factor, in_tile, "            ")
+    code_lines.extend([
         "            int src_o = out_base + o;",
         "            int src_i = in_base + i;",
         f"            if (src_o < {out_dim} && src_i < {in_dim}) {{",
@@ -777,13 +1042,13 @@ def generate_load_weight_tile_2d_function(data_type="float", out_dim=128256, in_
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_linear_tile_function(data_type="float", tile_rows=16, in_tile=128, out_tile=256):
+def generate_linear_tile_function(data_type="float", tile_rows=16, in_tile=128, out_tile=256, in_factor=1, out_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"linear_tile_{tile_rows}_{in_tile}_{out_tile}_{data_type_tag}"
+    func_name = f"linear_tile_{tile_rows}_{in_tile}_{out_tile}_{in_factor}_{out_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t input[{tile_rows}][{in_tile}],",
@@ -794,17 +1059,29 @@ def generate_linear_tile_function(data_type="float", tile_rows=16, in_tile=128, 
         "    int valid_in",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "input", in_factor, in_tile, 2)
+    emit_array_partition(code_lines, "weight", out_factor, out_tile, 1)
+    emit_array_partition(code_lines, "weight", in_factor, in_tile, 2)
+    emit_array_partition(code_lines, "output", out_factor, out_tile, 2)
+    code_lines.extend([
         "    for (int r = 0; r < valid_rows; ++r) {",
         "        for (int o = 0; o < valid_out; ++o) {",
+    ])
+    emit_unroll(code_lines, out_factor, out_tile, "            ")
+    code_lines.extend([
         "            acc_t sum = output[r][o];",
         "            for (int i = 0; i < valid_in; ++i) {",
+    ])
+    emit_unroll(code_lines, in_factor, in_tile, "                ")
+    code_lines.extend([
         "                sum += (acc_t)input[r][i] * (acc_t)weight[o][i];",
         "            }",
         "            output[r][o] = (data_t)sum;",
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
@@ -835,9 +1112,9 @@ def generate_rmsnorm_tile_full_function(data_type="float", tile_rows=16, dim=409
     return "\n".join(code_lines), func_name
 
 
-def generate_matrix_add_tile_2d_function(data_type="float", rows=16, cols=4096):
+def generate_matrix_add_tile_2d_function(data_type="float", rows=16, cols=4096, col_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"matrix_add_tile_2d_{rows}_{cols}_{data_type_tag}"
+    func_name = f"matrix_add_tile_2d_{rows}_{cols}_{col_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t lhs[{rows}][{cols}],",
@@ -847,19 +1124,27 @@ def generate_matrix_add_tile_2d_function(data_type="float", rows=16, cols=4096):
         "    int valid_cols",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "lhs", col_factor, cols, 2)
+    emit_array_partition(code_lines, "rhs", col_factor, cols, 2)
+    emit_array_partition(code_lines, "output", col_factor, cols, 2)
+    code_lines.extend([
         "    for (int r = 0; r < valid_rows; ++r) {",
         "        for (int c = 0; c < valid_cols; ++c) {",
+    ])
+    emit_unroll(code_lines, col_factor, cols, "            ")
+    code_lines.extend([
         "            output[r][c] = lhs[r][c] + rhs[r][c];",
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_activation_tile_2d_function(data_type="float", rows=16, cols=128, act_type="silu"):
+def generate_activation_tile_2d_function(data_type="float", rows=16, cols=128, act_type="silu", col_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"{act_type}_tile_2d_{rows}_{cols}_{data_type_tag}"
+    func_name = f"{act_type}_tile_2d_{rows}_{cols}_{col_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t input[{rows}][{cols}],",
@@ -868,9 +1153,14 @@ def generate_activation_tile_2d_function(data_type="float", rows=16, cols=128, a
         "    int valid_cols",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "input", col_factor, cols, 2)
+    emit_array_partition(code_lines, "output", col_factor, cols, 2)
+    code_lines.extend([
         "    for (int r = 0; r < valid_rows; ++r) {",
         "        for (int c = 0; c < valid_cols; ++c) {",
-    ]
+    ])
+    emit_unroll(code_lines, col_factor, cols, "            ")
     if act_type == "silu":
         code_lines.append("            output[r][c] = input[r][c] / ((data_t)1 + hls::exp(-input[r][c]));")
     elif act_type == "relu":
@@ -885,9 +1175,9 @@ def generate_activation_tile_2d_function(data_type="float", rows=16, cols=128, a
     return "\n".join(code_lines), func_name
 
 
-def generate_elementwise_mult_tile_2d_function(data_type="float", rows=16, cols=128):
+def generate_elementwise_mult_tile_2d_function(data_type="float", rows=16, cols=128, col_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"elementwise_mult_tile_2d_{rows}_{cols}_{data_type_tag}"
+    func_name = f"elementwise_mult_tile_2d_{rows}_{cols}_{col_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t lhs[{rows}][{cols}],",
@@ -897,13 +1187,132 @@ def generate_elementwise_mult_tile_2d_function(data_type="float", rows=16, cols=
         "    int valid_cols",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "lhs", col_factor, cols, 2)
+    emit_array_partition(code_lines, "rhs", col_factor, cols, 2)
+    emit_array_partition(code_lines, "output", col_factor, cols, 2)
+    code_lines.extend([
         "    for (int r = 0; r < valid_rows; ++r) {",
         "        for (int c = 0; c < valid_cols; ++c) {",
+    ])
+    emit_unroll(code_lines, col_factor, cols, "            ")
+    code_lines.extend([
         "            output[r][c] = lhs[r][c] * rhs[r][c];",
         "        }",
         "    }",
         "}",
+    ])
+    return "\n".join(code_lines), func_name
+
+
+def generate_embedding_lookup_chunk_function(data_type="float", seq_length=2048, vocab=128256, hidden=4096, tile_rows=16, tile_cols=128, col_factor=1):
+    data_type_tag = replace_data_type(data_type)
+    func_name = f"embedding_lookup_chunk_{seq_length}_{vocab}_{hidden}_{tile_rows}_{tile_cols}_{col_factor}_{data_type_tag}"
+    code_lines = [
+        f"void {func_name}(",
+        f"    data_t token_ids[{seq_length}],",
+        f"    data_t embedding[{vocab}][{hidden}],",
+        f"    data_t output[{tile_rows}][{tile_cols}],",
+        "    int token_base,",
+        "    int hidden_base,",
+        "    int valid_rows,",
+        "    int valid_cols",
+        ")",
+        "{",
     ]
+    emit_array_partition(code_lines, "output", col_factor, tile_cols, 2)
+    code_lines.extend([
+        "    for (int r = 0; r < valid_rows; ++r) {",
+        "        int token_idx = (int)token_ids[token_base + r];",
+        f"        if (token_idx < 0 || token_idx >= {vocab}) token_idx = 0;",
+        "        for (int c = 0; c < valid_cols; ++c) {",
+    ])
+    emit_unroll(code_lines, col_factor, tile_cols, "            ")
+    code_lines.extend([
+        "            output[r][c] = embedding[token_idx][hidden_base + c];",
+        "        }",
+        "    }",
+        "}",
+    ])
+    return "\n".join(code_lines), func_name
+
+
+def generate_rmsnorm_accumulate_tile_function(data_type="float", tile_rows=16, tile_cols=128, col_factor=1):
+    data_type_tag = replace_data_type(data_type)
+    func_name = f"rmsnorm_accumulate_tile_{tile_rows}_{tile_cols}_{col_factor}_{data_type_tag}"
+    code_lines = [
+        f"void {func_name}(",
+        f"    data_t input[{tile_rows}][{tile_cols}],",
+        f"    data_t sumsq[{tile_rows}],",
+        "    int valid_rows,",
+        "    int valid_cols",
+        ")",
+        "{",
+    ]
+    emit_array_partition(code_lines, "input", col_factor, tile_cols, 2)
+    code_lines.extend([
+        "    for (int r = 0; r < valid_rows; ++r) {",
+        "        acc_t sum = (acc_t)sumsq[r];",
+        "        for (int c = 0; c < valid_cols; ++c) {",
+    ])
+    emit_unroll(code_lines, col_factor, tile_cols, "            ")
+    code_lines.extend([
+        "            sum += (acc_t)input[r][c] * (acc_t)input[r][c];",
+        "        }",
+        "        sumsq[r] = (data_t)sum;",
+        "    }",
+        "}",
+    ])
+    return "\n".join(code_lines), func_name
+
+
+def generate_rmsnorm_finalize_rows_function(data_type="float", tile_rows=16, full_dim=4096):
+    data_type_tag = replace_data_type(data_type)
+    func_name = f"rmsnorm_finalize_rows_{tile_rows}_{full_dim}_{data_type_tag}"
+    code_lines = [
+        f"void {func_name}(",
+        f"    data_t sumsq[{tile_rows}],",
+        f"    data_t inv_rms[{tile_rows}],",
+        "    int valid_rows",
+        ")",
+        "{",
+        "    const acc_t eps = (acc_t)1e-5;",
+        "    for (int r = 0; r < valid_rows; ++r) {",
+        f"        inv_rms[r] = (data_t)((acc_t)1 / hls::sqrt((acc_t)sumsq[r] / (acc_t){full_dim} + eps));",
+        "    }",
+        "}",
+    ]
+    return "\n".join(code_lines), func_name
+
+
+def generate_rmsnorm_apply_tile_function(data_type="float", tile_rows=16, tile_cols=128, col_factor=1):
+    data_type_tag = replace_data_type(data_type)
+    func_name = f"rmsnorm_apply_tile_{tile_rows}_{tile_cols}_{col_factor}_{data_type_tag}"
+    code_lines = [
+        f"void {func_name}(",
+        f"    data_t input[{tile_rows}][{tile_cols}],",
+        f"    data_t gamma[{tile_cols}],",
+        f"    data_t inv_rms[{tile_rows}],",
+        f"    data_t output[{tile_rows}][{tile_cols}],",
+        "    int valid_rows,",
+        "    int valid_cols",
+        ")",
+        "{",
+    ]
+    emit_array_partition(code_lines, "input", col_factor, tile_cols, 2)
+    emit_array_partition(code_lines, "gamma", col_factor, tile_cols, 1)
+    emit_array_partition(code_lines, "output", col_factor, tile_cols, 2)
+    code_lines.extend([
+        "    for (int r = 0; r < valid_rows; ++r) {",
+        "        for (int c = 0; c < valid_cols; ++c) {",
+    ])
+    emit_unroll(code_lines, col_factor, tile_cols, "            ")
+    code_lines.extend([
+        "            output[r][c] = (data_t)((acc_t)input[r][c] * (acc_t)gamma[c] * (acc_t)inv_rms[r]);",
+        "        }",
+        "    }",
+        "}",
+    ])
     return "\n".join(code_lines), func_name
 
 
@@ -979,10 +1388,43 @@ def generate_kv_cache_load_tile_function(data_type="float", max_ctx=2048, kv_hea
     return "\n".join(code_lines), func_name
 
 
-def generate_apply_rope_tile_function(data_type="float", tile_rows=16, local_heads=4, head_dim=128):
+def generate_kv_cache_load_group_tile_function(data_type="float", max_ctx=2048, kv_heads=8, head_dim=128, tile_rows=128, local_kv_heads=1, dim_factor=1):
+    data_type_tag = replace_data_type(data_type)
+    local_kv_cols = local_kv_heads * head_dim
+    func_name = f"kv_cache_load_group_tile_{max_ctx}_{kv_heads}_{head_dim}_{tile_rows}_{local_kv_heads}_{dim_factor}_{data_type_tag}"
+    code_lines = [
+        f"void {func_name}(",
+        f"    data_t cache[32][{max_ctx}][{kv_heads}][{head_dim}],",
+        f"    data_t output[{tile_rows}][{local_kv_cols}],",
+        "    int layer_idx,",
+        "    int kv_head_base,",
+        "    int cache_row_base,",
+        "    int valid_rows",
+        ")",
+        "{",
+    ]
+    emit_array_partition(code_lines, "output", dim_factor, local_kv_cols, 2)
+    code_lines.extend([
+        "    for (int r = 0; r < valid_rows; ++r) {",
+        f"        for (int local_h = 0; local_h < {local_kv_heads}; ++local_h) {{",
+        "            int kv_head_idx = kv_head_base + local_h;",
+        f"            for (int d = 0; d < {head_dim}; ++d) {{",
+    ])
+    emit_unroll(code_lines, dim_factor, head_dim, "                ")
+    code_lines.extend([
+        "                output[r][local_h * 128 + d] = cache[layer_idx][cache_row_base + r][kv_head_idx][d];",
+        "            }",
+        "        }",
+        "    }",
+        "}",
+    ])
+    return "\n".join(code_lines), func_name
+
+
+def generate_apply_rope_tile_function(data_type="float", tile_rows=16, local_heads=4, head_dim=128, head_factor=1, dim_factor=1):
     data_type_tag = replace_data_type(data_type)
     cols = local_heads * head_dim
-    func_name = f"apply_rope_tile_{tile_rows}_{local_heads}_{head_dim}_{data_type_tag}"
+    func_name = f"apply_rope_tile_{tile_rows}_{local_heads}_{head_dim}_{head_factor}_{dim_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t input[{tile_rows}][{cols}],",
@@ -992,10 +1434,17 @@ def generate_apply_rope_tile_function(data_type="float", tile_rows=16, local_hea
         "    int valid_rows",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "input", dim_factor, cols, 2)
+    emit_array_partition(code_lines, "output", dim_factor, cols, 2)
+    code_lines.extend([
         "    const float rope_theta = 500000.0f;",
         "    for (int r = 0; r < valid_rows; ++r) {",
         f"        for (int h = 0; h < {local_heads}; ++h) {{",
         f"            for (int d = 0; d < {head_dim}; d += 2) {{",
+    ])
+    emit_unroll(code_lines, dim_factor, max(1, head_dim // 2), "                ")
+    code_lines.extend([
         "                int idx = h * 128 + d;",
         "                int global_head = head_base + h;",
         "                float theta = powf(rope_theta, -((float)d) / 128.0f);",
@@ -1010,18 +1459,19 @@ def generate_apply_rope_tile_function(data_type="float", tile_rows=16, local_hea
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_attention_score_tile_function(data_type="float", q_rows=16, q_heads=4, k_rows=128, head_dim=128):
+def generate_attention_score_tile_function(data_type="float", q_rows=16, q_heads=4, k_rows=128, head_dim=128, local_kv_heads=1, head_factor=1, dim_factor=1):
     data_type_tag = replace_data_type(data_type)
     q_cols = q_heads * head_dim
-    func_name = f"attention_score_tile_{q_rows}_{q_heads}_{k_rows}_{head_dim}_{data_type_tag}"
+    local_kv_cols = local_kv_heads * head_dim
+    func_name = f"attention_score_tile_{q_rows}_{q_heads}_{k_rows}_{head_dim}_{local_kv_heads}_{head_factor}_{dim_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t q_tile[{q_rows}][{q_cols}],",
-        f"    data_t k_tile[{k_rows}][{head_dim}],",
+        f"    data_t k_tile[{k_rows}][{local_kv_cols}],",
         f"    data_t score[{q_rows}][{q_heads}][{k_rows}],",
         "    int valid_q,",
         "    int valid_k,",
@@ -1029,16 +1479,25 @@ def generate_attention_score_tile_function(data_type="float", q_rows=16, q_heads
         "    int k_index_base",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "q_tile", dim_factor, q_cols, 2)
+    emit_array_partition(code_lines, "k_tile", dim_factor, local_kv_cols, 2)
+    emit_array_partition(code_lines, "score", head_factor, q_heads, 2)
+    code_lines.extend([
         "    const data_t scale = (data_t)1.0 / hls::sqrt((data_t)128);",
         "    for (int qt = 0; qt < valid_q; ++qt) {",
         f"        for (int qh = 0; qh < {q_heads}; ++qh) {{",
+        "            int local_kv_head = qh / 4;",
         "            for (int kt = 0; kt < valid_k; ++kt) {",
         "                if ((k_index_base + kt) > (q_index_base + qt)) {",
         "                    score[qt][qh][kt] = (data_t)(-8);",
         "                } else {",
         "                    acc_t sum = (acc_t)0;",
         f"                    for (int d = 0; d < {head_dim}; ++d) {{",
-        "                        sum += (acc_t)q_tile[qt][qh * 128 + d] * (acc_t)k_tile[kt][d];",
+    ])
+    emit_unroll(code_lines, dim_factor, head_dim, "                        ")
+    code_lines.extend([
+        "                        sum += (acc_t)q_tile[qt][qh * 128 + d] * (acc_t)k_tile[kt][local_kv_head * 128 + d];",
         "                    }",
         "                    score[qt][qh][kt] = (data_t)(sum * scale);",
         "                }",
@@ -1046,13 +1505,13 @@ def generate_attention_score_tile_function(data_type="float", q_rows=16, q_heads
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_attention_rowmax_tile_function(data_type="float", q_rows=16, q_heads=4, k_rows=128):
+def generate_attention_rowmax_tile_function(data_type="float", q_rows=16, q_heads=4, k_rows=128, head_factor=1):
     data_type_tag = replace_data_type(data_type)
-    func_name = f"attention_rowmax_tile_{q_rows}_{q_heads}_{k_rows}_{data_type_tag}"
+    func_name = f"attention_rowmax_tile_{q_rows}_{q_heads}_{k_rows}_{head_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t score[{q_rows}][{q_heads}][{k_rows}],",
@@ -1061,8 +1520,15 @@ def generate_attention_rowmax_tile_function(data_type="float", q_rows=16, q_head
         "    int valid_k",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "score", head_factor, q_heads, 2)
+    emit_array_partition(code_lines, "rowmax", head_factor, q_heads, 2)
+    code_lines.extend([
         "    for (int qt = 0; qt < valid_q; ++qt) {",
         f"        for (int qh = 0; qh < {q_heads}; ++qh) {{",
+    ])
+    emit_unroll(code_lines, head_factor, q_heads, "            ")
+    code_lines.extend([
         "            for (int kt = 0; kt < valid_k; ++kt) {",
         "                if (score[qt][qh][kt] > rowmax[qt][qh]) {",
         "                    rowmax[qt][qh] = score[qt][qh][kt];",
@@ -1071,18 +1537,19 @@ def generate_attention_rowmax_tile_function(data_type="float", q_rows=16, q_head
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_attention_softmax_context_tile_function(data_type="float", q_rows=16, q_heads=4, k_rows=128, head_dim=128):
+def generate_attention_softmax_context_tile_function(data_type="float", q_rows=16, q_heads=4, k_rows=128, head_dim=128, local_kv_heads=1, head_factor=1, dim_factor=1):
     data_type_tag = replace_data_type(data_type)
     ctx_cols = q_heads * head_dim
-    func_name = f"attention_softmax_context_tile_{q_rows}_{q_heads}_{k_rows}_{head_dim}_{data_type_tag}"
+    local_kv_cols = local_kv_heads * head_dim
+    func_name = f"attention_softmax_context_tile_{q_rows}_{q_heads}_{k_rows}_{head_dim}_{local_kv_heads}_{head_factor}_{dim_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t score[{q_rows}][{q_heads}][{k_rows}],",
-        f"    data_t v_tile[{k_rows}][{head_dim}],",
+        f"    data_t v_tile[{k_rows}][{local_kv_cols}],",
         f"    data_t rowmax[{q_rows}][{q_heads}],",
         f"    data_t rowsum[{q_rows}][{q_heads}],",
         f"    data_t ctx[{q_rows}][{ctx_cols}],",
@@ -1090,26 +1557,37 @@ def generate_attention_softmax_context_tile_function(data_type="float", q_rows=1
         "    int valid_k",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "score", head_factor, q_heads, 2)
+    emit_array_partition(code_lines, "v_tile", dim_factor, local_kv_cols, 2)
+    emit_array_partition(code_lines, "rowmax", head_factor, q_heads, 2)
+    emit_array_partition(code_lines, "rowsum", head_factor, q_heads, 2)
+    emit_array_partition(code_lines, "ctx", dim_factor, ctx_cols, 2)
+    code_lines.extend([
         "    for (int qt = 0; qt < valid_q; ++qt) {",
         f"        for (int qh = 0; qh < {q_heads}; ++qh) {{",
+        "            int local_kv_head = qh / 4;",
         "            for (int kt = 0; kt < valid_k; ++kt) {",
         "                data_t weight = hls::exp(score[qt][qh][kt] - rowmax[qt][qh]);",
         "                rowsum[qt][qh] += weight;",
         f"                for (int d = 0; d < {head_dim}; ++d) {{",
-        "                    ctx[qt][qh * 128 + d] += weight * v_tile[kt][d];",
+    ])
+    emit_unroll(code_lines, dim_factor, head_dim, "                    ")
+    code_lines.extend([
+        "                    ctx[qt][qh * 128 + d] += weight * v_tile[kt][local_kv_head * 128 + d];",
         "                }",
         "            }",
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
-def generate_attention_finalize_tile_function(data_type="float", q_rows=16, q_heads=4, head_dim=128):
+def generate_attention_finalize_tile_function(data_type="float", q_rows=16, q_heads=4, head_dim=128, head_factor=1, dim_factor=1):
     data_type_tag = replace_data_type(data_type)
     ctx_cols = q_heads * head_dim
-    func_name = f"attention_finalize_tile_{q_rows}_{q_heads}_{head_dim}_{data_type_tag}"
+    func_name = f"attention_finalize_tile_{q_rows}_{q_heads}_{head_dim}_{head_factor}_{dim_factor}_{data_type_tag}"
     code_lines = [
         f"void {func_name}(",
         f"    data_t ctx[{q_rows}][{ctx_cols}],",
@@ -1117,17 +1595,24 @@ def generate_attention_finalize_tile_function(data_type="float", q_rows=16, q_he
         "    int valid_q",
         ")",
         "{",
+    ]
+    emit_array_partition(code_lines, "ctx", dim_factor, ctx_cols, 2)
+    emit_array_partition(code_lines, "rowsum", head_factor, q_heads, 2)
+    code_lines.extend([
         "    for (int qt = 0; qt < valid_q; ++qt) {",
         f"        for (int qh = 0; qh < {q_heads}; ++qh) {{",
         "            data_t denom = rowsum[qt][qh];",
         "            if (denom == (data_t)0) denom = (data_t)1;",
         f"            for (int d = 0; d < {head_dim}; ++d) {{",
+    ])
+    emit_unroll(code_lines, dim_factor, head_dim, "                ")
+    code_lines.extend([
         "                ctx[qt][qh * 128 + d] = ctx[qt][qh * 128 + d] / denom;",
         "            }",
         "        }",
         "    }",
         "}",
-    ]
+    ])
     return "\n".join(code_lines), func_name
 
 
@@ -2208,45 +2693,108 @@ def generate_func_def(op_info, data_type):
     elif op_info['func_name'] == 'clear_tile':
         code_line, full_func_name = generate_clear_tile_function(op_info["dims"], data_type)
     elif op_info['func_name'] == 'clear_matrix_tile':
-        code_line, full_func_name = generate_clear_matrix_tile_function(op_info["dims"][0], op_info["dims"][1], data_type)
+        clear_dims = normalize_clear_matrix_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_clear_matrix_tile_function(clear_dims[0], clear_dims[1], data_type, col_factor=clear_dims[2])
+    elif op_info['func_name'] == 'clear_vector_tile':
+        code_line, full_func_name = generate_clear_vector_tile_function(op_info["dims"][0], data_type)
     elif op_info['func_name'] == 'init_rowmax_tile':
-        code_line, full_func_name = generate_init_rowmax_tile_function(op_info["dims"][0], op_info["dims"][1], data_type)
+        init_rowmax_dims = normalize_init_rowmax_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_init_rowmax_tile_function(init_rowmax_dims[0], init_rowmax_dims[1], data_type, col_factor=init_rowmax_dims[2])
     elif op_info['func_name'] == 'load_matrix_tile':
-        code_line, full_func_name = generate_load_matrix_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        matrix_tile_dims = normalize_matrix_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_matrix_tile_function(data_type, matrix_tile_dims[0], matrix_tile_dims[1], matrix_tile_dims[2], matrix_tile_dims[3], matrix_tile_dims[4])
     elif op_info['func_name'] == 'store_matrix_tile':
-        code_line, full_func_name = generate_store_matrix_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        matrix_tile_dims = normalize_matrix_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_store_matrix_tile_function(data_type, matrix_tile_dims[0], matrix_tile_dims[1], matrix_tile_dims[2], matrix_tile_dims[3], matrix_tile_dims[4])
+    elif op_info['func_name'] == 'load_vector_tile':
+        vector_tile_dims = normalize_vector_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_vector_tile_function(data_type, vector_tile_dims[0], vector_tile_dims[1], vector_tile_dims[2])
     elif op_info['func_name'] == 'load_layer_vector':
         code_line, full_func_name = generate_load_layer_vector_function(data_type, op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'load_layer_vector_tile':
+        layer_vector_tile_dims = normalize_layer_vector_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_layer_vector_tile_function(data_type, layer_vector_tile_dims[0], layer_vector_tile_dims[1], layer_vector_tile_dims[2], layer_vector_tile_dims[3])
     elif op_info['func_name'] == 'load_weight_tile_layered':
-        code_line, full_func_name = generate_load_weight_tile_layered_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4])
+        weight_tile_layered_dims = normalize_weight_tile_layered_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_weight_tile_layered_function(data_type, weight_tile_layered_dims[0], weight_tile_layered_dims[1], weight_tile_layered_dims[2], weight_tile_layered_dims[3], weight_tile_layered_dims[4], weight_tile_layered_dims[5], weight_tile_layered_dims[6])
     elif op_info['func_name'] == 'load_weight_tile_2d':
-        code_line, full_func_name = generate_load_weight_tile_2d_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        weight_tile_2d_dims = normalize_weight_tile_2d_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_weight_tile_2d_function(data_type, weight_tile_2d_dims[0], weight_tile_2d_dims[1], weight_tile_2d_dims[2], weight_tile_2d_dims[3], weight_tile_2d_dims[4], weight_tile_2d_dims[5])
     elif op_info['func_name'] == 'linear_tile':
-        code_line, full_func_name = generate_linear_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        linear_tile_dims = normalize_linear_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_linear_tile_function(data_type, linear_tile_dims[0], linear_tile_dims[1], linear_tile_dims[2], linear_tile_dims[3], linear_tile_dims[4])
     elif op_info['func_name'] == 'rmsnorm_tile_full':
         code_line, full_func_name = generate_rmsnorm_tile_full_function(data_type, op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'rmsnorm_accumulate_tile':
+        rmsnorm_tile_dims = normalize_rmsnorm_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_rmsnorm_accumulate_tile_function(data_type, rmsnorm_tile_dims[0], rmsnorm_tile_dims[1], rmsnorm_tile_dims[2])
+    elif op_info['func_name'] == 'rmsnorm_finalize_rows':
+        code_line, full_func_name = generate_rmsnorm_finalize_rows_function(data_type, op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'rmsnorm_apply_tile':
+        rmsnorm_tile_dims = normalize_rmsnorm_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_rmsnorm_apply_tile_function(data_type, rmsnorm_tile_dims[0], rmsnorm_tile_dims[1], rmsnorm_tile_dims[2])
     elif op_info['func_name'] == 'matrix_add_tile_2d':
-        code_line, full_func_name = generate_matrix_add_tile_2d_function(data_type, op_info["dims"][0], op_info["dims"][1])
+        matrix_2d_dims = normalize_matrix_2d_op_dims(op_info["dims"])
+        code_line, full_func_name = generate_matrix_add_tile_2d_function(data_type, matrix_2d_dims[0], matrix_2d_dims[1], matrix_2d_dims[2])
     elif op_info['func_name'] == 'activation_tile_2d':
-        code_line, full_func_name = generate_activation_tile_2d_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["func_info"][1])
+        matrix_2d_dims = normalize_matrix_2d_op_dims(op_info["dims"])
+        code_line, full_func_name = generate_activation_tile_2d_function(data_type, matrix_2d_dims[0], matrix_2d_dims[1], op_info["func_info"][1], matrix_2d_dims[2])
     elif op_info['func_name'] == 'elementwise_mult_tile_2d':
-        code_line, full_func_name = generate_elementwise_mult_tile_2d_function(data_type, op_info["dims"][0], op_info["dims"][1])
+        matrix_2d_dims = normalize_matrix_2d_op_dims(op_info["dims"])
+        code_line, full_func_name = generate_elementwise_mult_tile_2d_function(data_type, matrix_2d_dims[0], matrix_2d_dims[1], matrix_2d_dims[2])
+    elif op_info['func_name'] == 'embedding_lookup_chunk':
+        embedding_lookup_dims = normalize_embedding_lookup_chunk_dims(op_info["dims"])
+        code_line, full_func_name = generate_embedding_lookup_chunk_function(data_type, embedding_lookup_dims[0], embedding_lookup_dims[1], embedding_lookup_dims[2], embedding_lookup_dims[3], embedding_lookup_dims[4], embedding_lookup_dims[5])
     elif op_info['func_name'] == 'embedding_lookup_tile':
         code_line, full_func_name = generate_embedding_lookup_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
     elif op_info['func_name'] == 'kv_cache_store_tile':
         code_line, full_func_name = generate_kv_cache_store_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5])
     elif op_info['func_name'] == 'kv_cache_load_tile':
         code_line, full_func_name = generate_kv_cache_load_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+    elif op_info['func_name'] == 'kv_cache_load_group_tile':
+        kv_group_dims = normalize_kv_cache_load_group_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_kv_cache_load_group_tile_function(
+            data_type,
+            kv_group_dims[0],
+            kv_group_dims[1],
+            kv_group_dims[2],
+            kv_group_dims[3],
+            kv_group_dims[4],
+            kv_group_dims[5],
+        )
     elif op_info['func_name'] == 'apply_rope_tile':
-        code_line, full_func_name = generate_apply_rope_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        rope_dims = normalize_rope_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_apply_rope_tile_function(data_type, rope_dims[0], rope_dims[1], rope_dims[2], rope_dims[3], rope_dims[4])
     elif op_info['func_name'] == 'attention_score_tile':
-        code_line, full_func_name = generate_attention_score_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        attention_dims = normalize_attention_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_attention_score_tile_function(
+            data_type,
+            attention_dims[0],
+            attention_dims[1],
+            attention_dims[2],
+            attention_dims[3],
+            attention_dims[4],
+            attention_dims[5],
+            attention_dims[6],
+        )
     elif op_info['func_name'] == 'attention_rowmax_tile':
-        code_line, full_func_name = generate_attention_rowmax_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        rowmax_dims = normalize_attention_rowmax_dims(op_info["dims"])
+        code_line, full_func_name = generate_attention_rowmax_tile_function(data_type, rowmax_dims[0], rowmax_dims[1], rowmax_dims[2], rowmax_dims[3])
     elif op_info['func_name'] == 'attention_softmax_context_tile':
-        code_line, full_func_name = generate_attention_softmax_context_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        attention_dims = normalize_attention_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_attention_softmax_context_tile_function(
+            data_type,
+            attention_dims[0],
+            attention_dims[1],
+            attention_dims[2],
+            attention_dims[3],
+            attention_dims[4],
+            attention_dims[5],
+            attention_dims[6],
+        )
     elif op_info['func_name'] == 'attention_finalize_tile':
-        code_line, full_func_name = generate_attention_finalize_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        finalize_dims = normalize_attention_finalize_dims(op_info["dims"])
+        code_line, full_func_name = generate_attention_finalize_tile_function(data_type, finalize_dims[0], finalize_dims[1], finalize_dims[2], finalize_dims[3], finalize_dims[4])
     elif op_info['func_name'] == 'load_fmap_patch':
         code_line, full_func_name = generate_load_fmap_patch_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7])
     elif op_info['func_name'] == 'load_fmap_tile':
@@ -2374,45 +2922,108 @@ def generate_operator_call(op_info, data_type):
     elif op_info['func_name'] == 'clear_tile':
         code_line, full_func_name = generate_clear_tile_function(op_info["dims"], data_type)
     elif op_info['func_name'] == 'clear_matrix_tile':
-        code_line, full_func_name = generate_clear_matrix_tile_function(op_info["dims"][0], op_info["dims"][1], data_type)
+        clear_dims = normalize_clear_matrix_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_clear_matrix_tile_function(clear_dims[0], clear_dims[1], data_type, col_factor=clear_dims[2])
+    elif op_info['func_name'] == 'clear_vector_tile':
+        code_line, full_func_name = generate_clear_vector_tile_function(op_info["dims"][0], data_type)
     elif op_info['func_name'] == 'init_rowmax_tile':
-        code_line, full_func_name = generate_init_rowmax_tile_function(op_info["dims"][0], op_info["dims"][1], data_type)
+        init_rowmax_dims = normalize_init_rowmax_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_init_rowmax_tile_function(init_rowmax_dims[0], init_rowmax_dims[1], data_type, col_factor=init_rowmax_dims[2])
     elif op_info['func_name'] == 'load_matrix_tile':
-        code_line, full_func_name = generate_load_matrix_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        matrix_tile_dims = normalize_matrix_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_matrix_tile_function(data_type, matrix_tile_dims[0], matrix_tile_dims[1], matrix_tile_dims[2], matrix_tile_dims[3], matrix_tile_dims[4])
     elif op_info['func_name'] == 'store_matrix_tile':
-        code_line, full_func_name = generate_store_matrix_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        matrix_tile_dims = normalize_matrix_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_store_matrix_tile_function(data_type, matrix_tile_dims[0], matrix_tile_dims[1], matrix_tile_dims[2], matrix_tile_dims[3], matrix_tile_dims[4])
+    elif op_info['func_name'] == 'load_vector_tile':
+        vector_tile_dims = normalize_vector_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_vector_tile_function(data_type, vector_tile_dims[0], vector_tile_dims[1], vector_tile_dims[2])
     elif op_info['func_name'] == 'load_layer_vector':
         code_line, full_func_name = generate_load_layer_vector_function(data_type, op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'load_layer_vector_tile':
+        layer_vector_tile_dims = normalize_layer_vector_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_layer_vector_tile_function(data_type, layer_vector_tile_dims[0], layer_vector_tile_dims[1], layer_vector_tile_dims[2], layer_vector_tile_dims[3])
     elif op_info['func_name'] == 'load_weight_tile_layered':
-        code_line, full_func_name = generate_load_weight_tile_layered_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4])
+        weight_tile_layered_dims = normalize_weight_tile_layered_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_weight_tile_layered_function(data_type, weight_tile_layered_dims[0], weight_tile_layered_dims[1], weight_tile_layered_dims[2], weight_tile_layered_dims[3], weight_tile_layered_dims[4], weight_tile_layered_dims[5], weight_tile_layered_dims[6])
     elif op_info['func_name'] == 'load_weight_tile_2d':
-        code_line, full_func_name = generate_load_weight_tile_2d_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        weight_tile_2d_dims = normalize_weight_tile_2d_dims(op_info["dims"])
+        code_line, full_func_name = generate_load_weight_tile_2d_function(data_type, weight_tile_2d_dims[0], weight_tile_2d_dims[1], weight_tile_2d_dims[2], weight_tile_2d_dims[3], weight_tile_2d_dims[4], weight_tile_2d_dims[5])
     elif op_info['func_name'] == 'linear_tile':
-        code_line, full_func_name = generate_linear_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        linear_tile_dims = normalize_linear_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_linear_tile_function(data_type, linear_tile_dims[0], linear_tile_dims[1], linear_tile_dims[2], linear_tile_dims[3], linear_tile_dims[4])
     elif op_info['func_name'] == 'rmsnorm_tile_full':
         code_line, full_func_name = generate_rmsnorm_tile_full_function(data_type, op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'rmsnorm_accumulate_tile':
+        rmsnorm_tile_dims = normalize_rmsnorm_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_rmsnorm_accumulate_tile_function(data_type, rmsnorm_tile_dims[0], rmsnorm_tile_dims[1], rmsnorm_tile_dims[2])
+    elif op_info['func_name'] == 'rmsnorm_finalize_rows':
+        code_line, full_func_name = generate_rmsnorm_finalize_rows_function(data_type, op_info["dims"][0], op_info["dims"][1])
+    elif op_info['func_name'] == 'rmsnorm_apply_tile':
+        rmsnorm_tile_dims = normalize_rmsnorm_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_rmsnorm_apply_tile_function(data_type, rmsnorm_tile_dims[0], rmsnorm_tile_dims[1], rmsnorm_tile_dims[2])
     elif op_info['func_name'] == 'matrix_add_tile_2d':
-        code_line, full_func_name = generate_matrix_add_tile_2d_function(data_type, op_info["dims"][0], op_info["dims"][1])
+        matrix_2d_dims = normalize_matrix_2d_op_dims(op_info["dims"])
+        code_line, full_func_name = generate_matrix_add_tile_2d_function(data_type, matrix_2d_dims[0], matrix_2d_dims[1], matrix_2d_dims[2])
     elif op_info['func_name'] == 'activation_tile_2d':
-        code_line, full_func_name = generate_activation_tile_2d_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["func_info"][1])
+        matrix_2d_dims = normalize_matrix_2d_op_dims(op_info["dims"])
+        code_line, full_func_name = generate_activation_tile_2d_function(data_type, matrix_2d_dims[0], matrix_2d_dims[1], op_info["func_info"][1], matrix_2d_dims[2])
     elif op_info['func_name'] == 'elementwise_mult_tile_2d':
-        code_line, full_func_name = generate_elementwise_mult_tile_2d_function(data_type, op_info["dims"][0], op_info["dims"][1])
+        matrix_2d_dims = normalize_matrix_2d_op_dims(op_info["dims"])
+        code_line, full_func_name = generate_elementwise_mult_tile_2d_function(data_type, matrix_2d_dims[0], matrix_2d_dims[1], matrix_2d_dims[2])
+    elif op_info['func_name'] == 'embedding_lookup_chunk':
+        embedding_lookup_dims = normalize_embedding_lookup_chunk_dims(op_info["dims"])
+        code_line, full_func_name = generate_embedding_lookup_chunk_function(data_type, embedding_lookup_dims[0], embedding_lookup_dims[1], embedding_lookup_dims[2], embedding_lookup_dims[3], embedding_lookup_dims[4], embedding_lookup_dims[5])
     elif op_info['func_name'] == 'embedding_lookup_tile':
         code_line, full_func_name = generate_embedding_lookup_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
     elif op_info['func_name'] == 'kv_cache_store_tile':
         code_line, full_func_name = generate_kv_cache_store_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5])
     elif op_info['func_name'] == 'kv_cache_load_tile':
         code_line, full_func_name = generate_kv_cache_load_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+    elif op_info['func_name'] == 'kv_cache_load_group_tile':
+        kv_group_dims = normalize_kv_cache_load_group_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_kv_cache_load_group_tile_function(
+            data_type,
+            kv_group_dims[0],
+            kv_group_dims[1],
+            kv_group_dims[2],
+            kv_group_dims[3],
+            kv_group_dims[4],
+            kv_group_dims[5],
+        )
     elif op_info['func_name'] == 'apply_rope_tile':
-        code_line, full_func_name = generate_apply_rope_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        rope_dims = normalize_rope_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_apply_rope_tile_function(data_type, rope_dims[0], rope_dims[1], rope_dims[2], rope_dims[3], rope_dims[4])
     elif op_info['func_name'] == 'attention_score_tile':
-        code_line, full_func_name = generate_attention_score_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        attention_dims = normalize_attention_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_attention_score_tile_function(
+            data_type,
+            attention_dims[0],
+            attention_dims[1],
+            attention_dims[2],
+            attention_dims[3],
+            attention_dims[4],
+            attention_dims[5],
+            attention_dims[6],
+        )
     elif op_info['func_name'] == 'attention_rowmax_tile':
-        code_line, full_func_name = generate_attention_rowmax_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        rowmax_dims = normalize_attention_rowmax_dims(op_info["dims"])
+        code_line, full_func_name = generate_attention_rowmax_tile_function(data_type, rowmax_dims[0], rowmax_dims[1], rowmax_dims[2], rowmax_dims[3])
     elif op_info['func_name'] == 'attention_softmax_context_tile':
-        code_line, full_func_name = generate_attention_softmax_context_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3])
+        attention_dims = normalize_attention_tile_dims(op_info["dims"])
+        code_line, full_func_name = generate_attention_softmax_context_tile_function(
+            data_type,
+            attention_dims[0],
+            attention_dims[1],
+            attention_dims[2],
+            attention_dims[3],
+            attention_dims[4],
+            attention_dims[5],
+            attention_dims[6],
+        )
     elif op_info['func_name'] == 'attention_finalize_tile':
-        code_line, full_func_name = generate_attention_finalize_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        finalize_dims = normalize_attention_finalize_dims(op_info["dims"])
+        code_line, full_func_name = generate_attention_finalize_tile_function(data_type, finalize_dims[0], finalize_dims[1], finalize_dims[2], finalize_dims[3], finalize_dims[4])
     elif op_info['func_name'] == 'load_fmap_patch':
         code_line, full_func_name = generate_load_fmap_patch_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7])
     elif op_info['func_name'] == 'load_fmap_tile':

@@ -1979,17 +1979,104 @@ LLAMA3_8B_VOCAB = 128256
 DEFAULT_LLAMA3_8B_CONTEXTS = [2048, 8192]
 
 
-def build_llama3_8b_tile_config():
-    return {
+def build_llama3_8b_tile_config(tile_cfg=None):
+    config = {
         "token_tile_prefill": 16,
         "token_tile_decode": 1,
+        "hidden_chunk": 128,
         "in_chunk": 128,
         "max_out_chunk": 256,
         "ffn_chunk": 128,
         "k_token_tile": 128,
         "q_head_tile": 4,
-        "q_head_cols": 4 * LLAMA3_8B_HEAD_DIM,
     }
+    if tile_cfg is not None:
+        config.update(tile_cfg)
+
+    for key in (
+        "token_tile_prefill",
+        "token_tile_decode",
+        "hidden_chunk",
+        "in_chunk",
+        "max_out_chunk",
+        "ffn_chunk",
+        "k_token_tile",
+        "q_head_tile",
+    ):
+        config[key] = int(config[key])
+        if config[key] <= 0:
+            raise ValueError(f"{key} must be positive, got {config[key]}.")
+
+    if LLAMA3_8B_Q_HEADS % config["q_head_tile"] != 0:
+        raise ValueError(
+            f"q_head_tile must divide {LLAMA3_8B_Q_HEADS}, got {config['q_head_tile']}."
+        )
+    if config["q_head_tile"] % 4 != 0:
+        raise ValueError(
+            f"q_head_tile must be a multiple of 4 to preserve GQA grouping, got {config['q_head_tile']}."
+        )
+    if config["max_out_chunk"] < config["in_chunk"]:
+        raise ValueError(
+            f"max_out_chunk must be >= in_chunk, got {config['max_out_chunk']} < {config['in_chunk']}."
+        )
+    if config["max_out_chunk"] < config["ffn_chunk"]:
+        raise ValueError(
+            f"max_out_chunk must be >= ffn_chunk, got {config['max_out_chunk']} < {config['ffn_chunk']}."
+        )
+
+    config["q_head_cols"] = config["q_head_tile"] * LLAMA3_8B_HEAD_DIM
+    config["local_kv_heads"] = config["q_head_tile"] // 4
+    config["local_kv_cols"] = config["local_kv_heads"] * LLAMA3_8B_HEAD_DIM
+    config["is_default"] = (
+        config["token_tile_prefill"] == 16
+        and config["token_tile_decode"] == 1
+        and config["hidden_chunk"] == 128
+        and config["in_chunk"] == 128
+        and config["max_out_chunk"] == 256
+        and config["ffn_chunk"] == 128
+        and config["k_token_tile"] == 128
+        and config["q_head_tile"] == 4
+    )
+    return config
+
+
+def build_llama3_8b_pragma_config(pragma_cfg=None):
+    config = {
+        "linear_in_factor": 1,
+        "linear_out_factor": 1,
+        "chunk_col_factor": 1,
+        "attn_head_factor": 1,
+        "attn_dim_factor": 1,
+    }
+    if pragma_cfg is not None:
+        config.update(pragma_cfg)
+
+    for key in (
+        "linear_in_factor",
+        "linear_out_factor",
+        "chunk_col_factor",
+        "attn_head_factor",
+        "attn_dim_factor",
+    ):
+        config[key] = int(config[key])
+        if config[key] <= 0:
+            raise ValueError(f"{key} must be positive, got {config[key]}.")
+
+    config["is_default"] = all(
+        config[key] == 1
+        for key in (
+            "linear_in_factor",
+            "linear_out_factor",
+            "chunk_col_factor",
+            "attn_head_factor",
+            "attn_dim_factor",
+        )
+    )
+    return config
+
+
+def get_llama3_8b_token_tile(seq_capacity, tile_cfg):
+    return tile_cfg["token_tile_prefill"] if seq_capacity > 1 else tile_cfg["token_tile_decode"]
 
 
 def parse_context_list(contexts_arg):
@@ -2002,63 +2089,162 @@ def parse_context_list(contexts_arg):
     return contexts
 
 
-def get_llama3_8b_filename(mode, max_ctx, data_type):
+def get_llama3_8b_tile_suffix(tile_cfg, preserve_legacy_name=False):
+    if preserve_legacy_name and tile_cfg["is_default"]:
+        return ""
+    return (
+        f"_tp{tile_cfg['token_tile_prefill']}"
+        f"_td{tile_cfg['token_tile_decode']}"
+        f"_hc{tile_cfg['hidden_chunk']}"
+        f"_ic{tile_cfg['in_chunk']}"
+        f"_oc{tile_cfg['max_out_chunk']}"
+        f"_ffn{tile_cfg['ffn_chunk']}"
+        f"_kt{tile_cfg['k_token_tile']}"
+        f"_qh{tile_cfg['q_head_tile']}"
+    )
+
+
+def get_llama3_8b_pragma_suffix(pragma_cfg, preserve_legacy_name=False):
+    if preserve_legacy_name and pragma_cfg["is_default"]:
+        return ""
+    return (
+        f"_li{pragma_cfg['linear_in_factor']}"
+        f"_lo{pragma_cfg['linear_out_factor']}"
+        f"_cc{pragma_cfg['chunk_col_factor']}"
+        f"_ah{pragma_cfg['attn_head_factor']}"
+        f"_ad{pragma_cfg['attn_dim_factor']}"
+    )
+
+
+def get_llama3_8b_filename(mode, max_ctx, data_type, tile_cfg, pragma_cfg=None, preserve_legacy_name=False):
+    pragma_cfg = build_llama3_8b_pragma_config(pragma_cfg)
     naming_dtype = data_type.replace('<', '_').replace('>', '_').replace(',', '_')
-    return f"LLAMA3_8B_{mode.upper()}_ctx{max_ctx}_config_{naming_dtype}.json"
+    return (
+        f"LLAMA3_8B_{mode.upper()}_ctx{max_ctx}"
+        f"{get_llama3_8b_tile_suffix(tile_cfg, preserve_legacy_name)}"
+        f"{get_llama3_8b_pragma_suffix(pragma_cfg, preserve_legacy_name)}"
+        f"_config_{naming_dtype}.json"
+    )
 
 
-def append_llama_embedding_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, token_dram, output_dram):
-    tile_t = tile_cfg["token_tile_prefill"] if seq_capacity > 1 else tile_cfg["token_tile_decode"]
+def append_llama_embedding_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, pragma_cfg, token_dram, output_dram):
+    tile_t = get_llama3_8b_token_tile(seq_capacity, tile_cfg)
+    hidden_chunk = tile_cfg["hidden_chunk"]
+    chunk_col_factor = pragma_cfg["chunk_col_factor"]
     ops.extend([
         make_loop_begin(f"{prefix}_t_loop", "t_base", 0, seq_end_expr, tile_t, "valid_t", tile_t),
+        make_loop_begin(f"{prefix}_h_loop", "h_base", 0, LLAMA3_8B_HIDDEN, hidden_chunk, "valid_h", hidden_chunk),
         (
             f"{prefix}_lookup",
             {
-                "func_name": "embedding_lookup_tile",
-                "dims": [seq_capacity, LLAMA3_8B_VOCAB, LLAMA3_8B_HIDDEN, tile_t],
-                "args": [token_dram, "DRAM_embedding", "BRAM_hidden_a", "t_base", "valid_t"],
+                "func_name": "embedding_lookup_chunk",
+                "dims": [seq_capacity, LLAMA3_8B_VOCAB, LLAMA3_8B_HIDDEN, tile_t, hidden_chunk, chunk_col_factor],
+                "args": [token_dram, "DRAM_embedding", "BRAM_hidden_a", "t_base", "h_base", "valid_t", "valid_h"],
             },
         ),
         (
             f"{prefix}_store",
             {
                 "func_name": "store_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, LLAMA3_8B_HIDDEN],
-                "args": ["BRAM_hidden_a", output_dram, "t_base", "0", "valid_t", str(LLAMA3_8B_HIDDEN)],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, hidden_chunk, chunk_col_factor],
+                "args": ["BRAM_hidden_a", output_dram, "t_base", "h_base", "valid_t", "valid_h"],
             },
         ),
+        make_loop_end(f"{prefix}_h_loop_end"),
         make_loop_end(f"{prefix}_t_loop_end"),
     ])
 
 
-def append_llama_rmsnorm_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, input_dram, output_dram, gamma_bram):
-    tile_t = tile_cfg["token_tile_prefill"] if seq_capacity > 1 else tile_cfg["token_tile_decode"]
+def append_llama_rmsnorm_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, pragma_cfg, input_dram, output_dram, gamma_dram, layer_idx=None):
+    tile_t = get_llama3_8b_token_tile(seq_capacity, tile_cfg)
+    hidden_chunk = tile_cfg["hidden_chunk"]
+    chunk_col_factor = pragma_cfg["chunk_col_factor"]
     ops.extend([
         make_loop_begin(f"{prefix}_t_loop", "t_base", 0, seq_end_expr, tile_t, "valid_t", tile_t),
         (
-            f"{prefix}_load",
+            f"{prefix}_clear_sumsq",
+            {
+                "func_name": "clear_vector_tile",
+                "dims": [tile_t],
+                "args": ["BRAM_rms_sumsq"],
+            },
+        ),
+        make_loop_begin(f"{prefix}_acc_h_loop", "h_base", 0, LLAMA3_8B_HIDDEN, hidden_chunk, "valid_h", hidden_chunk),
+        (
+            f"{prefix}_load_acc",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, LLAMA3_8B_HIDDEN],
-                "args": [input_dram, "BRAM_hidden_a", "t_base", "0"],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, hidden_chunk, chunk_col_factor],
+                "args": [input_dram, "BRAM_hidden_a", "t_base", "h_base"],
             },
         ),
         (
-            f"{prefix}_norm",
+            f"{prefix}_accumulate",
             {
-                "func_name": "rmsnorm_tile_full",
+                "func_name": "rmsnorm_accumulate_tile",
+                "dims": [tile_t, hidden_chunk, chunk_col_factor],
+                "args": ["BRAM_hidden_a", "BRAM_rms_sumsq", "valid_t", "valid_h"],
+            },
+        ),
+        make_loop_end(f"{prefix}_acc_h_loop_end"),
+        (
+            f"{prefix}_finalize",
+            {
+                "func_name": "rmsnorm_finalize_rows",
                 "dims": [tile_t, LLAMA3_8B_HIDDEN],
-                "args": ["BRAM_hidden_a", gamma_bram, "BRAM_hidden_b", "valid_t"],
+                "args": ["BRAM_rms_sumsq", "BRAM_rms_inv", "valid_t"],
+            },
+        ),
+        make_loop_begin(f"{prefix}_apply_h_loop", "h_base", 0, LLAMA3_8B_HIDDEN, hidden_chunk, "valid_h", hidden_chunk),
+        (
+            f"{prefix}_load_apply",
+            {
+                "func_name": "load_matrix_tile",
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, hidden_chunk, chunk_col_factor],
+                "args": [input_dram, "BRAM_hidden_a", "t_base", "h_base"],
+            },
+        ),
+    ])
+    if layer_idx is None:
+        ops.append(
+            (
+                f"{prefix}_load_gamma",
+                {
+                    "func_name": "load_vector_tile",
+                    "dims": [LLAMA3_8B_HIDDEN, hidden_chunk, chunk_col_factor],
+                    "args": [gamma_dram, "BRAM_gamma_chunk", "h_base"],
+                },
+            )
+        )
+    else:
+        ops.append(
+            (
+                f"{prefix}_load_gamma",
+                {
+                    "func_name": "load_layer_vector_tile",
+                    "dims": [LLAMA3_8B_LAYERS, LLAMA3_8B_HIDDEN, hidden_chunk, chunk_col_factor],
+                    "args": [gamma_dram, "BRAM_gamma_chunk", str(layer_idx), "h_base"],
+                },
+            )
+        )
+    ops.extend([
+        (
+            f"{prefix}_apply",
+            {
+                "func_name": "rmsnorm_apply_tile",
+                "dims": [tile_t, hidden_chunk, chunk_col_factor],
+                "args": ["BRAM_hidden_a", "BRAM_gamma_chunk", "BRAM_rms_inv", "BRAM_hidden_b", "valid_t", "valid_h"],
             },
         ),
         (
             f"{prefix}_store",
             {
                 "func_name": "store_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, LLAMA3_8B_HIDDEN],
-                "args": ["BRAM_hidden_b", output_dram, "t_base", "0", "valid_t", str(LLAMA3_8B_HIDDEN)],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, hidden_chunk, chunk_col_factor],
+                "args": ["BRAM_hidden_b", output_dram, "t_base", "h_base", "valid_t", "valid_h"],
             },
         ),
+        make_loop_end(f"{prefix}_apply_h_loop_end"),
         make_loop_end(f"{prefix}_t_loop_end"),
     ])
 
@@ -2075,10 +2261,14 @@ def append_llama_linear_ops(
     input_dim,
     output_dim,
     out_chunk,
+    tile_cfg,
+    pragma_cfg,
     layer_idx=None,
 ):
-    in_chunk = build_llama3_8b_tile_config()["in_chunk"]
-    max_out_chunk = build_llama3_8b_tile_config()["max_out_chunk"]
+    in_chunk = tile_cfg["in_chunk"]
+    max_out_chunk = tile_cfg["max_out_chunk"]
+    linear_in_factor = pragma_cfg["linear_in_factor"]
+    linear_out_factor = pragma_cfg["linear_out_factor"]
     ops.extend([
         make_loop_begin(f"{prefix}_t_loop", "t_base", 0, seq_end_expr, tile_t, "valid_t", tile_t),
         make_loop_begin(f"{prefix}_o_loop", "o_base", 0, output_dim, out_chunk, "valid_o", out_chunk),
@@ -2086,7 +2276,7 @@ def append_llama_linear_ops(
             f"{prefix}_clear",
             {
                 "func_name": "clear_matrix_tile",
-                "dims": [tile_t, max_out_chunk],
+                "dims": [tile_t, max_out_chunk, linear_out_factor],
                 "args": ["BRAM_matrix_out"],
             },
         ),
@@ -2095,7 +2285,7 @@ def append_llama_linear_ops(
             f"{prefix}_load_in",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, input_dim, tile_t, in_chunk],
+                "dims": [seq_capacity, input_dim, tile_t, in_chunk, linear_in_factor],
                 "args": [input_dram, "BRAM_matrix_in", "t_base", "i_base"],
             },
         ),
@@ -2106,7 +2296,7 @@ def append_llama_linear_ops(
                 f"{prefix}_load_w",
                 {
                     "func_name": "load_weight_tile_2d",
-                    "dims": [output_dim, input_dim, max_out_chunk, in_chunk],
+                    "dims": [output_dim, input_dim, max_out_chunk, in_chunk, linear_out_factor, linear_in_factor],
                     "args": [weight_dram, "BRAM_weight_tile", "o_base", "i_base"],
                 },
             )
@@ -2117,7 +2307,7 @@ def append_llama_linear_ops(
                 f"{prefix}_load_w",
                 {
                     "func_name": "load_weight_tile_layered",
-                    "dims": [LLAMA3_8B_LAYERS, output_dim, input_dim, max_out_chunk, in_chunk],
+                    "dims": [LLAMA3_8B_LAYERS, output_dim, input_dim, max_out_chunk, in_chunk, linear_out_factor, linear_in_factor],
                     "args": [weight_dram, "BRAM_weight_tile", str(layer_idx), "o_base", "i_base"],
                 },
             )
@@ -2127,7 +2317,7 @@ def append_llama_linear_ops(
             f"{prefix}_linear",
             {
                 "func_name": "linear_tile",
-                "dims": [tile_t, in_chunk, max_out_chunk],
+                "dims": [tile_t, in_chunk, max_out_chunk, linear_in_factor, linear_out_factor],
                 "args": ["BRAM_matrix_in", "BRAM_weight_tile", "BRAM_matrix_out", "valid_t", "valid_o", "valid_i"],
             },
         ),
@@ -2136,7 +2326,7 @@ def append_llama_linear_ops(
             f"{prefix}_store",
             {
                 "func_name": "store_matrix_tile",
-                "dims": [seq_capacity, output_dim, tile_t, max_out_chunk],
+                "dims": [seq_capacity, output_dim, tile_t, max_out_chunk, linear_out_factor],
                 "args": ["BRAM_matrix_out", output_dram, "t_base", "o_base", "valid_t", "valid_o"],
             },
         ),
@@ -2145,49 +2335,54 @@ def append_llama_linear_ops(
     ])
 
 
-def append_llama_residual_add_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, lhs_dram, rhs_dram, output_dram):
-    tile_t = tile_cfg["token_tile_prefill"] if seq_capacity > 1 else tile_cfg["token_tile_decode"]
+def append_llama_residual_add_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, pragma_cfg, lhs_dram, rhs_dram, output_dram):
+    tile_t = get_llama3_8b_token_tile(seq_capacity, tile_cfg)
+    hidden_chunk = tile_cfg["hidden_chunk"]
+    chunk_col_factor = pragma_cfg["chunk_col_factor"]
     ops.extend([
         make_loop_begin(f"{prefix}_t_loop", "t_base", 0, seq_end_expr, tile_t, "valid_t", tile_t),
+        make_loop_begin(f"{prefix}_h_loop", "h_base", 0, LLAMA3_8B_HIDDEN, hidden_chunk, "valid_h", hidden_chunk),
         (
             f"{prefix}_load_lhs",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, LLAMA3_8B_HIDDEN],
-                "args": [lhs_dram, "BRAM_hidden_a", "t_base", "0"],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, hidden_chunk, chunk_col_factor],
+                "args": [lhs_dram, "BRAM_hidden_a", "t_base", "h_base"],
             },
         ),
         (
             f"{prefix}_load_rhs",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, LLAMA3_8B_HIDDEN],
-                "args": [rhs_dram, "BRAM_hidden_b", "t_base", "0"],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, hidden_chunk, chunk_col_factor],
+                "args": [rhs_dram, "BRAM_hidden_b", "t_base", "h_base"],
             },
         ),
         (
             f"{prefix}_add",
             {
                 "func_name": "matrix_add_tile_2d",
-                "dims": [tile_t, LLAMA3_8B_HIDDEN],
-                "args": ["BRAM_hidden_a", "BRAM_hidden_b", "BRAM_hidden_a", "valid_t", str(LLAMA3_8B_HIDDEN)],
+                "dims": [tile_t, hidden_chunk, chunk_col_factor],
+                "args": ["BRAM_hidden_a", "BRAM_hidden_b", "BRAM_hidden_a", "valid_t", "valid_h"],
             },
         ),
         (
             f"{prefix}_store",
             {
                 "func_name": "store_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, LLAMA3_8B_HIDDEN],
-                "args": ["BRAM_hidden_a", output_dram, "t_base", "0", "valid_t", str(LLAMA3_8B_HIDDEN)],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, hidden_chunk, chunk_col_factor],
+                "args": ["BRAM_hidden_a", output_dram, "t_base", "h_base", "valid_t", "valid_h"],
             },
         ),
+        make_loop_end(f"{prefix}_h_loop_end"),
         make_loop_end(f"{prefix}_t_loop_end"),
     ])
 
 
-def append_llama_swiglu_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, gate_dram, up_dram, output_dram):
-    tile_t = tile_cfg["token_tile_prefill"] if seq_capacity > 1 else tile_cfg["token_tile_decode"]
+def append_llama_swiglu_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, pragma_cfg, gate_dram, up_dram, output_dram):
+    tile_t = get_llama3_8b_token_tile(seq_capacity, tile_cfg)
     ffn_chunk = tile_cfg["ffn_chunk"]
+    chunk_col_factor = pragma_cfg["chunk_col_factor"]
     ops.extend([
         make_loop_begin(f"{prefix}_t_loop", "t_base", 0, seq_end_expr, tile_t, "valid_t", tile_t),
         make_loop_begin(f"{prefix}_c_loop", "c_base", 0, LLAMA3_8B_FFN, ffn_chunk, "valid_c", ffn_chunk),
@@ -2195,7 +2390,7 @@ def append_llama_swiglu_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, g
             f"{prefix}_load_gate",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_FFN, tile_t, ffn_chunk],
+                "dims": [seq_capacity, LLAMA3_8B_FFN, tile_t, ffn_chunk, chunk_col_factor],
                 "args": [gate_dram, "BRAM_gate_chunk", "t_base", "c_base"],
             },
         ),
@@ -2203,7 +2398,7 @@ def append_llama_swiglu_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, g
             f"{prefix}_load_up",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_FFN, tile_t, ffn_chunk],
+                "dims": [seq_capacity, LLAMA3_8B_FFN, tile_t, ffn_chunk, chunk_col_factor],
                 "args": [up_dram, "BRAM_up_chunk", "t_base", "c_base"],
             },
         ),
@@ -2211,7 +2406,7 @@ def append_llama_swiglu_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, g
             f"{prefix}_silu",
             {
                 "func_name": "activation_tile_2d",
-                "dims": [tile_t, ffn_chunk],
+                "dims": [tile_t, ffn_chunk, chunk_col_factor],
                 "func_info": ["activation_tile_2d", "silu"],
                 "args": ["BRAM_gate_chunk", "BRAM_gate_chunk", "valid_t", "valid_c"],
             },
@@ -2220,7 +2415,7 @@ def append_llama_swiglu_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, g
             f"{prefix}_mult",
             {
                 "func_name": "elementwise_mult_tile_2d",
-                "dims": [tile_t, ffn_chunk],
+                "dims": [tile_t, ffn_chunk, chunk_col_factor],
                 "args": ["BRAM_gate_chunk", "BRAM_up_chunk", "BRAM_ffn_chunk", "valid_t", "valid_c"],
             },
         ),
@@ -2228,7 +2423,7 @@ def append_llama_swiglu_ops(ops, prefix, seq_capacity, seq_end_expr, tile_cfg, g
             f"{prefix}_store",
             {
                 "func_name": "store_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_FFN, tile_t, ffn_chunk],
+                "dims": [seq_capacity, LLAMA3_8B_FFN, tile_t, ffn_chunk, chunk_col_factor],
                 "args": ["BRAM_ffn_chunk", output_dram, "t_base", "c_base", "valid_t", "valid_c"],
             },
         ),
@@ -2272,13 +2467,18 @@ def append_llama_attention_ops(
     output_row_base_expr,
     q_dram,
     output_dram,
+    tile_cfg,
+    pragma_cfg,
     layer_idx,
 ):
-    tile_cfg = build_llama3_8b_tile_config()
-    tile_t = tile_cfg["token_tile_prefill"] if seq_capacity > 1 else tile_cfg["token_tile_decode"]
+    tile_t = get_llama3_8b_token_tile(seq_capacity, tile_cfg)
     q_cols = tile_cfg["q_head_cols"]
     k_tile = tile_cfg["k_token_tile"]
     q_head_tile = tile_cfg["q_head_tile"]
+    local_kv_heads = tile_cfg["local_kv_heads"]
+    local_kv_cols = tile_cfg["local_kv_cols"]
+    attn_head_factor = pragma_cfg["attn_head_factor"]
+    attn_dim_factor = pragma_cfg["attn_dim_factor"]
     ops.extend([
         make_loop_begin(f"{prefix}_t_loop", "t_base", 0, q_end_expr, tile_t, "valid_t", tile_t),
         make_loop_begin(f"{prefix}_qh_loop", "qh_base", 0, LLAMA3_8B_Q_HEADS, q_head_tile, "valid_qh", q_head_tile),
@@ -2286,7 +2486,7 @@ def append_llama_attention_ops(
             f"{prefix}_init_rowmax",
             {
                 "func_name": "init_rowmax_tile",
-                "dims": [tile_t, q_head_tile],
+                "dims": [tile_t, q_head_tile, attn_head_factor],
                 "args": ["BRAM_rowmax"],
             },
         ),
@@ -2294,7 +2494,7 @@ def append_llama_attention_ops(
             f"{prefix}_clear_rowsum",
             {
                 "func_name": "clear_matrix_tile",
-                "dims": [tile_t, q_head_tile],
+                "dims": [tile_t, q_head_tile, attn_head_factor],
                 "args": ["BRAM_rowsum"],
             },
         ),
@@ -2302,7 +2502,7 @@ def append_llama_attention_ops(
             f"{prefix}_clear_ctx",
             {
                 "func_name": "clear_matrix_tile",
-                "dims": [tile_t, q_cols],
+                "dims": [tile_t, q_cols, attn_dim_factor],
                 "args": ["BRAM_ctx_tile"],
             },
         ),
@@ -2310,7 +2510,7 @@ def append_llama_attention_ops(
             f"{prefix}_load_q",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, q_cols],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, q_cols, attn_dim_factor],
                 "args": [q_dram, "BRAM_q_tile", q_row_base_expr, "(qh_base * 128)"],
             },
         ),
@@ -2318,8 +2518,8 @@ def append_llama_attention_ops(
         (
             f"{prefix}_load_k_pass1",
             {
-                "func_name": "kv_cache_load_tile",
-                "dims": [cache_ctx, LLAMA3_8B_KV_HEADS, LLAMA3_8B_HEAD_DIM, k_tile],
+                "func_name": "kv_cache_load_group_tile",
+                "dims": [cache_ctx, LLAMA3_8B_KV_HEADS, LLAMA3_8B_HEAD_DIM, k_tile, local_kv_heads, attn_dim_factor],
                 "args": ["DRAM_k_cache", "BRAM_k_tile", str(layer_idx), "(qh_base / 4)", "k_base", "valid_k"],
             },
         ),
@@ -2327,7 +2527,7 @@ def append_llama_attention_ops(
             f"{prefix}_score_pass1",
             {
                 "func_name": "attention_score_tile",
-                "dims": [tile_t, q_head_tile, k_tile, LLAMA3_8B_HEAD_DIM],
+                "dims": [tile_t, q_head_tile, k_tile, LLAMA3_8B_HEAD_DIM, local_kv_heads, attn_head_factor, attn_dim_factor],
                 "args": ["BRAM_q_tile", "BRAM_k_tile", "BRAM_score_tile", "valid_t", "valid_k", q_index_base_expr, "k_base"],
             },
         ),
@@ -2335,7 +2535,7 @@ def append_llama_attention_ops(
             f"{prefix}_rowmax",
             {
                 "func_name": "attention_rowmax_tile",
-                "dims": [tile_t, q_head_tile, k_tile],
+                "dims": [tile_t, q_head_tile, k_tile, attn_head_factor],
                 "args": ["BRAM_score_tile", "BRAM_rowmax", "valid_t", "valid_k"],
             },
         ),
@@ -2344,16 +2544,16 @@ def append_llama_attention_ops(
         (
             f"{prefix}_load_k_pass2",
             {
-                "func_name": "kv_cache_load_tile",
-                "dims": [cache_ctx, LLAMA3_8B_KV_HEADS, LLAMA3_8B_HEAD_DIM, k_tile],
+                "func_name": "kv_cache_load_group_tile",
+                "dims": [cache_ctx, LLAMA3_8B_KV_HEADS, LLAMA3_8B_HEAD_DIM, k_tile, local_kv_heads, attn_dim_factor],
                 "args": ["DRAM_k_cache", "BRAM_k_tile", str(layer_idx), "(qh_base / 4)", "k_base", "valid_k"],
             },
         ),
         (
             f"{prefix}_load_v_pass2",
             {
-                "func_name": "kv_cache_load_tile",
-                "dims": [cache_ctx, LLAMA3_8B_KV_HEADS, LLAMA3_8B_HEAD_DIM, k_tile],
+                "func_name": "kv_cache_load_group_tile",
+                "dims": [cache_ctx, LLAMA3_8B_KV_HEADS, LLAMA3_8B_HEAD_DIM, k_tile, local_kv_heads, attn_dim_factor],
                 "args": ["DRAM_v_cache", "BRAM_v_tile", str(layer_idx), "(qh_base / 4)", "k_base", "valid_k"],
             },
         ),
@@ -2361,7 +2561,7 @@ def append_llama_attention_ops(
             f"{prefix}_score_pass2",
             {
                 "func_name": "attention_score_tile",
-                "dims": [tile_t, q_head_tile, k_tile, LLAMA3_8B_HEAD_DIM],
+                "dims": [tile_t, q_head_tile, k_tile, LLAMA3_8B_HEAD_DIM, local_kv_heads, attn_head_factor, attn_dim_factor],
                 "args": ["BRAM_q_tile", "BRAM_k_tile", "BRAM_score_tile", "valid_t", "valid_k", q_index_base_expr, "k_base"],
             },
         ),
@@ -2369,7 +2569,7 @@ def append_llama_attention_ops(
             f"{prefix}_ctx_acc",
             {
                 "func_name": "attention_softmax_context_tile",
-                "dims": [tile_t, q_head_tile, k_tile, LLAMA3_8B_HEAD_DIM],
+                "dims": [tile_t, q_head_tile, k_tile, LLAMA3_8B_HEAD_DIM, local_kv_heads, attn_head_factor, attn_dim_factor],
                 "args": ["BRAM_score_tile", "BRAM_v_tile", "BRAM_rowmax", "BRAM_rowsum", "BRAM_ctx_tile", "valid_t", "valid_k"],
             },
         ),
@@ -2378,7 +2578,7 @@ def append_llama_attention_ops(
             f"{prefix}_ctx_finalize",
             {
                 "func_name": "attention_finalize_tile",
-                "dims": [tile_t, q_head_tile, LLAMA3_8B_HEAD_DIM],
+                "dims": [tile_t, q_head_tile, LLAMA3_8B_HEAD_DIM, attn_head_factor, attn_dim_factor],
                 "args": ["BRAM_ctx_tile", "BRAM_rowsum", "valid_t"],
             },
         ),
@@ -2386,7 +2586,7 @@ def append_llama_attention_ops(
             f"{prefix}_store_ctx",
             {
                 "func_name": "store_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, q_cols],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, q_cols, attn_dim_factor],
                 "args": ["BRAM_ctx_tile", output_dram, output_row_base_expr, "(qh_base * 128)", "valid_t", str(q_cols)],
             },
         ),
@@ -2395,10 +2595,11 @@ def append_llama_attention_ops(
     ])
 
 
-def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_expr, q_index_base_expr, q_dram, k_dram):
-    tile_cfg = build_llama3_8b_tile_config()
-    tile_t = tile_cfg["token_tile_prefill"] if seq_capacity > 1 else tile_cfg["token_tile_decode"]
+def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_expr, q_index_base_expr, q_dram, k_dram, tile_cfg, pragma_cfg):
+    tile_t = get_llama3_8b_token_tile(seq_capacity, tile_cfg)
     q_cols = tile_cfg["q_head_cols"]
+    attn_head_factor = pragma_cfg["attn_head_factor"]
+    attn_dim_factor = pragma_cfg["attn_dim_factor"]
     ops.extend([
         make_loop_begin(f"{prefix}_q_t_loop", "t_base", 0, seq_end_expr, tile_t, "valid_t", tile_t),
         make_loop_begin(f"{prefix}_q_h_loop", "qh_base", 0, LLAMA3_8B_Q_HEADS, tile_cfg["q_head_tile"], "valid_qh", tile_cfg["q_head_tile"]),
@@ -2406,7 +2607,7 @@ def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_ex
             f"{prefix}_load_q",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, q_cols],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, q_cols, attn_dim_factor],
                 "args": [q_dram, "BRAM_q_tile", q_row_base_expr, "(qh_base * 128)"],
             },
         ),
@@ -2414,7 +2615,7 @@ def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_ex
             f"{prefix}_rope_q",
             {
                 "func_name": "apply_rope_tile",
-                "dims": [tile_t, tile_cfg["q_head_tile"], LLAMA3_8B_HEAD_DIM],
+                "dims": [tile_t, tile_cfg["q_head_tile"], LLAMA3_8B_HEAD_DIM, attn_head_factor, attn_dim_factor],
                 "args": ["BRAM_q_tile", "BRAM_q_tile", q_index_base_expr, "qh_base", "valid_t"],
             },
         ),
@@ -2422,7 +2623,7 @@ def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_ex
             f"{prefix}_store_q",
             {
                 "func_name": "store_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, q_cols],
+                "dims": [seq_capacity, LLAMA3_8B_HIDDEN, tile_t, q_cols, attn_dim_factor],
                 "args": ["BRAM_q_tile", q_dram, q_row_base_expr, "(qh_base * 128)", "valid_t", str(q_cols)],
             },
         ),
@@ -2434,7 +2635,7 @@ def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_ex
             f"{prefix}_load_k",
             {
                 "func_name": "load_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_KV_DIM, tile_t, LLAMA3_8B_HEAD_DIM],
+                "dims": [seq_capacity, LLAMA3_8B_KV_DIM, tile_t, LLAMA3_8B_HEAD_DIM, attn_dim_factor],
                 "args": [k_dram, "BRAM_k_rope", "t_base", "(kh_base * 128)"],
             },
         ),
@@ -2442,7 +2643,7 @@ def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_ex
             f"{prefix}_rope_k",
             {
                 "func_name": "apply_rope_tile",
-                "dims": [tile_t, 1, LLAMA3_8B_HEAD_DIM],
+                "dims": [tile_t, 1, LLAMA3_8B_HEAD_DIM, attn_head_factor, attn_dim_factor],
                 "args": ["BRAM_k_rope", "BRAM_k_rope", q_index_base_expr, "kh_base", "valid_t"],
             },
         ),
@@ -2450,7 +2651,7 @@ def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_ex
             f"{prefix}_store_k",
             {
                 "func_name": "store_matrix_tile",
-                "dims": [seq_capacity, LLAMA3_8B_KV_DIM, tile_t, LLAMA3_8B_HEAD_DIM],
+                "dims": [seq_capacity, LLAMA3_8B_KV_DIM, tile_t, LLAMA3_8B_HEAD_DIM, attn_dim_factor],
                 "args": ["BRAM_k_rope", k_dram, "t_base", "(kh_base * 128)", "valid_t", str(LLAMA3_8B_HEAD_DIM)],
             },
         ),
@@ -2459,17 +2660,22 @@ def append_llama_rope_ops(ops, prefix, seq_capacity, seq_end_expr, q_row_base_ex
     ])
 
 
-def generate_llama3_8b_prefill_architecture(max_ctx):
-    tile_cfg = build_llama3_8b_tile_config()
+def generate_llama3_8b_prefill_architecture(max_ctx, tile_cfg=None, pragma_cfg=None):
+    tile_cfg = build_llama3_8b_tile_config(tile_cfg)
+    pragma_cfg = build_llama3_8b_pragma_config(pragma_cfg)
     tile_t = tile_cfg["token_tile_prefill"]
+    hidden_chunk = tile_cfg["hidden_chunk"]
     q_cols = tile_cfg["q_head_cols"]
+    local_kv_cols = tile_cfg["local_kv_cols"]
     max_out_chunk = tile_cfg["max_out_chunk"]
 
     brams = [
         {"name": "BRAM_prefill_len", "dims": [1]},
-        {"name": "BRAM_gamma", "dims": [LLAMA3_8B_HIDDEN]},
-        {"name": "BRAM_hidden_a", "dims": [tile_t, LLAMA3_8B_HIDDEN]},
-        {"name": "BRAM_hidden_b", "dims": [tile_t, LLAMA3_8B_HIDDEN]},
+        {"name": "BRAM_gamma_chunk", "dims": [hidden_chunk]},
+        {"name": "BRAM_hidden_a", "dims": [tile_t, hidden_chunk]},
+        {"name": "BRAM_hidden_b", "dims": [tile_t, hidden_chunk]},
+        {"name": "BRAM_rms_sumsq", "dims": [tile_t]},
+        {"name": "BRAM_rms_inv", "dims": [tile_t]},
         {"name": "BRAM_matrix_in", "dims": [tile_t, tile_cfg["in_chunk"]]},
         {"name": "BRAM_matrix_out", "dims": [tile_t, max_out_chunk]},
         {"name": "BRAM_weight_tile", "dims": [max_out_chunk, tile_cfg["in_chunk"]]},
@@ -2479,8 +2685,8 @@ def generate_llama3_8b_prefill_architecture(max_ctx):
         {"name": "BRAM_q_tile", "dims": [tile_t, q_cols]},
         {"name": "BRAM_k_rope", "dims": [tile_t, LLAMA3_8B_HEAD_DIM]},
         {"name": "BRAM_ctx_tile", "dims": [tile_t, q_cols]},
-        {"name": "BRAM_k_tile", "dims": [tile_cfg["k_token_tile"], LLAMA3_8B_HEAD_DIM]},
-        {"name": "BRAM_v_tile", "dims": [tile_cfg["k_token_tile"], LLAMA3_8B_HEAD_DIM]},
+        {"name": "BRAM_k_tile", "dims": [tile_cfg["k_token_tile"], local_kv_cols]},
+        {"name": "BRAM_v_tile", "dims": [tile_cfg["k_token_tile"], local_kv_cols]},
         {"name": "BRAM_score_tile", "dims": [tile_t, tile_cfg["q_head_tile"], tile_cfg["k_token_tile"]]},
         {"name": "BRAM_rowmax", "dims": [tile_t, tile_cfg["q_head_tile"]]},
         {"name": "BRAM_rowsum", "dims": [tile_t, tile_cfg["q_head_tile"]]},
@@ -2522,47 +2728,49 @@ def generate_llama3_8b_prefill_architecture(max_ctx):
     ops = [
         ("load_prefill_len", {"func_name": "load", "dims": [1], "args": ["DRAM_prefill_len", "BRAM_prefill_len"]}),
     ]
-    append_llama_embedding_ops(ops, "embed", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, "DRAM_token_ids", "DRAM_hidden_ping")
+    append_llama_embedding_ops(ops, "embed", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, pragma_cfg, "DRAM_token_ids", "DRAM_hidden_ping")
 
     current_hidden = "DRAM_hidden_ping"
     next_hidden = "DRAM_hidden_pong"
     for layer_idx in range(LLAMA3_8B_LAYERS):
-        ops.append((f"load_attn_gamma_{layer_idx}", {"func_name": "load_layer_vector", "dims": [LLAMA3_8B_LAYERS, LLAMA3_8B_HIDDEN], "args": ["DRAM_attn_norm", "BRAM_gamma", str(layer_idx)]}))
-        append_llama_rmsnorm_ops(ops, f"l{layer_idx}_attn_norm", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, current_hidden, "DRAM_norm1", "BRAM_gamma")
-        append_llama_linear_ops(ops, f"l{layer_idx}_qproj", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm1", "DRAM_q_proj", "DRAM_q", LLAMA3_8B_HIDDEN, LLAMA3_8B_HIDDEN, tile_cfg["in_chunk"], layer_idx)
-        append_llama_linear_ops(ops, f"l{layer_idx}_kproj", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm1", "DRAM_k_proj", "DRAM_k", LLAMA3_8B_HIDDEN, LLAMA3_8B_KV_DIM, tile_cfg["in_chunk"], layer_idx)
-        append_llama_linear_ops(ops, f"l{layer_idx}_vproj", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm1", "DRAM_v_proj", "DRAM_v", LLAMA3_8B_HIDDEN, LLAMA3_8B_KV_DIM, tile_cfg["in_chunk"], layer_idx)
-        append_llama_rope_ops(ops, f"l{layer_idx}_rope", max_ctx, "(int)BRAM_prefill_len[0]", "t_base", "t_base", "DRAM_q", "DRAM_k")
+        append_llama_rmsnorm_ops(ops, f"l{layer_idx}_attn_norm", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, pragma_cfg, current_hidden, "DRAM_norm1", "DRAM_attn_norm", layer_idx)
+        append_llama_linear_ops(ops, f"l{layer_idx}_qproj", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm1", "DRAM_q_proj", "DRAM_q", LLAMA3_8B_HIDDEN, LLAMA3_8B_HIDDEN, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_linear_ops(ops, f"l{layer_idx}_kproj", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm1", "DRAM_k_proj", "DRAM_k", LLAMA3_8B_HIDDEN, LLAMA3_8B_KV_DIM, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_linear_ops(ops, f"l{layer_idx}_vproj", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm1", "DRAM_v_proj", "DRAM_v", LLAMA3_8B_HIDDEN, LLAMA3_8B_KV_DIM, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_rope_ops(ops, f"l{layer_idx}_rope", max_ctx, "(int)BRAM_prefill_len[0]", "t_base", "t_base", "DRAM_q", "DRAM_k", tile_cfg, pragma_cfg)
         append_llama_kv_store_ops(ops, f"l{layer_idx}_cache", max_ctx, max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_k", "DRAM_v", "t_base", layer_idx)
-        append_llama_attention_ops(ops, f"l{layer_idx}_attn", max_ctx, max_ctx, "(int)BRAM_prefill_len[0]", "(int)BRAM_prefill_len[0]", "t_base", "t_base", "t_base", "DRAM_q", "DRAM_attn", layer_idx)
-        append_llama_linear_ops(ops, f"l{layer_idx}_oproj", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_attn", "DRAM_o_proj", "DRAM_attn", LLAMA3_8B_HIDDEN, LLAMA3_8B_HIDDEN, tile_cfg["in_chunk"], layer_idx)
-        append_llama_residual_add_ops(ops, f"l{layer_idx}_res1", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, current_hidden, "DRAM_attn", "DRAM_mid")
-        ops.append((f"load_ffn_gamma_{layer_idx}", {"func_name": "load_layer_vector", "dims": [LLAMA3_8B_LAYERS, LLAMA3_8B_HIDDEN], "args": ["DRAM_ffn_norm", "BRAM_gamma", str(layer_idx)]}))
-        append_llama_rmsnorm_ops(ops, f"l{layer_idx}_ffn_norm", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, "DRAM_mid", "DRAM_norm2", "BRAM_gamma")
-        append_llama_linear_ops(ops, f"l{layer_idx}_gate", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm2", "DRAM_gate_proj", "DRAM_gate", LLAMA3_8B_HIDDEN, LLAMA3_8B_FFN, tile_cfg["ffn_chunk"], layer_idx)
-        append_llama_linear_ops(ops, f"l{layer_idx}_up", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm2", "DRAM_up_proj", "DRAM_up", LLAMA3_8B_HIDDEN, LLAMA3_8B_FFN, tile_cfg["ffn_chunk"], layer_idx)
-        append_llama_swiglu_ops(ops, f"l{layer_idx}_swiglu", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, "DRAM_gate", "DRAM_up", "DRAM_ffn")
-        append_llama_linear_ops(ops, f"l{layer_idx}_down", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_ffn", "DRAM_down_proj", "DRAM_ffn_out", LLAMA3_8B_FFN, LLAMA3_8B_HIDDEN, tile_cfg["in_chunk"], layer_idx)
-        append_llama_residual_add_ops(ops, f"l{layer_idx}_res2", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, "DRAM_mid", "DRAM_ffn_out", next_hidden)
+        append_llama_attention_ops(ops, f"l{layer_idx}_attn", max_ctx, max_ctx, "(int)BRAM_prefill_len[0]", "(int)BRAM_prefill_len[0]", "t_base", "t_base", "t_base", "DRAM_q", "DRAM_attn", tile_cfg, pragma_cfg, layer_idx)
+        append_llama_linear_ops(ops, f"l{layer_idx}_oproj", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_attn", "DRAM_o_proj", "DRAM_attn", LLAMA3_8B_HIDDEN, LLAMA3_8B_HIDDEN, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_residual_add_ops(ops, f"l{layer_idx}_res1", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, pragma_cfg, current_hidden, "DRAM_attn", "DRAM_mid")
+        append_llama_rmsnorm_ops(ops, f"l{layer_idx}_ffn_norm", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, pragma_cfg, "DRAM_mid", "DRAM_norm2", "DRAM_ffn_norm", layer_idx)
+        append_llama_linear_ops(ops, f"l{layer_idx}_gate", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm2", "DRAM_gate_proj", "DRAM_gate", LLAMA3_8B_HIDDEN, LLAMA3_8B_FFN, tile_cfg["ffn_chunk"], tile_cfg, pragma_cfg, layer_idx)
+        append_llama_linear_ops(ops, f"l{layer_idx}_up", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm2", "DRAM_up_proj", "DRAM_up", LLAMA3_8B_HIDDEN, LLAMA3_8B_FFN, tile_cfg["ffn_chunk"], tile_cfg, pragma_cfg, layer_idx)
+        append_llama_swiglu_ops(ops, f"l{layer_idx}_swiglu", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, pragma_cfg, "DRAM_gate", "DRAM_up", "DRAM_ffn")
+        append_llama_linear_ops(ops, f"l{layer_idx}_down", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_ffn", "DRAM_down_proj", "DRAM_ffn_out", LLAMA3_8B_FFN, LLAMA3_8B_HIDDEN, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_residual_add_ops(ops, f"l{layer_idx}_res2", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, pragma_cfg, "DRAM_mid", "DRAM_ffn_out", next_hidden)
         current_hidden, next_hidden = next_hidden, current_hidden
 
-    ops.append(("load_final_gamma", {"func_name": "load", "dims": [LLAMA3_8B_HIDDEN], "args": ["DRAM_final_norm", "BRAM_gamma"]}))
-    append_llama_rmsnorm_ops(ops, "final_norm", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, current_hidden, "DRAM_norm1", "BRAM_gamma")
-    append_llama_linear_ops(ops, "lm_head", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm1", "DRAM_lm_head", "DRAM_logits", LLAMA3_8B_HIDDEN, LLAMA3_8B_VOCAB, max_out_chunk, None)
+    append_llama_rmsnorm_ops(ops, "final_norm", max_ctx, "(int)BRAM_prefill_len[0]", tile_cfg, pragma_cfg, current_hidden, "DRAM_norm1", "DRAM_final_norm", None)
+    append_llama_linear_ops(ops, "lm_head", max_ctx, "(int)BRAM_prefill_len[0]", tile_t, "DRAM_norm1", "DRAM_lm_head", "DRAM_logits", LLAMA3_8B_HIDDEN, LLAMA3_8B_VOCAB, max_out_chunk, tile_cfg, pragma_cfg, None)
     return brams, drams, ops
 
 
-def generate_llama3_8b_decode_architecture(max_ctx):
-    tile_cfg = build_llama3_8b_tile_config()
+def generate_llama3_8b_decode_architecture(max_ctx, tile_cfg=None, pragma_cfg=None):
+    tile_cfg = build_llama3_8b_tile_config(tile_cfg)
+    pragma_cfg = build_llama3_8b_pragma_config(pragma_cfg)
     tile_t = tile_cfg["token_tile_decode"]
+    hidden_chunk = tile_cfg["hidden_chunk"]
     q_cols = tile_cfg["q_head_cols"]
+    local_kv_cols = tile_cfg["local_kv_cols"]
     max_out_chunk = tile_cfg["max_out_chunk"]
 
     brams = [
         {"name": "BRAM_decode_pos", "dims": [1]},
-        {"name": "BRAM_gamma", "dims": [LLAMA3_8B_HIDDEN]},
-        {"name": "BRAM_hidden_a", "dims": [tile_t, LLAMA3_8B_HIDDEN]},
-        {"name": "BRAM_hidden_b", "dims": [tile_t, LLAMA3_8B_HIDDEN]},
+        {"name": "BRAM_gamma_chunk", "dims": [hidden_chunk]},
+        {"name": "BRAM_hidden_a", "dims": [tile_t, hidden_chunk]},
+        {"name": "BRAM_hidden_b", "dims": [tile_t, hidden_chunk]},
+        {"name": "BRAM_rms_sumsq", "dims": [tile_t]},
+        {"name": "BRAM_rms_inv", "dims": [tile_t]},
         {"name": "BRAM_matrix_in", "dims": [tile_t, tile_cfg["in_chunk"]]},
         {"name": "BRAM_matrix_out", "dims": [tile_t, max_out_chunk]},
         {"name": "BRAM_weight_tile", "dims": [max_out_chunk, tile_cfg["in_chunk"]]},
@@ -2572,8 +2780,8 @@ def generate_llama3_8b_decode_architecture(max_ctx):
         {"name": "BRAM_q_tile", "dims": [tile_t, q_cols]},
         {"name": "BRAM_k_rope", "dims": [tile_t, LLAMA3_8B_HEAD_DIM]},
         {"name": "BRAM_ctx_tile", "dims": [tile_t, q_cols]},
-        {"name": "BRAM_k_tile", "dims": [tile_cfg["k_token_tile"], LLAMA3_8B_HEAD_DIM]},
-        {"name": "BRAM_v_tile", "dims": [tile_cfg["k_token_tile"], LLAMA3_8B_HEAD_DIM]},
+        {"name": "BRAM_k_tile", "dims": [tile_cfg["k_token_tile"], local_kv_cols]},
+        {"name": "BRAM_v_tile", "dims": [tile_cfg["k_token_tile"], local_kv_cols]},
         {"name": "BRAM_score_tile", "dims": [tile_t, tile_cfg["q_head_tile"], tile_cfg["k_token_tile"]]},
         {"name": "BRAM_rowmax", "dims": [tile_t, tile_cfg["q_head_tile"]]},
         {"name": "BRAM_rowsum", "dims": [tile_t, tile_cfg["q_head_tile"]]},
@@ -2615,42 +2823,39 @@ def generate_llama3_8b_decode_architecture(max_ctx):
     ops = [
         ("load_decode_pos", {"func_name": "load", "dims": [1], "args": ["DRAM_decode_pos", "BRAM_decode_pos"]}),
     ]
-    append_llama_embedding_ops(ops, "embed_decode", 1, "1", tile_cfg, "DRAM_token_id", "DRAM_hidden_ping")
+    append_llama_embedding_ops(ops, "embed_decode", 1, "1", tile_cfg, pragma_cfg, "DRAM_token_id", "DRAM_hidden_ping")
     current_hidden = "DRAM_hidden_ping"
     next_hidden = "DRAM_hidden_pong"
     for layer_idx in range(LLAMA3_8B_LAYERS):
-        ops.append((f"load_attn_gamma_decode_{layer_idx}", {"func_name": "load_layer_vector", "dims": [LLAMA3_8B_LAYERS, LLAMA3_8B_HIDDEN], "args": ["DRAM_attn_norm", "BRAM_gamma", str(layer_idx)]}))
-        append_llama_rmsnorm_ops(ops, f"d{layer_idx}_attn_norm", 1, "1", tile_cfg, current_hidden, "DRAM_norm1", "BRAM_gamma")
-        append_llama_linear_ops(ops, f"d{layer_idx}_qproj", 1, "1", tile_t, "DRAM_norm1", "DRAM_q_proj", "DRAM_q", LLAMA3_8B_HIDDEN, LLAMA3_8B_HIDDEN, tile_cfg["in_chunk"], layer_idx)
-        append_llama_linear_ops(ops, f"d{layer_idx}_kproj", 1, "1", tile_t, "DRAM_norm1", "DRAM_k_proj", "DRAM_k", LLAMA3_8B_HIDDEN, LLAMA3_8B_KV_DIM, tile_cfg["in_chunk"], layer_idx)
-        append_llama_linear_ops(ops, f"d{layer_idx}_vproj", 1, "1", tile_t, "DRAM_norm1", "DRAM_v_proj", "DRAM_v", LLAMA3_8B_HIDDEN, LLAMA3_8B_KV_DIM, tile_cfg["in_chunk"], layer_idx)
-        append_llama_rope_ops(ops, f"d{layer_idx}_rope", 1, "1", "0", "(int)BRAM_decode_pos[0]", "DRAM_q", "DRAM_k")
+        append_llama_rmsnorm_ops(ops, f"d{layer_idx}_attn_norm", 1, "1", tile_cfg, pragma_cfg, current_hidden, "DRAM_norm1", "DRAM_attn_norm", layer_idx)
+        append_llama_linear_ops(ops, f"d{layer_idx}_qproj", 1, "1", tile_t, "DRAM_norm1", "DRAM_q_proj", "DRAM_q", LLAMA3_8B_HIDDEN, LLAMA3_8B_HIDDEN, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_linear_ops(ops, f"d{layer_idx}_kproj", 1, "1", tile_t, "DRAM_norm1", "DRAM_k_proj", "DRAM_k", LLAMA3_8B_HIDDEN, LLAMA3_8B_KV_DIM, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_linear_ops(ops, f"d{layer_idx}_vproj", 1, "1", tile_t, "DRAM_norm1", "DRAM_v_proj", "DRAM_v", LLAMA3_8B_HIDDEN, LLAMA3_8B_KV_DIM, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_rope_ops(ops, f"d{layer_idx}_rope", 1, "1", "0", "(int)BRAM_decode_pos[0]", "DRAM_q", "DRAM_k", tile_cfg, pragma_cfg)
         append_llama_kv_store_ops(ops, f"d{layer_idx}_cache", 1, max_ctx, "1", tile_t, "DRAM_k", "DRAM_v", "(int)BRAM_decode_pos[0]", layer_idx)
-        append_llama_attention_ops(ops, f"d{layer_idx}_attn", 1, max_ctx, "1", "((int)BRAM_decode_pos[0] + 1)", "0", "(int)BRAM_decode_pos[0]", "0", "DRAM_q", "DRAM_attn", layer_idx)
-        append_llama_linear_ops(ops, f"d{layer_idx}_oproj", 1, "1", tile_t, "DRAM_attn", "DRAM_o_proj", "DRAM_attn", LLAMA3_8B_HIDDEN, LLAMA3_8B_HIDDEN, tile_cfg["in_chunk"], layer_idx)
-        append_llama_residual_add_ops(ops, f"d{layer_idx}_res1", 1, "1", tile_cfg, current_hidden, "DRAM_attn", "DRAM_mid")
-        ops.append((f"load_ffn_gamma_decode_{layer_idx}", {"func_name": "load_layer_vector", "dims": [LLAMA3_8B_LAYERS, LLAMA3_8B_HIDDEN], "args": ["DRAM_ffn_norm", "BRAM_gamma", str(layer_idx)]}))
-        append_llama_rmsnorm_ops(ops, f"d{layer_idx}_ffn_norm", 1, "1", tile_cfg, "DRAM_mid", "DRAM_norm2", "BRAM_gamma")
-        append_llama_linear_ops(ops, f"d{layer_idx}_gate", 1, "1", tile_t, "DRAM_norm2", "DRAM_gate_proj", "DRAM_gate", LLAMA3_8B_HIDDEN, LLAMA3_8B_FFN, tile_cfg["ffn_chunk"], layer_idx)
-        append_llama_linear_ops(ops, f"d{layer_idx}_up", 1, "1", tile_t, "DRAM_norm2", "DRAM_up_proj", "DRAM_up", LLAMA3_8B_HIDDEN, LLAMA3_8B_FFN, tile_cfg["ffn_chunk"], layer_idx)
-        append_llama_swiglu_ops(ops, f"d{layer_idx}_swiglu", 1, "1", tile_cfg, "DRAM_gate", "DRAM_up", "DRAM_ffn")
-        append_llama_linear_ops(ops, f"d{layer_idx}_down", 1, "1", tile_t, "DRAM_ffn", "DRAM_down_proj", "DRAM_ffn_out", LLAMA3_8B_FFN, LLAMA3_8B_HIDDEN, tile_cfg["in_chunk"], layer_idx)
-        append_llama_residual_add_ops(ops, f"d{layer_idx}_res2", 1, "1", tile_cfg, "DRAM_mid", "DRAM_ffn_out", next_hidden)
+        append_llama_attention_ops(ops, f"d{layer_idx}_attn", 1, max_ctx, "1", "((int)BRAM_decode_pos[0] + 1)", "0", "(int)BRAM_decode_pos[0]", "0", "DRAM_q", "DRAM_attn", tile_cfg, pragma_cfg, layer_idx)
+        append_llama_linear_ops(ops, f"d{layer_idx}_oproj", 1, "1", tile_t, "DRAM_attn", "DRAM_o_proj", "DRAM_attn", LLAMA3_8B_HIDDEN, LLAMA3_8B_HIDDEN, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_residual_add_ops(ops, f"d{layer_idx}_res1", 1, "1", tile_cfg, pragma_cfg, current_hidden, "DRAM_attn", "DRAM_mid")
+        append_llama_rmsnorm_ops(ops, f"d{layer_idx}_ffn_norm", 1, "1", tile_cfg, pragma_cfg, "DRAM_mid", "DRAM_norm2", "DRAM_ffn_norm", layer_idx)
+        append_llama_linear_ops(ops, f"d{layer_idx}_gate", 1, "1", tile_t, "DRAM_norm2", "DRAM_gate_proj", "DRAM_gate", LLAMA3_8B_HIDDEN, LLAMA3_8B_FFN, tile_cfg["ffn_chunk"], tile_cfg, pragma_cfg, layer_idx)
+        append_llama_linear_ops(ops, f"d{layer_idx}_up", 1, "1", tile_t, "DRAM_norm2", "DRAM_up_proj", "DRAM_up", LLAMA3_8B_HIDDEN, LLAMA3_8B_FFN, tile_cfg["ffn_chunk"], tile_cfg, pragma_cfg, layer_idx)
+        append_llama_swiglu_ops(ops, f"d{layer_idx}_swiglu", 1, "1", tile_cfg, pragma_cfg, "DRAM_gate", "DRAM_up", "DRAM_ffn")
+        append_llama_linear_ops(ops, f"d{layer_idx}_down", 1, "1", tile_t, "DRAM_ffn", "DRAM_down_proj", "DRAM_ffn_out", LLAMA3_8B_FFN, LLAMA3_8B_HIDDEN, max_out_chunk, tile_cfg, pragma_cfg, layer_idx)
+        append_llama_residual_add_ops(ops, f"d{layer_idx}_res2", 1, "1", tile_cfg, pragma_cfg, "DRAM_mid", "DRAM_ffn_out", next_hidden)
         current_hidden, next_hidden = next_hidden, current_hidden
 
-    ops.append(("load_final_gamma_decode", {"func_name": "load", "dims": [LLAMA3_8B_HIDDEN], "args": ["DRAM_final_norm", "BRAM_gamma"]}))
-    append_llama_rmsnorm_ops(ops, "decode_final_norm", 1, "1", tile_cfg, current_hidden, "DRAM_norm1", "BRAM_gamma")
-    append_llama_linear_ops(ops, "decode_lm_head", 1, "1", tile_t, "DRAM_norm1", "DRAM_lm_head", "DRAM_logits_decode", LLAMA3_8B_HIDDEN, LLAMA3_8B_VOCAB, max_out_chunk, None)
+    append_llama_rmsnorm_ops(ops, "decode_final_norm", 1, "1", tile_cfg, pragma_cfg, current_hidden, "DRAM_norm1", "DRAM_final_norm", None)
+    append_llama_linear_ops(ops, "decode_lm_head", 1, "1", tile_t, "DRAM_norm1", "DRAM_lm_head", "DRAM_logits_decode", LLAMA3_8B_HIDDEN, LLAMA3_8B_VOCAB, max_out_chunk, tile_cfg, pragma_cfg, None)
     return brams, drams, ops
 
 
-def generate_llama3_8b_prefill_config_text(max_ctx, data_type="ap_fixed<16,5>", tile_cfg=None):
-    brams, drams, ops = generate_llama3_8b_prefill_architecture(max_ctx)
+def generate_llama3_8b_prefill_config_text(max_ctx, data_type="ap_fixed<16,5>", tile_cfg=None, pragma_cfg=None):
+    brams, drams, ops = generate_llama3_8b_prefill_architecture(max_ctx, tile_cfg, pragma_cfg)
     return serialize_scale_model_config(brams, drams, ops, ["DRAM_logits"], data_type=data_type)
 
 
-def generate_llama3_8b_decode_config_text(max_ctx, data_type="ap_fixed<16,5>", tile_cfg=None):
-    brams, drams, ops = generate_llama3_8b_decode_architecture(max_ctx)
+def generate_llama3_8b_decode_config_text(max_ctx, data_type="ap_fixed<16,5>", tile_cfg=None, pragma_cfg=None):
+    brams, drams, ops = generate_llama3_8b_decode_architecture(max_ctx, tile_cfg, pragma_cfg)
     return serialize_scale_model_config(brams, drams, ops, ["DRAM_logits_decode"], data_type=data_type)
 
 
@@ -2707,10 +2912,17 @@ def get_resnet_filename(depth, data_type, conv_cfg=None, preserve_legacy_name=Fa
     return f"RESNET{depth}{get_conv_factor_suffix(conv_cfg, preserve_legacy_name)}_config_{naming_dtype}.json"
 
 
-def get_resnet_tiled_filename(depth, data_type, tiled_cfg, conv_cfg=None, preserve_legacy_name=False):
+def get_resnet_tiled_filename(
+    depth,
+    data_type,
+    tiled_cfg,
+    conv_cfg=None,
+    preserve_legacy_conv_name=False,
+    preserve_legacy_tiled_name=False,
+):
     naming_dtype = data_type.replace('<', '_').replace('>', '_').replace(',', '_')
-    conv_suffix = get_conv_factor_suffix(conv_cfg, preserve_legacy_name)
-    if tiled_cfg["is_default"]:
+    conv_suffix = get_conv_factor_suffix(conv_cfg, preserve_legacy_conv_name)
+    if preserve_legacy_tiled_name and tiled_cfg["is_default"]:
         return f"RESNET{depth}_TILED{conv_suffix}_config_{naming_dtype}.json"
     return (
         f"RESNET{depth}_TILED_oc{tiled_cfg['tile_oc']}_ic{tiled_cfg['tile_ic']}"
@@ -3578,8 +3790,21 @@ def generate_resnet18_config_txt(data_type="ap_fixed<16,5>", conv_cfg=None):
     return generate_resnet_config_txt(18, data_type, conv_cfg=conv_cfg)
 
 
-def get_resnet18_tiled_filename(data_type, tiled_cfg, conv_cfg=None, preserve_legacy_name=False):
-    return get_resnet_tiled_filename(18, data_type, tiled_cfg, conv_cfg=conv_cfg, preserve_legacy_name=preserve_legacy_name)
+def get_resnet18_tiled_filename(
+    data_type,
+    tiled_cfg,
+    conv_cfg=None,
+    preserve_legacy_conv_name=False,
+    preserve_legacy_tiled_name=False,
+):
+    return get_resnet_tiled_filename(
+        18,
+        data_type,
+        tiled_cfg,
+        conv_cfg=conv_cfg,
+        preserve_legacy_conv_name=preserve_legacy_conv_name,
+        preserve_legacy_tiled_name=preserve_legacy_tiled_name,
+    )
 
 
 def generate_resnet18_tiled_architecture(conv_cfg=None):
@@ -3936,12 +4161,25 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Generate scale model JSON configs.")
     parser.add_argument("--resnet-depths", type=str, default="18,34,50,101,152")
     parser.add_argument("--llama3-8b-contexts", type=str, default="2048,8192")
+    parser.add_argument("--llama3-8b-token-tile-prefill", type=str, default="16")
+    parser.add_argument("--llama3-8b-token-tile-decode", type=str, default="1")
+    parser.add_argument("--llama3-8b-hidden-chunk", type=str, default="128")
+    parser.add_argument("--llama3-8b-in-chunk", type=str, default="128")
+    parser.add_argument("--llama3-8b-max-out-chunk", type=str, default="256")
+    parser.add_argument("--llama3-8b-ffn-chunk", type=str, default="128")
+    parser.add_argument("--llama3-8b-k-token-tile", type=str, default="128")
+    parser.add_argument("--llama3-8b-q-head-tile", type=str, default="4")
+    parser.add_argument("--llama3-8b-linear-in-factors", type=str, default="1")
+    parser.add_argument("--llama3-8b-linear-out-factors", type=str, default="1")
+    parser.add_argument("--llama3-8b-chunk-col-factors", type=str, default="1")
+    parser.add_argument("--llama3-8b-attn-head-factors", type=str, default="1")
+    parser.add_argument("--llama3-8b-attn-dim-factors", type=str, default="1")
     parser.add_argument("--conv-ci-factors", type=str, default=",".join(str(x) for x in DEFAULT_GLOBAL_CONV_CI_FACTORS))
     parser.add_argument("--conv-co-factors", type=str, default=",".join(str(x) for x in DEFAULT_GLOBAL_CONV_CO_FACTORS))
-    parser.add_argument("--resnet-tiled-oc", "--resnet18-tiled-oc", dest="resnet_tiled_oc", type=int, default=DEFAULT_RESNET18_TILE_OC)
-    parser.add_argument("--resnet-tiled-ic", "--resnet18-tiled-ic", dest="resnet_tiled_ic", type=int, default=DEFAULT_RESNET18_TILE_IC)
-    parser.add_argument("--resnet-tiled-h", "--resnet18-tiled-h", dest="resnet_tiled_h", type=int, default=DEFAULT_RESNET18_TILE_H)
-    parser.add_argument("--resnet-tiled-w", "--resnet18-tiled-w", dest="resnet_tiled_w", type=int, default=DEFAULT_RESNET18_TILE_W)
+    parser.add_argument("--resnet-tiled-oc", "--resnet18-tiled-oc", dest="resnet_tiled_oc", type=str, default=str(DEFAULT_RESNET18_TILE_OC))
+    parser.add_argument("--resnet-tiled-ic", "--resnet18-tiled-ic", dest="resnet_tiled_ic", type=str, default=str(DEFAULT_RESNET18_TILE_IC))
+    parser.add_argument("--resnet-tiled-h", "--resnet18-tiled-h", dest="resnet_tiled_h", type=str, default=str(DEFAULT_RESNET18_TILE_H))
+    parser.add_argument("--resnet-tiled-w", "--resnet18-tiled-w", dest="resnet_tiled_w", type=str, default=str(DEFAULT_RESNET18_TILE_W))
     return parser.parse_args()
 
 
@@ -3949,6 +4187,138 @@ def main():
     args = parse_args()
     selected_resnet_depths = parse_resnet_depths(args.resnet_depths)
     llama3_8b_contexts = parse_context_list(args.llama3_8b_contexts)
+    llama3_8b_token_tile_prefills = parse_positive_int_list(
+        args.llama3_8b_token_tile_prefill,
+        "--llama3-8b-token-tile-prefill",
+    )
+    llama3_8b_token_tile_decodes = parse_positive_int_list(
+        args.llama3_8b_token_tile_decode,
+        "--llama3-8b-token-tile-decode",
+    )
+    llama3_8b_hidden_chunks = parse_positive_int_list(
+        args.llama3_8b_hidden_chunk,
+        "--llama3-8b-hidden-chunk",
+    )
+    llama3_8b_in_chunks = parse_positive_int_list(
+        args.llama3_8b_in_chunk,
+        "--llama3-8b-in-chunk",
+    )
+    llama3_8b_max_out_chunks = parse_positive_int_list(
+        args.llama3_8b_max_out_chunk,
+        "--llama3-8b-max-out-chunk",
+    )
+    llama3_8b_ffn_chunks = parse_positive_int_list(
+        args.llama3_8b_ffn_chunk,
+        "--llama3-8b-ffn-chunk",
+    )
+    llama3_8b_k_token_tiles = parse_positive_int_list(
+        args.llama3_8b_k_token_tile,
+        "--llama3-8b-k-token-tile",
+    )
+    llama3_8b_q_head_tiles = parse_positive_int_list(
+        args.llama3_8b_q_head_tile,
+        "--llama3-8b-q-head-tile",
+    )
+    llama3_8b_linear_in_factors = parse_positive_int_list(
+        args.llama3_8b_linear_in_factors,
+        "--llama3-8b-linear-in-factors",
+    )
+    llama3_8b_linear_out_factors = parse_positive_int_list(
+        args.llama3_8b_linear_out_factors,
+        "--llama3-8b-linear-out-factors",
+    )
+    llama3_8b_chunk_col_factors = parse_positive_int_list(
+        args.llama3_8b_chunk_col_factors,
+        "--llama3-8b-chunk-col-factors",
+    )
+    llama3_8b_attn_head_factors = parse_positive_int_list(
+        args.llama3_8b_attn_head_factors,
+        "--llama3-8b-attn-head-factors",
+    )
+    llama3_8b_attn_dim_factors = parse_positive_int_list(
+        args.llama3_8b_attn_dim_factors,
+        "--llama3-8b-attn-dim-factors",
+    )
+
+    llama3_8b_tile_cfgs = []
+    skipped_llama3_8b_tile_cfgs = []
+    for (
+        token_tile_prefill,
+        token_tile_decode,
+        hidden_chunk,
+        in_chunk,
+        max_out_chunk,
+        ffn_chunk,
+        k_token_tile,
+        q_head_tile,
+    ) in itertools.product(
+        llama3_8b_token_tile_prefills,
+        llama3_8b_token_tile_decodes,
+        llama3_8b_hidden_chunks,
+        llama3_8b_in_chunks,
+        llama3_8b_max_out_chunks,
+        llama3_8b_ffn_chunks,
+        llama3_8b_k_token_tiles,
+        llama3_8b_q_head_tiles,
+    ):
+        tile_cfg_candidate = {
+            "token_tile_prefill": token_tile_prefill,
+            "token_tile_decode": token_tile_decode,
+            "hidden_chunk": hidden_chunk,
+            "in_chunk": in_chunk,
+            "max_out_chunk": max_out_chunk,
+            "ffn_chunk": ffn_chunk,
+            "k_token_tile": k_token_tile,
+            "q_head_tile": q_head_tile,
+        }
+        try:
+            llama3_8b_tile_cfgs.append(build_llama3_8b_tile_config(tile_cfg_candidate))
+        except ValueError as exc:
+            skipped_llama3_8b_tile_cfgs.append((tile_cfg_candidate, str(exc)))
+
+    if not llama3_8b_tile_cfgs:
+        raise ValueError(
+            "No valid Llama 3 8B tile configurations were generated from the provided sweep values."
+        )
+
+    llama3_8b_pragma_cfgs = []
+    skipped_llama3_8b_pragma_cfgs = []
+    for (
+        linear_in_factor,
+        linear_out_factor,
+        chunk_col_factor,
+        attn_head_factor,
+        attn_dim_factor,
+    ) in itertools.product(
+        llama3_8b_linear_in_factors,
+        llama3_8b_linear_out_factors,
+        llama3_8b_chunk_col_factors,
+        llama3_8b_attn_head_factors,
+        llama3_8b_attn_dim_factors,
+    ):
+        pragma_cfg_candidate = {
+            "linear_in_factor": linear_in_factor,
+            "linear_out_factor": linear_out_factor,
+            "chunk_col_factor": chunk_col_factor,
+            "attn_head_factor": attn_head_factor,
+            "attn_dim_factor": attn_dim_factor,
+        }
+        try:
+            llama3_8b_pragma_cfgs.append(build_llama3_8b_pragma_config(pragma_cfg_candidate))
+        except ValueError as exc:
+            skipped_llama3_8b_pragma_cfgs.append((pragma_cfg_candidate, str(exc)))
+
+    if not llama3_8b_pragma_cfgs:
+        raise ValueError(
+            "No valid Llama 3 8B pragma configurations were generated from the provided sweep values."
+        )
+
+    preserve_legacy_llama_names = (
+        len(llama3_8b_tile_cfgs) == 1
+        and len(llama3_8b_pragma_cfgs) == 1
+        and llama3_8b_tile_cfgs[0]["is_default"]
+        and llama3_8b_pragma_cfgs[0]["is_default"]
+    )
     conv_ci_factors = parse_positive_int_list(args.conv_ci_factors, "--conv-ci-factors")
     conv_co_factors = parse_positive_int_list(args.conv_co_factors, "--conv-co-factors")
     conv_factor_cfgs = [
@@ -3959,11 +4329,22 @@ def main():
         len(conv_factor_cfgs) == 1
         and is_default_conv_factor_config(conv_factor_cfgs[0])
     )
-    tiled_cfg = build_resnet18_tiled_config(
-        tile_oc=args.resnet_tiled_oc,
-        tile_ic=args.resnet_tiled_ic,
-        tile_h=args.resnet_tiled_h,
-        tile_w=args.resnet_tiled_w,
+    resnet_tiled_ocs = parse_positive_int_list(args.resnet_tiled_oc, "--resnet-tiled-oc")
+    resnet_tiled_ics = parse_positive_int_list(args.resnet_tiled_ic, "--resnet-tiled-ic")
+    resnet_tiled_hs = parse_positive_int_list(args.resnet_tiled_h, "--resnet-tiled-h")
+    resnet_tiled_ws = parse_positive_int_list(args.resnet_tiled_w, "--resnet-tiled-w")
+    tiled_cfgs = [
+        build_resnet18_tiled_config(tile_oc=tile_oc, tile_ic=tile_ic, tile_h=tile_h, tile_w=tile_w)
+        for tile_oc, tile_ic, tile_h, tile_w in itertools.product(
+            resnet_tiled_ocs,
+            resnet_tiled_ics,
+            resnet_tiled_hs,
+            resnet_tiled_ws,
+        )
+    ]
+    preserve_legacy_resnet_tiled_names = (
+        len(tiled_cfgs) == 1
+        and tiled_cfgs[0]["is_default"]
     )
 
     # Define parameter ranges (adjust as needed)
@@ -3992,15 +4373,6 @@ def main():
             seq_len=seq, 
             data_type=data_type
         )
-
-        llama3_8b_prefill_config_texts = {
-            ctx: generate_llama3_8b_prefill_config_text(ctx, data_type=data_type)
-            for ctx in llama3_8b_contexts
-        }
-        llama3_8b_decode_config_texts = {
-            ctx: generate_llama3_8b_decode_config_text(ctx, data_type=data_type)
-            for ctx in llama3_8b_contexts
-        }
 
         vit_config_text = generate_vit_config_txt(
             data_type=data_type
@@ -4056,37 +4428,67 @@ def main():
                     f.write(resnet_config_text)
                 conv_filepaths.append(resnet_filepath)
 
-                resnet_tiled_config_text = generate_resnet_tiled_config_txt(
-                    depth,
-                    data_type=data_type,
-                    tiled_cfg=tiled_cfg,
-                    conv_cfg=conv_cfg,
-                )
-                resnet_tiled_filename = get_resnet_tiled_filename(
-                    depth,
-                    data_type,
-                    tiled_cfg,
-                    conv_cfg=conv_cfg,
-                    preserve_legacy_name=preserve_legacy_conv_names,
-                )
-                resnet_tiled_filepath = os.path.join(output_dir, resnet_tiled_filename)
-                with open(resnet_tiled_filepath, "w") as f:
-                    f.write(resnet_tiled_config_text)
-                conv_filepaths.append(resnet_tiled_filepath)
+                for tiled_cfg in tiled_cfgs:
+                    resnet_tiled_config_text = generate_resnet_tiled_config_txt(
+                        depth,
+                        data_type=data_type,
+                        tiled_cfg=tiled_cfg,
+                        conv_cfg=conv_cfg,
+                    )
+                    resnet_tiled_filename = get_resnet_tiled_filename(
+                        depth,
+                        data_type,
+                        tiled_cfg,
+                        conv_cfg=conv_cfg,
+                        preserve_legacy_conv_name=preserve_legacy_conv_names,
+                        preserve_legacy_tiled_name=preserve_legacy_resnet_tiled_names,
+                    )
+                    resnet_tiled_filepath = os.path.join(output_dir, resnet_tiled_filename)
+                    with open(resnet_tiled_filepath, "w") as f:
+                        f.write(resnet_tiled_config_text)
+                    conv_filepaths.append(resnet_tiled_filepath)
 
         llama3_8b_filepaths = []
-        for ctx in llama3_8b_contexts:
-            prefill_filename = get_llama3_8b_filename("prefill", ctx, data_type)
-            prefill_filepath = os.path.join(output_dir, prefill_filename)
-            with open(prefill_filepath, "w") as f:
-                f.write(llama3_8b_prefill_config_texts[ctx])
-            llama3_8b_filepaths.append(prefill_filepath)
+        for llama3_8b_tile_cfg in llama3_8b_tile_cfgs:
+            for llama3_8b_pragma_cfg in llama3_8b_pragma_cfgs:
+                for ctx in llama3_8b_contexts:
+                    prefill_config_text = generate_llama3_8b_prefill_config_text(
+                        ctx,
+                        data_type=data_type,
+                        tile_cfg=llama3_8b_tile_cfg,
+                        pragma_cfg=llama3_8b_pragma_cfg,
+                    )
+                    prefill_filename = get_llama3_8b_filename(
+                        "prefill",
+                        ctx,
+                        data_type,
+                        llama3_8b_tile_cfg,
+                        pragma_cfg=llama3_8b_pragma_cfg,
+                        preserve_legacy_name=preserve_legacy_llama_names,
+                    )
+                    prefill_filepath = os.path.join(output_dir, prefill_filename)
+                    with open(prefill_filepath, "w") as f:
+                        f.write(prefill_config_text)
+                    llama3_8b_filepaths.append(prefill_filepath)
 
-            decode_filename = get_llama3_8b_filename("decode", ctx, data_type)
-            decode_filepath = os.path.join(output_dir, decode_filename)
-            with open(decode_filepath, "w") as f:
-                f.write(llama3_8b_decode_config_texts[ctx])
-            llama3_8b_filepaths.append(decode_filepath)
+                    decode_config_text = generate_llama3_8b_decode_config_text(
+                        ctx,
+                        data_type=data_type,
+                        tile_cfg=llama3_8b_tile_cfg,
+                        pragma_cfg=llama3_8b_pragma_cfg,
+                    )
+                    decode_filename = get_llama3_8b_filename(
+                        "decode",
+                        ctx,
+                        data_type,
+                        llama3_8b_tile_cfg,
+                        pragma_cfg=llama3_8b_pragma_cfg,
+                        preserve_legacy_name=preserve_legacy_llama_names,
+                    )
+                    decode_filepath = os.path.join(output_dir, decode_filename)
+                    with open(decode_filepath, "w") as f:
+                        f.write(decode_config_text)
+                    llama3_8b_filepaths.append(decode_filepath)
 
         vit_filename = (
             f"VIT_config_{naming_dtype}.json"
@@ -4101,7 +4503,24 @@ def main():
             print(f"Generated {conv_filepath}")
         for llama3_8b_filepath in llama3_8b_filepaths:
             print(f"Generated {llama3_8b_filepath}")
+        for skipped_tile_cfg, skip_reason in skipped_llama3_8b_tile_cfgs:
+            print(f"Skipped Llama3 8B tile config {skipped_tile_cfg}: {skip_reason}")
+        for skipped_pragma_cfg, skip_reason in skipped_llama3_8b_pragma_cfgs:
+            print(f"Skipped Llama3 8B pragma config {skipped_pragma_cfg}: {skip_reason}")
         print(f"Generated {vit_filepath}")
+        print(
+            "Llama3 8B tile sweep summary: "
+            f"candidates={len(llama3_8b_tile_cfgs) + len(skipped_llama3_8b_tile_cfgs)}, "
+            f"valid={len(llama3_8b_tile_cfgs)}, "
+            f"skipped={len(skipped_llama3_8b_tile_cfgs)}, "
+            f"generated_jsons={len(llama3_8b_filepaths)}"
+        )
+        print(
+            "Llama3 8B pragma sweep summary: "
+            f"candidates={len(llama3_8b_pragma_cfgs) + len(skipped_llama3_8b_pragma_cfgs)}, "
+            f"valid={len(llama3_8b_pragma_cfgs)}, "
+            f"skipped={len(skipped_llama3_8b_pragma_cfgs)}"
+        )
 
     num_combos = len(list(itertools.product(
         seq_len, data_type_list,
