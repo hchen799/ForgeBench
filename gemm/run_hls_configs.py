@@ -44,7 +44,7 @@ def run_hls_on_dirs(base_dir="hls_files"):
     # run_dirs = run_dirs[:100]  # Limit to first 1000 directories for testing
 
     # limit concurrency to 50 here
-    MAX_CONCURRENT_JOBS = 50 
+    MAX_CONCURRENT_JOBS = 64 
     all_results = []
     with ProcessPoolExecutor(max_workers=MAX_CONCURRENT_JOBS) as ex:
         futures = []

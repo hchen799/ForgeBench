@@ -54,7 +54,7 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
             shutil.move(dram_txt, os.path.join(run_dir, dram_txt))
     
     generate_full_tcl_file(drams, fpga_name, clock, tasks, output_filename=os.path.join(run_dir, "run_hls.tcl"))
-    print(f"Generated files for {run_name} in {run_dir}")
+    # print(f"Generated files for {run_name} in {run_dir}")
 
 if __name__ == "__main__":
     test_case_dir = "auto_generated_configs"
