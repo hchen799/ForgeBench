@@ -44,6 +44,7 @@ def parse_utilization(xml_path, project_name=None, function_name=None):
         "Function": function_name if function_name else "Overall",
         "LUT_Utilization": (overall_lut / total_lut) * 100 if total_lut else 0,
         "DSP_Utilization": (overall_dsp / total_dsp) * 100 if total_dsp else 0,
+        "Average_Utilization": ((overall_dsp / total_dsp) * 100 + (overall_lut / total_lut) * 100) / 2 if total_dsp and total_lut else 0,
     }
 
     results = [utilization]

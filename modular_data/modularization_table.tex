@@ -1,0 +1,37 @@
+\begin{table*}[!tbh]
+\centering
+\footnotesize
+\begin{tabular}{L{1.1cm}L{2.9cm}C{0.6cm}C{0.6cm}C{0.6cm}R{0.8cm}C{0.8cm}C{0.9cm}R{0.8cm}C{2.5cm}}
+\toprule
+
+    \multirow{2}{*}{\centering \textbf{Test Suite}} & 
+    \multirow{2}{*}{\centering \textbf{Test Case}} & 
+    \multicolumn{4}{L{3.3cm}}{\textbf{Resource Utilization Before Modularization}} & 
+    \multicolumn{3}{L{3.2cm}}{\textbf{Resource Utilization After Modularization}} &
+    \multirow{2}{2.5cm}{\textbf{\% Change in Resource Utilization}} \\ 
+
+    \cmidrule{3-6} 
+    \cmidrule{7-9}
+
+    & & P1 & P2 & P3 & \textbf{Total} & Shared & \textbf{\% Reuse} & \textbf{Total} & \\ 
+
+    \midrule
+    \multirow{6}{*}{\centering \textbf{GEMM}} & Tiled GEMM $\dagger$ & 13.66 & 5.72 & 19.25 & 38.62 & 2.33 & \textbf{50.71} & 4.60 & \textbf{-88.08} \\
+        & Vec/Mtx Mult - Dot $\dagger$ $\ast$ & 63.31 & 8.45 & 1.01 & 72.77 & 0.35 & \textbf{12.36} & 2.83 & \textbf{-96.11} \\
+        & Vec/Mtx Mult - MMV $\dagger$ $\ast$ & 63.31 & 8.45 & 1.01 & 72.77 & 3.33 & \textbf{30.19} & 11.03 & \textbf{-84.84} \\
+        & Vec/Mtx Mult - GEMM $\dagger$ $\ast$ & 63.31 & 8.45 & 1.01 & 72.77 & 58.86 & \textbf{84.51} & 69.65 & \textbf{-4.29} \\
+        & i-j-k Orders $\ast$ & 61.96 & 62.81 & 62.45 & 187.22 & 56.99 & \textbf{79.88} & 71.34 & \textbf{-61.89} \\
+        & Vector Transpose $\ast$ & 8.41 & 7.54 & - & 15.95 & 6.07 & \textbf{43.73} & 13.89 & \textbf{-12.91} \\
+    \midrule
+    \multirow{3}{*}{\centering \textbf{DNN}} & Activation Functions $\ddagger$ $\ast$ & 1.24 & 1.31 & 1.11 & 3.66 & 0.18 & \textbf{11.03} & 1.62 & \textbf{-55.74} \\
+        & Tiled Convolution $\dagger$ $\ast$ & 15.64 & 19.36 & 19.38 & 54.38 & 21.19 & \textbf{89.12} & 23.78 & \textbf{-56.27} \\
+        & DNN Blocks $\ddagger$ & 22.49 & 21.83 & 64.17 & 108.49 & 20.99 & \textbf{24.26} & 86.52 & \textbf{-20.25} \\
+    \midrule
+    \multirow{3}{*}{\centering \textbf{LLM}} & Tiled Attention $\dagger$ $\ast$ & 4.24 & 4.23 & - & 8.46 & 3.59 & \textbf{77.31} & 4.65 & \textbf{-45.07} \\
+        & Functional Attention $\ddagger$ & 12.56 & 13.05 & - & 25.61 & 9.88 & \textbf{66.81} & 14.79 & \textbf{-42.27} \\
+        & LLaMA/GPT Transformers $\ddagger$ & 21.54 & 11.62 & - & 33.15 & 7.50 & \textbf{32.40} & 23.16 & \textbf{-30.15} \\
+    \bottomrule
+    \end{tabular}
+    \caption{ Resource usage of hardware test cases, annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. }
+    \label{tab:modularization_results}
+\end{table*}

@@ -148,7 +148,7 @@ def generate_llama_architecture(seq_len=2048):
         {"name": "DRAM_input", "dims": [SEQ_LEN, DIM_IN], "bundle": "mem_input"},
     ]
 
-    for layer_idx in range(32):
+    for layer_idx in range(4):
         brams.extend([
             {"name": f"BRAM_input_{layer_idx + 1}", "dims": [SEQ_LEN, DIM_IN]},
             {"name": f"BRAM_rms_norm_w1_{layer_idx}", "dims": [DIM_IN]},
@@ -180,7 +180,7 @@ def generate_llama_architecture(seq_len=2048):
         {"func_name": "load", "dims": [SEQ_LEN, DIM_IN], "args": ["DRAM_input", "BRAM_input_0"]}
     ))
 
-    for layer_idx in range(32):
+    for layer_idx in range(4):
         ops.extend([
             (
                 f"load_rms_norm_w1_{layer_idx}",
@@ -217,7 +217,7 @@ def generate_llama_architecture(seq_len=2048):
         ])
 
     # Process 32 decoder layers
-    for layer_idx in range(32):
+    for layer_idx in range(4):
         mod_name = f"layer_{layer_idx}"
         
         bram_in = f"BRAM_input_{layer_idx}"
@@ -1305,54 +1305,54 @@ def main():
             data_type=data_type
         )
 
-        longformer_config_text = generate_longformer_config_txt(
-            seq_len=seq, 
-            data_type=data_type
-        )
+        # longformer_config_text = generate_longformer_config_txt(
+        #     seq_len=seq, 
+        #     data_type=data_type
+        # )
 
-        mobilenetv2_config_text = generate_mobilenetv2_config_txt(
-            data_type=data_type
-        )
+        # mobilenetv2_config_text = generate_mobilenetv2_config_txt(
+        #     data_type=data_type
+        # )
 
-        vit_config_text = generate_vit_config_txt(
-            data_type=data_type
-        )
+        # vit_config_text = generate_vit_config_txt(
+        #     data_type=data_type
+        # )
 
         naming_dtype = data_type.replace('<','_').replace('>','_').replace(',','_')
         
         llama_filename = (
-            f"LLAMA3B_config_{seq}_{naming_dtype}.json"
+            f"LLAMA_small_config_{seq}_{naming_dtype}.json"
         )
         llama_filepath = os.path.join(output_dir, llama_filename)
         with open(llama_filepath, "w") as f:
             f.write(llama_config_text)
 
 
-        longformer_filename = (
-            f"LONGFORMER_config_{seq}_{naming_dtype}.json"
-        )
-        longformer_filepath = os.path.join(output_dir, longformer_filename)
-        with open(longformer_filepath, "w") as f:
-            f.write(longformer_config_text)
+        # longformer_filename = (
+        #     f"LONGFORMER_config_{seq}_{naming_dtype}.json"
+        # )
+        # longformer_filepath = os.path.join(output_dir, longformer_filename)
+        # with open(longformer_filepath, "w") as f:
+        #     f.write(longformer_config_text)
         
-        mobilenetv2_filename = (
-            f"MOBILENETV2_config_{naming_dtype}.json"
-        )
-        mobilenetv2_filepath = os.path.join(output_dir, mobilenetv2_filename)
-        with open(mobilenetv2_filepath, "w") as f:
-            f.write(mobilenetv2_config_text)
+        # mobilenetv2_filename = (
+        #     f"MOBILENETV2_config_{naming_dtype}.json"
+        # )
+        # mobilenetv2_filepath = os.path.join(output_dir, mobilenetv2_filename)
+        # with open(mobilenetv2_filepath, "w") as f:
+        #     f.write(mobilenetv2_config_text)
 
-        vit_filename = (
-            f"VIT_config_{naming_dtype}.json"
-        )
-        vit_filepath = os.path.join(output_dir, vit_filename)
-        with open(vit_filepath, "w") as f:
-            f.write(vit_config_text)
+        # vit_filename = (
+        #     f"VIT_config_{naming_dtype}.json"
+        # )
+        # vit_filepath = os.path.join(output_dir, vit_filename)
+        # with open(vit_filepath, "w") as f:
+        #     f.write(vit_config_text)
         
         print(f"Generated {llama_filepath}")
-        print(f"Generated {longformer_filepath}")
-        print(f"Generated {mobilenetv2_filepath}")
-        print(f"Generated {vit_filepath}")
+        # print(f"Generated {longformer_filepath}")
+        # print(f"Generated {mobilenetv2_filepath}")
+        # print(f"Generated {vit_filepath}")
 
     num_combos = len(list(itertools.product(
         seq_len, data_type_list,

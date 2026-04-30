@@ -1,0 +1,13 @@
+Test Suite,Test Case,P1,P2,P3,Total_Before,Shared,Pct_Reuse,Total_After,Pct_Change
+GEMM,Tiled GEMM $\dagger$,13.66,5.72,19.25,38.62,2.33,50.71,4.6,-88.08
+GEMM,Vec/Mtx Mult - Dot $\dagger$ $\ast$,63.31,8.45,1.01,72.77,0.35,12.36,2.83,-96.11
+GEMM,Vec/Mtx Mult - MMV $\dagger$ $\ast$,63.31,8.45,1.01,72.77,3.33,30.19,11.03,-84.84
+GEMM,Vec/Mtx Mult - GEMM $\dagger$ $\ast$,63.31,8.45,1.01,72.77,58.86,84.51,69.65,-4.29
+GEMM,i-j-k Orders $\ast$,61.96,62.81,62.45,187.22,56.99,79.88,71.34,-61.89
+GEMM,Vector Transpose $\ast$,8.41,7.54,,15.95,6.07,43.73,13.89,-12.91
+DNN,Activation Functions $\ddagger$ $\ast$,1.24,1.31,1.11,3.66,0.18,11.03,1.62,-55.74
+DNN,Tiled Convolution $\dagger$ $\ast$,15.64,19.36,19.38,54.38,21.19,89.12,23.78,-56.27
+DNN,DNN Blocks $\ddagger$,22.49,21.83,64.17,108.49,20.99,24.26,86.52,-20.25
+LLM,Tiled Attention $\dagger$ $\ast$,4.24,4.23,,8.46,3.59,77.31,4.65,-45.07
+LLM,Functional Attention $\ddagger$,12.56,13.05,,25.61,9.88,66.81,14.79,-42.27
+LLM,LLaMA/GPT Transformers $\ddagger$,21.54,11.62,,33.15,7.5,32.4,23.16,-30.15
