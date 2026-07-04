@@ -104,12 +104,18 @@ def compile_and_run(run_dir):
     return rp.returncode, rp.stdout + rp.stderr
 
 
-def python_compare(config, run_dir, domain):
-    """Compare golden vs the tb's <DRAM>_output.txt dump. Returns per-output stats."""
+def write_goldens(config, run_dir, domain):
+    """Compute and write <DRAM>.golden.txt for each output. Must run BEFORE the
+    sim so the testbench compares against the current inputs (not a stale golden
+    from a previous run with different inputs). Returns {name: ndarray}."""
     goldens = compute_goldens(config, run_dir, domain)
     for name, arr in goldens.items():
         write_golden(os.path.join(run_dir, f"{name}.golden.txt"), arr)
+    return goldens
 
+
+def python_compare(goldens, run_dir):
+    """Compare precomputed goldens vs the tb's <DRAM>_output.txt dump."""
     stats = {}
     for name, golden in goldens.items():
         out_path = os.path.join(run_dir, f"{name}_output.txt")
@@ -140,8 +146,11 @@ def python_compare(config, run_dir, domain):
 def run_one(domain, config_path, out_base):
     stem = os.path.splitext(os.path.basename(config_path))[0]
     run_dir, config = generate_float_design(domain, config_path, out_base)
+    # Write goldens BEFORE running the sim so the testbench's own VERIFICATION
+    # verdict reflects the current inputs, not a stale golden from a prior run.
+    goldens = write_goldens(config, run_dir, domain)
     rc, out = compile_and_run(run_dir)
-    stats = python_compare(config, run_dir, domain)
+    stats = python_compare(goldens, run_dir)
 
     tb_verdict = None
     m = _VERIF_RE.search(out or "")
