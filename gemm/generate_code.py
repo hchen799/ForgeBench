@@ -1526,20 +1526,30 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     # Include headers.
     code_lines.append('#include <stdio.h>')
     code_lines.append('#include <stdlib.h>')
+    code_lines.append('#include <math.h>')
     code_lines.append("#include <ap_fixed.h>")
     code_lines.append('#include "top.h"  // Include the top function declaration')
     code_lines.append("")
-    
+
+    # Golden-reference comparison tolerance (overridable at compile time).
+    code_lines.append("#ifndef VERIF_RTOL")
+    code_lines.append("#define VERIF_RTOL 1e-3")
+    code_lines.append("#endif")
+    code_lines.append("#ifndef VERIF_ATOL")
+    code_lines.append("#define VERIF_ATOL 1e-5")
+    code_lines.append("#endif")
+    code_lines.append("")
+
     # Define data type.
     code_lines.append(f"typedef {data_type} data_t;")
     code_lines.append("")
-    
+
     # Declare DRAM arrays.
     for dram in drams:
         dims_str = "".join(f"[{d}]" for d in dram["dims"])
         code_lines.append(f"data_t {dram['name']}{dims_str};")
     code_lines.append("")
-    
+
     # Helper function to load a text file into an array.
     code_lines.append("void load_txt_to_array(const char *filename, data_t *array, int total_size) {")
     code_lines.append("    FILE *fp = fopen(filename, \"r\");")
@@ -1555,22 +1565,27 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     code_lines.append("    fclose(fp);")
     code_lines.append("}")
     code_lines.append("")
-    
+
     # Main function.
     code_lines.append("int main() {")
-    
+
     # For each DRAM, generate a load call.
     for dram in drams:
         total_elements = prod(dram["dims"])
         code_lines.append(f"    load_txt_to_array(\"{dram['name']}.txt\", (data_t*){dram['name']}, {total_elements});")
     code_lines.append("")
-    
+
     # Insert top function call. DRAM arguments in the order of the drams list.
     dram_args = ", ".join(d["name"] for d in drams)
     code_lines.append(f"    {top_func_name}({dram_args});")
     code_lines.append("")
-    
-    # For each output DRAM specified in output_dram_names, generate printing code.
+
+    # Golden-reference verification accumulators.
+    code_lines.append("    double verif_max_abs = 0.0, verif_max_rel = 0.0;")
+    code_lines.append("    long verif_n_mismatch = 0, verif_n_total = 0, verif_n_checked = 0;")
+    code_lines.append("")
+
+    # For each output DRAM specified in output_dram_names, dump then compare.
     for out_name in output_dram_names:
         # Find the DRAM in the configuration.
         matched = None
@@ -1581,6 +1596,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         if matched is None:
             raise ValueError(f"Output DRAM {out_name} not found in DRAM configuration.")
         total_out = prod(matched["dims"])
+        # Keep the existing output dump for debugging.
         code_lines.append(f"    // Write contents of {out_name} to {out_name}_output.txt")
         code_lines.append("    {")
         code_lines.append(f"        FILE *fp = fopen(\"{out_name}_output.txt\", \"w\");")
@@ -1591,11 +1607,44 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         code_lines.append("            fclose(fp);")
         code_lines.append("        }")
         code_lines.append("    }")
+        # Compare against the golden file if present (backward compatible if absent).
+        code_lines.append(f"    // Compare {out_name} against {out_name}.golden.txt if present")
+        code_lines.append("    {")
+        code_lines.append(f"        FILE *gf = fopen(\"{out_name}.golden.txt\", \"r\");")
+        code_lines.append("        if (gf != NULL) {")
+        code_lines.append(f"            for (int i = 0; i < {total_out}; i++) {{")
+        code_lines.append("                float gv;")
+        code_lines.append("                if (fscanf(gf, \"%f\", &gv) != 1) break;")
+        code_lines.append(f"                double a = (double)(float)((data_t*){out_name})[i];")
+        code_lines.append("                double b = (double)gv;")
+        code_lines.append("                double abs_err = fabs(a - b);")
+        code_lines.append("                double rel_err = abs_err / (fabs(b) + 1e-12);")
+        code_lines.append("                double tol = VERIF_ATOL + VERIF_RTOL * fabs(b);")
+        code_lines.append("                int bad = (!(abs_err <= tol)) || (!isfinite(a));")
+        code_lines.append("                if (abs_err > verif_max_abs) verif_max_abs = abs_err;")
+        code_lines.append("                if (rel_err > verif_max_rel) verif_max_rel = rel_err;")
+        code_lines.append("                if (bad) verif_n_mismatch++;")
+        code_lines.append("                verif_n_total++;")
+        code_lines.append("            }")
+        code_lines.append("            fclose(gf);")
+        code_lines.append("            verif_n_checked++;")
+        code_lines.append("        }")
+        code_lines.append("    }")
         code_lines.append("")
-    
-    code_lines.append("    return 0;")
+
+    # Emit a machine-parseable verdict and return nonzero on failure.
+    code_lines.append("    if (verif_n_checked == 0) {")
+    code_lines.append("        printf(\"VERIFICATION: SKIP (no golden files found)\\n\");")
+    code_lines.append("        return 0;")
+    code_lines.append("    }")
+    code_lines.append("    if (verif_n_mismatch == 0) {")
+    code_lines.append("        printf(\"VERIFICATION: PASS (max_abs=%g, max_rel=%g, n=%ld)\\n\", verif_max_abs, verif_max_rel, verif_n_total);")
+    code_lines.append("        return 0;")
+    code_lines.append("    }")
+    code_lines.append("    printf(\"VERIFICATION: FAIL (max_abs=%g, max_rel=%g, n_mismatch=%ld/%ld)\\n\", verif_max_abs, verif_max_rel, verif_n_mismatch, verif_n_total);")
+    code_lines.append("    return 1;")
     code_lines.append("}")
-    
+
     return "\n".join(code_lines)
 
 def generate_dram_txt_files(drams, seed=None):
