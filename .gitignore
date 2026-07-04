@@ -21,4 +21,5 @@ ML_testsuite.tar.gz
 
 # verification harness local self-check artifacts (generated, Vitis-free)
 verification/_selfcheck/
+verification/_server/
 verification/**/sim
