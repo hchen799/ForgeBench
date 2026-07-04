@@ -924,13 +924,12 @@ def generate_dram_txt_files(drams, seed=None):
         total_elements = prod(dram["dims"])
         filename = f"{dram['name']}.txt"
         with open(filename, "w") as f:
-            # Generate random numbers between 0 and 1.
-            #numbers = [str(random.random()) for _ in range(total_elements)]
-            numbers = [str(0) for _ in range(total_elements)]
+            # Generate random numbers between 0 and 1 so functional verification
+            # actually exercises the compute (all-zero inputs make every op output
+            # 0 and defeat the golden-reference check). Mirrors gemm/llm domains.
+            numbers = [str(random.random()) for _ in range(total_elements)]
             # Write each number on a new line.
-            #f.write("\n".join(numbers))
             f.write("\n".join(numbers))
-        print(f"Generated {filename} with {total_elements} random numbers.")
         
 def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="design.tcl"):
     """
