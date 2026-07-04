@@ -4,6 +4,28 @@ Issues surfaced by the golden-reference correctness harness (see `verification/`
 The golden is an independent textbook oracle, so a mismatch means the generated C
 and the canonical math disagree.
 
+## Summary across domains
+
+Local Vitis-free self-check (`python3 -m verification.gcc_selfcheck <domain>`),
+real random inputs, `rtol=1e-3, atol=1e-5`:
+
+| Domain | Pass | Non-passing (all genuine bugs / non-configs) |
+|--------|------|-----------------------------------------------|
+| gemm | 13/14 | `mlp` — softmax overflows to `nan` in float (see below) |
+| conv | 28/30 | `conv_variable` (symbolic non-config), `vgg19_block3` (buffer-size bug) — see `FINDINGS_conv.md` |
+| llm  | 5/7  | `gpt_transformer_p1`, `llama_transformer_p2` — train-time dropout at inference — see `FINDINGS_llm.md` |
+
+Per-domain detail: this file (gemm), `FINDINGS_conv.md`, `FINDINGS_llm.md`.
+
+**Bugs the harness caught that need an author decision** (fix the generator vs.
+report as a known limitation): softmax overflow (gemm/§1), train-time dropout at
+inference (llm), and the `vgg19_block3` buffer-size mismatch (conv). All three
+were invisible to the old dump-only testbench. Two domains (conv, llm) also had
+their DRAM inputs hard-coded to all-zeros (random generation commented out),
+which would have made any functional check vacuous; restored to random.
+
+---
+
 ## 1. Softmax overflows in float (real bug) — gemm `mlp`
 
 The generated softmax (`gemm/2D_activations_template.cpp`, SOFTMAX block) computes
