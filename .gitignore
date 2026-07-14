@@ -23,3 +23,12 @@ ML_testsuite.tar.gz
 verification/_selfcheck/
 verification/_server/
 verification/**/sim
+
+# analysis package generated outputs (figures/tables/metrics/impl runs)
+analysis/figures/
+analysis/tables_out/
+analysis/_impl/
+analysis/*.csv
+
+# manuscript PDF (author-held, not part of the code artifact)
+*.pdf
