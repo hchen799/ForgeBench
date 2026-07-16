@@ -4,8 +4,8 @@
   BRAM-vs-DSP util), colored by domain. Faithful to the original
   plotting/analyze_report_data_new_plot_final.py (same panels, log-y, filters).
 - resource_vs_latency: resource util vs end-to-end latency (ns).
-- resource_vs_power: resource util vs total power (STUB+FLAG: needs impl power
-  data; no-op with a clear message until metrics contain power_w).
+- resource_vs_power: resource util vs total power (needs an impl metrics.csv
+  with power_w; no-ops with a clear message if power data is absent).
 
 By default reads the committed legacy coverage CSVs
 (plotting/{gemm,conv,llm}_data). Pass --metrics <metrics.csv> to plot a unified
@@ -129,11 +129,10 @@ def resource_vs_latency(df=None, out=None):
 
 
 def resource_vs_power(df=None, out=None):
-    """Resource utilization vs total power. STUB+FLAG: needs impl power data."""
+    """Resource utilization vs total power (impl metrics.csv with power_w)."""
     if df is None or "power_w" not in df or df["power_w"].notna().sum() == 0:
-        print("resource_vs_power: SKIPPED — no power data available yet. "
-              "Provide a Vitis impl report sample so analysis.extractors.vitis can "
-              "populate power_w, then re-run. [TODO]")
+        print("resource_vs_power: SKIPPED — this metrics.csv has no power_w. "
+              "Pass an impl metrics.csv (analysis.collect --flow impl) and re-run.")
         return None
     out = out or os.path.join(REPO_ROOT, "analysis", "figures", "resource_vs_power.png")
     os.makedirs(os.path.dirname(out), exist_ok=True)

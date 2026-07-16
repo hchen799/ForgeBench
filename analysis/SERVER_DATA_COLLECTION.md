@@ -25,16 +25,19 @@ Run the generator in its normal mode; each design lands under `<results_dir>/`:
     *.cpp / *.h / *.golden.txt          ← inputs; keep as-is
     project_1/solution1/
       syn/report/
-        csynth.xml                      ← REQUIRED for csynth PPA
+        csynth.xml                      ← REQUIRED for csynth PPA + impl latency (cycles)
       impl/report/verilog/
-        export_impl.xml                 ← REQUIRED for impl area (post-P&R)
-      impl/report/verilog/
-        export_impl_power.rpt           ← REQUIRED for power (see §3)
-      impl/report/verilog/
-        *.timing_summary.rpt            ← REQUIRED for Fmax / timing closure (see §4)
-      csim/build/csim.log              ← REQUIRED for VERIFICATION verdict (see §5)
+        export_impl.xml                 ← REQUIRED for impl area + Fmax/timing (see §3, §5)
+      impl/verilog/project.runs/impl_1/
+        *_power_routed.rpt              ← REQUIRED for power (see §4)
+      csim/build/csim.log              ← REQUIRED for VERIFICATION verdict (see §7)
       cosim/report/*.rpt               ← optional cosim pass/fail
 ```
+
+> Paths locked against a real Vitis 2024.1.2 / Vivado impl bundle (ZCU102,
+> xczu9eg). Timing/Fmax come from `export_impl.xml`'s `<TimingReport>` — the
+> routed `*_timing_*.rpt` files are NOT needed by the parser. Impl latency reuses
+> the cycle count from `csynth.xml` (the impl XML has no PerformanceEstimates).
 
 Tarball or rsync the full `<results_dir>/` tree back — the parsers walk it automatically.
 
@@ -74,82 +77,72 @@ No action needed if this file is present — it is already fully parsed.
 
 **Path:** `project_1/solution1/impl/report/verilog/export_impl.xml`
 
-The extractor reads:
+The extractor reads (root element is `<profile>`):
 
 ```
-<root>
+<profile>
 └── AreaReport
     ├── Resources
-    │   ├── BRAM_18K
+    │   ├── BRAM        ← RAMB36 tile count (NOT BRAM_18K — different unit than csynth)
     │   ├── DSP
     │   ├── FF
     │   └── LUT
     └── AvailableResources
-        ├── BRAM_18K
+        ├── BRAM
         ├── DSP
         ├── FF
         └── LUT
-└── PerformanceEstimates          ← Worst-caseLatency (cycles) if present
-    └── SummaryOfOverallLatency
-        └── Worst-caseLatency
+└── TimingReport                  ← Fmax / timing closure (see §5)
 ```
 
-No action needed if this file is present.
+No PerformanceEstimates/latency node exists in this XML — impl latency is derived
+from the sibling `csynth.xml` cycle count (see §6). No action needed if present.
+
+> **Unit note (reviewer B3):** csynth reports `BRAM_18K` (18-Kb blocks); impl
+> reports `BRAM` as RAMB36 (36-Kb) tiles. DSP/FF/LUT are directly comparable.
 
 ---
 
-## 4. Power report (STUB — needed to fill `_parse_impl_ppa`)
+## 4. Power report (DONE — parser locked)
 
-**Expected path (confirm):**
-`project_1/solution1/impl/report/verilog/<design>_power_routed.rpt`
-or any `*_power*.rpt` under `impl/report/`.
+**Path:** `project_1/solution1/impl/verilog/project.runs/impl_1/*_power_routed.rpt`
+(Vivado `report_power` output, e.g. `bd_0_wrapper_power_routed.rpt`).
 
-From the Vivado power report, extract and note:
+`_parse_power_rpt` reads these Summary rows:
 
-| Field | Location in .rpt | Target `PPAMetrics` field |
-|-------|-----------------|--------------------------|
-| Total on-chip power | `Total On-Chip Power (W)` row | `power_w` |
-| Dynamic power | `Dynamic (W)` row | `power_dyn_w` |
-| Static power | `Device Static (W)` row | `power_static_w` |
+| Field | Row in .rpt | `PPAMetrics` field |
+|-------|-------------|--------------------|
+| Total on-chip power | `Total On-Chip Power (W)` | `power_w` |
+| Dynamic power | `Dynamic (W)` | `power_dyn_w` |
+| Static power | `Device Static (W)` | `power_static_w` |
 
-**Send:** the full `.rpt` file so the exact column/row format can be locked and the
-parser in `analysis/extractors/vitis.py::_parse_impl_ppa` can be completed.
+No action needed — just include the routed power report in the tarball.
 
 ---
 
-## 5. Timing / Fmax report (STUB — needed to fill `_parse_impl_ppa`)
+## 5. Timing / Fmax (DONE — from `export_impl.xml`, no .rpt needed)
 
-**Expected path (confirm):**
-`project_1/solution1/impl/report/verilog/<design>_timing_summary_routed.rpt`
-or any `*timing*.rpt` under `impl/report/`.
+Timing closure and achieved clock come from the `<TimingReport>` node inside
+`export_impl.xml` (§3) — the routed `*_timing_*.rpt` files are not parsed.
 
-From the Vivado timing summary, extract and note:
+| Tag in `<TimingReport>` | `PPAMetrics` field |
+|-------------------------|--------------------|
+| `AchievedClockPeriod` (= target − WNS) | `achieved_clock_ns`; `fmax_mhz = 1000/achieved` |
+| `TargetClockPeriod` / `CP_TARGET` | `target_clock_ns` |
+| `TIMING_MET` (`TRUE`/`FALSE`) | `timing_met` (falls back to `WNS_FINAL >= 0`) |
 
-| Field | Location in .rpt | Target `PPAMetrics` field |
-|-------|-----------------|--------------------------|
-| Achieved clock period (ns) | `Data Path Delay` or WNS column | `achieved_clock_ns` |
-| Worst Negative Slack (ns) | `WNS` column | used to compute `timing_met = WNS >= 0` |
-| Fmax (MHz) | `1000 / achieved_clock_ns` | `fmax_mhz` |
-
-**Send:** the full `.rpt` file so the column/row format can be locked.
+No action needed.
 
 ---
 
-## 6. Throughput (definition to confirm before parsing)
+## 6. Throughput (DONE — end-to-end definition)
 
-Two candidate definitions — confirm which the paper uses before the stub is filled:
-
-| Option | Formula | Notes |
-|--------|---------|-------|
-| **End-to-end** | `1e9 / latency_ns` (designs/sec) | Simple; uses worst-case latency from csynth/impl |
-| **II-based** | `target_clock_MHz / II` | Higher throughput for pipelined designs; requires II from csynth.xml `SummaryOfOverallLatency/Interval-min` |
-
-Once confirmed, add to `analysis/extractors/vitis.py::_parse_impl_ppa`:
-```python
-m.throughput = 1e9 / m.latency_ns          # end-to-end variant
-# or
-m.throughput = (1000 / m.target_clock_ns) / ii   # II-based variant
-```
+Implemented as **end-to-end**: `throughput = 1e9 / latency_ns` (designs/sec),
+where `latency_ns = cycles × target_clock_ns`. `cycles` is the worst-case latency
+from the sibling `csynth.xml` (the impl XML has none); the design is clocked at
+`target_clock_ns` (the constraint it meets). `II` is also recorded (from
+`SummaryOfOverallLatency/Interval-max`) so an II-based throughput can be derived
+later if the paper prefers it.
 
 ---
 
@@ -187,9 +180,8 @@ uv run python -m verification.collect_results <results_dir> \
     --out verification/results.csv
 ```
 
-Once power and timing .rpt samples arrive, `_parse_impl_ppa` in
-`analysis/extractors/vitis.py` will be completed and `--parse-only` will populate
-all `PPAMetrics` fields.
+`_parse_impl_ppa` in `analysis/extractors/vitis.py` is now complete — `--parse-only`
+populates all `PPAMetrics` fields (area, latency, throughput, power, Fmax, timing).
 
 ---
 
@@ -197,11 +189,11 @@ all `PPAMetrics` fields.
 
 For each design dir, ensure these files are present before sending:
 
-- [ ] `project_1/solution1/syn/report/csynth.xml`
-- [ ] `project_1/solution1/impl/report/verilog/export_impl.xml`
-- [ ] `project_1/solution1/impl/report/verilog/*_power_routed.rpt` ← **new, needed for stub**
-- [ ] `project_1/solution1/impl/report/verilog/*_timing_summary_routed.rpt` ← **new, needed for stub**
+- [ ] `project_1/solution1/syn/report/csynth.xml` (csynth PPA **and** impl latency/II)
+- [ ] `project_1/solution1/impl/report/verilog/export_impl.xml` (impl area + timing/Fmax)
+- [ ] `project_1/solution1/impl/verilog/project.runs/impl_1/*_power_routed.rpt` (power)
 - [ ] Any `.log` file that contains the `VERIFICATION:` line (csim output)
 
-Everything else (generated C++, Vitis project files) is optional — the parsers only
-read the above paths.
+The routed `*_timing_*.rpt` files are NOT needed (timing is read from
+`export_impl.xml`). Everything else (generated C++, Vitis project files) is
+optional — the parsers only read the above paths.

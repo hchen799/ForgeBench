@@ -6,10 +6,10 @@ csynth). This runs the three generation-case-study base designs
 ResNet design, with the Vitis `impl` flow on ZCU102, then parses resources,
 latency, throughput, power, timing closure and Fmax via the Vitis extractor.
 
-Impl PPA parsing (power/Fmax/timing/throughput) is a STUB until a sample impl
-report is available — see analysis/extractors/vitis.py. Generation + TCL (with
-the `impl` task) are fully wired now; the actual `vitis_hls` run happens on the
-server.
+Impl PPA parsing (power/Fmax/timing/throughput) is fully implemented — see
+analysis/extractors/vitis.py. Generation + TCL (with the `impl` task) are wired;
+the actual `vitis_hls` run happens on the server, then `--parse-only` populates
+every `PPAMetrics` field.
 
 DESIGNS below are best-guess mappings — CONFIRM the exact case-study configs
 (and the ResNet) or override with --config domain:path.
@@ -101,13 +101,13 @@ def main():
         print("  (cd <design_dir> && vitis_hls -f run_hls.tcl)")
         print(f"then: python3 -m analysis.impl_runner --parse-only --out {args.out}")
 
-    # Parse whatever impl reports exist (stubbed PPA fields until a sample lands).
+    # Parse whatever impl reports exist (all PPA fields now populated).
     rows = collect_mod.collect(args.out, tool="vitis", flow="impl")
     out_csv = os.path.join(args.out, "impl_metrics.csv")
     if rows:
         collect_mod.write_csv(rows, out_csv)
         print(f"\nwrote {out_csv}: {len(rows)} impl designs "
-              "(power/Fmax/timing/throughput are stubbed — see vitis.py TODO)")
+              "(area, latency, throughput, power, Fmax, timing)")
     else:
         print("\nno impl reports found yet (run vitis_hls on the server first)")
 

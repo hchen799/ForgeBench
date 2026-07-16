@@ -19,7 +19,7 @@ uv run python -m analysis.<module> ...
 |-----------|---------|-------------|
 | **Fig. 4** (design-space coverage: BRAM/DSP/LUT util vs Cycles, BRAM-vs-DSP) | `uv run python -m analysis.plots fig4` | committed `plotting/{gemm,conv,llm}_data/*.csv` |
 | Resource vs latency scatter | `uv run python -m analysis.plots resource_vs_latency` | same |
-| Resource vs power scatter | `uv run python -m analysis.plots resource_vs_power` | **needs impl power data (stub)** |
+| Resource vs power scatter | `uv run python -m analysis.plots resource_vs_power --metrics <impl_metrics.csv>` | impl metrics.csv (power_w column) |
 | **Table 2** (full-scale min/max LUT/BRAM/DSP) | `uv run python -m analysis.tables table2` | `scale_models/hls_synth_utilization.csv` |
 | **Table 3** (suite testcase counts) | `uv run python -m analysis.tables table3` | generated-config dirs (falls back to paper counts) |
 | **Table 5** (modularization %reuse) | `uv run python -m analysis.tables table5` | `modular_data/modularization_results.csv` |
@@ -60,11 +60,11 @@ config paths in `impl_runner.DESIGNS` are best guesses — confirm them** (or pa
 analysis/
   schema.py            # PPAMetrics: the tool-agnostic record everything shares
   extractors/base.py   # Extractor ABC + registry (get_extractor)
-  extractors/vitis.py  # Vitis csynth + impl (impl PPA fields stubbed — see below)
+  extractors/vitis.py  # Vitis csynth + impl (full impl PPA: power/Fmax/timing)
   extractors/catapult.py  # STUB (concern E1): same interface, TODO
   collect.py           # results tree -> unified metrics.csv
   io.py                # CSV load/normalize (unified + legacy per-domain schemas)
-  plots.py             # Fig 4 + resource-vs-latency + resource-vs-power (stub)
+  plots.py             # Fig 4 + resource-vs-latency + resource-vs-power
   tables.py            # Table 2 / 3 / 5
   impl_runner.py       # generate + drive impl on the 4 base designs
 ```
@@ -77,12 +77,12 @@ Implement `analysis/extractors/catapult.py` (`discover` + `parse` returning
 
 ## Known gaps / flags
 
-- **Impl PPA (power, Fmax, timing closure, throughput) is stubbed** in
-  `extractors/vitis.py::_parse_impl_ppa` — the csynth report has none of these,
-  and the exact impl/Vivado report tag paths need a sample bundle to lock. The
-  `resource_vs_power` plot no-ops until then.
-- **Throughput definition** to confirm (designs/sec via end-to-end latency vs
-  II-based).
+- **Impl PPA is complete** in `extractors/vitis.py::_parse_impl_ppa` — post-P&R
+  area, power (from `*_power_routed.rpt`), Fmax + timing closure (from
+  `export_impl.xml`'s `<TimingReport>`), and latency/throughput (cycles from the
+  sibling `csynth.xml`). Tag paths locked against a real Vitis 2024.1.2 bundle.
+- **Throughput** is end-to-end (`1e9 / latency_ns`, designs/sec); `ii` is also
+  recorded so an II-based variant can be derived if the paper prefers it.
 - **Testcase count discrepancy:** repo README claims 6000+ (1920/2304/1944); the
   paper (Table 3) claims 10,837 (3335/4143/3359). `tables.table3` reports the
   paper numbers when the generated suites aren't present — regenerate the suites
