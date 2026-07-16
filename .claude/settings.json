@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cargo run *)",
+      "Bash(cargo build *)",
+      "Bash(cargo test *)",
+      "Bash(cargo build)",
+      "Bash(cargo run)",
+      "Bash(verilator *)",
+      "Bash(uv run *)"
+    ]
+  }
+}
