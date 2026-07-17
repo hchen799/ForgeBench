@@ -169,6 +169,16 @@ def generate_conv_function(
     group_bias_arg = bias_arg  # same as above
     group_bias_init_expr = bias_init_expr
 
+    # The bias array_partition pragma must only appear when a bias array exists;
+    # otherwise it references an undeclared identifier and csynth fails.
+    if with_bias:
+        bias_partition_pragma = (
+            f"    #pragma HLS array_partition variable=bias   "
+            f"type=cyclic factor={bias_partition_factor}   dim=1"
+        )
+    else:
+        bias_partition_pragma = ""
+
     # 3) Perform common placeholder substitution for header values.
     formatted_code = template_code.format(
         DATA_TYPE=DATA_TYPE,
@@ -189,6 +199,7 @@ def generate_conv_function(
         ARRAY_FACTOR_KERNEL1=kernel_partition_factor1,
         ARRAY_FACTOR_KERNEL2=kernel_partition_factor2,
         ARRAY_FACTOR_BIAS=bias_partition_factor,
+        BIAS_PARTITION_PRAGMA=bias_partition_pragma,
         ARRAY_FACTOR_OUTPUT=output_partition_factor,
         UNROLL_FACTOR_C_IN=unroll_factor_cin,
         UNROLL_FACTOR_C_OUT=unroll_factor_cout,
@@ -610,7 +621,7 @@ def generate_operator_call(op_info, data_type):
     else:
         print("the operator we do not support!")
         
-    args_str = ", ".join(op_info["args"])
+    args_str = ", ".join(str(a) for a in op_info["args"])
     return f"{full_func_name}({args_str});"
 
 
@@ -977,7 +988,7 @@ def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename
         lines.append("cosim_design")
         lines.append("")
     if "export_ip" in task:
-        lines.append("export_design -format ip_catalog")
+        lines.append("export_design -format ip_catalog -flow impl")
         lines.append("")
         
     lines.append("exit")

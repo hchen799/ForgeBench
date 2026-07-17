@@ -70,9 +70,14 @@ def generate_config_text(
         return "[" + ", ".join(f'"{item}"' for item in lst) + "]"
 
     # Define ops in order. Update conv_1 per conv_type.
-    conv_args = (["BRAM_image_input", "BRAM_conv_weight", "BRAM_conv_bias", "BRAM_buffer_1", groups]
-                 if conv_type == "group_conv2d" else
-                 ["BRAM_image_input", "BRAM_conv_weight", "BRAM_conv_bias", "BRAM_buffer_1"])
+    # The conv/group_conv function only has a bias parameter when need_bias is set,
+    # so the bias BRAM must be omitted from the call args otherwise (arg-count match).
+    conv_args = ["BRAM_image_input", "BRAM_conv_weight"]
+    if need_bias:
+        conv_args.append("BRAM_conv_bias")
+    conv_args.append("BRAM_buffer_1")
+    if conv_type == "group_conv2d":
+        conv_args.append(groups)
 
     ops_order = [
         ("load_1", {
@@ -142,7 +147,7 @@ def generate_config_text(
             fi_str = "[" + ", ".join(fi_list) + "]"
             func_info_line = f'        "func_info": {fi_str},\n'
         dims_str = one_line_list(op_data["dims"])
-        args_str = quoted_list(op_data["args"]) if conv_type != "conv2d_group" else "[" + ", ".join(f'"{a}"' if not isinstance(a, int) else str(a) for a in op_data["args"]) + "]"
+        args_str = quoted_list(op_data["args"]) if conv_type != "group_conv2d" else "[" + ", ".join(f'"{a}"' if not isinstance(a, int) else str(a) for a in op_data["args"]) + "]"
         if func_info_line:
             op_block = (
 f'''{{
@@ -177,7 +182,7 @@ f'''{{
     "output_dram_names": ["DRAM_image_output"],
     "FPGA_name": "xczu9eg-ffvb1156-2-e",
     "clock_period": 10,
-    "task": ["csim", "csynth", "cosim", "export_ip"],
+    "task": ["csynth"],
     "data_type": "{DATA_TYPE}",
     "top_func_name": "top"
 }}'''
@@ -190,8 +195,8 @@ def main():
     W_IN_list              = [56, 28]
     C_OUT_list             = [16, 32]
     K_list                 = [1, 3]
-    unroll_factor_cin_list = [1, 4]
-    unroll_factor_cout_list= [1, 4]
+    unroll_factor_cin_list = [1, 4, 8]
+    unroll_factor_cout_list= [1, 4, 8]
     PAD_list               = [1]
     STRIDE_list            = [1]
     need_bias_list         = [True, False]
@@ -227,7 +232,7 @@ def main():
     for (C_IN, H_IN, W_IN, C_OUT, K,
          unroll_factor_cin, unroll_factor_cout, PAD, STRIDE, activations, need_bias) in base_combos:
         for conv_type in conv_type_list:
-            if conv_type == "conv2d_group":
+            if conv_type == "group_conv2d":
                 for groups in groups_list:
                     for DATA_TYPE in data_type_list:
                         config_text = generate_config_text(

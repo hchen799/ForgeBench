@@ -1,35 +1,52 @@
 import os
 import subprocess
-import concurrent.futures
+from concurrent.futures import ProcessPoolExecutor, as_completed
 import time
+from tqdm import tqdm
+
 
 def run_hls(run_path):
     tcl_script = os.path.join(run_path, "run_hls.tcl")
-    if os.path.isfile(tcl_script):
-        print(f"Running HLS flow in {run_path}...")
-        result = subprocess.run(["vitis_hls", "-f", "run_hls.tcl"], cwd=run_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        log_file = os.path.join(run_path, "vitis_hls.log")
-        if result.returncode == 0:
-            print(f"HLS flow completed successfully in {run_path}.")
-        else:
-            print(f"HLS flow failed in {run_path}. Check {log_file} for details.")
-    else:
-        print(f"No 'run_hls.tcl' found in {run_path}, skipping...")
+    if not os.path.isfile(tcl_script):
+        return f"Skipped: {run_path} (No TCL file)"
 
-def run_hls_on_dirs(base_dir="hls_files"):
+    try:
+        result = subprocess.run(
+            ["vitis_hls", "-f", "run_hls.tcl"],
+            cwd=run_path,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            bufsize=0,
+        )
+        if result.returncode == 0:
+            return f"Success: {run_path}"
+        else:
+            return f"Failed: {run_path}"
+    except Exception as e:
+        return f"Error in {run_path}: {str(e)}"
+
+
+def run_hls_on_dirs(base_dir="large_hls_files"):
     if not os.path.exists(base_dir):
-        print(f"Base directory '{base_dir}' does not exist. Nothing to run.")
+        print(f"Base directory '{base_dir}' does not exist.")
         return
-    
-    run_dirs = [os.path.join(base_dir, d) for d in sorted(os.listdir(base_dir))]
-    # run_dirs = [d for d in run_dirs if os.path.isdir(d)]
-    run_dirs = [os.path.join(base_dir, d) for d in ['conv_block_module']]
-    num_workers = len(run_dirs)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
-        executor.map(run_hls, run_dirs)
+
+    run_dirs = [
+        os.path.join(base_dir, d)
+        for d in sorted(os.listdir(base_dir))
+        if os.path.isdir(os.path.join(base_dir, d))
+    ]
+
+    MAX_CONCURRENT_JOBS = 64
+    all_results = []
+    with ProcessPoolExecutor(max_workers=MAX_CONCURRENT_JOBS) as ex:
+        futures = [ex.submit(run_hls, run) for run in run_dirs]
+        for fut in tqdm(as_completed(futures), total=len(futures)):
+            all_results.append(fut.result())
+
 
 if __name__ == "__main__":
     start = time.time()
-    run_hls_on_dirs()
+    run_hls_on_dirs("large_hls_files")
     end = time.time()
-    print(f"Total time taken: {end - start} seconds.")
+    print(f"Total time taken: {end - start:.2f} seconds.")

@@ -305,7 +305,7 @@ f'''{{
     "output_dram_names": ["DRAM_result"],
     "FPGA_name": "xczu9eg-ffvb1156-2-e",
     "clock_period": 10,
-    "task": ["csynth", "export_ip"],
+    "task": ["csynth"],
     "data_type": "{DATA_TYPE}",
     "top_func_name": "top"
 }}'''
@@ -313,9 +313,9 @@ f'''{{
 
 def main():
     # Define parameter ranges (adjust as needed)
-    vals_M = [256, 512]
-    vals_K = [256, 512]
-    vals_N = [256, 512]
+    vals_M = [64, 128]
+    vals_K = [64, 128]
+    vals_N = [64, 128]
     vals_unroll_M = [1, 8]
     vals_unroll_K = [1, 8]
     vals_unroll_N = [1, 8]
@@ -323,7 +323,7 @@ def main():
     comp_order_list = ["option_1", "option_2", "option_3", "option_4", "option_5"]
 
     # Static parameters
-    need_bias_list = [False]
+    need_bias_list = [False, True]
     inline_list = [True]
     data_type_list = ["ap_fixed<16,5>"]
 

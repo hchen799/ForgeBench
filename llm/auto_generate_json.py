@@ -40,7 +40,12 @@ def generate_config_text(
         brams.extend([
             {"name": "BRAM_dropout",        "dims": [SEQ_LEN, DIM_OUT]},
         ])
-    
+
+    # Norm scale/shift params: layer_norm needs gamma+beta, rms_norm needs gamma only.
+    brams.append({"name": "BRAM_norm_gamma", "dims": [DIM_OUT]})
+    if norm_type == 'layer_norm':
+        brams.append({"name": "BRAM_norm_beta", "dims": [DIM_OUT]})
+
     brams_lines = []
     for i, b in enumerate(brams):
         comma = "," if i < len(brams) - 1 else ""
@@ -57,6 +62,11 @@ def generate_config_text(
         {"name": "DRAM_WV",        "dims": [DIM_IN, DIM_IN], "bundle": "mem4"},
         {"name": "DRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT], "bundle": "mem6"}
     ]
+
+    # Off-chip storage for the norm scale/shift parameters (loaded into BRAM below).
+    drams.append({"name": "DRAM_norm_gamma", "dims": [DIM_OUT], "bundle": "mem5"})
+    if norm_type == 'layer_norm':
+        drams.append({"name": "DRAM_norm_beta", "dims": [DIM_OUT], "bundle": "mem7"})
 
     drams_lines = []
     for i, d in enumerate(drams):
@@ -100,21 +110,30 @@ def generate_config_text(
         ])
         input_bram = "BRAM_dropout"
     
+    # Load the norm scale/shift params from DRAM before the norm op.
+    ops_order.append(
+        ("load_norm_gamma", {"func_name": "load", "dims": [DIM_OUT],
+                             "args": ["DRAM_norm_gamma", "BRAM_norm_gamma"]})
+    )
     if norm_type == 'layer_norm':
+        ops_order.append(
+            ("load_norm_beta", {"func_name": "load", "dims": [DIM_OUT],
+                                "args": ["DRAM_norm_beta", "BRAM_norm_beta"]})
+        )
         ops_order.extend([
             ("norm", {
-                "func_name": "layernorm", 
-                "dims": [SEQ_LEN, DIM_OUT, norm_eps], 
-                "args": [input_bram, "BRAM_norm_output"],
+                "func_name": "layernorm",
+                "dims": [SEQ_LEN, DIM_OUT, norm_eps],
+                "args": [input_bram, "BRAM_norm_gamma", "BRAM_norm_beta", "BRAM_norm_output"],
                 "func_info": ["layer_norm_template.cpp"]
             }),
         ])
     elif norm_type == 'rms_norm':
         ops_order.extend([
             ("rms_norm", {
-                "func_name": "rmsnorm", 
-                "dims": [SEQ_LEN, DIM_OUT, norm_eps], 
-                "args": [input_bram, "BRAM_norm_output"],
+                "func_name": "rmsnorm",
+                "dims": [SEQ_LEN, DIM_OUT, norm_eps],
+                "args": [input_bram, "BRAM_norm_gamma", "BRAM_norm_output"],
                 "func_info": ["rms_norm_template.cpp"]
             }),
         ])
@@ -176,7 +195,7 @@ f'''{{
     "output_dram_names": ["DRAM_norm_output"],
     "FPGA_name": "xczu9eg-ffvb1156-2-e",
     "clock_period": 10,
-    "task": ["csim", "csynth", "cosim", "export_ip"],
+    "task": ["csynth"],
     "data_type": "{DATA_TYPE}",
     "top_func_name": "top"
 }}'''
@@ -189,11 +208,11 @@ def main():
     vals_dim_in = [128, 256, 512]
     vals_num_heads = [8, 16, 32]
     vals_head_dim = [16, 32, 64]
-    vals_num_groups = [1, 4]
+    vals_num_groups = [1, 2, 4]
     vals_with_rope = [True, False]
     vals_norm_type = ['layer_norm', 'rms_norm']
     vals_with_dropout = [True, False]
-    vals_dropout_prob = [0.1, 0.5]
+    vals_dropout_prob = [0.1, 0.3, 0.5]
 
     # Static parameters
     data_type_list = ["ap_fixed<16,5>"]
