@@ -739,9 +739,14 @@ def generate_vmm_function(
         raise ValueError("The 'order' parameter must be a permutation of ['i', 'j']")
     
 
-    # Determine function name and signature based on whether bias is included
+    # Determine function name and signature based on whether bias is included.
+    # The dims are part of the function name (not just the dedup key): array
+    # parameters decay to pointers, so two vmm ops that differ only in the outer
+    # dim (e.g. [K][N] vs [M][K] with N==K) would otherwise emit two identically
+    # -signed `vmm_ij` definitions -> "redefinition" (hits option_1 when K==N and
+    # option_4 when N==K). Encoding M,N keeps every distinct shape a distinct name.
     if with_bias:
-        function_name = f"{func_type}_{''.join(order)}_bias"
+        function_name = f"{func_type}_{''.join(order)}_{M}_{N}_bias"
         function_signature =    f"""void {function_name}(
     {data_type} input_A[{M}][{N}],
     {data_type} input_B[{M}],
@@ -750,7 +755,7 @@ def generate_vmm_function(
 )"""
         init_out = "output[j] = bias[j];"
     else:
-        function_name = f"{func_type}_{''.join(order)}"
+        function_name = f"{func_type}_{''.join(order)}_{M}_{N}"
         function_signature =    f"""void {function_name}(
     {data_type} input_A[{M}][{N}],
     {data_type} input_B[{M}],
@@ -822,7 +827,7 @@ def generate_vmm_function(
 //////////////////////////////////////////
 """
     
-    ext_func_name = f"{function_name}_{M}_{N}"
+    ext_func_name = function_name  # already unique per (order, M, N, bias)
     return function, ext_func_name
 
 def call_vmm(
@@ -857,13 +862,14 @@ def call_vmm(
     # Validate order parameter
     if sorted(order) != sorted(['i', 'j']):
         raise ValueError("The 'order' parameter must be a permutation of ['i', 'j']")
-    
-    # Determine function name based on parameters
+
+    # Determine function name based on parameters. Must match the dims-encoded
+    # definition name in generate_vmm_function (see note there).
     if with_bias:
-        function_name = f"{func_type}_{''.join(order)}_bias"
+        function_name = f"{func_type}_{''.join(order)}_{M}_{N}_bias"
         call_code = f"{function_name}({input_A_var}, {input_B_var}, {bias_var}, {output_var});"
     else:
-        function_name = f"{func_type}_{''.join(order)}"
+        function_name = f"{func_type}_{''.join(order)}_{M}_{N}"
         call_code = f"{function_name}({input_A_var}, {input_B_var}, {output_var});"
     
     # Create the complete function call with appropriate comment
@@ -1274,24 +1280,34 @@ def generate_activation_function(
     # We'll assume the function signature starts with "void <name>(".
     DATA_TYPE = replace_data_type(DATA_TYPE)
     dim_suffix = f"_{H}_{W}_{DATA_TYPE}"
-    # Use a regex to capture "void" followed by the function name
+    # Use a regex to capture "void" followed by the function name. Record the
+    # template's actual name so the generated call matches the emitted
+    # definition: some blocks are named differently from the config's activation
+    # string (e.g. tanh is defined as tanh_act to avoid clashing with C's tanh).
+    captured_name = []
+
+    def _append_dim_suffix(m):
+        captured_name.append(m.group(2))
+        return m.group(1) + dim_suffix + "("
+
     function_block = re.sub(
         r"(void\s+(\w+))\s*\(",
-        lambda m: m.group(1) + dim_suffix + "(", 
+        _append_dim_suffix,
         function_block,
         count=1
     )
-    
+
     # 6) Optionally, include a header (everything before the first marker).
     header_end = formatted_code.find("/*====")
     if header_end != -1:
         header = formatted_code[:header_end].strip() + "\n\n"
     else:
         header = ""
-    
+
     output_code = header + function_block
-    
-    return output_code, func_name + dim_suffix
+
+    emitted_name = captured_name[0] if captured_name else func_name
+    return output_code, emitted_name + dim_suffix
 
 def generate_func_def(op_info, data_type):
     

@@ -98,23 +98,33 @@ def generate_activation_function(
     
     DATA_TYPE = replace_data_type(DATA_TYPE)
     dim_suffix = f"_{SEQ_LENGTH}_{HIDDEN_DIM}_{DATA_TYPE}"
-    # Use a regex to capture "void" followed by the function name
+    # Use a regex to capture "void" followed by the function name. Record the
+    # template's actual name so the generated call matches the emitted
+    # definition: some blocks are named differently from the config's activation
+    # string (e.g. tanh is defined as tanh_act to avoid clashing with C's tanh).
+    captured_name = []
+
+    def _append_dim_suffix(m):
+        captured_name.append(m.group(2))
+        return m.group(1) + dim_suffix + "("
+
     function_block = re.sub(
         r"(void\s+(\w+))\s*\(",
-        lambda m: m.group(1) + dim_suffix + "(", 
+        _append_dim_suffix,
         function_block,
         count=1
     )
-    
+
     # 5) Optionally, include a header (everything before the first marker).
     header_end = formatted_code.find("/*====")
     header = ""
     if header_end != -1:
         header = formatted_code[:header_end].strip() + "\n\n"
-    
+
     output_code = header + function_block
-    
-    return output_code, func_name + dim_suffix
+
+    emitted_name = captured_name[0] if captured_name else func_name
+    return output_code, emitted_name + dim_suffix
     
 
 

@@ -1,8 +1,22 @@
 import os
+import shutil
 import subprocess
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import time
 from tqdm import tqdm
+
+
+def _prune_autopilot(run_path):
+    """Delete the ~25 MB/design .autopilot build DB once synth is done.
+
+    Prune-as-we-go: a full sweep leaves hundreds of GB of these intermediates
+    and previously filled the scratch disk to 100%. The reports we extract live
+    under solution1/{syn,impl}/report, not here, so dropping .autopilot as each
+    design completes is lossless and bounds peak usage to the ~64 live workers.
+    """
+    ap = os.path.join(run_path, "project_1", "solution1", ".autopilot")
+    if os.path.isdir(ap):
+        shutil.rmtree(ap, ignore_errors=True)
 
 
 def run_hls(run_path):
@@ -18,11 +32,13 @@ def run_hls(run_path):
             stderr=subprocess.DEVNULL,
             bufsize=0,
         )
+        _prune_autopilot(run_path)
         if result.returncode == 0:
             return f"Success: {run_path}"
         else:
             return f"Failed: {run_path}"
     except Exception as e:
+        _prune_autopilot(run_path)
         return f"Error in {run_path}: {str(e)}"
 
 

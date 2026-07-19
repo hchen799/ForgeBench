@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import concurrent.futures
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -6,27 +7,44 @@ import time
 from tqdm import tqdm
 from joblib import Parallel, delayed
 
+
+def _prune_autopilot(run_path):
+    """Delete the ~25 MB/design .autopilot build DB once synth is done.
+
+    Prune-as-we-go: a full 12.9k-design sweep leaves ~490 GB of these
+    intermediates and previously filled the scratch disk to 100%. The reports
+    we actually extract live under solution1/{syn,impl}/report, not here, so
+    dropping .autopilot as each design completes is lossless and keeps peak
+    usage bounded to the concurrent workers (~64) rather than the whole sweep.
+    """
+    ap = os.path.join(run_path, "project_1", "solution1", ".autopilot")
+    if os.path.isdir(ap):
+        shutil.rmtree(ap, ignore_errors=True)
+
+
 def run_hls(run_path):
     tcl_script = os.path.join(run_path, "run_hls.tcl")
     if not os.path.isfile(tcl_script):
         return f"Skipped: {run_path} (No TCL file)"
-    
+
     try:
-        # Using subprocess.run. 
+        # Using subprocess.run.
         # Note: capture_output=True is a cleaner way to write stdout=PIPE, stderr=PIPE
         result = subprocess.run(
-            ["vitis_hls", "-f", "run_hls.tcl"], 
-            cwd=run_path, 
+            ["vitis_hls", "-f", "run_hls.tcl"],
+            cwd=run_path,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             bufsize=0,
         )
-        
+        _prune_autopilot(run_path)
+
         if result.returncode == 0:
             return f"Success: {run_path}"
         else:
             return f"Failed: {run_path}"
     except Exception as e:
+        _prune_autopilot(run_path)
         return f"Error in {run_path}: {str(e)}"
 
 def run_hls_on_dirs(base_dir="hls_files"):

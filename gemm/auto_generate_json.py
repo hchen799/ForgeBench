@@ -80,7 +80,7 @@ def generate_config_text(
         brams.extend([
             {"name": "BRAM_xt_bias",        "dims": [K]},
             {"name": "BRAM_xt",        "dims": [K]},
-            {"name": "BRAM_xt_bias",        "dims": [K]},
+            {"name": "BRAM_yt_bias",        "dims": [K]},
             {"name": "BRAM_yt",        "dims": [K]},
         ]) 
 
@@ -138,14 +138,14 @@ def generate_config_text(
             ("vmm_2", {
                 "func_name": "vmm",
                 "dims": [K, N],
-                "args": ["BRAM_B", "BRAM_y", "BRAM_xAB_bias", "BRAM_xAB"],
+                "args": ["BRAM_B", "BRAM_xA", "BRAM_xAB_bias", "BRAM_xAB"],
                 "func_info": [order_vm, [unroll_K, unroll_N], intermediate_bias, inline]
             }),
 
             ("dot_1", {
                 "func_name": "dot_product",
                 "dims": [N],
-                "args": ["BRAM_xA", "BRAM_mmv", "BRAM_bias", "BRAM_result"],
+                "args": ["BRAM_xAB", "BRAM_y", "BRAM_bias", "BRAM_result"],
                 "func_info": [unroll_N, intermediate_bias, inline]
             }),
         ])

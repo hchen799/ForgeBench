@@ -34,6 +34,19 @@ IMPL_REL = "project_1/solution1/impl/report/verilog/export_impl.xml"
 POWER_GLOB = "project_1/solution1/impl/verilog/project.runs/impl_1/*_power_routed.rpt"
 
 
+def _parse_xml(path):
+    """Parse a report, tolerating truncated/corrupt XML.
+
+    A run that fills the disk can leave a half-written report; one bad file must
+    not abort collection over thousands of designs. Returns None on failure.
+    """
+    try:
+        return ET.parse(path).getroot()
+    except ET.ParseError as e:
+        print(f"WARNING: skipping malformed XML {path}: {e}")
+        return None
+
+
 def _int(node, tag):
     if node is None:
         return None
@@ -111,7 +124,9 @@ class VitisExtractor(Extractor):
         xml_path = os.path.join(design_dir, CSYNTH_REL)
         if not os.path.exists(xml_path):
             return None
-        root = ET.parse(xml_path).getroot()
+        root = _parse_xml(xml_path)
+        if root is None:
+            return None
         area = root.find("AreaEstimates")
         if area is None:
             return None
@@ -144,7 +159,9 @@ class VitisExtractor(Extractor):
         xml_path = os.path.join(design_dir, IMPL_REL)
         if not os.path.exists(xml_path):
             return None
-        root = ET.parse(xml_path).getroot()
+        root = _parse_xml(xml_path)
+        if root is None:
+            return None
         area = root.find("AreaReport")
         res = area.find("Resources") if area is not None else None
         avail = area.find("AvailableResources") if area is not None else None
@@ -204,7 +221,8 @@ class VitisExtractor(Extractor):
         # --- Latency / throughput (cycles from sibling csynth.xml) ---
         csynth_path = os.path.join(design_dir, CSYNTH_REL)
         if os.path.exists(csynth_path):
-            perf = ET.parse(csynth_path).getroot().find("PerformanceEstimates")
+            csynth_root = _parse_xml(csynth_path)
+            perf = csynth_root.find("PerformanceEstimates") if csynth_root is not None else None
             m.cycles, _ = _latency_ns(perf)
             if perf is not None:
                 summ = perf.find("SummaryOfOverallLatency")
