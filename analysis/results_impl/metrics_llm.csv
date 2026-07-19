@@ -1,0 +1,3 @@
+design,domain,tool,flow,datatype,bram,dsp,ff,lut,bram_avail,dsp_avail,ff_avail,lut_avail,bram_util,dsp_util,ff_util,lut_util,cycles,latency_ns,ii,target_clock_ns,achieved_clock_ns,fmax_mhz,power_w,power_dyn_w,power_static_w,timing_met,throughput,notes
+ATTN_config_16_128_16_16_1_layer_norm_False_DROPTrue_0.1_ap_fixed_16_5_,llm,vitis,impl,"ap_fixed<16,5>",54,69,22768,25830,1824,2520,548160,274080,2.9605,2.7381,4.1535,9.4243,604295,6042950.0,604296,10.0,6.377,156.814,1.176,0.553,0.623,True,165.48209070073392,
+ATTN_config_16_128_16_16_1_rms_norm_False_DROPTrue_0.1_ap_fixed_16_5_,llm,vitis,impl,"ap_fixed<16,5>",52,74,20463,23858,1824,2520,548160,274080,2.8509,2.9365,3.733,8.7048,595275,5952750.0,595276,10.0,6.437,155.352,1.161,0.538,0.623,True,167.98958464575196,
