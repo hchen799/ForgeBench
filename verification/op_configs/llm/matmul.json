@@ -1,0 +1,24 @@
+{
+    "brams": [
+        {"name": "BRAM_1", "dims": [8, 32]},
+        {"name": "FF_weights_1", "dims": [128, 32]},
+        {"name": "BRAM_MLP_1", "dims": [8, 128]}
+    ],
+    "drams": [
+        {"name": "DRAM_input", "dims": [8, 32], "bundle": "mem1"},
+        {"name": "DRAM_weights", "dims": [128, 32], "bundle": "mem1"},
+        {"name": "DRAM_output", "dims": [8, 128], "bundle": "mem2"}
+    ],
+    "ops": {
+        "load_1": {"func_name": "load", "dims": [8, 32], "args": ["DRAM_input", "BRAM_1"]},
+        "load_2": {"func_name": "load", "dims": [128, 32], "args": ["DRAM_weights", "FF_weights_1"]},
+        "matmul_1": {
+            "func_name": "matmul",
+            "dims": [8, 32, 128],
+            "func_info": ["matmul_template.cpp", false],
+            "args": ["BRAM_1", "FF_weights_1", "BRAM_MLP_1"]
+        },
+        "store": {"func_name": "store", "dims": [8, 128], "args": ["BRAM_MLP_1", "DRAM_output"]}
+    },
+    "output_dram_names": ["DRAM_output"]
+}

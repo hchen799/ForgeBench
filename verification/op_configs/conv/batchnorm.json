@@ -1,0 +1,24 @@
+{
+    "brams": [
+        {"name": "BRAM_buffer_1", "dims": [8, 16, 16]},
+        {"name": "BRAM_batch_norm_weights", "dims": [4, 8]},
+        {"name": "BRAM_buffer_2", "dims": [8, 16, 16]}
+    ],
+    "drams": [
+        {"name": "DRAM_input", "dims": [8, 16, 16], "bundle": "mem1"},
+        {"name": "DRAM_weights", "dims": [4, 8], "bundle": "mem1"},
+        {"name": "DRAM_output", "dims": [8, 16, 16], "bundle": "mem2"}
+    ],
+    "ops": {
+        "load_1": {"func_name": "load", "dims": [8, 16, 16], "args": ["DRAM_input", "BRAM_buffer_1"]},
+        "load_2": {"func_name": "load", "dims": [4, 8], "args": ["DRAM_weights", "BRAM_batch_norm_weights"]},
+        "batchnorm_1": {
+            "func_name": "batchnorm",
+            "dims": [8, 16, 16],
+            "func_info": ["batch_norm_template.cpp", 1e-05],
+            "args": ["BRAM_buffer_1", "BRAM_batch_norm_weights", "BRAM_buffer_2"]
+        },
+        "store": {"func_name": "store", "dims": [8, 16, 16], "args": ["BRAM_buffer_2", "DRAM_output"]}
+    },
+    "output_dram_names": ["DRAM_output"]
+}

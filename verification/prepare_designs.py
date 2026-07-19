@@ -92,14 +92,16 @@ def main():
     ap.add_argument("domain", choices=["gemm", "conv", "llm"])
     ap.add_argument("--task", default="csim", help="comma-separated Vitis tasks, e.g. csim or csim,cosim")
     ap.add_argument("--out", default=None, help="output base dir (default verification/_server/<domain>)")
-    ap.add_argument("configs", nargs="*", help="config names (default: all test_case_configs)")
+    ap.add_argument("--configs-dir", default=None,
+                    help="directory of config JSONs (default: <domain>/test_case_configs)")
+    ap.add_argument("configs", nargs="*", help="config names (default: all configs in --configs-dir)")
     args = ap.parse_args()
 
     tasks = [t.strip() for t in args.task.split(",") if t.strip()]
     out_base = args.out or os.path.join(REPO_ROOT, "verification", "_server", args.domain)
     os.makedirs(out_base, exist_ok=True)
 
-    cfg_dir = os.path.join(_domain_dir(args.domain), "test_case_configs")
+    cfg_dir = args.configs_dir or os.path.join(_domain_dir(args.domain), "test_case_configs")
     if args.configs:
         cfg_paths = [os.path.join(cfg_dir, c if c.endswith(".json") else c + ".json") for c in args.configs]
     else:

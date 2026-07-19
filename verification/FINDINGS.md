@@ -17,6 +17,28 @@ real random inputs, `rtol=1e-3, atol=1e-5`:
 
 Per-domain detail: this file (gemm), `FINDINGS_conv.md`, `FINDINGS_llm.md`.
 
+### Per-operator CSIM suite (`verification/op_configs/`)
+
+In addition to the whole-design configs above, every **core operator** emitted by
+each domain's `generate_code.py` now has an isolated single-operator config
+(`load -> op -> store`) under `verification/op_configs/<domain>/`, so a failure
+points directly at one operator's C-vs-numpy correctness rather than at a
+composite design. Run the local proxy with
+`python3 -m verification.verify_operators` (server: `bash verification/run_operators.sh`).
+
+Operators covered (20 total): gemm — `gemm, vmm, mmv, dot_product, activation`;
+conv — `conv, batchnorm, activation, maxpool, adaptive_avgpool, matrix_add`;
+llm — `matmul, mha, swa, layernorm, rmsnorm, activation, dropout, matrix_add,
+elementwise_mult`. (`load`/`store` are exercised by every config.)
+
+Result (local proxy, random inputs, `rtol=1e-3, atol=1e-5`): **19/20 PASS**. The
+only failure is **`llm/dropout`** (256/256 elements mismatch, `max_rel≈1.0`): the
+emitted C runs its train-time LCG mask + inverse-keep scaling at inference, while
+the textbook inference-time counterpart is the identity — the same bug already
+documented in `FINDINGS_llm.md` §1, now isolated to the operator and no longer
+masked by all-zero inputs. `swa` and `adaptive_avgpool`, which no whole-design
+config exercised, both PASS.
+
 **Bugs the harness caught that need an author decision** (fix the generator vs.
 report as a known limitation): softmax overflow (gemm/§1), train-time dropout at
 inference (llm), and the `vgg19_block3` buffer-size mismatch (conv). All three

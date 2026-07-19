@@ -1,0 +1,24 @@
+{
+    "brams": [
+        {"name": "BRAM_SWISH", "dims": [8, 128]},
+        {"name": "BRAM_MLP_1", "dims": [8, 128]},
+        {"name": "BRAM_MLP_2", "dims": [8, 128]}
+    ],
+    "drams": [
+        {"name": "DRAM_input_1", "dims": [8, 128], "bundle": "mem1"},
+        {"name": "DRAM_input_2", "dims": [8, 128], "bundle": "mem1"},
+        {"name": "DRAM_output", "dims": [8, 128], "bundle": "mem2"}
+    ],
+    "ops": {
+        "load_1": {"func_name": "load", "dims": [8, 128], "args": ["DRAM_input_1", "BRAM_SWISH"]},
+        "load_2": {"func_name": "load", "dims": [8, 128], "args": ["DRAM_input_2", "BRAM_MLP_1"]},
+        "elementwise_mult_1": {
+            "func_name": "elementwise_mult",
+            "dims": [8, 128],
+            "func_info": ["elementwise_mult_template.cpp"],
+            "args": ["BRAM_SWISH", "BRAM_MLP_1", "BRAM_MLP_2"]
+        },
+        "store": {"func_name": "store", "dims": [8, 128], "args": ["BRAM_MLP_2", "DRAM_output"]}
+    },
+    "output_dram_names": ["DRAM_output"]
+}

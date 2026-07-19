@@ -1,0 +1,24 @@
+{
+    "brams": [
+        {"name": "BRAM_attn_input", "dims": [8, 32]},
+        {"name": "BRAM_rms_norm_weights_1", "dims": [2, 32]},
+        {"name": "BRAM_2", "dims": [8, 32]}
+    ],
+    "drams": [
+        {"name": "DRAM_input", "dims": [8, 32], "bundle": "mem1"},
+        {"name": "DRAM_weights", "dims": [2, 32], "bundle": "mem1"},
+        {"name": "DRAM_output", "dims": [8, 32], "bundle": "mem2"}
+    ],
+    "ops": {
+        "load_1": {"func_name": "load", "dims": [8, 32], "args": ["DRAM_input", "BRAM_attn_input"]},
+        "load_2": {"func_name": "load", "dims": [2, 32], "args": ["DRAM_weights", "BRAM_rms_norm_weights_1"]},
+        "rmsnorm_1": {
+            "func_name": "rmsnorm",
+            "dims": [8, 32, 0.01],
+            "func_info": ["rms_norm_template.cpp"],
+            "args": ["BRAM_attn_input", "BRAM_rms_norm_weights_1[0]", "BRAM_2"]
+        },
+        "store": {"func_name": "store", "dims": [8, 32], "args": ["BRAM_2", "DRAM_output"]}
+    },
+    "output_dram_names": ["DRAM_output"]
+}

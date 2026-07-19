@@ -47,10 +47,11 @@ def _domain_dir(domain):
     return os.path.join(REPO_ROOT, domain)
 
 
-def _config_path(domain, name):
+def _config_path(domain, name, configs_dir=None):
     if not name.endswith(".json"):
         name += ".json"
-    return os.path.join(_domain_dir(domain), "test_case_configs", name)
+    base = configs_dir or os.path.join(_domain_dir(domain), "test_case_configs")
+    return os.path.join(base, name)
 
 
 def generate_float_design(domain, config_path, out_base):
@@ -178,17 +179,19 @@ def run_one(domain, config_path, out_base):
 def main():
     ap = argparse.ArgumentParser(description="Vitis-free golden self-check")
     ap.add_argument("domain", choices=["gemm", "conv", "llm"])
-    ap.add_argument("configs", nargs="*", help="config names (default: all test_case_configs)")
+    ap.add_argument("configs", nargs="*", help="config names (default: all configs in --configs-dir)")
+    ap.add_argument("--configs-dir", default=None,
+                    help="directory of config JSONs (default: <domain>/test_case_configs)")
     ap.add_argument("--out", default=None, help="output base dir (default: verification/_selfcheck/<domain>)")
     args = ap.parse_args()
 
+    cfg_dir = args.configs_dir or os.path.join(_domain_dir(args.domain), "test_case_configs")
     out_base = args.out or os.path.join(REPO_ROOT, "verification", "_selfcheck", args.domain)
     os.makedirs(out_base, exist_ok=True)
 
     if args.configs:
-        cfg_paths = [_config_path(args.domain, c) for c in args.configs]
+        cfg_paths = [_config_path(args.domain, c, cfg_dir) for c in args.configs]
     else:
-        cfg_dir = os.path.join(_domain_dir(args.domain), "test_case_configs")
         cfg_paths = sorted(
             os.path.join(cfg_dir, f) for f in os.listdir(cfg_dir) if f.endswith(".json")
         )

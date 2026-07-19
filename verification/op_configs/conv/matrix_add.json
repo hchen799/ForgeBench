@@ -1,0 +1,24 @@
+{
+    "brams": [
+        {"name": "BRAM_buffer_1", "dims": [8, 16, 16]},
+        {"name": "BRAM_image_input", "dims": [8, 16, 16]},
+        {"name": "BRAM_buffer_2", "dims": [8, 16, 16]}
+    ],
+    "drams": [
+        {"name": "DRAM_input_1", "dims": [8, 16, 16], "bundle": "mem1"},
+        {"name": "DRAM_input_2", "dims": [8, 16, 16], "bundle": "mem1"},
+        {"name": "DRAM_output", "dims": [8, 16, 16], "bundle": "mem2"}
+    ],
+    "ops": {
+        "load_1": {"func_name": "load", "dims": [8, 16, 16], "args": ["DRAM_input_1", "BRAM_buffer_1"]},
+        "load_2": {"func_name": "load", "dims": [8, 16, 16], "args": ["DRAM_input_2", "BRAM_image_input"]},
+        "matrix_add_1": {
+            "func_name": "matrix_add",
+            "dims": [8, 16, 16],
+            "func_info": ["matrix_add_template.cpp"],
+            "args": ["BRAM_buffer_1", "BRAM_image_input", "BRAM_buffer_2"]
+        },
+        "store": {"func_name": "store", "dims": [8, 16, 16], "args": ["BRAM_buffer_2", "DRAM_output"]}
+    },
+    "output_dram_names": ["DRAM_output"]
+}
