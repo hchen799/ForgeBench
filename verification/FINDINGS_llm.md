@@ -7,10 +7,11 @@ in float32; it is compared against the emitted C at `rtol=1e-3, atol=1e-5`.
 Ops implemented: `load`, `store`, `matmul`, `mha`, `swa`, `layernorm`, `rmsnorm`,
 `activation`, `dropout`, `matrix_add`, `elementwise_mult`.
 
-Self-check result: `python3 -m verification.gcc_selfcheck llm` -> **5/7 configs
-PASS**. The two failures (`gpt_transformer_p1`, `llama_transformer_p2`) are the
-only configs containing a `dropout` op and are caused by a real bug in the emitted
-C (see Caught bug #1). Everything else matches to within ~1.9e-6 absolute.
+Self-check result: `python3 -m verification.gcc_selfcheck llm` -> **7/7 configs
+PASS** after the dropout fix below (was 5/7; the two failures
+`gpt_transformer_p1`, `llama_transformer_p2` were the only configs containing a
+`dropout` op — see Caught bug #1, now fixed). Everything matches to within
+~1.9e-6 absolute. The per-operator suite (`verify_operators llm`) is **9/9 PASS**.
 
 Tolerance: unchanged at the harness default `rtol=1e-3, atol=1e-5`. No tolerance
 relaxation was needed; passing configs clear it by 3+ orders of magnitude. Torch
@@ -18,9 +19,17 @@ was NOT used — the golden is pure NumPy.
 
 ---
 
-## Caught bug #1 — dropout runs its train-time formula at inference (non-identity)
+## Caught bug #1 (FIXED) — dropout ran its train-time formula at inference (non-identity)
 
-Evidence — `llm/dropout_template.cpp`:
+**Status: fixed.** `llm/dropout_template.cpp` now emits an identity passthrough
+(`output[i][j] = input[i][j]`), the correct inference-time behavior, and drops the
+now-unused `lcg_rand` helper (which was also emitted once per unique dropout
+instantiation and would have collided if a design used two differently-sized
+dropouts). `dropout_prob`/`seed` remain in the signature for call-site
+compatibility. Both transformer configs and the `llm/dropout` operator config now
+pass. Original analysis retained below.
+
+Evidence — original `llm/dropout_template.cpp`:
 
     unsigned int r = lcg_rand(&seed);
     data_t rand_val = (data_t)r / (data_t)2147483647;
@@ -96,8 +105,9 @@ These are widely-used variants where the golden intentionally mirrors the C:
 
 ## Notes
 
-- `swa` (sliding-window attention) is implemented per the vocabulary but is not
-  exercised by any current `test_case_configs`.
+- `swa` (sliding-window attention) is not exercised by any `test_case_configs`,
+  but is now covered by the per-operator suite (`verification/op_configs/llm/swa.json`)
+  and PASSes.
 - Shared shim (`verification/shim/hls_math.h`) already provides every math symbol
   the llm C needs (`exp`, `tanh`, `sqrt`, `pow`, `powf`, `sin`, `cos`); no shim
   change was required.

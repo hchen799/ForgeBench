@@ -1,10 +1,9 @@
 
-// Simple LCG for pseudo-random numbers.
-unsigned int lcg_rand(unsigned int *seed) {{
-    *seed = (1103515245 * (*seed) + 12345) & 0x7fffffff;
-    return *seed;
-}}
-
+// Inference-time dropout is the identity: dropout is disabled at evaluation time
+// (with inverted dropout, the 1/(1-p) scaling is already folded in at training
+// time). This benchmark emits inference designs, so dropout is a passthrough.
+// dropout_prob and seed are kept in the signature for call-site compatibility but
+// are intentionally unused.
 void dropout(
     data_t input[{SEQ_LENGTH}][{DIM}],
     data_t output[{SEQ_LENGTH}][{DIM}],
@@ -12,18 +11,11 @@ void dropout(
     unsigned int seed
 )
 {{
+    (void)dropout_prob;
+    (void)seed;
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         for (int j = 0; j < {DIM}; j++) {{
-            // Generate a random value between 0 and 1.
-            unsigned int r = lcg_rand(&seed);
-            data_t rand_val = (data_t)r / (data_t)2147483647;
-            // Apply dropout: if random value is below dropout_prob, output is 0;
-            // otherwise, scale the input.
-            if (rand_val < dropout_prob) {{
-                output[i][j] = (data_t)0;
-            }} else {{
-                output[i][j] = input[i][j] / (1 - dropout_prob);
-            }}
+            output[i][j] = input[i][j];
         }}
     }}
 }}

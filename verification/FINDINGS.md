@@ -13,7 +13,7 @@ real random inputs, `rtol=1e-3, atol=1e-5`:
 |--------|------|-----------------------------------------------|
 | gemm | 13/14 | `mlp` — softmax overflows to `nan` in float (see below) |
 | conv | 28/30 | `conv_variable` (symbolic non-config), `vgg19_block3` (buffer-size bug) — see `FINDINGS_conv.md` |
-| llm  | 5/7  | `gpt_transformer_p1`, `llama_transformer_p2` — train-time dropout at inference — see `FINDINGS_llm.md` |
+| llm  | 7/7  | dropout-at-inference bug now fixed (was 5/7) — see `FINDINGS_llm.md` |
 
 Per-domain detail: this file (gemm), `FINDINGS_conv.md`, `FINDINGS_llm.md`.
 
@@ -31,18 +31,20 @@ conv — `conv, batchnorm, activation, maxpool, adaptive_avgpool, matrix_add`;
 llm — `matmul, mha, swa, layernorm, rmsnorm, activation, dropout, matrix_add,
 elementwise_mult`. (`load`/`store` are exercised by every config.)
 
-Result (local proxy, random inputs, `rtol=1e-3, atol=1e-5`): **19/20 PASS**. The
-only failure is **`llm/dropout`** (256/256 elements mismatch, `max_rel≈1.0`): the
-emitted C runs its train-time LCG mask + inverse-keep scaling at inference, while
-the textbook inference-time counterpart is the identity — the same bug already
-documented in `FINDINGS_llm.md` §1, now isolated to the operator and no longer
-masked by all-zero inputs. `swa` and `adaptive_avgpool`, which no whole-design
-config exercised, both PASS.
+Result (local proxy, random inputs, `rtol=1e-3, atol=1e-5`): **20/20 PASS**.
+`llm/dropout` initially failed (256/256 elements mismatch, `max_rel≈1.0`) — the
+emitted C ran its train-time LCG mask + inverse-keep scaling at inference while
+the textbook counterpart is the identity — the same bug documented in
+`FINDINGS_llm.md` §1, isolated to the operator and no longer masked by all-zero
+inputs. **Now fixed** (`llm/dropout_template.cpp` emits an identity passthrough),
+so the operator, both transformer designs, and the suite all pass. `swa` and
+`adaptive_avgpool`, which no whole-design config exercised, both PASS.
 
-**Bugs the harness caught that need an author decision** (fix the generator vs.
-report as a known limitation): softmax overflow (gemm/§1), train-time dropout at
-inference (llm), and the `vgg19_block3` buffer-size mismatch (conv). All three
-were invisible to the old dump-only testbench. Two domains (conv, llm) also had
+**Bugs the harness caught** (all invisible to the old dump-only testbench):
+train-time dropout at inference (llm) — **fixed**, `llm/dropout_template.cpp` now
+emits an identity passthrough; softmax overflow (gemm/§1) and the `vgg19_block3`
+buffer-size mismatch (conv) — **still open**, awaiting an author decision (fix the
+generator vs. report as a known limitation). Two domains (conv, llm) also had
 their DRAM inputs hard-coded to all-zeros (random generation commented out),
 which would have made any functional check vacuous; restored to random.
 
