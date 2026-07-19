@@ -11,7 +11,7 @@ real random inputs, `rtol=1e-3, atol=1e-5`:
 
 | Domain | Pass | Non-passing (all genuine bugs / non-configs) |
 |--------|------|-----------------------------------------------|
-| gemm | 13/14 | `mlp` — softmax overflows to `nan` in float (see below) |
+| gemm | 14/14 | softmax overflow now fixed (was 13/14) — see below |
 | conv | 28/30 | `conv_variable` (symbolic non-config), `vgg19_block3` (buffer-size bug) — see `FINDINGS_conv.md` |
 | llm  | 7/7  | dropout-at-inference bug now fixed (was 5/7) — see `FINDINGS_llm.md` |
 
@@ -42,9 +42,10 @@ so the operator, both transformer designs, and the suite all pass. `swa` and
 
 **Bugs the harness caught** (all invisible to the old dump-only testbench):
 train-time dropout at inference (llm) — **fixed**, `llm/dropout_template.cpp` now
-emits an identity passthrough; softmax overflow (gemm/§1) and the `vgg19_block3`
-buffer-size mismatch (conv) — **still open**, awaiting an author decision (fix the
-generator vs. report as a known limitation). Two domains (conv, llm) also had
+emits an identity passthrough; softmax overflow (gemm/§1) — **fixed**,
+`gemm/2D_activations_template.cpp` now subtracts the row max before `exp`; the
+`vgg19_block3` buffer-size mismatch (conv) — **still open**, awaiting an author
+decision (fix the generator vs. report as a known limitation). Two domains (conv, llm) also had
 their DRAM inputs hard-coded to all-zeros (random generation commented out),
 which would have made any functional check vacuous; restored to random.
 
@@ -57,22 +58,21 @@ the Vitis-free oracle.
 
 ---
 
-## 1. Softmax overflows in float (real bug) — gemm `mlp`
+## 1. Softmax overflowed in float (real bug, FIXED) — gemm `mlp`
 
-The generated softmax (`gemm/2D_activations_template.cpp`, SOFTMAX block) computes
-`out[i][j] = exp(in[i][j])` with no max-subtraction, then normalizes by the row
+The generated softmax (`gemm/2D_activations_template.cpp`, SOFTMAX block) computed
+`out[i][j] = exp(in[i][j])` with no max-subtraction, then normalized by the row
 sum. In the `mlp` design the pre-softmax activations reach ~770–1338, so
-`exp(...)` overflows to `inf` in IEEE-754 float and the normalization yields `nan`
-for **all** outputs. The old dump-only testbench never caught this.
+`exp(...)` overflowed to `inf` in IEEE-754 float and the normalization yielded
+`nan` for **all** outputs. The old dump-only testbench never caught this.
 
 - **Impact:** any design whose pre-softmax magnitudes exceed ~88 (float `exp`
-  overflow point) produces `nan`. This also affects the released fixed-point suites
-  (fixed-point saturates instead, giving wrong—but finite—results).
-- **Proposed fix (recommended, not yet applied):** subtract the row max before
-  `exp` in the SOFTMAX template — mathematically identical (softmax is
-  shift-invariant), numerically stable, one-line change. Would make `mlp` pass.
-- **Status:** flagged for author decision; harness currently reports `mlp` as FAIL
-  (correct signal).
+  overflow point) produced `nan`. This also affected the released fixed-point
+  suites (fixed-point saturates instead, giving wrong—but finite—results).
+- **Fix (applied):** subtract the row max before `exp` in the SOFTMAX template —
+  mathematically identical (softmax is shift-invariant), numerically stable. The
+  golden already uses a max-subtracting softmax, so the two now agree.
+- **Status:** `mlp` now PASSes (`max_abs≈8.5e-5`); gemm domain is 14/14.
 
 ## 2. Bias array declared/loaded but unused (minor smell) — 8/14 gemm configs
 

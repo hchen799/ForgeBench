@@ -225,11 +225,19 @@ void softmax(
     data_t output[{H}][{W}]
 )
 {{
-    // Compute softmax along the channel dimension for each spatial location.
+    // Compute softmax rowwise. Subtract the row max before exp for numerical
+    // stability: softmax is shift-invariant, so this is mathematically identical
+    // but avoids exp() overflowing to inf (and the normalization to nan) when the
+    // pre-softmax activations are large.
     for (int i = 0; i < {H}; i++) {{
-        data_t sum = 0; // compute softmax rowise
+        data_t max_val = input[i][0];
+        for (int j = 1; j < {W}; j++) {{
+            if (input[i][j] > max_val) max_val = input[i][j];
+        }}
+
+        data_t sum = 0;
         for (int j = 0; j < {W}; j++) {{
-            output[i][j] = hls::exp(input[i][j]);
+            output[i][j] = hls::exp(input[i][j] - max_val);
             sum += output[i][j];
         }}
 
