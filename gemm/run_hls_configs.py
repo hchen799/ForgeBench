@@ -4,8 +4,17 @@ import subprocess
 import concurrent.futures
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import time
-from tqdm import tqdm
-from joblib import Parallel, delayed
+try:
+    from tqdm import tqdm
+except ImportError:  # tqdm is optional; fall back to a no-op progress wrapper
+    def tqdm(x, **kwargs):
+        return x
+# joblib is only referenced in commented-out alternatives below; import it
+# lazily so a missing optional dep can't break the actual ProcessPoolExecutor run.
+try:
+    from joblib import Parallel, delayed
+except ImportError:
+    Parallel = delayed = None
 
 
 def _prune_autopilot(run_path):

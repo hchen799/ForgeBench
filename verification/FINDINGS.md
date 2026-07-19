@@ -24,6 +24,13 @@ were invisible to the old dump-only testbench. Two domains (conv, llm) also had
 their DRAM inputs hard-coded to all-zeros (random generation commented out),
 which would have made any functional check vacuous; restored to random.
 
+**Caught by real Vitis CSIM, missed by the local self-check:** `vgg19_block1`
+had a `maxpool` channel dim of 256 over 128-channel buffers — an out-of-bounds
+write that `g++` tolerated (so the golden self-check reported PASS) but that
+SIGSEGVs under Vitis CSIM. Fixed (256→128); CSIM now passes. See
+`FINDINGS_conv.md` §3 — a concrete case where CSIM/CO-SIM adds coverage beyond
+the Vitis-free oracle.
+
 ---
 
 ## 1. Softmax overflows in float (real bug) — gemm `mlp`

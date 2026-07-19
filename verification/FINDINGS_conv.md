@@ -62,6 +62,30 @@ This is a genuine generator/config bug (the pooled buffer should be
 compile error before verification even runs. Left failing on purpose per the
 "a caught bug is the POINT" rule.
 
+### 3. `vgg19_block1.json` — CAUGHT BUG (Vitis CSIM only): maxpool channel OOB — FIXED
+Surfaced by the **real Vitis CSIM** run, not the g++ self-check. The `maxpool`
+op's channel dim was `256` (`dims=[256, 112, 112, 56, 56, ...]`) while both
+conv layers output `128` channels and the pooling buffers `BRAM_buffer_2`/
+`BRAM_buffer_3` are `[128][...]`. The generated `maxpool_256_..._float` therefore
+loops `for (c = 0; c < 256; c++)` over 128-channel arrays — an out-of-bounds
+**read and write** of channels 128–255. Under `vitis_hls` CSIM this faults:
+
+    @E Simulation failed: SIGSEGV.  ERROR: [SIM 211-100] CSim failed with errors.
+
+Crucially, the **golden self-check missed this**: the testbench compare only
+reads the in-bounds first `128*56*56` output elements (correct for c=0–127), so
+the OOB write past the buffer end is invisible to it — `g++` tolerates the stray
+write (adjacent globals) and prints `VERIFICATION: PASS`. Only real CSIM's memory
+layout faults on it. A concrete case where CSIM/CO-SIM adds coverage over the
+Vitis-free oracle.
+
+**Fix applied:** `maxpool` `dims[0]` `256 -> 128` in `vgg19_block1.json` (matches
+the 128-channel convs and buffers, and the analogous correct blocks). After the
+fix: `maxpool_128_...` is emitted and CSIM passes —
+`VERIFICATION: PASS (max_abs=0.219, max_rel=2.6e-06, n=401408)`, `CSim done with
+0 errors`. (Sibling blocks 2/3/4 have matching maxpool channel counts and are
+unaffected; block 3 still fails separately per finding #2.)
+
 ## Deliberate variants matched (not bugs)
 
 - **Activations** reuse the shared textbook oracles in

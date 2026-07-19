@@ -3,7 +3,11 @@ import shutil
 import subprocess
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import time
-from tqdm import tqdm
+try:
+    from tqdm import tqdm
+except ImportError:  # tqdm is optional; fall back to a no-op progress wrapper
+    def tqdm(x, **kwargs):
+        return x
 
 
 def _prune_autopilot(run_path):
