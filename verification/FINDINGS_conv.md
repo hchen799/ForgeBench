@@ -35,32 +35,39 @@ Layout conventions confirmed from the C:
 
 ## Results
 
-28 / 30 `conv/test_case_configs/*.json` pass the self-check
+29 / 30 `conv/test_case_configs/*.json` pass the self-check
 (Python golden vs generated-C output dump, plus the tb `VERIFICATION:` line),
 verified with real random inputs.
 
-The 2 non-passing configs are NOT golden defects; both are pre-existing
-config/generator issues surfaced by the harness:
+The 1 non-passing config is NOT a golden defect; it is a pre-existing
+non-instantiable template surfaced by the harness (see #1). `vgg19_block3`
+(finding #2) was a genuine caught bug and is now FIXED.
 
 ### 1. `conv_variable.json` — not a concrete config (symbolic template)
 Its dims are literal symbols (`C_IN`, `H_IN`, `K`, ...) rather than integers, so
 it is invalid JSON and cannot be generated/compiled. It is a hand-authoring
 template, not a runnable test case. Excluded as non-instantiable.
 
-### 2. `vgg19_block3.json` — CAUGHT BUG: buffer-size mismatch (won't compile)
-`BRAM_buffer_3` is declared `[512, 28, 28]`, but the `maxpool` op writes it as
+### 2. `vgg19_block3.json` — CAUGHT BUG: buffer-size mismatch (won't compile) — FIXED
+`BRAM_buffer_3` was declared `[512, 28, 28]`, but the `maxpool` op writes it as
 `[512][14][14]` and the following `store` reads it as `[512][14][14]`. The
-generated C therefore declares `BRAM_buffer_3` as `[512][28][28]` while calling
+generated C therefore declared `BRAM_buffer_3` as `[512][28][28]` while calling
 `maxpool_512_28_28_14_14_2_2_2_2_float(BRAM_buffer_2, BRAM_buffer_3)` and
 `store_512_14_14_float(BRAM_buffer_3, ...)`, which are pointer-type mismatches:
 
     error: cannot convert 'data_t (*)[28][28]' to 'data_t (*)[14][14]'
 
-This is a genuine generator/config bug (the pooled buffer should be
-`[512, 14, 14]`, as it correctly is in the analogous `vgg19_block1` where
-`BRAM_buffer_3` is `[128, 56, 56]`). The gemm-style flow catches it as a
-compile error before verification even runs. Left failing on purpose per the
-"a caught bug is the POINT" rule.
+This was a genuine generator/config bug: the pooled buffer must be
+`[512, 14, 14]`, as it correctly is in every sibling block (block1 buffer_3
+`[128, 56, 56]`, block2 `[256, 28, 28]`, block4 `[512, 7, 7]` — each the halved
+maxpool-output resolution). The gemm-style flow catches it as a compile error
+before verification even runs.
+
+**Fix applied:** `BRAM_buffer_3` dims `[512, 28, 28] -> [512, 14, 14]` in
+`vgg19_block3.json`. After the fix the C compiles and passes:
+`DRAM_image_output: max_abs=3.093e+07 max_rel=4.955e-06 mismatch=0/100352 PASS`
+(large absolute magnitudes are the expected deep-unnormalized-stack behavior
+noted under Tolerance; the tiny relative error confirms correctness).
 
 ### 3. `vgg19_block1.json` — CAUGHT BUG (Vitis CSIM only): maxpool channel OOB — FIXED
 Surfaced by the **real Vitis CSIM** run, not the g++ self-check. The `maxpool`

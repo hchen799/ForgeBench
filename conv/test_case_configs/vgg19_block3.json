@@ -7,7 +7,7 @@
       { "name": "BRAM_conv_weight_4", "dims": [512, 512, 3, 3] },
       { "name": "BRAM_buffer_1", "dims": [512, 28, 28] },
       { "name": "BRAM_buffer_2", "dims": [512, 28, 28] },
-      { "name": "BRAM_buffer_3", "dims": [512, 28, 28] }
+      { "name": "BRAM_buffer_3", "dims": [512, 14, 14] }
     ],
     "drams": [
       { "name": "DRAM_image_input", "dims": [256, 28, 28], "bundle": "mem1" },

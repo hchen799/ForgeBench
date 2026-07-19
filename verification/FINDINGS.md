@@ -12,7 +12,7 @@ real random inputs, `rtol=1e-3, atol=1e-5`:
 | Domain | Pass | Non-passing (all genuine bugs / non-configs) |
 |--------|------|-----------------------------------------------|
 | gemm | 14/14 | softmax overflow now fixed (was 13/14) — see below |
-| conv | 28/30 | `conv_variable` (symbolic non-config), `vgg19_block3` (buffer-size bug) — see `FINDINGS_conv.md` |
+| conv | 29/30 | `conv_variable` (symbolic non-config); `vgg19_block3` buffer-size bug now fixed — see `FINDINGS_conv.md` |
 | llm  | 7/7  | dropout-at-inference bug now fixed (was 5/7) — see `FINDINGS_llm.md` |
 
 Per-domain detail: this file (gemm), `FINDINGS_conv.md`, `FINDINGS_llm.md`.
@@ -44,8 +44,8 @@ so the operator, both transformer designs, and the suite all pass. `swa` and
 train-time dropout at inference (llm) — **fixed**, `llm/dropout_template.cpp` now
 emits an identity passthrough; softmax overflow (gemm/§1) — **fixed**,
 `gemm/2D_activations_template.cpp` now subtracts the row max before `exp`; the
-`vgg19_block3` buffer-size mismatch (conv) — **still open**, awaiting an author
-decision (fix the generator vs. report as a known limitation). Two domains (conv, llm) also had
+`vgg19_block3` buffer-size mismatch (conv) — **fixed**, `BRAM_buffer_3` corrected
+from `[512,28,28]` to the pooled `[512,14,14]` to match every sibling block. Two domains (conv, llm) also had
 their DRAM inputs hard-coded to all-zeros (random generation commented out),
 which would have made any functional check vacuous; restored to random.
 
