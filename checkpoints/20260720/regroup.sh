@@ -22,7 +22,7 @@ done
 
 echo ">>> verifying archives"
 for f in csynth_gemm_lean.tar.gz csynth_conv_lean.tar.gz csynth_llm_lean.tar.gz \
-         impl60_reports_lean.tar.gz; do
+         impl60_reports_lean.tar.gz impl1000_reports_lean.tar.gz; do
   [ -f "$f" ] || { echo "    (missing $f - skipping)"; continue; }
   if tar -tzf "$f" > /dev/null 2>&1; then
     echo "    OK  $f"
@@ -32,7 +32,7 @@ for f in csynth_gemm_lean.tar.gz csynth_conv_lean.tar.gz csynth_llm_lean.tar.gz 
 done
 
 if [ "$EXTRACT" = "--extract" ]; then
-  for f in csynth_*_lean.tar.gz impl60_reports_lean.tar.gz; do
+  for f in csynth_*_lean.tar.gz impl60_reports_lean.tar.gz impl1000_reports_lean.tar.gz; do
     [ -f "$f" ] || continue
     echo ">>> extracting $f"
     tar -xzf "$f"
@@ -46,6 +46,9 @@ Contents:
                                       (3840 / 5183 / 3888 designs)
   impl60_reports_lean.tar.gz          60 impl designs: export_impl.xml,
                                       csynth.xml, *_power_routed.rpt
+                                      (post-P&R power / Fmax / timing)
+  impl1000_reports_lean.tar.gz        ~2711 impl designs (stratified ~1000/domain):
+                                      export_impl.xml, csynth.xml, *_power_routed.rpt
                                       (post-P&R power / Fmax / timing)
 
 Re-extract metrics to CSV with:
