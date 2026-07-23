@@ -1,0 +1,1 @@
+design,domain,tool,flow,datatype,bram,dsp,ff,lut,bram_avail,dsp_avail,ff_avail,lut_avail,bram_util,dsp_util,ff_util,lut_util,cycles,latency_ns,ii,target_clock_ns,achieved_clock_ns,fmax_mhz,power_w,power_dyn_w,power_static_w,timing_met,throughput,notes

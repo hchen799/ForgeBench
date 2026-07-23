@@ -1,0 +1,5 @@
+design,domain,tool,flow,datatype,bram,dsp,ff,lut,bram_avail,dsp_avail,ff_avail,lut_avail,bram_util,dsp_util,ff_util,lut_util,cycles,latency_ns,ii,target_clock_ns,achieved_clock_ns,fmax_mhz,power_w,power_dyn_w,power_static_w,timing_met,throughput,notes
+RESNET18_TILED_config_ap_fixed_16_5_,scale,vitis,csynth,"ap_fixed<16,5>",1094,11484,1020913,1122962,1824,2520,548160,274080,59.9781,455.7143,186.2436,409.7205,,,,7.644,,,,,,,,
+RESNET18_config_ap_fixed_16_5_,scale,vitis,csynth,"ap_fixed<16,5>",5427,37,5980522,5241674,1824,2520,548160,274080,297.5329,1.4683,1091.0176,1912.4613,21149661,154392525.29999998,,7.3,,,,,,,,
+RESNET34_TILED_config_ap_fixed_16_5_,scale,vitis,csynth,"ap_fixed<16,5>",1142,11484,1055303,1162471,1824,2520,548160,274080,62.6096,455.7143,192.5173,424.1357,,,,7.703,,,,,,,,
+RESNET34_config_ap_fixed_16_5_,scale,vitis,csynth,"ap_fixed<16,5>",12339,37,5999302,5556969,1824,2520,548160,274080,676.4803,1.4683,1094.4436,2027.4989,65171812,475754227.59999996,,7.3,,,,,,,,

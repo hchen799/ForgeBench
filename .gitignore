@@ -32,3 +32,18 @@ analysis/*.csv
 
 # manuscript PDF (author-held, not part of the code artifact)
 *.pdf
+
+# impl P&R run output (large, regenerable)
+_impl1000/
+_run_logs/
+
+# --- checkpoints ---------------------------------------------------------
+# GitHub rejects any single file >100MB, so archives over ~75MB are committed
+# as `_part_NN` chunks (see checkpoints/*/regroup.sh to reassemble).
+# Ignore the reassembled wholes (regenerable from the parts) and the raw
+# full-build impl archive (3GB of Vivado artifacts; the lean reports archive
+# carries everything needed to re-extract metrics).
+checkpoints/*/impl60_designs.tar.gz
+checkpoints/*/csynth_conv_lean.tar.gz
+checkpoints/*/csynth_llm_lean.tar.gz
+checkpoints/*/*.log

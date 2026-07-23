@@ -1,6 +1,11 @@
 import os
 import json
 import shutil
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import backends
+
 from generate_code import (
     generate_top_function,
     generate_top_h,
@@ -18,11 +23,11 @@ def create_run_directory(run_name, base_dir="runs"):
     os.makedirs(run_dir, exist_ok=True)
     return run_dir
 
-def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e", clock_period=10, task=["csynth",]):
+def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e", clock_period=10, task=["csynth",], tool="vitis"):
     config = load_json_config(config_path)
     run_name = os.path.splitext(os.path.basename(config_path))[0]
     run_dir = create_run_directory(run_name, base_dir)
-    
+
     brams = config["brams"]
     drams = config["drams"]
     ops = config["ops"]
@@ -33,7 +38,14 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     clock= config.get("clock_period", clock_period)
     tasks = config.get("task", task)
 
-    
+    # Selects the whole emission policy: types, pragmas, interfaces, build script.
+    # A fresh backend instance per design, so nothing leaks between designs.
+    backend = backends.set_current(config.get("tool", tool))
+    # Catapult targets an ASIC library rather than an FPGA part.
+    if backend.name != "vitis":
+        fpga_name = config.get("target_library", None)
+
+
     # Generate and save files in run directory
     top_code = generate_top_function(brams, drams, ops, data_type, top_func_name)
     with open(os.path.join(run_dir, "top.cpp"), "w") as f:
@@ -53,7 +65,19 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
         if os.path.exists(dram_txt):
             shutil.move(dram_txt, os.path.join(run_dir, dram_txt))
     
+    # Backends that bind the generated `fb::` math calls to a tool math library
+    # ship the binding header alongside the design.
+    math_header = getattr(backend, "math_header", lambda: None)()
+    if math_header:
+        with open(os.path.join(run_dir, "forgebench_math.h"), "w") as f:
+            f.write(math_header)
+
     generate_full_tcl_file(drams, fpga_name, clock, tasks, output_filename=os.path.join(run_dir, "run_hls.tcl"))
+
+    dropped = getattr(backend, "dropped_partitions", [])
+    if dropped:
+        print(f"  [{backend.name}] {run_name}: no declaration to attach array "
+              f"partitioning to, dropped for {sorted(set(dropped))}")
     # print(f"Generated files for {run_name} in {run_dir}")
 
 if __name__ == "__main__":

@@ -1,12 +1,23 @@
-import re
+import os
 import random
+import re
+import sys
+
+# This module is executed with the domain directory as cwd (see the
+# `subprocess ... cwd=domain_dir` call in verification/prepare_designs.py), so the
+# repo root has to go on sys.path before `backends` resolves.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import backends
+
+
+def _backend():
+    """The active tool backend. Defaults to Vitis; set by gen_configs.run_hls_flow."""
+    return backends.current()
+
 
 def replace_data_type(data_type: str) -> str:
-    # Replace all occurrences of <, >, and , with an underscore
-    result = re.sub(r'[<>,]', '_', data_type)
-    # Remove all spaces
-    result = result.replace(" ", "")
-    return result
+    """Sanitize a C++ type into a function-name suffix, per the active backend."""
+    return _backend().type_suffix(data_type)
 
 
 def generate_load_function(
@@ -193,18 +204,18 @@ def generate_gemm_function(
         var = int(v)
         if var > 1:
             if idx == 0:
-                partition_pragma = f"""#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}
-#pragma HLS array_partition variable=output cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition("input_A", var, idx + 1)
+                                    + _backend().array_partition("output", var, idx + 1))
                 if with_bias:
-                    partition_pragma += f"#pragma HLS array_partition variable=bias cyclic factor={var} dim={idx + 1}\n"
+                    partition_pragma += _backend().array_partition("bias", var, idx + 1)
             elif idx == 1:
-                partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx}
-#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition("input_B", var, idx)
+                                    + _backend().array_partition("input_A", var, idx + 1))
             elif idx == 2:
-                partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx}
-#pragma HLS array_partition variable=output cyclic factor={var} dim={idx}\n"""
+                partition_pragma = (_backend().array_partition("input_B", var, idx)
+                                    + _backend().array_partition("output", var, idx))
                 if with_bias:
-                    partition_pragma += f"#pragma HLS array_partition variable=bias cyclic factor={var} dim={idx}\n"
+                    partition_pragma += _backend().array_partition("bias", var, idx)
             partitioning += partition_pragma
 
 
@@ -223,8 +234,7 @@ def generate_gemm_function(
     for var in order:
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         loop_ends = "}\n" + loop_ends
     
     for var in order:
@@ -232,8 +242,7 @@ def generate_gemm_function(
             continue
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         bias_loop_ends = "}\n" + bias_loop_ends
     
     # Create the complete function
@@ -356,18 +365,18 @@ def call_gemm_inline(
         var = int(v)
         if var > 1:
             if idx == 0:
-                partition_pragma = f"""#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}
-#pragma HLS array_partition variable={output_var} cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition(input_A_var, var, idx + 1)
+                                    + _backend().array_partition(output_var, var, idx + 1))
                 if with_bias:
-                    partition_pragma += f"#pragma HLS array_partition variable={bias_var} cyclic factor={var} dim={idx + 1}\n"
+                    partition_pragma += _backend().array_partition(bias_var, var, idx + 1)
             elif idx == 1:
-                partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx}
-#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition(input_B_var, var, idx)
+                                    + _backend().array_partition(input_A_var, var, idx + 1))
             elif idx == 2:
-                partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx}
-#pragma HLS array_partition variable={output_var} cyclic factor={var} dim={idx}\n"""
+                partition_pragma = (_backend().array_partition(input_B_var, var, idx)
+                                    + _backend().array_partition(output_var, var, idx))
                 if with_bias:
-                    partition_pragma += f"#pragma HLS array_partition variable={bias_var} cyclic factor={var} dim={idx}\n"
+                    partition_pragma += _backend().array_partition(bias_var, var, idx)
             partitioning += partition_pragma
 
     # Create the loop structure based on specified order
@@ -383,8 +392,7 @@ def call_gemm_inline(
     for var in order:
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         loop_ends = "}\n" + loop_ends
     
     for var in order:
@@ -392,8 +400,7 @@ def call_gemm_inline(
             continue
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         bias_loop_ends = "}\n" + bias_loop_ends
     
     # Create the complete inline implementation
@@ -484,13 +491,13 @@ def generate_mmv_function(
         var = int(v)
         if var > 1:
             if idx == 0:
-                partition_pragma = f"""#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}
-#pragma HLS array_partition variable=output cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition("input_A", var, idx + 1)
+                                    + _backend().array_partition("output", var, idx + 1))
                 if with_bias:
-                    partition_pragma += f"#pragma HLS array_partition variable=bias cyclic factor={var} dim={idx + 1}\n"
+                    partition_pragma += _backend().array_partition("bias", var, idx + 1)
             elif idx == 1:
-                partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx}
-#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition("input_B", var, idx)
+                                    + _backend().array_partition("input_A", var, idx + 1))
                 
             partitioning += partition_pragma
 
@@ -509,8 +516,7 @@ def generate_mmv_function(
     for var in order:
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         loop_ends = "}\n" + loop_ends
     
     for var in order:
@@ -518,8 +524,7 @@ def generate_mmv_function(
             continue
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         bias_loop_ends = "}\n" + bias_loop_ends
 
 
@@ -642,13 +647,13 @@ def call_mmv_inline(
         var = int(v)
         if var > 1:
             if idx == 0:
-                partition_pragma = f"""#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}
-#pragma HLS array_partition variable={output_var} cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition(input_A_var, var, idx + 1)
+                                    + _backend().array_partition(output_var, var, idx + 1))
                 if with_bias:
-                    partition_pragma += f"#pragma HLS array_partition variable={bias_var} cyclic factor={var} dim={idx + 1}\n"
+                    partition_pragma += _backend().array_partition(bias_var, var, idx + 1)
             elif idx == 1:
-                partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx}
-#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition(input_B_var, var, idx)
+                                    + _backend().array_partition(input_A_var, var, idx + 1))
             partitioning += partition_pragma
             
     computation = f"{output_var}[i] += {input_A_var}[i][j] * {input_B_var}[j];"
@@ -665,8 +670,7 @@ def call_mmv_inline(
     for var in order:
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         loop_ends = "}\n" + loop_ends
     
     for var in order:
@@ -674,8 +678,7 @@ def call_mmv_inline(
             continue
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         bias_loop_ends = "}\n" + bias_loop_ends
 
     # Create the complete inline implementation
@@ -768,13 +771,13 @@ def generate_vmm_function(
         var = int(v)
         if var > 1:
             if idx == 0:
-                partition_pragma = f"""#pragma HLS array_partition variable=input_B cyclic factor={var} dim={idx+1}
-#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition("input_B", var, idx+1)
+                                    + _backend().array_partition("input_A", var, idx + 1))
             elif idx == 1:
-                partition_pragma = f"""#pragma HLS array_partition variable=input_A cyclic factor={var} dim={idx + 1}
-#pragma HLS array_partition variable=output cyclic factor={var} dim={idx}\n"""
+                partition_pragma = (_backend().array_partition("input_A", var, idx + 1)
+                                    + _backend().array_partition("output", var, idx))
                 if with_bias:
-                    partition_pragma += f"#pragma HLS array_partition variable=bias cyclic factor={var} dim={idx}\n"
+                    partition_pragma += _backend().array_partition("bias", var, idx)
                 
             partitioning += partition_pragma
 
@@ -795,8 +798,7 @@ def generate_vmm_function(
     for var in order:
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         loop_ends = "}\n" + loop_ends
     
     for var in order:
@@ -804,8 +806,7 @@ def generate_vmm_function(
             continue
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         bias_loop_ends = "}\n" + bias_loop_ends
     
     # Create the complete function
@@ -931,13 +932,13 @@ def call_vmm_inline(
         var = int(v)
         if var > 1:
             if idx == 0:
-                partition_pragma = f"""#pragma HLS array_partition variable={input_B_var} cyclic factor={var} dim={idx+1}
-#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}\n"""
+                partition_pragma = (_backend().array_partition(input_B_var, var, idx+1)
+                                    + _backend().array_partition(input_A_var, var, idx + 1))
             elif idx == 1:
-                partition_pragma = f"""#pragma HLS array_partition variable={input_A_var} cyclic factor={var} dim={idx + 1}
-#pragma HLS array_partition variable={output_var} cyclic factor={var} dim={idx}\n"""
+                partition_pragma = (_backend().array_partition(input_A_var, var, idx + 1)
+                                    + _backend().array_partition(output_var, var, idx))
                 if with_bias:
-                    partition_pragma += f"""#pragma HLS array_partition variable={bias_var} cyclic factor={var} dim={idx}\n"""
+                    partition_pragma += _backend().array_partition(bias_var, var, idx)
                 
             partitioning += partition_pragma
 
@@ -955,8 +956,7 @@ def call_vmm_inline(
     for var in order:
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         loop_ends = "}\n" + loop_ends
     
     for var in order:
@@ -964,8 +964,7 @@ def call_vmm_inline(
             continue
         limit = loop_vars[var]
         unroll_factor = unroll_factors[var]
-        bias_loop_starts += f"for (int {var} = 0; {var} < {limit}; {var}++) {{\n"
-        bias_loop_starts += f"#pragma HLS unroll factor={unroll_factor}\n"
+        bias_loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {limit}; {var}++)", unroll_factor)
         bias_loop_ends = "}\n" + bias_loop_ends
         
     # Create the complete inline implementation
@@ -1044,8 +1043,8 @@ def generate_dot_function(
     partitioning = ""
     unroll = int(unroll)
     if unroll > 1:
-        partitioning = f"#pragma HLS array_partition variable=input_A cyclic factor={unroll} dim=1\n"
-        partitioning += f"#pragma HLS array_partition variable=input_B cyclic factor={unroll} dim=1\n"
+        partitioning = _backend().array_partition("input_A", unroll, 1)
+        partitioning += _backend().array_partition("input_B", unroll, 1)
 
     computation = "output[0] += input_A[i] * input_B[i];"
     
@@ -1056,8 +1055,7 @@ def generate_dot_function(
     loop_ends = ""
     
     for var in ['i']:
-        loop_starts += f"for (int {var} = 0; {var} < {M}; {var}++) {{\n"
-        loop_starts += f"#pragma HLS unroll factor={unroll}\n"
+        loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {M}; {var}++)", unroll)
         loop_ends = "}\n" + loop_ends
     
     # Create the complete function
@@ -1164,8 +1162,8 @@ def call_dot_inline(
     partitioning = ""
     unroll = int(unroll)
     if unroll > 1:
-        partitioning = f"#pragma HLS array_partition variable={input_A_var} cyclic factor={unroll} dim=1\n"
-        partitioning += f"#pragma HLS array_partition variable={input_B_var} cyclic factor={unroll} dim=1\n"
+        partitioning = _backend().array_partition(input_A_var, unroll, 1)
+        partitioning += _backend().array_partition(input_B_var, unroll, 1)
 
     computation = f"{output_var}[0] += {input_A_var}[i] * {input_B_var}[i];"
     
@@ -1173,8 +1171,7 @@ def call_dot_inline(
     loop_ends = ""
     
     for var in ['i']:
-        loop_starts += f"for (int {var} = 0; {var} < {M}; {var}++) {{\n"
-        loop_starts += f"#pragma HLS unroll factor={unroll}\n"
+        loop_starts += _backend().open_loop(f"for (int {var} = 0; {var} < {M}; {var}++)", unroll)
         loop_ends = "}\n" + loop_ends
     
     # Create the complete inline implementation
@@ -1416,41 +1413,58 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
       
     Returns a string containing the generated HLS C code.
     """
-    code_lines = []
-    
-    code_lines.append("")
-    code_lines.append(f"#include <stdio.h>")
-    code_lines.append(f"#include <iostream>")
-    code_lines.append(f"#include <fstream>")
-    code_lines.append(f"#include <cstdlib>")
-    code_lines.append(f"#include <ap_fixed.h>")
-    code_lines.append(f"#include <hls_math.h>")
-    code_lines.append(f"#include <stdlib.h>")
-    code_lines.append(f"#include <cstdint>")
-    code_lines.append(f"#include <hls_math.h>")
-    code_lines.append(f"using namespace std;\n")
-    
-    # 1. Write typedef.
-    code_lines.append(f"typedef {data_type} data_t;\n")
-    
-    # 2. Declare BRAM arrays.
-    for bram in brams:
-        dims_str = "".join(f"[{d}]" for d in bram["dims"])
-        code_lines.append(f"data_t {bram['name']}{dims_str};")
-    
-    code_lines.append("")  # blank line
-    
+    backend = _backend()
+    ctype = backend.type_decl(data_type)
+
+    # The op bodies and the inlined calls are generated FIRST, before anything is
+    # emitted, because generating them is what tells the backend which arrays want
+    # partitioning. Catapult's `hls_interleave` attaches to the array declaration,
+    # so the BRAM declarations below cannot be written until those requests are in.
+    # Buffering here does not change the Vitis output: the pieces are still
+    # assembled in the original order.
+    func_def_lines = []
     func_name_set = set()
     func_def_name_list = []
-   
+
     for key, op_info in ops.items():
-       func_def_code, func_name  = generate_func_def(op_info, data_type)
+       func_def_code, func_name  = generate_func_def(op_info, ctype)
        if func_name not in func_name_set:
            func_name_set.add(func_name)
-           code_lines.append(func_def_code)
-           code_lines.append("")
+           func_def_lines.append(func_def_code)
+           func_def_lines.append("")
            func_def_name_list.append(func_name)
-    
+
+    call_lines = []
+    # If ops is a dictionary, we iterate in insertion order.
+    for key, op_info in ops.items():
+        call_str = generate_operator_call(op_info, ctype)
+        call_lines.append(f"    {call_str}")
+
+    code_lines = []
+
+    code_lines.append("")
+    code_lines.extend(backend.includes_top_cpp())
+    code_lines.append(f"using namespace std;\n")
+
+    # 1. Write typedef.
+    code_lines.append(f"typedef {ctype} data_t;\n")
+
+    # 2. Declare BRAM arrays, carrying any partitioning the backend wants placed
+    #    on the declaration rather than at the use site.
+    decl_pragma = getattr(backend, "declaration_pragmas", None)
+    for bram in brams:
+        dims_str = "".join(f"[{d}]" for d in bram["dims"])
+        if decl_pragma:
+            code_lines.append(
+                decl_pragma(bram["name"], bram["dims"]) + f"data_t {bram['name']}{dims_str};"
+            )
+        else:
+            code_lines.append(f"data_t {bram['name']}{dims_str};")
+
+    code_lines.append("")  # blank line
+
+    code_lines.extend(func_def_lines)
+
     # 3. Build the top function signature with DRAM parameters.
     dram_params = []
     for dram in drams:
@@ -1459,22 +1473,17 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     params_str = ", ".join(dram_params)
     code_lines.append(f"void {top_func_name}({params_str})")
     code_lines.append("{")
-    
-    # 4. Insert the #pragma HLS interface lines for each DRAM.
-    for dram in drams:
-        code_lines.append(f"    #pragma HLS interface m_axi port={dram['name']} offset=slave bundle={dram['bundle']}")
-    
+
+    # 4. Insert the top-level interface pragmas (Vitis m_axi; none for Catapult).
+    code_lines.extend(backend.interface(drams))
+
     code_lines.append("")  # blank line before function calls
-    
-    # 5. Generate the operator function calls.
-    # If ops is a dictionary, we iterate in insertion order.
-    for key, op_info in ops.items():
-        #print("the value of key is:", key)
-        call_str = generate_operator_call(op_info, data_type)
-        code_lines.append(f"    {call_str}")
-    
+
+    # 5. Emit the operator function calls generated above.
+    code_lines.extend(call_lines)
+
     code_lines.append("}")
-    
+
     return "\n".join(code_lines)
 
 def prod(lst):
@@ -1499,11 +1508,11 @@ def generate_top_h(drams, data_type="float", top_func_name="top"):
       A string containing the header file content.
     """
     lines = []
-    lines.append("#include <ap_fixed.h>")
+    lines.extend(_backend().includes_top_h())
     lines.append("#ifndef TOP_H")
     lines.append("#define TOP_H")
     lines.append("")
-    lines.append(f"typedef {data_type} data_t;")
+    lines.append(f"typedef {_backend().type_decl(data_type)} data_t;")
     lines.append("")
     
     # Build function parameter list for DRAM arrays.
@@ -1540,11 +1549,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     """
     code_lines = []
     # Include headers.
-    code_lines.append('#include <stdio.h>')
-    code_lines.append('#include <stdlib.h>')
-    code_lines.append('#include <math.h>')
-    code_lines.append("#include <ap_fixed.h>")
-    code_lines.append('#include "top.h"  // Include the top function declaration')
+    code_lines.extend(_backend().includes_tb())
     code_lines.append("")
 
     # Golden-reference comparison tolerance (overridable at compile time).
@@ -1689,251 +1694,15 @@ def generate_dram_txt_files(drams, seed=None):
         
 def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="design.tcl"):
     """
-    Generates a TCL file for HLS that includes the add_files -tb commands for each DRAM.
-    
+    Generates the tool build script for this design.
+
+    Which script gets written -- Vitis `run_hls.tcl` or a Catapult project script --
+    is decided by the active backend; `FPGA_name` carries the Vitis part for the
+    Vitis backend and the target library list for Catapult.
+
     Parameters:
       - drams: list of dictionaries, each with a "name" key (e.g., "DRAM_1")
       - output_filename: the name of the TCL file to generate.
-      
-    The generated TCL file will contain lines like:
-        add_files -tb DRAM_1.txt
-        add_files -tb DRAM_2.txt
-        ...
     """
-    # You can add a header if needed.
-    lines = []
-    lines.append("# Auto-generated TCL file for HLS")
-    lines.append("open_project -reset project_1")
-    lines.append("")
-    lines.append("set_top top")
-    lines.append("")
-    lines.append("add_files  top.cpp")
-    lines.append("add_files -tb tb_top.cpp")
-    lines.append("add_files -tb top.h")
-    lines.append("")
-
-    # Generate add_files lines for each DRAM based on user configuration.
-    for dram in drams:
-        lines.append(f"add_files -tb {dram['name']}.txt")
-    
-    lines.append('open_solution "solution1"')
-    lines.append("")
-    lines.append(f"set_part {FPGA_name}")
-    lines.append("")
-    lines.append(f"create_clock -period {clock_period} -name default")
-    lines.append("")
-    
-    if "csim" in task:
-        lines.append("csim_design")
-        lines.append("")
-    if "csynth" in task:
-        lines.append("csynth_design")
-        lines.append("")
-    if "cosim" in task:
-        lines.append("cosim_design")
-        lines.append("")
-    if "export_ip" in task:
-        lines.append("export_design -format ip_catalog -flow impl")
-        lines.append("")
-        
-    lines.append("exit")
-    # (Optional) Add other static TCL commands if needed.
-    # For example:
-    # lines.append("")
-    # lines.append("open_project my_project")
-    # lines.append("set_part {xc7z020clg484-1}")
-    # etc.
-    
-    # Write the TCL file.
-    with open(output_filename, "w") as f:
-        f.write("\n".join(lines))
-    
-    # print(f"Generated TCL file '{output_filename}' with the following contents:")
-    # print("\n".join(lines))
-
-if __name__ == "__main__":
-    # Example BRAM configuration:
-    brams = [
-        {"name": "BRAM_1", "dims": [16, 8]}, # Used to store Matrix 1 [M, N]
-        {"name": "BRAM_2", "dims": [8, 32]}, # Used to store Matrix 2 [N, K]
-        {"name": "BRAM_3", "dims": [16, 32]}, # Used to store bias [M, K]
-        {"name": "BRAM_4", "dims": [16, 32]}, # Used to store output [M, K]
-
-        {"name": "BRAM_5", "dims": [32]}, # Used to store Vector 2 [K]
-        {"name": "BRAM_6", "dims": [16]}, # Unused Bias
-        {"name": "BRAM_7", "dims": [16]}, # Used to store output of BRAM_4 * BRAM_5 -> [K]
-
-        {"name": "BRAM_8", "dims": [32]}, # Unused Bias
-        {"name": "BRAM_9", "dims": [32]}, # Used to store output of BRAM_7 * BRAM_4 -> [M]
-        
-        {"name": "BRAM_10", "dims": [32]},
-        {"name": "BRAM_11", "dims": [1]}, # Bias of BRAM_9 * BRAM_10 -> [1]
-        {"name": "BRAM_12", "dims": [1]},# Output of BRAM_7 * BRAM_8 + bias -> [1]
-    ]
-    
-    # Example DRAM configuration:
-    drams = [
-        # {"name": "DRAM_1", "dims": [2, 4, 4], "bundle": "mem1"}, # Used to load the input [c, h, w]
-        # {"name": "DRAM_2", "dims": [2, 2, 3, 3], "bundle": "mem1"}, # Used to load the conv weights [cout, cin, k, k]
-        # {"name": "DRAM_3", "dims": [2], "bundle": "mem1"},  #Used to load the bias [cout]
-        # {"name": "DRAM_4", "dims": [4, 2], "bundle": "mem1"}, #Used to load the batch norm weights [4][cout]
-        # {"name": "DRAM_5", "dims": [2, 2, 2], "bundle": "mem2"} #Used to write back the output [c, h, w]
-
-        {"name": "DRAM_1", "dims": [16, 8], "bundle": "mem1"}, # Used to load the Matrix 1 [M, N]
-        {"name": "DRAM_2", "dims": [8, 32], "bundle": "mem1"}, # Used to load the Matrix 2 [N, K]
-        {"name": "DRAM_3", "dims": [16, 32], "bundle": "mem1"}, # Used to load the bias [K]
-        {"name": "DRAM_4", "dims": [16, 32], "bundle": "mem2"}, # Used to write back the output [M, K]
-
-        {"name": "DRAM_5", "dims": [32], "bundle": "mem1"}, # Used to load the Vector 2 [K]
-        # {"name": "DRAM_6", "dims": [16], "bundle": "mem2"}, # Unused Bias
-        # {"name": "DRAM_7", "dims": [16], "bundle": "mem2"}, # Used to write back the output of BRAM_4 * BRAM_5 -> [K]
-
-        # {"name": "DRAM_8", "dims": [32], "bundle": "mem3"}, # Unused Bias
-        # {"name": "DRAM_9", "dims": [32], "bundle": "mem3"}, # Used to write back the output of BRAM_6 * BRAM_4 -> [M]
-        
-        {"name": "DRAM_10", "dims": [32], "bundle": "mem1"},
-        {"name": "DRAM_11", "dims": [1], "bundle": "mem1"}, # Bias of BRAM_9 * BRAM_10 -> [1]
-        {"name": "DRAM_12", "dims": [1], "bundle": "mem2"},# Output of BRAM_7 * BRAM_8 + bias
-
-    ]
-    
-    # Example operators dictionary.
-    # The keys determine the order of function calls.
-    ops = {
-        "load_1": {
-            "func_name": "load",
-            "dims": [16, 8],
-            "args": ["DRAM_1", "BRAM_1"]
-        },
-        "load_2": {
-            "func_name": "load",
-            "dims": [8, 32],
-            "args": ["DRAM_2", "BRAM_2"]
-        },
-        "load_3": {
-            "func_name": "load",
-            "dims": [16, 32],
-            "args": ["DRAM_3", "BRAM_3"]
-        },
-        "load_4": {
-            "func_name": "load",
-            "dims": [32],
-            "args": ["DRAM_5", "BRAM_5"]
-        },
-
-        "load_5": {
-            "func_name": "load",
-            "dims": [32],
-            "args": ["DRAM_10", "BRAM_10"]
-        },
-
-        "load_6": {
-            "func_name": "load",
-            "dims": [1],
-            "args": ["DRAM_11", "BRAM_11"]
-        },
-
-        "gemm_1": {
-            "func_name": "gemm",
-            "dims": [16, 8, 32],
-            "func_info": [['i', 'j', 'k'], True, True],
-            "args": ["BRAM_1", "BRAM_2", "BRAM_3", "BRAM_4"]
-        },
-        
-        "store_1": {
-            "func_name": "store",
-            "dims": [16, 32],
-            "args": ["BRAM_4", "DRAM_4"]
-        },
-
-        "vmm": {
-            "func_name": "vmm",
-            "dims": [16, 32],
-            "func_info": [['i', 'j'], False, False],
-            "args": ["BRAM_4", "BRAM_5", "BRAM_6", "BRAM_7"]
-        },
-
-        "mmv": {
-            "func_name": "mmv",
-            "dims": [16, 32],
-            "func_info": [['j', 'i'], False, False],
-            "args": ["BRAM_4", "BRAM_7", "BRAM_8", "BRAM_9"]
-        },
-
-        "dot_product": {
-            "func_name": "dot_product",
-            "dims": [16],
-            "func_info": [True, False, True],
-            "args": ["BRAM_9", "BRAM_10", "BRAM_11", "BRAM_12"]
-        },
-
-        "store_2": {
-            "func_name": "store",
-            "dims": [1],
-            "args": ["BRAM_12", "DRAM_12"]
-        }
-    }
-    
-    output_dram_names = ["DRAM_4", "DRAM_12"]
-    
-    FPGA_name = "xczu9eg-ffvb1156-2-e"
-    clock_period = 10
-    task = ["csim", "csynth", "cosim", "export_ip"]
-    
-    # Generate the complete HLS C code for the top function.
-    top_code = generate_top_function(brams, drams, ops, data_type="ap_fixed<16, 5>", top_func_name="top")
-    
-    # Write the generated code to a file, for example "top.cpp"
-    output_filename = "top.cpp"
-    with open(output_filename, "w") as f:
-        f.write(top_code)
-    # print("Generated top.cpp:")
-        
-    top_h_code = generate_top_h(drams, data_type="ap_fixed<16, 5>", top_func_name="top")
-    with open("top.h", "w") as f:
-        f.write(top_h_code)
-    # print("Generated top.h:")
-    
-    tb_code = generate_testbench_code(drams, output_dram_names, data_type="ap_fixed<16, 5>", top_func_name="top")
-    with open("tb_top.cpp", "w") as f:
-        f.write(tb_code)
-    # print("Generated tb_top.cpp:")
-    
-    generate_dram_txt_files(drams, seed=42)
-    # print("Generated dram initialization.")
-    
-    generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="run_hls.tcl")
-    # print("Generated tcl file to launch tasks.")
-    
-    
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    _backend().emit_script(drams, FPGA_name, clock_period, task, output_filename)
 
