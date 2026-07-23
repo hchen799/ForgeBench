@@ -1,0 +1,9 @@
+#include <ap_fixed.h>
+#ifndef TOP_H
+#define TOP_H
+
+typedef float data_t;
+
+void top(data_t DRAM_input[8][16][16], data_t DRAM_output[8][8][8]);
+
+#endif // TOP_H
