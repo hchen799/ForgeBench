@@ -99,6 +99,10 @@ def main():
 
     tasks = [t.strip() for t in args.task.split(",") if t.strip()]
     out_base = args.out or os.path.join(REPO_ROOT, "verification", "_server", args.domain)
+    # generate_design runs the codegen subprocess with cwd=<domain>/, so a
+    # relative out_base would resolve against that dir there but against the repo
+    # root in compute_goldens/write_golden here. Anchor it absolutely up front.
+    out_base = os.path.abspath(out_base)
     os.makedirs(out_base, exist_ok=True)
 
     cfg_dir = args.configs_dir or os.path.join(_domain_dir(args.domain), "test_case_configs")
