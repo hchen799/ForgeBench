@@ -42,6 +42,27 @@ ATOL = 1e-5
 
 _VERIF_RE = re.compile(r"VERIFICATION:\s*(PASS|FAIL)")
 
+# Base seed for the first input trial; trial k uses BASE_SEED + k so runs are
+# reproducible and the k=0 trial matches the historical single-input result.
+BASE_SEED = 42
+
+
+def regenerate_inputs(config, run_dir, seed):
+    """Re-fill the DRAM input .txt files in an existing run_dir with a new seed,
+    without regenerating the C++ (which does not depend on input values). Uses the
+    same generate_dram_txt_files the HLS flow uses, so inputs stay identical in
+    form to a fresh run -- only the seed changes."""
+    # Import the domain generator lazily; it lives in <domain>/generate_code.py and
+    # is import-compatible with the copy the design was generated from.
+    import importlib
+    gen = importlib.import_module("generate_code")
+    cwd = os.getcwd()
+    os.chdir(run_dir)  # generate_dram_txt_files writes <NAME>.txt in cwd
+    try:
+        gen.generate_dram_txt_files(config["drams"], seed=seed)
+    finally:
+        os.chdir(cwd)
+
 
 def _domain_dir(domain):
     return os.path.join(REPO_ROOT, domain)
@@ -174,6 +195,62 @@ def run_one(domain, config_path, out_base):
             )
     print(f"  g++ exit={rc}  tb_verdict={tb_verdict or 'n/a'}  -> {'OK' if ok else 'FAIL'}")
     return ok
+
+
+def run_one_multi(domain, config_path, out_base, n_inputs=1):
+    """Verify one operator across ``n_inputs`` randomized input trials.
+
+    The float design is generated and compiled ONCE. For each trial k we refill
+    the DRAM inputs with seed BASE_SEED+k, recompute the numpy golden for those
+    inputs, re-run the compiled binary, and compare. A trial passes only if every
+    output DRAM matches within tolerance; the operator passes only if ALL trials
+    pass. Returns a result dict suitable for the paper table:
+
+        {op, domain, n_inputs, elements, max_rel_err, passed}
+
+    ``elements`` is the per-trial output element count (constant across trials);
+    ``max_rel_err`` is the worst case over all trials. With n_inputs=1 and
+    seed=BASE_SEED this reproduces the historical single-input result exactly.
+    """
+    stem = os.path.splitext(os.path.basename(config_path))[0]
+    # Generate + compile the design once (k=0 inputs written here with seed=42).
+    run_dir, config = generate_float_design(domain, config_path, out_base)
+    domain_dir = _domain_dir(domain)
+
+    worst_rel = 0.0
+    elements = 0
+    all_pass = True
+    added_path = False
+    if domain_dir not in sys.path:
+        sys.path.insert(0, domain_dir); added_path = True
+    try:
+        for k in range(n_inputs):
+            if k > 0:
+                # k=0 already has seed-42 inputs from generate_float_design.
+                regenerate_inputs(config, run_dir, seed=BASE_SEED + k)
+            goldens = write_goldens(config, run_dir, domain)
+            rc, out = compile_and_run(run_dir)
+            stats = python_compare(goldens, run_dir)
+            trial_ok = rc == 0 and all(s.get("pass") for s in stats.values())
+            all_pass = all_pass and trial_ok
+            for s in stats.values():
+                if "max_rel" in s:
+                    worst_rel = max(worst_rel, s["max_rel"])
+                    elements = max(elements, s["n_total"])
+    finally:
+        if added_path and domain_dir in sys.path:
+            sys.path.remove(domain_dir)
+
+    print(f"  {domain}/{stem}: n_inputs={n_inputs} elements={elements} "
+          f"max_rel={worst_rel:.3e} -> {'PASS' if all_pass else 'FAIL'}")
+    return {
+        "op": stem,
+        "domain": domain,
+        "n_inputs": n_inputs,
+        "elements": elements,
+        "max_rel_err": worst_rel,
+        "passed": all_pass,
+    }
 
 
 def main():

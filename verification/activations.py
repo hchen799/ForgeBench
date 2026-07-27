@@ -83,6 +83,18 @@ def softmax(x):
     return (e / np.sum(e, axis=-1, keepdims=True)).astype(np.float32)
 
 
+def hardsigmoid(x):
+    # Matches conv/activations_template.cpp: 0 for x<=-3, 1 for x>=3, else (x+3)/6.
+    x = x.astype(np.float32)
+    return np.clip((x + np.float32(3.0)) / np.float32(6.0), 0.0, 1.0).astype(np.float32)
+
+
+def hardswish(x):
+    # Matches conv/activations_template.cpp: x * hardsigmoid(x).
+    x = x.astype(np.float32)
+    return (x * hardsigmoid(x)).astype(np.float32)
+
+
 # Map config activation names -> implementation. "tanh" and "tanh_act" both accepted.
 _DISPATCH = {
     "relu": relu,
@@ -99,6 +111,8 @@ _DISPATCH = {
     "gelu": gelu,
     "swish": swish,
     "softmax": softmax,
+    "hardsigmoid": hardsigmoid,
+    "hardswish": hardswish,
 }
 
 

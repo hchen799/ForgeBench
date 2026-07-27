@@ -97,10 +97,19 @@ def _op_conv(op, arrays):
     C_IN, C_OUT, H_IN, W_IN, H_OUT, W_OUT, K, PAD, STRIDE = d[:9]
     _template, func_type, with_bias = op["func_info"]
 
+    # For group_conv2d the generator appends the groups count as the final arg
+    # (matching conv/auto_generate_json.py: conv_args.append(groups)). The emitted
+    # C still declares the kernel as [C_OUT][C_IN][K][K] (full C_IN) and only reads
+    # the block-diagonal slice per group, so the weight shape is unchanged.
+    args = list(op["args"])
+    groups = 1
+    if func_type == "group_conv2d":
+        groups = int(args.pop())  # trailing groups count
+
     if with_bias:
-        in_name, w_name, b_name, out_name = op["args"]
+        in_name, w_name, b_name, out_name = args
     else:
-        in_name, w_name, out_name = op["args"]
+        in_name, w_name, out_name = args
         b_name = None
 
     x = _read(arrays, in_name, (C_IN, H_IN, W_IN))
@@ -113,15 +122,12 @@ def _op_conv(op, arrays):
     else:
         out = np.zeros((C_OUT, H_OUT, W_OUT), dtype=np.float32)
 
-    groups = 1
-    if func_type == "group_conv2d":
-        # The generated call site does not pass a groups value, so grouped conv
-        # is not instantiable in current configs; default to 1 for completeness.
-        groups = int(op.get("groups", 1))
     ci_per_g = C_IN // groups
     co_per_g = C_OUT // groups
 
     # Standard cross-correlation with padding/stride, dilation=1, square kernel.
+    # For grouped conv, output channels in group g only see input channels in the
+    # same group; the kernel is indexed by absolute (co, ci) exactly as the C.
     for i in range(H_OUT):
         for j in range(W_OUT):
             for kh in range(K):
@@ -133,14 +139,13 @@ def _op_conv(op, arrays):
                     if in_col < 0 or in_col >= W_IN:
                         continue
                     if groups == 1:
-                        # out[:, i, j] += sum_ci x[ci,in_row,in_col]*w[:,ci,kh,kw]
                         out[:, i, j] += w[:, :, kh, kw] @ x[:, in_row, in_col]
                     else:
                         for g in range(groups):
                             ci0, ci1 = g * ci_per_g, (g + 1) * ci_per_g
                             co0, co1 = g * co_per_g, (g + 1) * co_per_g
                             out[co0:co1, i, j] += (
-                                w[co0:co1, :ci_per_g, kh, kw]
+                                w[co0:co1, ci0:ci1, kh, kw]
                                 @ x[ci0:ci1, in_row, in_col]
                             )
     _write(arrays, out_name, out)

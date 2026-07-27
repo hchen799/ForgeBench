@@ -1,0 +1,78 @@
+{
+  "brams": [
+    {
+      "name": "BRAM_MLP_1",
+      "dims": [
+        8,
+        128
+      ]
+    },
+    {
+      "name": "BRAM_MLP_2",
+      "dims": [
+        8,
+        128
+      ]
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_input",
+      "dims": [
+        8,
+        128
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_output",
+      "dims": [
+        8,
+        128
+      ],
+      "bundle": "mem2"
+    }
+  ],
+  "ops": {
+    "load_1": {
+      "func_name": "load",
+      "dims": [
+        8,
+        128
+      ],
+      "args": [
+        "DRAM_input",
+        "BRAM_MLP_1"
+      ]
+    },
+    "activation_1": {
+      "func_name": "activation",
+      "dims": [
+        8,
+        128
+      ],
+      "func_info": [
+        "activation_template.cpp",
+        "selu"
+      ],
+      "args": [
+        "BRAM_MLP_1",
+        "BRAM_MLP_2"
+      ]
+    },
+    "store": {
+      "func_name": "store",
+      "dims": [
+        8,
+        128
+      ],
+      "args": [
+        "BRAM_MLP_2",
+        "DRAM_output"
+      ]
+    }
+  },
+  "output_dram_names": [
+    "DRAM_output"
+  ]
+}

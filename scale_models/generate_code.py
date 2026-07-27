@@ -246,9 +246,6 @@ def generate_activation_function(
     elif func_name == "gelu":
         marker_start = "/*==== GELU FUNCTION START ====*/"
         marker_end = "/*==== GELU FUNCTION END ====*/"
-    elif func_name == "geglu":
-        marker_start = "/*==== GEGLU FUNCTION START ====*/"
-        marker_end = "/*==== GEGLU FUNCTION END ====*/"
     elif func_name == "swish":
         marker_start = "/*==== SWISH FUNCTION START ====*/"
         marker_end = "/*==== SWISH FUNCTION END ====*/"

@@ -1,0 +1,78 @@
+{
+  "brams": [
+    {
+      "name": "BRAM_1",
+      "dims": [
+        16,
+        32
+      ]
+    },
+    {
+      "name": "BRAM_2",
+      "dims": [
+        16,
+        32
+      ]
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_1",
+      "dims": [
+        16,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_2",
+      "dims": [
+        16,
+        32
+      ],
+      "bundle": "mem2"
+    }
+  ],
+  "ops": {
+    "load_1": {
+      "func_name": "load",
+      "dims": [
+        16,
+        32
+      ],
+      "args": [
+        "DRAM_1",
+        "BRAM_1"
+      ]
+    },
+    "activation_1": {
+      "func_name": "activation",
+      "dims": [
+        16,
+        32
+      ],
+      "func_info": [
+        "2D_activations_template.cpp",
+        "tanh"
+      ],
+      "args": [
+        "BRAM_1",
+        "BRAM_2"
+      ]
+    },
+    "store_1": {
+      "func_name": "store",
+      "dims": [
+        16,
+        32
+      ],
+      "args": [
+        "BRAM_2",
+        "DRAM_2"
+      ]
+    }
+  },
+  "output_dram_names": [
+    "DRAM_2"
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "brams": [
+    {
+      "name": "BRAM_attn_input",
+      "dims": [
+        8,
+        32
+      ]
+    },
+    {
+      "name": "BRAM_weights_q",
+      "dims": [
+        32,
+        32
+      ]
+    },
+    {
+      "name": "BRAM_weights_k",
+      "dims": [
+        32,
+        32
+      ]
+    },
+    {
+      "name": "BRAM_weights_v",
+      "dims": [
+        32,
+        32
+      ]
+    },
+    {
+      "name": "BRAM_1",
+      "dims": [
+        8,
+        32
+      ]
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_attn_input",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_weights_q",
+      "dims": [
+        32,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_weights_k",
+      "dims": [
+        32,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_weights_v",
+      "dims": [
+        32,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_output",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem2"
+    }
+  ],
+  "ops": {
+    "load_1": {
+      "func_name": "load",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "DRAM_attn_input",
+        "BRAM_attn_input"
+      ]
+    },
+    "load_2": {
+      "func_name": "load",
+      "dims": [
+        32,
+        32
+      ],
+      "args": [
+        "DRAM_weights_q",
+        "BRAM_weights_q"
+      ]
+    },
+    "load_3": {
+      "func_name": "load",
+      "dims": [
+        32,
+        32
+      ],
+      "args": [
+        "DRAM_weights_k",
+        "BRAM_weights_k"
+      ]
+    },
+    "load_4": {
+      "func_name": "load",
+      "dims": [
+        32,
+        32
+      ],
+      "args": [
+        "DRAM_weights_v",
+        "BRAM_weights_v"
+      ]
+    },
+    "swa": {
+      "func_name": "swa",
+      "dims": [
+        8,
+        32,
+        2,
+        16
+      ],
+      "func_info": [
+        "sliding_window_attention_template.cpp",
+        true
+      ],
+      "args": [
+        "BRAM_attn_input",
+        "BRAM_weights_q",
+        "BRAM_weights_k",
+        "BRAM_weights_v",
+        "BRAM_1",
+        "4"
+      ]
+    },
+    "store": {
+      "func_name": "store",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "BRAM_1",
+        "DRAM_output"
+      ]
+    }
+  },
+  "output_dram_names": [
+    "DRAM_output"
+  ]
+}
