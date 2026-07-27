@@ -109,7 +109,14 @@ def main():
     if args.configs:
         cfg_paths = [os.path.join(cfg_dir, c if c.endswith(".json") else c + ".json") for c in args.configs]
     else:
-        cfg_paths = sorted(os.path.join(cfg_dir, f) for f in os.listdir(cfg_dir) if f.endswith(".json"))
+        names = sorted(f for f in os.listdir(cfg_dir) if f.endswith(".json"))
+        # When an operator has explicit `<op>__<variant>.json` files, skip its bare
+        # `<op>.json` base (the template the variants were derived from) so it is
+        # not verified twice. Mirrors verification/verify_operators.py.
+        ops_with_variants = {n.split("__", 1)[0] for n in names if "__" in n}
+        names = [n for n in names
+                 if "__" in n or os.path.splitext(n)[0] not in ops_with_variants]
+        cfg_paths = [os.path.join(cfg_dir, n) for n in names]
 
     for cfg in cfg_paths:
         stem = os.path.splitext(os.path.basename(cfg))[0]
