@@ -95,8 +95,9 @@ def _op_dot(op, arrays):
 def _op_activation(op, arrays):
     H, W = op["dims"]
     act_name = op["func_info"][1]
+    params = op["func_info"][2:]  # extra activation parameters, e.g. elu alpha
     in_name, out_name = op["args"]
-    _write(arrays, out_name, apply_activation(act_name, _read(arrays, in_name, (H, W))))
+    _write(arrays, out_name, apply_activation(act_name, _read(arrays, in_name, (H, W)), params))
 
 
 _DISPATCH = {

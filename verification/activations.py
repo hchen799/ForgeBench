@@ -12,11 +12,13 @@ Deliberate variants matched here:
     for numerical stability; softmax is shift-invariant so this is mathematically
     identical to the C's raw-exp form and stays within float tolerance.
 
-Note: several activations in the C template take extra scalar parameters
-(leaky_relu alpha, elu alpha, selu alpha/lambda, relu6 cap, prelu, rrelu,
-thresholded_relu). The generator's activation call site passes only (input,
-output), so those variants are not instantiable in valid configs today; they are
-implemented with standard defaults for completeness but are not exercised.
+Several activations in the C template take extra scalar parameters (leaky_relu
+alpha, elu alpha, selu alpha/lambda, relu6 cap, prelu alpha, rrelu lower/upper,
+thresholded_relu theta). The generators emit those arguments at the call site,
+defaulting to the canonical values in each domain's `ACTIVATION_EXTRA_PARAMS` and
+overridable per config via `func_info[2:]`; `apply_activation` takes the same
+values so the oracle and the emitted C stay in step. The defaults below and the
+generators' defaults must be kept in sync.
 """
 import numpy as np
 
@@ -116,8 +118,26 @@ _DISPATCH = {
 }
 
 
-def apply_activation(name, x):
+def apply_activation(name, x, params=()):
+    """Apply activation `name` to `x`.
+
+    `params` are the activation's extra scalar parameters, taken from the config's
+    `func_info[2:]` (leaky_relu alpha, elu alpha, selu alpha/lambda, relu6 cap,
+    prelu alpha, rrelu lower/upper, thresholded_relu theta). When empty, each
+    oracle's default applies -- and those defaults are the same values the
+    generators emit at the call site (ACTIVATION_EXTRA_PARAMS in each domain's
+    generate_code.py). Activations that take no extra parameters ignore `params`.
+    """
     key = name.lower()
     if key not in _DISPATCH:
         raise NotImplementedError(f"activation '{name}' not implemented in golden reference")
-    return _DISPATCH[key](x)
+    fn = _DISPATCH[key]
+    if not params:
+        return fn(x)
+    if key not in _PARAMETERIZED:
+        raise ValueError(f"activation '{name}' takes no extra parameters, got {list(params)}")
+    return fn(x, *[float(p) for p in params])
+
+
+# Activations whose oracle accepts extra scalar parameters.
+_PARAMETERIZED = {"relu6", "leaky_relu", "prelu", "rrelu", "thresholded_relu", "elu", "selu"}

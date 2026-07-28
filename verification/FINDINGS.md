@@ -56,6 +56,47 @@ SIGSEGVs under Vitis CSIM. Fixed (256→128); CSIM now passes. See
 `FINDINGS_conv.md` §3 — a concrete case where CSIM/CO-SIM adds coverage beyond
 the Vitis-free oracle.
 
+### Caught by the per-operator variant suite (FIXED)
+
+Enumerating every activation as its own operator config surfaced three defects
+that no whole-design config could reach, because the released designs only ever
+instantiate the parameter-free activations (relu, gelu, sigmoid, softmax, ...):
+
+1. **Parameterized activations were not instantiable** (21 configs; gemm, conv,
+   llm). The templates declare extra parameters — `leaky_relu(…, alpha)`,
+   `elu(…, alpha)`, `selu(…, alpha, lambda)`, `relu6(…, cap)`,
+   `thresholded_relu(…, theta)`, `rrelu(…, lower, upper)`, `prelu(…, alpha[])` —
+   but the call site emitted only `(input, output)`, so the generated C did not
+   compile at all (`no matching function for call to 'elu_16_32_float'`). The
+   limitation was known and documented in `activations.py`, but nothing enforced
+   it, and `gen_variants.py` duly generated configs for all of them.
+   **Fixed:** each generator now emits the extra arguments, defaulting to the
+   canonical values in its `ACTIVATION_EXTRA_PARAMS` and overridable per config
+   via `func_info[2:]`; `apply_activation` takes the same values so the oracle
+   tracks the emitted C. conv's and llm's `prelu` take a per-channel `alpha[]`,
+   emitted as an array beside the (deduplicated) function definition. This turns
+   7 dead activations x 3 domains into verified coverage.
+
+2. **`tanh` was spelled inconsistently across domains** (2 configs). conv
+   accepted `"tanh"`; gemm and llm accepted only `"tanh_act"` and raised
+   `ValueError: Invalid function name` at generation time. **Fixed:** all three
+   dispatchers accept both spellings, matching the golden's `_DISPATCH`.
+
+3. **The golden files quantized the comparison** (all configs). `write_golden`
+   emitted `%.6f`, a fixed 6 decimal places, putting a ~5e-7 *absolute* floor
+   under every comparison — that floor, not the design, was what the reported
+   errors measured. Identity ops (relu on positive inputs, dropout) reported
+   `max_abs=5.07e-07`; small-output ops (gelu near zero, elementwise_mult)
+   reported `max_rel` in the 1e-3 range, i.e. right at the declared tolerance.
+   **Fixed:** `%.9g`, the shortest form that round-trips float32. Identity ops
+   now report exactly 0.
+
+A fourth issue was a gap in the *inputs* rather than a defect: `random.random()`
+produces `[0, 1)`, so every sign-dependent branch and every clamp in the
+activation templates was unreachable at any number of trials. Configs now carry
+an `input_range` (see the README), which is what makes the 21 newly-instantiable
+activations meaningful to verify.
+
 ---
 
 ## 1. Softmax overflowed in float (real bug, FIXED) — gemm `mlp`

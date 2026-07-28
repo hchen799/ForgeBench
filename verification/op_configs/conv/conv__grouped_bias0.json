@@ -152,5 +152,9 @@
   },
   "output_dram_names": [
     "DRAM_image_output"
+  ],
+  "input_range": [
+    -1.0,
+    1.0
   ]
 }

@@ -10,6 +10,9 @@
 #ifndef VERIF_ATOL
 #define VERIF_ATOL 1e-5
 #endif
+#ifndef VERIF_ATOL_SCALE
+#define VERIF_ATOL_SCALE 5e-5
+#endif
 
 typedef float data_t;
 
@@ -53,14 +56,25 @@ int main() {
     {
         FILE *gf = fopen("DRAM_output.golden.txt", "r");
         if (gf != NULL) {
+            static float verif_golden[256];
+            long gn = 0;
             for (int i = 0; i < 256; i++) {
                 float gv;
                 if (fscanf(gf, "%f", &gv) != 1) break;
+                verif_golden[i] = gv; gn++;
+            }
+            double verif_scale = 0.0;
+            for (long i = 0; i < gn; i++) {
+                double m = fabs((double)verif_golden[i]);
+                if (m > verif_scale) verif_scale = m;
+            }
+            double verif_atol = VERIF_ATOL + VERIF_ATOL_SCALE * verif_scale;
+            for (long i = 0; i < gn; i++) {
                 double a = (double)(float)((data_t*)DRAM_output)[i];
-                double b = (double)gv;
+                double b = (double)verif_golden[i];
                 double abs_err = fabs(a - b);
                 double rel_err = abs_err / (fabs(b) + 1e-12);
-                double tol = VERIF_ATOL + VERIF_RTOL * fabs(b);
+                double tol = verif_atol + VERIF_RTOL * fabs(b);
                 int bad = (!(abs_err <= tol)) || (!isfinite(a));
                 if (abs_err > verif_max_abs) verif_max_abs = abs_err;
                 if (rel_err > verif_max_rel) verif_max_rel = rel_err;

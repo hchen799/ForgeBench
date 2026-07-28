@@ -30,9 +30,14 @@ def load_dram_txt(path, dims):
 def write_golden(path, arr):
     """Write `arr` (any shape) to `path`, row-major, one float per line.
 
-    Matches `%f` printf formatting (6 decimal places) used by the testbench dump
-    so the file is human-comparable; the testbench reads it with `fscanf("%f")`.
+    Uses `%.9g` -- the shortest format that round-trips float32 exactly. The
+    earlier `%.6f` put a ~5e-7 *absolute* quantization floor on every comparison,
+    which dominated the reported errors: identity ops (relu on positive inputs,
+    dropout) reported max_abs=5.07e-07 purely from golden-file rounding, and ops
+    with small outputs (gelu near zero, elementwise_mult) reported max_rel in the
+    1e-3 range for the same reason. The testbench reads with `fscanf("%f")`,
+    which accepts exponent notation, so this is backward compatible.
     """
     flat = np.asarray(arr, dtype=np.float32).reshape(-1)
     with open(path, "w") as f:
-        f.write("\n".join(f"{v:.6f}" for v in flat))
+        f.write("\n".join(f"{v:.9g}" for v in flat))

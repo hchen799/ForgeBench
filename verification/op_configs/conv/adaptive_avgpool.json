@@ -1,21 +1,90 @@
 {
-    "brams": [
-        {"name": "BRAM_buffer_1", "dims": [8, 16, 16]},
-        {"name": "BRAM_buffer_2", "dims": [8, 4, 4]}
-    ],
-    "drams": [
-        {"name": "DRAM_input", "dims": [8, 16, 16], "bundle": "mem1"},
-        {"name": "DRAM_output", "dims": [8, 4, 4], "bundle": "mem2"}
-    ],
-    "ops": {
-        "load_1": {"func_name": "load", "dims": [8, 16, 16], "args": ["DRAM_input", "BRAM_buffer_1"]},
-        "adaptive_avgpool_1": {
-            "func_name": "adaptive_avgpool",
-            "dims": [8, 16, 16, 4, 4],
-            "func_info": ["adaptive_avgpool_template.cpp"],
-            "args": ["BRAM_buffer_1", "BRAM_buffer_2"]
-        },
-        "store": {"func_name": "store", "dims": [8, 4, 4], "args": ["BRAM_buffer_2", "DRAM_output"]}
+  "brams": [
+    {
+      "name": "BRAM_buffer_1",
+      "dims": [
+        8,
+        16,
+        16
+      ]
     },
-    "output_dram_names": ["DRAM_output"]
+    {
+      "name": "BRAM_buffer_2",
+      "dims": [
+        8,
+        4,
+        4
+      ]
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_input",
+      "dims": [
+        8,
+        16,
+        16
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_output",
+      "dims": [
+        8,
+        4,
+        4
+      ],
+      "bundle": "mem2"
+    }
+  ],
+  "ops": {
+    "load_1": {
+      "func_name": "load",
+      "dims": [
+        8,
+        16,
+        16
+      ],
+      "args": [
+        "DRAM_input",
+        "BRAM_buffer_1"
+      ]
+    },
+    "adaptive_avgpool_1": {
+      "func_name": "adaptive_avgpool",
+      "dims": [
+        8,
+        16,
+        16,
+        4,
+        4
+      ],
+      "func_info": [
+        "adaptive_avgpool_template.cpp"
+      ],
+      "args": [
+        "BRAM_buffer_1",
+        "BRAM_buffer_2"
+      ]
+    },
+    "store": {
+      "func_name": "store",
+      "dims": [
+        8,
+        4,
+        4
+      ],
+      "args": [
+        "BRAM_buffer_2",
+        "DRAM_output"
+      ]
+    }
+  },
+  "output_dram_names": [
+    "DRAM_output"
+  ],
+  "input_range": [
+    -1.0,
+    1.0
+  ]
 }

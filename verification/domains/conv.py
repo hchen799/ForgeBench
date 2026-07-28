@@ -171,12 +171,13 @@ def _op_batchnorm(op, arrays):
 def _op_activation(op, arrays):
     C, H, W = op["dims"]
     act_name = op["func_info"][1]
+    params = op["func_info"][2:]  # extra activation parameters, e.g. elu alpha
     in_name, out_name = op["args"]
     x = _read(arrays, in_name, (C, H, W))
-    _write(arrays, out_name, _apply_conv_activation(act_name, x))
+    _write(arrays, out_name, _apply_conv_activation(act_name, x, params))
 
 
-def _apply_conv_activation(name, x):
+def _apply_conv_activation(name, x, params=()):
     """Conv-domain activations. Softmax here is over the CHANNEL axis (axis 0),
     which differs from the shared row-wise softmax; the rest reuse the shared
     textbook oracles."""
@@ -190,7 +191,7 @@ def _apply_conv_activation(name, x):
         return np.clip((x + 3.0) / 6.0, 0.0, 1.0).astype(np.float32)
     if key == "hardswish":
         return (x * np.clip((x + 3.0) / 6.0, 0.0, 1.0)).astype(np.float32)
-    return apply_activation(name, x)
+    return apply_activation(name, x, params)
 
 
 def _op_maxpool(op, arrays):

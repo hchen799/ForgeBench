@@ -48,3 +48,6 @@ checkpoints/*/csynth_conv_lean.tar.gz
 checkpoints/*/csynth_llm_lean.tar.gz
 checkpoints/*/*.log
 verification/_server_ops/
+verification/_csim_ops*/
+verification/_csim_designs*/
+.vprep.lock

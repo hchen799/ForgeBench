@@ -74,5 +74,9 @@
   },
   "output_dram_names": [
     "DRAM_2"
+  ],
+  "input_range": [
+    -8.0,
+    8.0
   ]
 }

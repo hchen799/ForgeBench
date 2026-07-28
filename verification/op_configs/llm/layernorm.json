@@ -1,24 +1,110 @@
 {
-    "brams": [
-        {"name": "BRAM_attn_input", "dims": [8, 32]},
-        {"name": "BRAM_layer_norm_weights_1", "dims": [2, 32]},
-        {"name": "BRAM_2", "dims": [8, 32]}
-    ],
-    "drams": [
-        {"name": "DRAM_input", "dims": [8, 32], "bundle": "mem1"},
-        {"name": "DRAM_weights", "dims": [2, 32], "bundle": "mem1"},
-        {"name": "DRAM_output", "dims": [8, 32], "bundle": "mem2"}
-    ],
-    "ops": {
-        "load_1": {"func_name": "load", "dims": [8, 32], "args": ["DRAM_input", "BRAM_attn_input"]},
-        "load_2": {"func_name": "load", "dims": [2, 32], "args": ["DRAM_weights", "BRAM_layer_norm_weights_1"]},
-        "layernorm_1": {
-            "func_name": "layernorm",
-            "dims": [8, 32, 0.01],
-            "func_info": ["layer_norm_template.cpp"],
-            "args": ["BRAM_attn_input", "BRAM_layer_norm_weights_1[0]", "BRAM_layer_norm_weights_1[1]", "BRAM_2"]
-        },
-        "store": {"func_name": "store", "dims": [8, 32], "args": ["BRAM_2", "DRAM_output"]}
+  "brams": [
+    {
+      "name": "BRAM_attn_input",
+      "dims": [
+        8,
+        32
+      ]
     },
-    "output_dram_names": ["DRAM_output"]
+    {
+      "name": "BRAM_layer_norm_weights_1",
+      "dims": [
+        2,
+        32
+      ]
+    },
+    {
+      "name": "BRAM_2",
+      "dims": [
+        8,
+        32
+      ]
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_input",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_weights",
+      "dims": [
+        2,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_output",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem2"
+    }
+  ],
+  "ops": {
+    "load_1": {
+      "func_name": "load",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "DRAM_input",
+        "BRAM_attn_input"
+      ]
+    },
+    "load_2": {
+      "func_name": "load",
+      "dims": [
+        2,
+        32
+      ],
+      "args": [
+        "DRAM_weights",
+        "BRAM_layer_norm_weights_1"
+      ]
+    },
+    "layernorm_1": {
+      "func_name": "layernorm",
+      "dims": [
+        8,
+        32,
+        0.01
+      ],
+      "func_info": [
+        "layer_norm_template.cpp"
+      ],
+      "args": [
+        "BRAM_attn_input",
+        "BRAM_layer_norm_weights_1[0]",
+        "BRAM_layer_norm_weights_1[1]",
+        "BRAM_2"
+      ]
+    },
+    "store": {
+      "func_name": "store",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "BRAM_2",
+        "DRAM_output"
+      ]
+    }
+  },
+  "output_dram_names": [
+    "DRAM_output"
+  ],
+  "input_range": [
+    -1.0,
+    1.0
+  ]
 }

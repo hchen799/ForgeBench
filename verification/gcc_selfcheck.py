@@ -39,6 +39,14 @@ SHIM_DIR = os.path.join(REPO_ROOT, "verification", "shim")
 
 RTOL = 1e-3
 ATOL = 1e-5
+# The absolute tolerance also scales with the output tensor's peak magnitude:
+# tol_i = (ATOL + ATOL_SCALE*max|ref|) + RTOL*|ref_i|. A reduction's float32
+# reassociation error is set by the magnitude of the terms being summed, not by
+# the magnitude of an individual result, so an element that happens to cancel to
+# near zero (mha produces a handful per run) would otherwise be held to an
+# unreachable absolute tolerance. Must match VERIF_ATOL_SCALE in the generated
+# testbench.
+ATOL_SCALE = 5e-5
 
 _VERIF_RE = re.compile(r"VERIFICATION:\s*(PASS|FAIL)")
 
@@ -56,10 +64,11 @@ def regenerate_inputs(config, run_dir, seed):
     # is import-compatible with the copy the design was generated from.
     import importlib
     gen = importlib.import_module("generate_code")
+    low, high = config.get("input_range", [0.0, 1.0])
     cwd = os.getcwd()
     os.chdir(run_dir)  # generate_dram_txt_files writes <NAME>.txt in cwd
     try:
-        gen.generate_dram_txt_files(config["drams"], seed=seed)
+        gen.generate_dram_txt_files(config["drams"], seed=seed, low=low, high=high)
     finally:
         os.chdir(cwd)
 
@@ -150,7 +159,8 @@ def python_compare(goldens, run_dir):
         got, ref = got[:n], ref[:n]
         abs_err = np.abs(got - ref)
         rel_err = abs_err / (np.abs(ref) + 1e-12)
-        tol = ATOL + RTOL * np.abs(ref)
+        scale = float(np.abs(ref).max()) if n else 0.0
+        tol = (ATOL + ATOL_SCALE * scale) + RTOL * np.abs(ref)
         # Non-finite C output (e.g. overflow to inf/nan) counts as a mismatch;
         # NaN comparisons are False, so count them explicitly.
         nonfinite = ~np.isfinite(got)

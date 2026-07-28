@@ -28,6 +28,21 @@ ACTS_13 = ["relu", "leaky_relu", "prelu", "rrelu", "thresholded_relu", "relu6",
            "sigmoid", "tanh", "elu", "selu", "gelu", "swish", "softmax"]
 ACTS_CONV = ACTS_13 + ["hardsigmoid", "hardswish"]
 
+# Input ranges written into each config as "input_range" (see the `low`/`high`
+# arguments of generate_dram_txt_files). The generator's historical default,
+# [0, 1), is strictly non-negative, so half of every activation's definition was
+# dead code under test.
+#
+#   activations: [-8, 8] reaches both sign branches and clears the clamping
+#     constants -- relu6's cap of 6 and thresholded_relu's theta of 1 -- which a
+#     narrower range would never touch.
+#   everything else: [-1, 1] exercises sign handling in the reduction ops without
+#     inviting catastrophic cancellation. Long float accumulations (conv, gemm,
+#     mha) over a wide symmetric range can land arbitrarily close to zero, where
+#     the relative-error tolerance is meaningless and comparisons fail spuriously.
+INPUT_RANGE_ACTIVATION = [-8.0, 8.0]
+INPUT_RANGE_DEFAULT = [-1.0, 1.0]
+
 
 def _load(domain, name):
     with open(os.path.join(OP, domain, name)) as f:
@@ -35,10 +50,16 @@ def _load(domain, name):
 
 
 def _write(domain, name, cfg):
+    cfg["input_range"] = (INPUT_RANGE_ACTIVATION if _has_activation(cfg)
+                          else INPUT_RANGE_DEFAULT)
     path = os.path.join(OP, domain, name)
     with open(path, "w") as f:
         json.dump(cfg, f, indent=2)
     return name
+
+
+def _has_activation(cfg):
+    return any(v.get("func_name") == "activation" for v in cfg["ops"].values())
 
 
 def _act_op_key(cfg):

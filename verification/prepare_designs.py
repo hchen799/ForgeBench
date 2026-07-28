@@ -13,6 +13,7 @@ CLI:
   python -m verification.prepare_designs llm  --task csim,cosim
 """
 import argparse
+import fcntl
 import json
 import os
 import subprocess
@@ -29,7 +30,15 @@ def _domain_dir(domain):
 
 
 def generate_design(domain, config_path, out_base, tasks):
-    """Generate a float design with `tasks`; return (run_dir, config_dict)."""
+    """Generate a float design with `tasks`; return (run_dir, config_dict).
+
+    Generation is serialized per domain with an flock. Two concurrent runs (e.g.
+    a `full`-mode and an `exe`-mode sweep side by side) both write the scratch
+    config `_vprep_<stem>.json` into the domain directory, and `run_hls_flow`
+    emits each `<DRAM>.txt` there before moving it into the run dir -- so without
+    the lock they overwrite and delete each other's files. Generation is ~25 ms,
+    so serializing it costs nothing.
+    """
     with open(config_path) as f:
         config = json.load(f)
     config["data_type"] = "float"
@@ -38,21 +47,27 @@ def generate_design(domain, config_path, out_base, tasks):
     stem = os.path.splitext(os.path.basename(config_path))[0]
     domain_dir = _domain_dir(domain)
     tmp_cfg = os.path.join(domain_dir, f"_vprep_{stem}.json")
-    with open(tmp_cfg, "w") as f:
-        json.dump(config, f)
-    try:
-        code = (
-            "import gen_configs; "
-            f"gen_configs.run_hls_flow({os.path.basename(tmp_cfg)!r}, "
-            f"base_dir={out_base!r}, task={list(tasks)!r})"
-        )
-        subprocess.run(
-            [sys.executable, "-c", code],
-            cwd=domain_dir, check=True, capture_output=True, text=True,
-        )
-    finally:
-        if os.path.exists(tmp_cfg):
-            os.remove(tmp_cfg)
+    lock_path = os.path.join(domain_dir, ".vprep.lock")
+    with open(lock_path, "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            with open(tmp_cfg, "w") as f:
+                json.dump(config, f)
+            try:
+                code = (
+                    "import gen_configs; "
+                    f"gen_configs.run_hls_flow({os.path.basename(tmp_cfg)!r}, "
+                    f"base_dir={out_base!r}, task={list(tasks)!r})"
+                )
+                subprocess.run(
+                    [sys.executable, "-c", code],
+                    cwd=domain_dir, check=True, capture_output=True, text=True,
+                )
+            finally:
+                if os.path.exists(tmp_cfg):
+                    os.remove(tmp_cfg)
+        finally:
+            fcntl.flock(lock, fcntl.LOCK_UN)
     return os.path.join(out_base, f"_vprep_{stem}"), config
 
 

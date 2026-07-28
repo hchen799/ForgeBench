@@ -1,24 +1,108 @@
 {
-    "brams": [
-        {"name": "BRAM_attn_input", "dims": [8, 32]},
-        {"name": "BRAM_2", "dims": [8, 32]},
-        {"name": "BRAM_1", "dims": [8, 32]}
-    ],
-    "drams": [
-        {"name": "DRAM_input_1", "dims": [8, 32], "bundle": "mem1"},
-        {"name": "DRAM_input_2", "dims": [8, 32], "bundle": "mem1"},
-        {"name": "DRAM_output", "dims": [8, 32], "bundle": "mem2"}
-    ],
-    "ops": {
-        "load_1": {"func_name": "load", "dims": [8, 32], "args": ["DRAM_input_1", "BRAM_attn_input"]},
-        "load_2": {"func_name": "load", "dims": [8, 32], "args": ["DRAM_input_2", "BRAM_2"]},
-        "matrix_add_1": {
-            "func_name": "matrix_add",
-            "dims": [8, 32],
-            "func_info": ["matrix_add_template.cpp"],
-            "args": ["BRAM_attn_input", "BRAM_2", "BRAM_1"]
-        },
-        "store": {"func_name": "store", "dims": [8, 32], "args": ["BRAM_1", "DRAM_output"]}
+  "brams": [
+    {
+      "name": "BRAM_attn_input",
+      "dims": [
+        8,
+        32
+      ]
     },
-    "output_dram_names": ["DRAM_output"]
+    {
+      "name": "BRAM_2",
+      "dims": [
+        8,
+        32
+      ]
+    },
+    {
+      "name": "BRAM_1",
+      "dims": [
+        8,
+        32
+      ]
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_input_1",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_input_2",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_output",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem2"
+    }
+  ],
+  "ops": {
+    "load_1": {
+      "func_name": "load",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "DRAM_input_1",
+        "BRAM_attn_input"
+      ]
+    },
+    "load_2": {
+      "func_name": "load",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "DRAM_input_2",
+        "BRAM_2"
+      ]
+    },
+    "matrix_add_1": {
+      "func_name": "matrix_add",
+      "dims": [
+        8,
+        32
+      ],
+      "func_info": [
+        "matrix_add_template.cpp"
+      ],
+      "args": [
+        "BRAM_attn_input",
+        "BRAM_2",
+        "BRAM_1"
+      ]
+    },
+    "store": {
+      "func_name": "store",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "BRAM_1",
+        "DRAM_output"
+      ]
+    }
+  },
+  "output_dram_names": [
+    "DRAM_output"
+  ],
+  "input_range": [
+    -1.0,
+    1.0
+  ]
 }

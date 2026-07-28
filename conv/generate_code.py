@@ -297,6 +297,54 @@ def generate_batch_norm_code(
     return new_generated_code, func_name
 
 
+# Several activation blocks in the template declare extra parameters beyond
+# (input, output). A config may supply its own values as func_info[2:]; otherwise
+# these canonical defaults are emitted. They must stay in sync with the golden
+# reference defaults in verification/activations.py. Note conv's prelu takes a
+# per-channel alpha[C] rather than a scalar (see activation_extra_decl).
+ACTIVATION_EXTRA_PARAMS = {
+    "leaky_relu": [0.01],
+    "prelu": [0.25],
+    "rrelu": [0.125, 1.0 / 3.0],
+    "thresholded_relu": [1.0],
+    "relu6": [6.0],
+    "elu": [1.0],
+    "selu": [1.6732632423543772, 1.0507009873554805],
+}
+
+
+def _activation_name(func_info):
+    name = func_info[1].lower()
+    return "tanh_act" if name == "tanh" else name
+
+
+def activation_extra_decl(func_info, full_func_name, C):
+    """File-scope declaration an activation needs, or "".
+
+    conv's prelu takes `data_t alpha[C]`, so the coefficients are emitted as a
+    const array next to the function definition. `full_func_name` already encodes
+    the dims and data type and is deduplicated by generate_top_function, so the
+    array name is unique per emitted definition.
+    """
+    if _activation_name(func_info) != "prelu":
+        return ""
+    values = [float(v) for v in func_info[2:]] or ACTIVATION_EXTRA_PARAMS["prelu"]
+    if len(values) == 1:
+        values = values * C
+    init = ", ".join(f"(data_t){v!r}" for v in values)
+    # Deliberately not `const`: the template's parameter is a plain `data_t[]`.
+    return f"\nstatic data_t {full_func_name}_alpha[{C}] = {{{init}}};\n"
+
+
+def activation_extra_args(func_info, full_func_name):
+    """Literal call arguments for an activation's extra parameters."""
+    name = _activation_name(func_info)
+    if name == "prelu":
+        return [f"{full_func_name}_alpha"]
+    values = list(func_info[2:]) or ACTIVATION_EXTRA_PARAMS.get(name, [])
+    return [f"(data_t){float(v)!r}" for v in values]
+
+
 def generate_activation_function(
     template_path,      # Path to activations_template.cpp
     func_name,          # One of: "relu", "leaky_relu", "prelu", "rrelu", "thresholded_relu", "relu6", "sigmoid", "tanh_act", "elu", "selu", "gelu", "swish", "softmax"
@@ -351,7 +399,9 @@ def generate_activation_function(
     elif func_name == "sigmoid":
         marker_start = "/*==== SIGMOID FUNCTION START ====*/"
         marker_end = "/*==== SIGMOID FUNCTION END ====*/"
-    elif func_name == "tanh":
+    elif func_name in ("tanh", "tanh_act"):
+        # The template defines the block as tanh_act (plain `tanh` would clash with
+        # C's tanh), but configs are written either way; accept both spellings.
         marker_start = "/*==== TANH FUNCTION START ====*/"
         marker_end = "/*==== TANH FUNCTION END ====*/"
     elif func_name == "elu":
@@ -586,6 +636,7 @@ def generate_func_def(op_info, data_type):
         code_line, full_func_name = generate_batch_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'activation':
         code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        code_line += activation_extra_decl(op_info["func_info"], full_func_name, op_info["dims"][0])
     elif op_info['func_name'] == 'maxpool':
         code_line, full_func_name = generate_maxpool_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8])
     elif op_info['func_name'] == 'adaptive_avgpool':
@@ -622,6 +673,7 @@ def generate_operator_call(op_info, data_type):
         code_line, full_func_name = generate_batch_norm_code(op_info["func_info"][0], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'activation':
         code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
+        code_line += activation_extra_decl(op_info["func_info"], full_func_name, op_info["dims"][0])
     elif op_info['func_name'] == 'maxpool':
         code_line, full_func_name = generate_maxpool_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8])
     elif op_info['func_name'] == 'adaptive_avgpool':
@@ -631,7 +683,9 @@ def generate_operator_call(op_info, data_type):
     else:
         print("the operator we do not support!")
         
-    args_str = ", ".join(str(a) for a in op_info["args"])
+    extra_args = (activation_extra_args(op_info["func_info"], full_func_name)
+                  if op_info['func_name'] == 'activation' else [])
+    args_str = ", ".join(str(a) for a in list(op_info["args"]) + extra_args)
     return f"{full_func_name}({args_str});"
 
 
@@ -793,6 +847,9 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     code_lines.append("#ifndef VERIF_ATOL")
     code_lines.append("#define VERIF_ATOL 1e-5")
     code_lines.append("#endif")
+    code_lines.append("#ifndef VERIF_ATOL_SCALE")
+    code_lines.append("#define VERIF_ATOL_SCALE 5e-5")
+    code_lines.append("#endif")
     code_lines.append("")
 
     # Define data type.
@@ -867,14 +924,30 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         code_lines.append("    {")
         code_lines.append(f"        FILE *gf = fopen(\"{out_name}.golden.txt\", \"r\");")
         code_lines.append("        if (gf != NULL) {")
+        # Two passes: the absolute tolerance is scaled by the output tensor's peak
+        # magnitude, so buffer the golden first to learn that scale. A reduction's
+        # float32 reassociation error is set by the size of the terms summed, not
+        # by the size of an individual result, so an element that happens to
+        # cancel to near zero must not be held to a near-zero absolute tolerance.
+        code_lines.append(f"            static float verif_golden[{total_out}];")
+        code_lines.append("            long gn = 0;")
         code_lines.append(f"            for (int i = 0; i < {total_out}; i++) {{")
         code_lines.append("                float gv;")
         code_lines.append("                if (fscanf(gf, \"%f\", &gv) != 1) break;")
+        code_lines.append("                verif_golden[i] = gv; gn++;")
+        code_lines.append("            }")
+        code_lines.append("            double verif_scale = 0.0;")
+        code_lines.append("            for (long i = 0; i < gn; i++) {")
+        code_lines.append("                double m = fabs((double)verif_golden[i]);")
+        code_lines.append("                if (m > verif_scale) verif_scale = m;")
+        code_lines.append("            }")
+        code_lines.append("            double verif_atol = VERIF_ATOL + VERIF_ATOL_SCALE * verif_scale;")
+        code_lines.append("            for (long i = 0; i < gn; i++) {")
         code_lines.append(f"                double a = (double)(float)((data_t*){out_name})[i];")
-        code_lines.append("                double b = (double)gv;")
+        code_lines.append("                double b = (double)verif_golden[i];")
         code_lines.append("                double abs_err = fabs(a - b);")
         code_lines.append("                double rel_err = abs_err / (fabs(b) + 1e-12);")
-        code_lines.append("                double tol = VERIF_ATOL + VERIF_RTOL * fabs(b);")
+        code_lines.append("                double tol = verif_atol + VERIF_RTOL * fabs(b);")
         code_lines.append("                int bad = (!(abs_err <= tol)) || (!isfinite(a));")
         code_lines.append("                if (abs_err > verif_max_abs) verif_max_abs = abs_err;")
         code_lines.append("                if (rel_err > verif_max_rel) verif_max_rel = rel_err;")
@@ -927,31 +1000,37 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
 #             f.write("\n".join(numbers))
 #         print(f"Generated {filename} with {total_elements} random numbers.")
 
-def generate_dram_txt_files(drams, seed=None):
+def generate_dram_txt_files(drams, seed=None, low=0.0, high=1.0):
     """
-    For each DRAM in the configuration, generate a .txt file containing random numbers
-    between 0 and 1, one per line.
-    
+    For each DRAM in the configuration, generate a .txt file containing random
+    numbers in [low, high), one per line.
+
     Parameters:
       - drams: a list of dictionaries. Each dictionary should have:
            "name": string, e.g., "DRAM_1"
            "dims": list of integers, e.g., [2, 4, 4]
       - seed: optional integer seed for reproducibility.
+      - low, high: input range. The default [0, 1) is the historical behavior, but
+        it is strictly non-negative, so any op with a sign-dependent branch (relu,
+        leaky_relu, elu, prelu, ...) never exercises its negative path and any op
+        with a clamp (relu6 cap, thresholded_relu theta) never reaches it. Set a
+        config's "input_range" to widen this for functional verification.
     """
     if seed is not None:
         random.seed(seed)
-    
+
     for dram in drams:
         total_elements = prod(dram["dims"])
         filename = f"{dram['name']}.txt"
+        # A DRAM may override the design-wide range when its contents are not
+        # free-form data -- e.g. batchnorm's weights array holds a variance term
+        # that must stay non-negative or sqrt() yields NaN.
+        dram_low, dram_high = dram.get("input_range", (low, high))
         with open(filename, "w") as f:
-            # Generate random numbers between 0 and 1 so functional verification
-            # actually exercises the compute (all-zero inputs make every op output
-            # 0 and defeat the golden-reference check). Mirrors gemm/llm domains.
-            numbers = [str(random.random()) for _ in range(total_elements)]
+            numbers = [str(random.uniform(dram_low, dram_high)) for _ in range(total_elements)]
             # Write each number on a new line.
             f.write("\n".join(numbers))
-        
+
 def generate_full_tcl_file(drams, FPGA_name, clock_period, task, output_filename="design.tcl"):
     """
     Generates a TCL file for HLS that includes the add_files -tb commands for each DRAM.

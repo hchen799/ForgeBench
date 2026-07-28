@@ -1,21 +1,83 @@
 {
-    "brams": [
-        {"name": "BRAM_1", "dims": [8, 32]},
-        {"name": "BRAM_2", "dims": [8, 32]}
-    ],
-    "drams": [
-        {"name": "DRAM_input", "dims": [8, 32], "bundle": "mem1"},
-        {"name": "DRAM_output", "dims": [8, 32], "bundle": "mem2"}
-    ],
-    "ops": {
-        "load_1": {"func_name": "load", "dims": [8, 32], "args": ["DRAM_input", "BRAM_1"]},
-        "dropout_1": {
-            "func_name": "dropout",
-            "dims": [8, 32],
-            "func_info": ["dropout_template.cpp"],
-            "args": ["BRAM_1", "BRAM_2", "0.5", "47"]
-        },
-        "store": {"func_name": "store", "dims": [8, 32], "args": ["BRAM_2", "DRAM_output"]}
+  "brams": [
+    {
+      "name": "BRAM_1",
+      "dims": [
+        8,
+        32
+      ]
     },
-    "output_dram_names": ["DRAM_output"]
+    {
+      "name": "BRAM_2",
+      "dims": [
+        8,
+        32
+      ]
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_input",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem1"
+    },
+    {
+      "name": "DRAM_output",
+      "dims": [
+        8,
+        32
+      ],
+      "bundle": "mem2"
+    }
+  ],
+  "ops": {
+    "load_1": {
+      "func_name": "load",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "DRAM_input",
+        "BRAM_1"
+      ]
+    },
+    "dropout_1": {
+      "func_name": "dropout",
+      "dims": [
+        8,
+        32
+      ],
+      "func_info": [
+        "dropout_template.cpp"
+      ],
+      "args": [
+        "BRAM_1",
+        "BRAM_2",
+        "0.5",
+        "47"
+      ]
+    },
+    "store": {
+      "func_name": "store",
+      "dims": [
+        8,
+        32
+      ],
+      "args": [
+        "BRAM_2",
+        "DRAM_output"
+      ]
+    }
+  },
+  "output_dram_names": [
+    "DRAM_output"
+  ],
+  "input_range": [
+    -1.0,
+    1.0
+  ]
 }

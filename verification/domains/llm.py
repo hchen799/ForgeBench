@@ -124,8 +124,9 @@ def _op_rmsnorm(op, arrays):
 def _op_activation(op, arrays):
     S, DIM = op["dims"]
     act_name = op["func_info"][1]
+    params = op["func_info"][2:]  # extra activation parameters, e.g. elu alpha
     a, out = op["args"]
-    _write(arrays, out, apply_activation(act_name, _read(arrays, a, (S, DIM))))
+    _write(arrays, out, apply_activation(act_name, _read(arrays, a, (S, DIM)), params))
 
 
 def _op_dropout(op, arrays):

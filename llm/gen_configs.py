@@ -47,7 +47,11 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     with open(os.path.join(run_dir, "tb_top.cpp"), "w") as f:
         f.write(tb_code)
     
-    generate_dram_txt_files(drams, seed=42)
+    # Input range for the generated DRAM .txt files. Default [0, 1) is the
+    # historical behavior; a config widens it (e.g. [-8, 8]) so ops with
+    # sign-dependent branches or clamps are actually exercised in CSIM.
+    input_low, input_high = config.get("input_range", [0.0, 1.0])
+    generate_dram_txt_files(drams, seed=42, low=input_low, high=input_high)
     for dram in drams:
         dram_txt = f"{dram['name']}.txt"
         if os.path.exists(dram_txt):
