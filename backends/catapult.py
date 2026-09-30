@@ -17,7 +17,7 @@ Differences from Vitis that this backend has to absorb:
                which keeps the `*_template.cpp` files and the Vitis output
                completely untouched. Same trick as `verification/shim/hls_math.h`.
 
-Target is Nangate 45nm, matching the exploratory `catapult.tcl` at the repo root.
+Target is Nangate 45nm, matching the exploratory `legacy/catapult_exploratory.tcl`.
 """
 from backends.base import (
     ToolBackend,
