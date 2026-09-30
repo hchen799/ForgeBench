@@ -19,21 +19,14 @@ Step 3: Run the following command to lauch the HLS synthesis on all data in hls_
 python run_hls_configs.py
 ```
 
-## Ready-To-Go BenchMark Suites
+## Generated benchmark suites
 
-### ML BenchMarks
-We provide an ML oriented benchmark suite with 6000+ testcases - 1920 GEMM, 2304 DNN, 1944 LLM. The file is compressed and split for uploading. 
-First merge the split files:
-
-```sh
-cat ML_testsuite_part_* > ML_testsuite.tar.gz
-```
-
-Then extract:
-
-```sh
-tar -xvzf ML_testsuite.tar.gz
-```
+ForgeBench is a *generator*. The sweep suites it produces (3,840 GEMM, 5,184 DNN/conv, 3,888 LLM = 12,912
+configurations) are regenerated from `{gemm,conv,llm}/auto_generate_json.py`; the JSON configs, lean
+csynth/impl report archives and logs are distributed as a release bundle (Zenodo DOI: TODO) rather than
+stored in git. See `release/build_release.sh` and `release/MANIFEST_FILES.csv` (sizes + SHA-256).
+The earlier `ML_testsuite_part_*` archives (5,400 configs) were removed from the branch tip; they remain in
+git history under tag `r1-public-snapshot`.
 
 ### Modular HLS BenchMarks
 
