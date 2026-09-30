@@ -37,17 +37,23 @@ analysis/*.csv
 _impl1000/
 _run_logs/
 
-# --- checkpoints ---------------------------------------------------------
-# GitHub rejects any single file >100MB, so archives over ~75MB are committed
-# as `_part_NN` chunks (see checkpoints/*/regroup.sh to reassemble).
-# Ignore the reassembled wholes (regenerable from the parts) and the raw
-# full-build impl archive (3GB of Vivado artifacts; the lean reports archive
-# carries everything needed to re-extract metrics).
-checkpoints/*/impl60_designs.tar.gz
-checkpoints/*/csynth_conv_lean.tar.gz
-checkpoints/*/csynth_llm_lean.tar.gz
+# --- large artifacts (live in the Zenodo release bundle, not git; see release/) ------
+# Kept on disk locally; history retains them under tag r1-july-harness / r1-public-snapshot.
+ML_testsuite_part_*
+checkpoints/*/*.tar.gz
+checkpoints/*/*_part_*
+checkpoints/*/regroup.sh
 checkpoints/*/*.log
+release/_bundle/
+
+# --- verification scratch (regenerable) ---------------------------------
 verification/_server_ops/
 verification/_csim_ops*/
 verification/_csim_designs*/
 .vprep.lock
+
+# session / tooling junk
+.claude/
+jgproject/
+tmux-*.log
+.venv/
