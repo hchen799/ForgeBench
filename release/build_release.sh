@@ -35,7 +35,9 @@ for f in impl1000_reports_lean.tar.gz impl60_reports_lean.tar.gz; do
   have "$CKPT_DIR/$f" && cp "$CKPT_DIR/$f" "$OUT/reports/"
 done
 
-# (iv) full-model configs + reports (Table 3): populated once workstream K lands
+# (iv) full-model configs + reports (Table 3): populated once workstream K lands.
+# scale_csynth_r1_lean: July csynth reports of ResNet-18/34 (plain+tiled), saved before the build trees were deleted.
+have "$CKPT_DIR/scale_csynth_r1_lean.tar.gz" && cp "$CKPT_DIR/scale_csynth_r1_lean.tar.gz" "$OUT/full_model/"
 if have "scale_models/paper_configs"; then
   tar -czf "$OUT/full_model/paper_configs.tar.gz" -C scale_models paper_configs
 fi
@@ -44,6 +46,7 @@ fi
 for d in verification/results_fixed verification/e2e results/catapult integrations/hlsfactory/expected_output tool_eval; do
   if have "$d"; then tar -czf "$OUT/logs/$(echo "$d" | tr / _).tar.gz" "$d"; fi
 done
+have _run_logs && tar -czf "$OUT/logs/run_logs_r1_july.tar.gz" _run_logs
 have verification/_csim_ops_n1000 && tar -czf "$OUT/logs/verification_csim_ops_n1000.tar.gz" verification/_csim_ops_n1000
 
 ( cd "$OUT" && find . -type f ! -name SHA256SUMS | sort | xargs sha256sum > SHA256SUMS )

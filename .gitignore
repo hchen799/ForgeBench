@@ -57,3 +57,6 @@ verification/_csim_designs*/
 jgproject/
 tmux-*.log
 .venv/
+
+# sweep runs (generated designs, lean outputs, logs)
+_sweeps/
