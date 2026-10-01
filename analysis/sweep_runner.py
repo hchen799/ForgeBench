@@ -21,6 +21,7 @@ Lean layout (what the release bundle / analysis.collect expect):
 import argparse
 import csv
 import glob
+import json
 import os
 import queue
 import shutil
@@ -51,14 +52,26 @@ def run_one(design, cfg_path, a, tmpl_q):
     work = os.path.join(a.work_dir, design)
     lean = os.path.join(a.lean_out, design)
     tmpl = tmpl_q.get()  # per-thread cwd copy of the generator dir: gen_configs writes DRAM_*.txt in cwd
+    # The sweep configs carry "task": ["csynth"] and gen_configs lets the config override the `task`
+    # argument, so write a copy whose task is the one this flow needs (otherwise impl silently = csynth).
+    with open(cfg_path) as f:
+        cfg = json.load(f)
+    cfg["task"] = TASKS[a.flow]
+    cfg_dir = os.path.join(a.work_dir, "_cfg")
+    os.makedirs(cfg_dir, exist_ok=True)
+    run_cfg = os.path.join(cfg_dir, design + ".json")
+    with open(run_cfg, "w") as f:
+        json.dump(cfg, f, indent=4)
     try:
         gen = ("import gen_configs; gen_configs.run_hls_flow("
-               f"{os.path.abspath(cfg_path)!r}, base_dir={os.path.abspath(a.work_dir)!r}, task={TASKS[a.flow]!r})")
+               f"{run_cfg!r}, base_dir={os.path.abspath(a.work_dir)!r}, task={TASKS[a.flow]!r})")
         g = subprocess.run([sys.executable, "-c", gen], cwd=tmpl, capture_output=True, text=True)
         if g.returncode != 0 or not os.path.isfile(os.path.join(work, "run_hls.tcl")):
             return "gen_fail", g.returncode, time.time() - t0
     finally:
         tmpl_q.put(tmpl)
+        if os.path.exists(run_cfg):
+            os.remove(run_cfg)
 
     logp = os.path.join(work, "vitis_hls.log")
     status, rc = "ok", 0
