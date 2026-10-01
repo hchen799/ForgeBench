@@ -26,7 +26,7 @@
 
     data_t Q[{SEQ_LENGTH}][{DIM_OUT}];
     data_t K[{SEQ_LENGTH}][{DIM_OUT}];
-    data_t V[{SEQ_LENGTH}][{DIM_OUT}];
+    data_t V[{SEQ_LENGTH}][{DIM_OUT}];{HD_PARTITION}
 
     // Compute Q, K, V
     for (int seq = 0; seq < {SEQ_LENGTH}; seq++) {{
@@ -56,7 +56,7 @@
             for (int i = 0; i < {SEQ_LENGTH}; i++) {{
                 for (int j = 0; j < {SEQ_LENGTH}; j++) {{
                     scores[i][j] = 0;
-                    for (int d = 0; d < head_dim; d++) {{
+                    for (int d = 0; d < head_dim; d++) {{{HD_UNROLL_SCORES}
                         int idx = head_index * head_dim + d;
                         scores[i][j] += Q[i][idx] * K[j][idx];
                     }}
@@ -83,7 +83,7 @@
 
             // Compute context: scores x V for head head_index.
             for (int i = 0; i < {SEQ_LENGTH}; i++) {{
-                for (int d = 0; d < head_dim; d++) {{
+                for (int d = 0; d < head_dim; d++) {{{HD_UNROLL_CONTEXT}
                     data_t context = 0;
                     for (int j = 0; j < {SEQ_LENGTH}; j++) {{
                         context += scores[i][j] * V[j][head_index * head_dim + d];

@@ -311,21 +311,30 @@ f'''{{
 }}'''
     return text
 
-def main():
-    # Define parameter ranges (adjust as needed)
-    vals_M = [64, 128]
-    vals_K = [64, 128]
-    vals_N = [64, 128]
-    vals_unroll_M = [1, 8]
-    vals_unroll_K = [1, 8]
-    vals_unroll_N = [1, 8]
-    vals_order = [x for x in itertools.permutations(["i", "j", "k"])]
-    comp_order_list = ["option_1", "option_2", "option_3", "option_4", "option_5"]
+# ---- Sweep specification (single source of truth; imported by manifest/ and paper_artifacts/) ----
+SWEEP = {
+    "M": [64, 128],
+    "K": [64, 128],
+    "N": [64, 128],
+    "unroll_M": [1, 8],
+    "unroll_K": [1, 8],
+    "unroll_N": [1, 8],
+    "order": [x for x in itertools.permutations(["i", "j", "k"])],
+    "comp_order": ["option_1", "option_2", "option_3", "option_4", "option_5"],
+    "with_bias": [False, True],
+    "inline": [True],
+    "data_type": ["ap_fixed<16,5>"],
+}
 
-    # Static parameters
-    need_bias_list = [False, True]
-    inline_list = [True]
-    data_type_list = ["ap_fixed<16,5>"]
+
+def main():
+    vals_M, vals_K, vals_N = SWEEP["M"], SWEEP["K"], SWEEP["N"]
+    vals_unroll_M, vals_unroll_K, vals_unroll_N = SWEEP["unroll_M"], SWEEP["unroll_K"], SWEEP["unroll_N"]
+    vals_order = SWEEP["order"]
+    comp_order_list = SWEEP["comp_order"]
+    need_bias_list = SWEEP["with_bias"]
+    inline_list = SWEEP["inline"]
+    data_type_list = SWEEP["data_type"]
 
     combinations = itertools.product(
         vals_M, vals_K, vals_N,

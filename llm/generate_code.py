@@ -479,9 +479,23 @@ def generate_grouped_mha_code(
     DIM_IN=512,
     NUM_HEADS=8,
     HEAD_DIM=64,
-    use_rope=True
+    use_rope=True,
+    hd_unroll=None
 ):
     DIM_OUT = NUM_HEADS * HEAD_DIM
+
+    # Head-dimension parallelism knob. None -> no pragmas (legacy behaviour, byte-identical
+    # to the pre-knob generator). Otherwise unroll the two head-dim (d) loops by `hd_unroll`
+    # and cyclically partition Q/K/V along the feature dim so the unrolled accesses hit
+    # distinct banks (HEAD_DIM is a multiple of hd_unroll, so d-groups align to banks).
+    if hd_unroll is None:
+        hd_partition = hd_unroll_scores = hd_unroll_context = ""
+    else:
+        assert hd_unroll >= 1 and HEAD_DIM % hd_unroll == 0, (hd_unroll, HEAD_DIM)
+        hd_partition = "".join(
+            f"\n    #pragma HLS ARRAY_PARTITION variable={v} cyclic factor={hd_unroll} dim=2" for v in ("Q", "K", "V"))
+        hd_unroll_scores = f"\n                        #pragma HLS UNROLL factor={hd_unroll}"
+        hd_unroll_context = f"\n                    #pragma HLS UNROLL factor={hd_unroll}"
 
     if use_rope:
         rope_inline = f"""
@@ -523,7 +537,10 @@ def generate_grouped_mha_code(
         DIM_OUT=DIM_OUT,
         NUM_HEADS=NUM_HEADS,
         HEAD_DIM=HEAD_DIM,
-        ROPE_INLINE=rope_inline
+        ROPE_INLINE=rope_inline,
+        HD_PARTITION=hd_partition,
+        HD_UNROLL_SCORES=hd_unroll_scores,
+        HD_UNROLL_CONTEXT=hd_unroll_context
     )
 
     DATA_TYPE = replace_data_type(DATA_TYPE)
@@ -725,7 +742,7 @@ def generate_func_def(op_info, data_type):
     elif op_info['func_name'] == 'matmul':
         code_line, full_func_name = generate_matmul_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'mha':
-        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
+        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1], *op_info["func_info"][2:3])
     elif op_info['func_name'] == 'swa':
         code_line, full_func_name = generate_sliding_window_attention_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
     elif op_info['func_name'] == 'layernorm':
@@ -767,7 +784,7 @@ def generate_operator_call(op_info, data_type):
     elif op_info['func_name'] == 'matmul':
         code_line, full_func_name = generate_matmul_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["func_info"][1])
     elif op_info['func_name'] == 'mha':
-        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
+        code_line, full_func_name = generate_grouped_mha_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1], *op_info["func_info"][2:3])
     elif op_info['func_name'] == 'swa':
         code_line, full_func_name = generate_sliding_window_attention_code(op_info["func_info"][0], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["func_info"][1])
     elif op_info['func_name'] == 'layernorm':

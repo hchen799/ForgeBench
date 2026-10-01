@@ -19,19 +19,22 @@ import os
 
 def generate_config_text(
         SEQ_LEN, DIM_IN, NUM_HEADS, HEAD_DIM, NUM_GROUPS,
-        DATA_TYPE, with_rope=False, norm_type='layer_norm', with_dropout=True, dropout_prob=0.1, seed=47, norm_eps=1e-2
+        DATA_TYPE, with_rope=False, norm_type='layer_norm', with_dropout=True, dropout_prob=0.1, seed=47, norm_eps=1e-2,
+        hd_unroll=None
 ):
     """
     Returns a string of the JSON config of an Attentoin/Norm block with the given parameters.
     """
     DIM_OUT = NUM_HEADS * HEAD_DIM
+    # W_q/W_k/W_v are [DIM_OUT][DIM_IN] (see grouped_mha_rope_template.cpp). Declaring them
+    # [DIM_IN][DIM_IN] made the kernel read out of bounds whenever NUM_HEADS*HEAD_DIM > DIM_IN.
 
     # 1) Build the lines for brams
     brams = [
         {"name": "BRAM_attn_input",        "dims": [SEQ_LEN, DIM_IN]},
-        {"name": "BRAM_WQ",        "dims": [DIM_IN, DIM_IN]},
-        {"name": "BRAM_WK",        "dims": [DIM_IN, DIM_IN]},
-        {"name": "BRAM_WV",        "dims": [DIM_IN, DIM_IN]},
+        {"name": "BRAM_WQ",        "dims": [DIM_OUT, DIM_IN]},
+        {"name": "BRAM_WK",        "dims": [DIM_OUT, DIM_IN]},
+        {"name": "BRAM_WV",        "dims": [DIM_OUT, DIM_IN]},
         {"name": "BRAM_attn_output",        "dims": [SEQ_LEN, DIM_OUT]},
         {"name": "BRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT]},
     ]
@@ -57,9 +60,9 @@ def generate_config_text(
     # 2) Build the lines for drams
     drams = [
         {"name": "DRAM_attn_input",        "dims": [SEQ_LEN, DIM_IN], "bundle": "mem1"},
-        {"name": "DRAM_WQ",        "dims": [DIM_IN, DIM_IN], "bundle": "mem2"},
-        {"name": "DRAM_WK",        "dims": [DIM_IN, DIM_IN], "bundle": "mem3"},
-        {"name": "DRAM_WV",        "dims": [DIM_IN, DIM_IN], "bundle": "mem4"},
+        {"name": "DRAM_WQ",        "dims": [DIM_OUT, DIM_IN], "bundle": "mem2"},
+        {"name": "DRAM_WK",        "dims": [DIM_OUT, DIM_IN], "bundle": "mem3"},
+        {"name": "DRAM_WV",        "dims": [DIM_OUT, DIM_IN], "bundle": "mem4"},
         {"name": "DRAM_norm_output",        "dims": [SEQ_LEN, DIM_OUT], "bundle": "mem6"}
     ]
 
@@ -86,15 +89,15 @@ def generate_config_text(
     
     ops_order = [
         ("load_1", {"func_name": "load", "dims": [SEQ_LEN, DIM_IN], "args": ["DRAM_attn_input", "BRAM_attn_input"]}),
-        ("load_2", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WQ", "BRAM_WQ"]}),
-        ("load_3", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WK", "BRAM_WK"]}),
-        ("load_4", {"func_name": "load", "dims": [DIM_IN, DIM_IN], "args": ["DRAM_WV", "BRAM_WV"]}),
+        ("load_2", {"func_name": "load", "dims": [DIM_OUT, DIM_IN], "args": ["DRAM_WQ", "BRAM_WQ"]}),
+        ("load_3", {"func_name": "load", "dims": [DIM_OUT, DIM_IN], "args": ["DRAM_WK", "BRAM_WK"]}),
+        ("load_4", {"func_name": "load", "dims": [DIM_OUT, DIM_IN], "args": ["DRAM_WV", "BRAM_WV"]}),
         
         ("attn", {
             "func_name": "mha", 
             "dims": [SEQ_LEN, DIM_IN, NUM_HEADS, HEAD_DIM], 
             "args": ["BRAM_attn_input", "BRAM_WQ", "BRAM_WK", "BRAM_WV", "BRAM_attn_output", f"{NUM_GROUPS}"],
-            "func_info": ["grouped_mha_rope_template.cpp", with_rope]
+            "func_info": ["grouped_mha_rope_template.cpp", with_rope] + ([] if hd_unroll is None else [hd_unroll])
         }),
     ]
 
@@ -151,7 +154,7 @@ def generate_config_text(
             for item in op_data["func_info"]:
                 if isinstance(item, bool):
                     fi_list.append("true" if item else "false")
-                elif isinstance(item, float):
+                elif isinstance(item, (int, float)):
                     fi_list.append(str(item))
                 elif isinstance(item, list):
                     fi_list.append(quoted_list(item))
@@ -202,67 +205,54 @@ f'''{{
     return text
 
 
+# ---- Sweep specification (single source of truth; imported by manifest/ and paper_artifacts/) ----
+# hd_unroll: head-dimension unroll/partition factor of the attention kernel (see
+# generate_grouped_mha_code). It replaces the former dropout setting, which is an identity at
+# inference and therefore did not change the design (see docs/revision_r2/CHANGELOG_R2.md).
+SWEEP = {
+    "seq_len": [8, 16, 32],
+    "dim_in": [128, 256, 512],
+    "num_heads": [8, 16, 32],
+    "head_dim": [16, 32, 64],
+    "num_groups": [1, 2, 4],
+    "with_rope": [True, False],
+    "norm_type": ['layer_norm', 'rms_norm'],
+    "hd_unroll": [1, 2, 4, 8],
+    "data_type": ["ap_fixed<16,5>"],
+}
+
+
+def config_name(seq, d_in, heads, d_head, groups, norm, with_rope, hd_unroll, data_type):
+    dtype = data_type.replace('<', '_').replace('>', '_').replace(',', '_')
+    return (f"ATTN_config_S{seq}_D{d_in}_H{heads}_HD{d_head}_G{groups}_{norm}_"
+            f"ROPE{with_rope}_UHD{hd_unroll}_{dtype}")
+
+
 def main():
-    # Define parameter ranges (adjust as needed)
-    vals_seq_len = [8, 16, 32]
-    vals_dim_in = [128, 256, 512]
-    vals_num_heads = [8, 16, 32]
-    vals_head_dim = [16, 32, 64]
-    vals_num_groups = [1, 2, 4]
-    vals_with_rope = [True, False]
-    vals_norm_type = ['layer_norm', 'rms_norm']
-    vals_with_dropout = [True, False]
-    vals_dropout_prob = [0.1, 0.3, 0.5]
-
-    # Static parameters
-    data_type_list = ["ap_fixed<16,5>"]
-    # seed_list = [47]    
-
-    combinations = itertools.product(
-        vals_seq_len, vals_dim_in, vals_num_heads, vals_head_dim, vals_num_groups,
-        vals_with_rope, vals_norm_type, vals_with_dropout, data_type_list
-    )
-
     output_dir = "auto_generated_configs"
     os.makedirs(output_dir, exist_ok=True)
 
-    # Now iterate over the base combos, conv_type, (groups if needed), and data_type.
-    for (seq, d_in, heads, d_head, groups, with_rope, norm, with_dropout, data_type) in combinations:
-        if with_dropout:
-            for dropout_prob in vals_dropout_prob:
-                config_text = generate_config_text(
-                    seq, d_in, heads, d_head, groups,
-                    data_type_list[0], with_rope, norm, with_dropout, dropout_prob
-                )
-                naming_dtype = data_type.replace('<','_').replace('>','_').replace(',','_')
-                filename = (
-                    f"ATTN_config_{seq}_{d_in}_{heads}_{d_head}_{groups}_"
-                    f"{norm}_{with_rope}_DROP{with_dropout}_{dropout_prob}_"
-                    f"{naming_dtype}.json"
-                )
-                filepath = os.path.join(output_dir, filename)
-                with open(filepath, "w") as f:
-                    f.write(config_text)
-                print(f"Generated {filepath}")
-        else:
-            config_text = generate_config_text(
-                seq, d_in, heads, d_head, groups,
-                data_type_list[0], with_rope, norm, with_dropout
-            )
-            naming_dtype = data_type.replace('<','_').replace('>','_').replace(',','_')
-            filename = (
-                f"ATTN_config_{seq}_{d_in}_{heads}_{d_head}_{groups}_"
-                f"{norm}_ROPE_{with_rope}_DROP_{with_dropout}_"
-                f"{naming_dtype}.json"
-            )
-            filepath = os.path.join(output_dir, filename)
-            with open(filepath, "w") as f:
-                f.write(config_text)
-            print(f"Generated {filepath}")
+    combinations = itertools.product(
+        SWEEP["seq_len"], SWEEP["dim_in"], SWEEP["num_heads"], SWEEP["head_dim"], SWEEP["num_groups"],
+        SWEEP["with_rope"], SWEEP["norm_type"], SWEEP["hd_unroll"], SWEEP["data_type"]
+    )
+    n = 0
+    for (seq, d_in, heads, d_head, groups, with_rope, norm, uhd, data_type) in combinations:
+        config_text = generate_config_text(
+            seq, d_in, heads, d_head, groups, data_type, with_rope, norm,
+            with_dropout=False, hd_unroll=uhd
+        )
+        filepath = os.path.join(output_dir, config_name(seq, d_in, heads, d_head, groups, norm, with_rope, uhd, data_type) + ".json")
+        with open(filepath, "w") as f:
+            f.write(config_text)
+        print(f"Generated {filepath}")
+        n += 1
 
-    num_combos = len(vals_seq_len) * len(vals_dim_in) * len(vals_num_heads) * len(vals_head_dim) * len(vals_num_groups) * len(vals_with_rope) * len(vals_norm_type) * len(data_type_list)
-    num_combos *= (len(vals_dropout_prob) + 1)
-    print("Total number of combos:", num_combos)
+    expected = 1
+    for v in SWEEP.values():
+        expected *= len(v)
+    assert n == expected
+    print("Total number of combos:", n)
 
 if __name__ == "__main__":
     main()

@@ -188,26 +188,40 @@ f'''{{
 }}'''
     return text
 
+# ---- Sweep specification (single source of truth; imported by manifest/ and paper_artifacts/) ----
+SWEEP = {
+    "C_IN": [16, 32],
+    "H_IN": [56, 28],
+    "W_IN": [56, 28],
+    "C_OUT": [16, 32],
+    "K": [1, 3],
+    "unroll_cin": [1, 4, 8],
+    "unroll_cout": [1, 4, 8],
+    "pad": [1],
+    "stride": [1],
+    "with_bias": [True, False],
+    "activation": ['relu', 'sigmoid', 'tanh'],
+    "conv_type": ["conv2d", "group_conv2d"],
+    "groups": [2, 4],  # only used when conv_type is "group_conv2d"
+    "data_type": ["ap_fixed<16,5>"],
+}
+
+
 def main():
-    # Define parameter ranges (adjust as needed)
-    C_IN_list              = [16, 32]
-    H_IN_list              = [56, 28]
-    W_IN_list              = [56, 28]
-    C_OUT_list             = [16, 32]
-    K_list                 = [1, 3]
-    unroll_factor_cin_list = [1, 4, 8]
-    unroll_factor_cout_list= [1, 4, 8]
-    PAD_list               = [1]
-    STRIDE_list            = [1]
-    need_bias_list         = [True, False]
-    activations_list       = ['relu', 'sigmoid', 'tanh']
-
-    # New sweeping parameters
-    conv_type_list = ["conv2d", "group_conv2d"]
-    groups_list    = [2, 4]  # Only used when conv_type is "conv2d_group"
-
-    # Data type list
-    data_type_list = ["ap_fixed<16,5>"]
+    C_IN_list = SWEEP["C_IN"]
+    H_IN_list = SWEEP["H_IN"]
+    W_IN_list = SWEEP["W_IN"]
+    C_OUT_list = SWEEP["C_OUT"]
+    K_list = SWEEP["K"]
+    unroll_factor_cin_list = SWEEP["unroll_cin"]
+    unroll_factor_cout_list = SWEEP["unroll_cout"]
+    PAD_list = SWEEP["pad"]
+    STRIDE_list = SWEEP["stride"]
+    need_bias_list = SWEEP["with_bias"]
+    activations_list = SWEEP["activation"]
+    conv_type_list = SWEEP["conv_type"]
+    groups_list = SWEEP["groups"]
+    data_type_list = SWEEP["data_type"]
 
     output_dir = "auto_generated_configs"
     os.makedirs(output_dir, exist_ok=True)
