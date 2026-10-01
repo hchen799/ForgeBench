@@ -51,22 +51,29 @@ the expected value of `duplicate_of` is empty everywhere. conv: none. llm: all 3
 - llm: all rows `pending` until the R2 sweeps (dropout replaced by `hd_unroll`, weight-shape fix) are collected;
   `impl_selected` is filled from `manifest/llm_impl_selection.csv`.
 
+## What the manifest covers (scope = what the paper references)
+
+| Paper item | Registry | Status |
+|---|---|---|
+| Table 4, Figs 6-7, Table 5 (sweep suites) | `designs/{gemm,conv,llm}.csv` | gemm/conv built; llm pending sweep |
+| Table 2 (per-operator verification, 17 operators) | `designs/ops.csv` | built |
+| Sec. 4.4, Table 7 (modularization) | `designs/modular.csv`, `designs/modular_cases.csv` | built; csynth reports missing |
+| Table 3 (full models: ResNet-18/34/50/101/152, LLaMA-3.1-8B) | `designs/fullmodel.csv` | planned; needs the exact configs (Hanqiu) |
+| Table 6 (tool support), Catapult backend (Fig. 5), HLSFactory (Fig. 4c/d) | selections of sweep design ids (`tool_eval/`, `manifest/catapult_selection.csv`); Fig. 4c/d uses `modular/llm/Llama_GPT_module` | planned |
+
+Designs the paper does not reference are not registered (they stay in the repo and in git history): the
+whole-design configs in `<domain>/test_case_configs/` outside Table 7 (ResNet/VGG blocks, `attention_op_p*`,
+`testing_*`, ...) and two unused modular designs (`gemm/mlp`, `gemm/diff_dims_module_large`).
+
 ## Non-sweep registries (`python manifest/build_registry.py`)
 
-`design_id = <suite>/<domain>/<name>`. A design is in exactly one file; modular designs that also have a
-`test_case_configs` config are listed under `modular`, not `cases`. Everything is read from the repo
-(configs, generator dispatch, golden dispatch, the `ROWS` table in `modular_data/parse_synth_resourc_util.py`).
+`design_id = <suite>/<domain>/<name>`. Everything is read from the repo (configs, generator dispatch, golden
+dispatch, the `ROWS` table in `modular_data/parse_synth_resourc_util.py`); only the Table 2 row labels are typed.
 
 | File | Rows | What |
 |---|---|---|
-| `designs/ops.csv` | 69 | Operator variants verified in `verification/` (17 distinct operators: gemm 21, conv 23, llm 25 variants). Columns: `operator`, `variant`, `op_func`, `op_dims`, `op_func_info`, `template`, `generator_function` (`<domain>/generate_code.py:fn`), `golden_function` (`verification/domains/<domain>.py:fn`), `input_range`, config path + hash. A bare `<op>.json` is skipped when `<op>__*.json` variants exist (10 superseded base configs). `data_type` is blank: the verification flow sets it at generation time. |
-| `designs/cases.csv` | 32 | Whole-design configs in `<domain>/test_case_configs/` that are not modular (conv 27 incl. ResNet-18/50 and VGG-19 blocks, gemm 2, llm 3). `runnable=False` marks `conv_variable.json`, a symbolic template whose dims are variable names. `hls_dir` points at a generated design if one is tracked. |
-| `designs/modular.csv` | 40 | Every design directory under `modular_data/*/hls_files/`. `role`: program / shared_module / unused (`gemm/mlp`, `gemm/diff_dims_module_large` are in no test case). `construction`: generated (config in repo), generated (config not in repo), or manual (all 12 shared modules are hand-written; they ship without configs, testbenches or inputs). `test_cases` lists the cases using the design (the `mult_op_p*` programs are shared by 3 cases). `csynth_report` is `missing` for all 40: no csynth report for any modular design exists in the repo or the R1 tarball. |
-| `designs/modular_cases.csv` | 12 | The modularization test cases (6 gemm, 3 conv, 3 llm): programs, shared module, shared functions. Note the paper says 13 test cases; the table behind it (`modular_data/modularization_results.csv`) has 12 rows. |
+| `designs/ops.csv` | 69 | Operator variants verified in `verification/` (17 distinct operators = the 17 rows of Table 2; gemm 21, conv 23, llm 25 variants). Columns: `operator`, `paper_table2_row`, `variant`, `op_func`, `op_dims`, `op_func_info`, `template`, `generator_function` (`<domain>/generate_code.py:fn`), `golden_function` (`verification/domains/<domain>.py:fn`), `input_range`, config path + hash. A bare `<op>.json` is skipped when `<op>__*.json` variants exist (10 superseded base configs). `data_type` is blank: the verification flow sets it at generation time. Table 2 lists 57 variants; this registry has 69 (see `docs/revision_r2/PAPER_VS_REPO.md`). |
+| `designs/modular.csv` | 38 | Design directories under `modular_data/*/hls_files/` used by Table 7: 26 `program`s (P1-P3) and 12 `modularized_design`s (the paper's "Overall" column; each contains the shared function(s)). `construction`: generated (config in repo, 18), generated (config not in repo, 8), manual (all 12 modularized designs are hand-written; they ship without configs, testbenches or inputs). `test_cases` lists the cases using the design (`mult_op_p*` are shared by 3 cases). `csynth_report` is `missing` for all: no csynth report for any modular design exists in the repo or the R1 tarball. |
+| `designs/modular_cases.csv` | 12 | The 12 rows of Table 7 (gemm 6, conv 3, llm 3): `reuse_types` (the paper's †/‡/∗ marks: tiling / functional / arithmetic), programs, modularized design, shared functions. |
 
-`cases` + modular-with-config = 51 = all files in the three `test_case_configs/` dirs.
-
-## Planned
-`designs/fullmodel.csv` (ResNet-18..152, LLaMA-3.1-8B, reduced e2e models) and `verif/*.csv`: one row per
-`design_id` x datatype x sim level, pointing at `designs/` by `design_id`.
 `evidence/` holds small logs backing statuses that have no report (e.g. July impl failures).

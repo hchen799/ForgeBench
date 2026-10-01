@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
-"""Build the non-sweep design registries: manifest/designs/{ops,cases,modular,modular_cases}.csv.
+"""Build the non-sweep design registries: manifest/designs/{ops,modular,modular_cases}.csv.
 
-design_id = "<suite>/<domain>/<name>" (e.g. ops/gemm/dot_product__bias1, cases/conv/resnet18_block1,
-modular/gemm/diff_dims_p1). A design appears in exactly one registry file: modular designs that also have a
-`test_case_configs` config are listed in modular.csv (with that config_path), not in cases.csv.
+Scope rule: only designs the paper references are registered.
+  ops      Table 2 (per-operator verification: 17 operators)         -> ops.csv
+  modular  Sec. 4.4 / Table 7 (modularization test cases)            -> modular.csv, modular_cases.csv
+  (sweeps: Table 4/Figs 6-8/Table 5 -> build_manifest.py; full models: Table 3 -> fullmodel.csv, once the
+   configs are recovered; tool evaluation: Table 6 -> tool_eval/ selections of sweep design ids)
+Whole-design configs in <domain>/test_case_configs/ that the paper does not reference (e.g. ResNet/VGG blocks,
+attention_op_p*, testing_*) and the two unused modular designs (gemm/mlp, gemm/diff_dims_module_large) are not
+registered; they remain in the repo and in git history.
+
+design_id = "<suite>/<domain>/<name>" (e.g. ops/gemm/dot_product__bias1, modular/gemm/diff_dims_p1).
 
     python manifest/build_registry.py
 
-Sources of truth (nothing is hand-typed here):
+Sources of truth (nothing is hand-typed here except the Table 2 operator labels):
   ops      verification/op_configs/<domain>/*.json  (same selection rule as verification/prepare_designs:
            a bare `<op>.json` is skipped when `<op>__*.json` variants exist), the generator dispatch in
            <domain>/generate_code.py and the golden dispatch in verification/domains/<domain>.py
-  cases    <domain>/test_case_configs/*.json
   modular  modular_data/<category>/hls_files/*  +  modular_data/parse_synth_resourc_util.py:ROWS
-           (ROWS defines each test case: its programs, its shared module and its shared functions)
+           (ROWS defines each test case: its programs, its modularized design and its shared functions)
 """
 import ast
 import csv
@@ -28,6 +34,17 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(REPO, "manifest", "designs")
 DOMAINS = ["gemm", "conv", "llm"]
 CATEGORY = {"GEMM": "gemm", "DNN": "conv", "LLM": "llm"}
+
+
+# Operator -> row label in the paper's Table 2 (17 rows).
+TABLE2_ROW = {
+    "gemm": "GEMM", "vmm": "Vec-Mtx Mult.", "mmv": "Mtx-Vec Mult.", "dot_product": "Dot Product",
+    "conv": "Convolution", "batchnorm": "BatchNorm", "mha": "Multi-head Attention", "swa": "Sliding-window Attn.",
+    "matmul": "MatMul", "layernorm": "LayerNorm", "rmsnorm": "RMSNorm", "activation": "Activation",
+    "matrix_add": "Matrix add", "elementwise_mult": "Element-wise Mult.", "dropout": "Dropout",
+    "maxpool": "Max pool", "adaptive_avgpool": "Avg pool",
+}
+REUSE = {"dagger": "tiling", "ddagger": "functional", "ast": "arithmetic"}      # Table 7 footnote marks
 
 
 def sha256_file(path):
@@ -98,7 +115,7 @@ def build_ops():
             fn = op["func_name"]
             rows.append({
                 "design_id": f"ops/{domain}/{stem}", "domain": domain, "suite": "ops",
-                "operator": stem.split("__", 1)[0], "variant": stem.split("__", 1)[1] if "__" in stem else "",
+                "operator": stem.split("__", 1)[0], "paper_table2_row": TABLE2_ROW[stem.split("__", 1)[0]], "variant": stem.split("__", 1)[1] if "__" in stem else "",
                 "op_func": fn, "op_dims": compact(op.get("dims", [])), "op_func_info": compact(op.get("func_info", [])),
                 "template": template_of(op),
                 "generator_function": f"{domain}/generate_code.py:{gen.get(fn, '')}",
@@ -106,7 +123,7 @@ def build_ops():
                 "data_type": cfg.get("data_type", ""), "input_range": compact(cfg.get("input_range", "")),
                 "config_path": rel(path), "config_sha256": sha256_file(path),
             })
-    cols = ["design_id", "domain", "suite", "operator", "variant", "op_func", "op_dims", "op_func_info", "template",
+    cols = ["design_id", "domain", "suite", "operator", "paper_table2_row", "variant", "op_func", "op_dims", "op_func_info", "template",
             "generator_function", "golden_function", "data_type", "input_range", "config_path", "config_sha256"]
     return cols, rows
 
@@ -136,12 +153,13 @@ def build_modular():
             in_cases.setdefault((cat, p), []).append(case_id)
             role[(cat, p)] = "program"
         in_cases.setdefault((cat, r["module"]), []).append(case_id)
-        role[(cat, r["module"])] = "shared_module"
+        role[(cat, r["module"])] = "modularized_design"
         cases.append({
             "case_id": case_id, "suite_name": r["suite"], "domain": cat,
             "case_name": re.sub(r"\s+", " ", re.sub(r"\$\\\w+\$", "", r["case"])).strip(),
+            "reuse_types": ";".join(REUSE[m] for m in re.findall(r"\\(\w+)\$", r["case"]) if m in REUSE),
             "programs": ";".join(f"modular/{cat}/{p}" for p in progs),
-            "module": f"modular/{cat}/{r['module']}", "shared_functions": ";".join(r["shared"]),
+            "modularized_design": f"modular/{cat}/{r['module']}", "shared_functions": ";".join(r["shared"]),
         })
     designs = []
     for cat in DOMAINS:
@@ -154,10 +172,12 @@ def build_modular():
             files = set(os.listdir(ddir))
             cfg = os.path.join(cfg_dir, name + ".json")
             has_cfg = os.path.isfile(cfg)
-            r_ = role.get((cat, name), "unused")
+            r_ = role.get((cat, name))
+            if r_ is None:
+                continue                                  # in no Table 7 test case: not registered
             if has_cfg:
                 construction = "generated"
-            elif r_ == "shared_module":
+            elif r_ == "modularized_design":
                 construction = "manual"
             else:
                 construction = "generated (config not in repo)"
@@ -173,45 +193,8 @@ def build_modular():
             })
     dcols = ["design_id", "domain", "suite", "name", "role", "test_cases", "construction", "config_path", "config_sha256",
              "hls_dir", "source_sha256", "has_testbench", "has_dram_inputs", "csynth_report"]
-    ccols = ["case_id", "suite_name", "domain", "case_name", "programs", "module", "shared_functions"]
+    ccols = ["case_id", "suite_name", "domain", "case_name", "reuse_types", "programs", "modularized_design", "shared_functions"]
     return dcols, designs, ccols, cases
-
-
-# ------------------------------------------------------------------ cases
-def family(domain, name):
-    if domain == "conv":
-        m = re.match(r"(resnet\d+|vgg\d+)_", name)
-        return m.group(1) if m else "conv"
-    return {"gemm": "gemm", "llm": "attention"}[domain] if not re.match(r"(gpt|llama)", name) else "transformer"
-
-
-def build_cases(modular_designs):
-    modular_cfgs = {d["config_path"] for d in modular_designs if d["config_path"]}
-    rows = []
-    for domain in DOMAINS:
-        d = os.path.join(REPO, domain, "test_case_configs")
-        for n in sorted(f for f in os.listdir(d) if f.endswith(".json")):
-            path = os.path.join(d, n)
-            if rel(path) in modular_cfgs:
-                continue                                  # registered under modular/
-            name = n[:-5]
-            hls = os.path.join(REPO, domain, "hls_files", name)
-            try:
-                cfg, runnable = json.load(open(path)), True
-            except ValueError:                            # symbolic template (e.g. conv_variable.json: dims are variable names)
-                cfg, runnable = {"ops": {}}, False
-            funcs = [o["func_name"] for o in cfg["ops"].values() if o["func_name"] not in ("load", "store")]
-            rows.append({
-                "design_id": f"cases/{domain}/{name}", "domain": domain, "suite": "cases", "name": name,
-                "family": family(domain, name), "runnable": runnable, "n_compute_ops": len(funcs), "compute_ops": ";".join(funcs),
-                "data_type": cfg.get("data_type", ""),
-                "config_path": rel(path), "config_sha256": sha256_file(path),
-                "hls_dir": rel(hls) if os.path.isdir(hls) else "",
-                "has_testbench": os.path.isfile(os.path.join(hls, "tb_top.cpp")),
-            })
-    cols = ["design_id", "domain", "suite", "name", "family", "runnable", "n_compute_ops", "compute_ops", "data_type",
-            "config_path", "config_sha256", "hls_dir", "has_testbench"]
-    return cols, rows
 
 
 def main():
@@ -220,10 +203,8 @@ def main():
     dcols, designs, ccols, cases = build_modular()
     write_csv("modular.csv", dcols, designs)
     write_csv("modular_cases.csv", ccols, cases)
-    cols, rows = build_cases(designs)
-    write_csv("cases.csv", cols, rows)
     # consistency checks
-    ids = [r["design_id"] for f in ("ops", "cases", "modular") for r in csv.DictReader(open(os.path.join(OUT, f + ".csv")))]
+    ids = [r["design_id"] for f in ("ops", "modular") for r in csv.DictReader(open(os.path.join(OUT, f + ".csv")))]
     assert len(ids) == len(set(ids)), "duplicate design_id across registries"
     print(f"total registered non-sweep designs: {len(ids)}")
 
