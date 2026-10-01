@@ -207,95 +207,46 @@ SWEEP = {
 }
 
 
-def main():
-    C_IN_list = SWEEP["C_IN"]
-    H_IN_list = SWEEP["H_IN"]
-    W_IN_list = SWEEP["W_IN"]
-    C_OUT_list = SWEEP["C_OUT"]
-    K_list = SWEEP["K"]
-    unroll_factor_cin_list = SWEEP["unroll_cin"]
-    unroll_factor_cout_list = SWEEP["unroll_cout"]
-    PAD_list = SWEEP["pad"]
-    STRIDE_list = SWEEP["stride"]
-    need_bias_list = SWEEP["with_bias"]
-    activations_list = SWEEP["activation"]
-    conv_type_list = SWEEP["conv_type"]
-    groups_list = SWEEP["groups"]
-    data_type_list = SWEEP["data_type"]
+def iter_params():
+    """Yield one dict of sweep parameters per design, in generation order."""
+    for (c_in, h_in, w_in, c_out, k, uf_cin, uf_cout, pad, stride, act, bias) in itertools.product(
+            SWEEP["C_IN"], SWEEP["H_IN"], SWEEP["W_IN"], SWEEP["C_OUT"], SWEEP["K"],
+            SWEEP["unroll_cin"], SWEEP["unroll_cout"], SWEEP["pad"], SWEEP["stride"],
+            SWEEP["activation"], SWEEP["with_bias"]):
+        for conv_type in SWEEP["conv_type"]:
+            for groups in (SWEEP["groups"] if conv_type == "group_conv2d" else [None]):
+                for dtype in SWEEP["data_type"]:
+                    yield {"C_IN": c_in, "H_IN": h_in, "W_IN": w_in, "C_OUT": c_out, "K": k,
+                           "unroll_cin": uf_cin, "unroll_cout": uf_cout, "pad": pad, "stride": stride,
+                           "with_bias": bias, "conv_type": conv_type, "groups": groups,
+                           "activation": act, "data_type": dtype}
 
+
+def config_stem(p):
+    dtype = p["data_type"].replace('<', '_').replace('>', '_').replace(',', '_')
+    g = f"_GROUPS{p['groups']}" if p["conv_type"] == "group_conv2d" else ""
+    return (f"config_CIN{p['C_IN']}_HIN{p['H_IN']}_WIN{p['W_IN']}_COUT{p['C_OUT']}_K{p['K']}_"
+            f"UFCIN{p['unroll_cin']}_UFCOU{p['unroll_cout']}_PAD{p['pad']}_STRIDE{p['stride']}_BIAS{p['with_bias']}_"
+            f"{p['conv_type']}{g}_ACTIVATION{p['activation']}_{dtype}")
+
+
+def build_config_text(p):
+    return generate_config_text(
+        p["C_IN"], p["H_IN"], p["W_IN"], p["C_OUT"], p["K"], p["unroll_cin"], p["unroll_cout"],
+        p["data_type"], p["with_bias"], p["pad"], p["stride"], p["conv_type"], p["activation"], p["groups"])
+
+
+def main():
     output_dir = "auto_generated_configs"
     os.makedirs(output_dir, exist_ok=True)
-
-    # Create base combinations for parameters except conv_type and groups
-    base_combos = list(itertools.product(
-        C_IN_list,
-        H_IN_list,
-        W_IN_list,
-        C_OUT_list,
-        K_list,
-        unroll_factor_cin_list,
-        unroll_factor_cout_list,
-        PAD_list,
-        STRIDE_list,
-        activations_list, 
-        need_bias_list,
-        
-    ))
-
-    # Now iterate over the base combos, conv_type, (groups if needed), and data_type.
-    for (C_IN, H_IN, W_IN, C_OUT, K,
-         unroll_factor_cin, unroll_factor_cout, PAD, STRIDE, activations, need_bias) in base_combos:
-        for conv_type in conv_type_list:
-            if conv_type == "group_conv2d":
-                for groups in groups_list:
-                    for DATA_TYPE in data_type_list:
-                        config_text = generate_config_text(
-                            C_IN, H_IN, W_IN, C_OUT, K,
-                            unroll_factor_cin, unroll_factor_cout,
-                            DATA_TYPE, need_bias,
-                            PAD, STRIDE,
-                            conv_type, activations, groups 
-                        )
-                        safe_dtype = DATA_TYPE.replace('<','_').replace('>','_').replace(',','_')
-                        filename = (
-                            f"config_CIN{C_IN}_HIN{H_IN}_WIN{W_IN}_COUT{C_OUT}_K{K}_"
-                            f"UFCIN{unroll_factor_cin}_UFCOU{unroll_factor_cout}_PAD{PAD}_STRIDE{STRIDE}_BIAS{need_bias}_"
-                            f"{conv_type}_GROUPS{groups}_ACTIVATION{activations}_{safe_dtype}.json"
-                        )
-                        filepath = os.path.join(output_dir, filename)
-                        with open(filepath, "w") as f:
-                            f.write(config_text)
-                        print(f"Generated {filepath}")
-            else:
-                groups = None
-                for DATA_TYPE in data_type_list:
-                    config_text = generate_config_text(
-                        C_IN, H_IN, W_IN, C_OUT, K,
-                        unroll_factor_cin, unroll_factor_cout,
-                        DATA_TYPE, need_bias,
-                        PAD, STRIDE,
-                        conv_type, activations, groups
-                    )
-                    safe_dtype = DATA_TYPE.replace('<','_').replace('>','_').replace(',','_')
-                    filename = (
-                        f"config_CIN{C_IN}_HIN{H_IN}_WIN{W_IN}_COUT{C_OUT}_K{K}_"
-                        f"UFCIN{unroll_factor_cin}_UFCOU{unroll_factor_cout}_PAD{PAD}_STRIDE{STRIDE}_BIAS{need_bias}_"
-                        f"{conv_type}_ACTIVATION{activations}_{safe_dtype}.json"
-                    )
-                    filepath = os.path.join(output_dir, filename)
-                    with open(filepath, "w") as f:
-                        f.write(config_text)
-                    print(f"Generated {filepath}")
-
-    # Compute total number of combos:
-    # For each base combo, we have: 
-    #   - 1 possibility if conv_type is "conv2d"
-    #   - len(groups_list) possibilities if conv_type is "conv2d_group"
-    # Total conv-type possibilities = 1 + len(groups_list)
-    # And then multiplied by len(data_type_list)
-    total_conv_variants = 1 + len(groups_list)
-    total_combos = len(base_combos) * total_conv_variants * len(data_type_list)
-    print("Total number of combos:", total_combos)
+    n = 0
+    for p in iter_params():
+        filepath = os.path.join(output_dir, config_stem(p) + ".json")
+        with open(filepath, "w") as f:
+            f.write(build_config_text(p))
+        print(f"Generated {filepath}")
+        n += 1
+    print("Total number of combos:", n)
 
 if __name__ == "__main__":
     main()

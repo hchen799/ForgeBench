@@ -222,32 +222,37 @@ SWEEP = {
 }
 
 
-def config_name(seq, d_in, heads, d_head, groups, norm, with_rope, hd_unroll, data_type):
-    dtype = data_type.replace('<', '_').replace('>', '_').replace(',', '_')
-    return (f"ATTN_config_S{seq}_D{d_in}_H{heads}_HD{d_head}_G{groups}_{norm}_"
-            f"ROPE{with_rope}_UHD{hd_unroll}_{dtype}")
+def iter_params():
+    """Yield one dict of sweep parameters per design, in generation order."""
+    for (seq, d_in, heads, d_head, groups, rope, norm, uhd, dtype) in itertools.product(
+            SWEEP["seq_len"], SWEEP["dim_in"], SWEEP["num_heads"], SWEEP["head_dim"], SWEEP["num_groups"],
+            SWEEP["with_rope"], SWEEP["norm_type"], SWEEP["hd_unroll"], SWEEP["data_type"]):
+        yield {"seq_len": seq, "dim_in": d_in, "num_heads": heads, "head_dim": d_head, "num_groups": groups,
+               "with_rope": rope, "norm_type": norm, "hd_unroll": uhd, "data_type": dtype}
+
+
+def config_stem(p):
+    dtype = p["data_type"].replace('<', '_').replace('>', '_').replace(',', '_')
+    return (f"ATTN_config_S{p['seq_len']}_D{p['dim_in']}_H{p['num_heads']}_HD{p['head_dim']}_G{p['num_groups']}_"
+            f"{p['norm_type']}_ROPE{p['with_rope']}_UHD{p['hd_unroll']}_{dtype}")
+
+
+def build_config_text(p):
+    return generate_config_text(
+        p["seq_len"], p["dim_in"], p["num_heads"], p["head_dim"], p["num_groups"], p["data_type"],
+        p["with_rope"], p["norm_type"], with_dropout=False, hd_unroll=p["hd_unroll"])
 
 
 def main():
     output_dir = "auto_generated_configs"
     os.makedirs(output_dir, exist_ok=True)
-
-    combinations = itertools.product(
-        SWEEP["seq_len"], SWEEP["dim_in"], SWEEP["num_heads"], SWEEP["head_dim"], SWEEP["num_groups"],
-        SWEEP["with_rope"], SWEEP["norm_type"], SWEEP["hd_unroll"], SWEEP["data_type"]
-    )
     n = 0
-    for (seq, d_in, heads, d_head, groups, with_rope, norm, uhd, data_type) in combinations:
-        config_text = generate_config_text(
-            seq, d_in, heads, d_head, groups, data_type, with_rope, norm,
-            with_dropout=False, hd_unroll=uhd
-        )
-        filepath = os.path.join(output_dir, config_name(seq, d_in, heads, d_head, groups, norm, with_rope, uhd, data_type) + ".json")
+    for p in iter_params():
+        filepath = os.path.join(output_dir, config_stem(p) + ".json")
         with open(filepath, "w") as f:
-            f.write(config_text)
+            f.write(build_config_text(p))
         print(f"Generated {filepath}")
         n += 1
-
     expected = 1
     for v in SWEEP.values():
         expected *= len(v)

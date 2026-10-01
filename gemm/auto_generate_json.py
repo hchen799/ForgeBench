@@ -327,50 +327,40 @@ SWEEP = {
 }
 
 
+def iter_params():
+    """Yield one dict of sweep parameters per design, in generation order."""
+    for (m, k, n, um, uk, un, order, comp_order, bias, inline, dtype) in itertools.product(
+            SWEEP["M"], SWEEP["K"], SWEEP["N"],
+            SWEEP["unroll_M"], SWEEP["unroll_K"], SWEEP["unroll_N"],
+            SWEEP["order"], SWEEP["comp_order"], SWEEP["with_bias"], SWEEP["inline"], SWEEP["data_type"]):
+        yield {"M": m, "K": k, "N": n, "unroll_M": um, "unroll_K": uk, "unroll_N": un,
+               "order": "".join(order), "comp_order": comp_order, "with_bias": bias,
+               "inline": inline, "data_type": dtype}
+
+
+def config_stem(p):
+    dtype = p["data_type"].replace('<', '_').replace('>', '_').replace(',', '_')
+    return (f"GEMM_config_M{p['M']}_K{p['K']}_N{p['N']}_UM{p['unroll_M']}_UK{p['unroll_K']}_UN{p['unroll_N']}_"
+            f"{p['order']}_BIAS_{p['with_bias']}_INLINE_{p['inline']}_COMPORDER_{p['comp_order']}_{dtype}")
+
+
+def build_config_text(p):
+    return generate_config_text(
+        p["M"], p["K"], p["N"], p["unroll_M"], p["unroll_K"], p["unroll_N"],
+        tuple(p["order"]), p["data_type"], p["with_bias"], p["inline"], p["comp_order"])
+
+
 def main():
-    vals_M, vals_K, vals_N = SWEEP["M"], SWEEP["K"], SWEEP["N"]
-    vals_unroll_M, vals_unroll_K, vals_unroll_N = SWEEP["unroll_M"], SWEEP["unroll_K"], SWEEP["unroll_N"]
-    vals_order = SWEEP["order"]
-    comp_order_list = SWEEP["comp_order"]
-    need_bias_list = SWEEP["with_bias"]
-    inline_list = SWEEP["inline"]
-    data_type_list = SWEEP["data_type"]
-
-    combinations = itertools.product(
-        vals_M, vals_K, vals_N,
-        vals_unroll_M, vals_unroll_K, vals_unroll_N,
-        vals_order,
-        comp_order_list,
-        need_bias_list,
-        inline_list,
-        data_type_list
-    )
-
     output_dir = "auto_generated_configs"
     os.makedirs(output_dir, exist_ok=True)
-
-    # Now iterate over the base combos, conv_type, (groups if needed), and data_type.
-    for (m, k, n, unroll_m, unroll_k, unroll_n, ord, comp_order, with_bias, inline, data_type) in combinations:
-        config_text = generate_config_text(
-            m, k, n,
-            unroll_m, unroll_k, unroll_n,
-            ord,
-            data_type, with_bias, inline, comp_order
-        )
-        naming_dtype = data_type.replace('<','_').replace('>','_').replace(',','_')
-        filename = (
-            f"GEMM_config_M{m}_K{k}_N{n}_UM{unroll_m}_UK{unroll_k}_UN{unroll_n}_"
-            f"{ord[0]}{ord[1]}{ord[2]}_BIAS_{with_bias}_INLINE_{inline}_COMPORDER_{comp_order}_"
-            f"{naming_dtype}.json"
-        )
-        filepath = os.path.join(output_dir, filename)
+    n = 0
+    for p in iter_params():
+        filepath = os.path.join(output_dir, config_stem(p) + ".json")
         with open(filepath, "w") as f:
-            f.write(config_text)
+            f.write(build_config_text(p))
         print(f"Generated {filepath}")
-
-
-    num_combos = len(vals_M) * len(vals_K) * len(vals_N) * len(vals_unroll_M) * len(vals_unroll_K) * len(vals_unroll_N) * len(vals_order) * len(comp_order_list) * len(need_bias_list) * len(inline_list) * len(data_type_list)
-    print("Total number of combos:", num_combos)
+        n += 1
+    print("Total number of combos:", n)
 
 if __name__ == "__main__":
     main()

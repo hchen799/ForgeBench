@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Write/merge rows (file, size_bytes, sha256, zenodo_path) into release/MANIFEST_FILES.csv.
+"""Write/merge rows (file, size_bytes, sha256, zenodo_path) into release/bundle_files.csv.
 
-Usage: python release/make_manifest.py [--out release/MANIFEST_FILES.csv] [--category NAME] PATH [PATH ...]
+Usage: python release/make_manifest.py [--out release/bundle_files.csv] [--category NAME] PATH [PATH ...]
 Directories are walked recursively. Existing rows with the same `file` are replaced.
 `zenodo_path` is left as TODO until the human uploads the bundle.
 """
@@ -32,7 +32,7 @@ def walk(paths):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "MANIFEST_FILES.csv"))
+    ap.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "bundle_files.csv"))
     ap.add_argument("--category", default="")
     ap.add_argument("paths", nargs="+")
     a = ap.parse_args()
