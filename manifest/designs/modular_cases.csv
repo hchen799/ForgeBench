@@ -1,0 +1,13 @@
+case_id,suite_name,domain,case_name,programs,module,shared_functions
+modular_case/gemm/tiled_gemm,GEMM,gemm,Tiled GEMM,modular/gemm/diff_dims_p1;modular/gemm/diff_dims_p2;modular/gemm/diff_dims_p3,modular/gemm/diff_dims_module_small,tiled_gemm
+modular_case/gemm/vec_mtx_mult_dot,GEMM,gemm,Vec/Mtx Mult - Dot,modular/gemm/mult_op_p1;modular/gemm/mult_op_p2;modular/gemm/mult_op_p3,modular/gemm/mult_op_module_dot,dot_product
+modular_case/gemm/vec_mtx_mult_mmv,GEMM,gemm,Vec/Mtx Mult - MMV,modular/gemm/mult_op_p1;modular/gemm/mult_op_p2;modular/gemm/mult_op_p3,modular/gemm/mult_op_module_mmv,mmv_ij
+modular_case/gemm/vec_mtx_mult_gemm,GEMM,gemm,Vec/Mtx Mult - GEMM,modular/gemm/mult_op_p1;modular/gemm/mult_op_p2;modular/gemm/mult_op_p3,modular/gemm/mult_op_module_mm,gemm_ijk
+modular_case/gemm/i_j_k_orders,GEMM,gemm,i-j-k Orders,modular/gemm/diff_orders_p1;modular/gemm/diff_orders_p2;modular/gemm/diff_orders_p3,modular/gemm/diff_orders_module,common_gemm_ikj
+modular_case/gemm/vector_transpose,GEMM,gemm,Vector Transpose,modular/gemm/vec_mtx_p1;modular/gemm/vec_mtx_p2,modular/gemm/vec_mtx_module,mmv_ij
+modular_case/conv/activation_functions,DNN,conv,Activation Functions,modular/conv/activation_op1;modular/conv/activation_op2;modular/conv/activation_op3,modular/conv/activation_module,compute_exp
+modular_case/conv/tiled_convolution,DNN,conv,Tiled Convolution,modular/conv/conv_A;modular/conv/conv_B;modular/conv/conv_C,modular/conv/conv_module,conv_via_tiling_3x3
+modular_case/conv/dnn_blocks,DNN,conv,DNN Blocks,modular/conv/conv_block_op1;modular/conv/conv_block_op2;modular/conv/conv_block_op3,modular/conv/conv_block_module,conv_via_tiling_3x3_1;batch_norm_tiled;relu_tiled
+modular_case/llm/tiled_attention,LLM,llm,Tiled Attention,modular/llm/tiled_attn_p1;modular/llm/tiled_attn_p2,modular/llm/tiled_attn_module,grouped_multihead_attention_8_256_4_16_ap_fixed_16_5_s
+modular_case/llm/functional_attention,LLM,llm,Functional Attention,modular/llm/attn_breakdown_op1;modular/llm/attn_breakdown_op2,modular/llm/attn_breakdown_module,matmul_large;matmul_small_1;calculate_scale;softmax;matmul_small_2
+modular_case/llm/llama_gpt_transformers,LLM,llm,LLaMA/GPT Transformers,modular/llm/gpt_transformer_p1;modular/llm/llama_transformer_p2,modular/llm/Llama_GPT_module,grouped_multihead_attention_8_32_8_4_rope_ap_fixed_16_5_s;dropout_8_32_ap_fixed_16_5_s;matrix_add_8_32_ap_fixed_16_5_s;matmul_8_32_128_ap_fixed_16_5_s;matmul_8_128_32_ap_fixed_16_5_s

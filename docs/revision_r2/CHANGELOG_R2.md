@@ -53,3 +53,5 @@ changes csynth results in 88–100% of matched pairs). Sweep total 3,072 + 5,184
   No impl selection has been made for the 768 new designs.
 * Stale: nothing. Existing GEMM csynth/impl results stay valid for the 2,304 mapped designs; the metrics CSVs
   are still keyed by R1 ids until the 768 new results are collected and re-keyed.
+* **Decision (2026-10-01):** after the LLM sweeps finish, GEMM impl is re-sampled and re-run (the July sample no
+  longer matches the 3,072-design sweep).
