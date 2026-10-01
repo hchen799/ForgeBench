@@ -15,7 +15,7 @@ Parameters, names and config text come from `{gemm,conv,llm}/auto_generate_json.
 
 | Column group | Columns |
 |---|---|
-| identity | `design_id` (= config file stem = design directory name), `domain`, `suite` (`sweep`) |
+| identity | `design_id` (= config file stem = design directory name), `legacy_design_id` (id in the R1 sweep; its R1 results/reports are filed under it; blank if none), `domain`, `suite` (`sweep`) |
 | parameters | one column per sweep parameter (see `SWEEP` in the generator), then `data_type` |
 | files | `config_path` (repo-relative; also inside `configs/sweep_configs_<domain>.tar.gz`), `config_sha256`, `source_sha256` (hash of emitted `top.cpp`) |
 | duplicates | `duplicate_of`: `design_id` of the first design with byte-identical `top.cpp`; empty if unique |
@@ -37,17 +37,19 @@ BRAM_18K 1824, DSP 2520, LUT 274,080, FF 548,160; `over_capacity_resources` list
   (`analysis/impl_sampler.py`).
 
 ### Duplicates
-`duplicate_of` flags designs whose emitted `top.cpp` is byte-identical to an earlier design. They are
-still separate designs (different config, same hardware). Count "as generated" = all rows; count
-"unique" = rows with empty `duplicate_of`. Current numbers: gemm 2,304 unique of 3,840
-(computation options 1, 4, 5 depend only on the i/j loop order, so the 6 orders collapse to 2);
-conv 5,184 of 5,184; llm pending.
+`duplicate_of` flags designs whose emitted `top.cpp` is byte-identical to an earlier design (they would be
+separate designs with the same hardware). The R1 GEMM sweep had 1,536 such copies (loop order crossed with
+options that have no gemm op); the R2 GEMM sweep removes them (see `docs/revision_r2/CHANGELOG_R2.md`), so
+the expected value of `duplicate_of` is empty everywhere. conv: none. llm: all 3,888 sources are unique
+(checked by generating them).
 
 ### Current state
-gemm and conv are complete (csynth 3,840/3,840 and 5,184/5,184; impl per July). conv includes one design
-whose July report was missing; it was re-run in R2 and its report is in
-`reports/csynth_conv_rerun_lean.tar.gz`. llm rows are `pending` until the R2 sweeps (dropout replaced by
-`hd_unroll`, weight-shape fix; see `docs/revision_r2/CHANGELOG_R2.md`) are collected.
+- conv: complete (csynth 5,184/5,184; impl 896 selected, all ok). One design's July report was missing; it was
+  re-run in R2 (`reports/csynth_conv_rerun_lean.tar.gz`).
+- gemm: 3,072 designs (per-op loop orders, see changelog). 2,304 have July csynth results (via `legacy_design_id`);
+  768 are `pending` (new designs). impl: 500 selected-and-run (499 ok, 1 Vivado segfault); no selection yet for the new 768.
+- llm: all rows `pending` until the R2 sweeps (dropout replaced by `hd_unroll`, weight-shape fix) are collected;
+  `impl_selected` is filled from `manifest/llm_impl_selection.csv`.
 
 ## Planned
 `designs/{ops,cases,modular,fullmodel}.csv` (same core columns, suite-specific parameters) and

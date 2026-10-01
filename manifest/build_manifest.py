@@ -30,7 +30,8 @@ DEVICE = {"bram": 1824, "dsp": 2520, "lut": 274080, "ff": 548160}
 
 # Parameter columns per domain, in manifest order (keys of iter_params()).
 PARAMS = {
-    "gemm": ["M", "K", "N", "unroll_M", "unroll_K", "unroll_N", "order", "comp_order", "with_bias", "inline"],
+    "gemm": ["M", "K", "N", "unroll_M", "unroll_K", "unroll_N", "comp_order", "gemm_order", "vm_order_1", "vm_order_2",
+             "with_bias", "inline"],
     "conv": ["C_IN", "H_IN", "W_IN", "C_OUT", "K", "unroll_cin", "unroll_cout", "pad", "stride", "with_bias",
              "conv_type", "groups", "activation"],
     "llm": ["seq_len", "dim_in", "num_heads", "head_dim", "num_groups", "with_rope", "norm_type", "hd_unroll"],
@@ -133,7 +134,11 @@ def main():
             if domain != "llm" else {}                  # July LLM results are stale (see CHANGELOG_R2)
         impl = read_csv(os.path.join(REPO, "analysis", "results_impl", f"metrics_{domain}.csv")) \
             if domain in IMPL_DOMAINS_WITH_JULY_SELECTION else {}
-        cols = (["design_id", "domain", "suite"] + PARAMS[domain] +
+        llm_sel = None
+        if domain == "llm":
+            with open(os.path.join(REPO, "manifest", "llm_impl_selection.csv"), newline="") as f:
+                llm_sel = {r["design"] for r in csv.DictReader(f)}
+        cols = (["design_id", "legacy_design_id", "domain", "suite"] + PARAMS[domain] +
                 ["data_type", "config_path", "config_sha256", "source_sha256", "duplicate_of",
                  "generated", "csynth_status", "csynth_fail_reason", "over_capacity", "over_capacity_resources",
                  "impl_selected", "impl_status", "impl_fail_reason",
@@ -148,9 +153,13 @@ def main():
             if a.check_disk:
                 with open(os.path.join(REPO, cfg_rel), "rb") as f:
                     assert hashlib.sha256(f.read()).hexdigest() == cfg_sha, f"disk config differs: {cfg_rel}"
-            loc = index.get((domain, stem), {})
-            m = csynth.get(stem)
-            r = {"design_id": stem, "domain": domain, "suite": "sweep",
+            # legacy_design_id: the id this design had in the R1 sweep (its R1 results/reports are filed under it)
+            legacy = gen.legacy_stem(p) if hasattr(gen, "legacy_stem") else None
+            key = legacy or stem
+            is_new = domain == "llm" or (hasattr(gen, "legacy_stem") and legacy is None)   # no R1/July results exist
+            loc = index.get((domain, key), {})
+            m = csynth.get(key)
+            r = {"design_id": stem, "legacy_design_id": legacy or "", "domain": domain, "suite": "sweep",
                  "data_type": p["data_type"], "config_path": cfg_rel, "config_sha256": cfg_sha}
             for k in PARAMS[domain]:
                 v = p[k]
@@ -170,7 +179,7 @@ def main():
                 r["csynth_status"], r["csynth_fail_reason"] = "ok", ""
                 over = [k for k in DEVICE if float(m[k]) > DEVICE[k]]
                 r["over_capacity"], r["over_capacity_resources"] = bool(over), "+".join(over)
-            elif domain == "llm":
+            elif is_new:
                 r["csynth_status"], r["csynth_fail_reason"] = "pending", "R2 sweep not yet collected"
                 r["over_capacity"] = r["over_capacity_resources"] = ""
             else:
@@ -179,16 +188,18 @@ def main():
             r["csynth_report_archive"] = loc.get("csynth_path_archive", "")
             r["csynth_report_path"] = loc.get("csynth_path", "")
             # impl
-            uf = unfinished.get((domain, stem))
-            if domain in IMPL_DOMAINS_WITH_JULY_SELECTION:
-                r["impl_selected"] = (stem in impl) or (uf is not None)
+            uf = unfinished.get((domain, key))
+            if domain == "llm":
+                r["impl_selected"] = stem in llm_sel
+            elif domain in IMPL_DOMAINS_WITH_JULY_SELECTION and not is_new:
+                r["impl_selected"] = (key in impl) or (uf is not None)
             else:
-                r["impl_selected"] = ""
-            if stem in impl and "impl_path" in loc:
+                r["impl_selected"] = ""          # new design: selection not decided yet
+            if key in impl and "impl_path" in loc:
                 r["impl_status"], r["impl_fail_reason"] = "ok", ""
             elif uf is not None:
                 r["impl_status"], r["impl_fail_reason"] = uf["impl_status"], uf["impl_fail_reason"]
-            elif domain == "llm":
+            elif is_new and r["impl_selected"] in ("", True):
                 r["impl_status"], r["impl_fail_reason"] = "pending", ""
             else:
                 r["impl_status"], r["impl_fail_reason"] = "not_selected", ""

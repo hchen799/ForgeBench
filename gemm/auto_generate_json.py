@@ -24,6 +24,7 @@ def generate_config_text(
     unroll_M, unroll_K, unroll_N,
     order, 
     DATA_TYPE, intermediate_bias, inline, computation_order = "option_1",
+    vm_orders=None,
 ):
     """
     Returns a string of the JSON config in exactly the format requested,
@@ -36,6 +37,13 @@ def generate_config_text(
     
     order_vm = [f"{x}" for x in order if x in ['i', 'j']]
     order_gmm = [f"{x}"  for x in order if x in ['i', 'k', 'j']]
+    # Loop order of each vector-matrix op (vmm/mmv), by position in the option's op list.
+    # Default (vm_orders=None): every vm op uses the i/j subsequence of `order` (original behaviour).
+    # Options 1/4/5 have no gemm op, so `order` is meaningless there; pass vm_orders=("ij"|"ji", "ij"|"ji").
+    if vm_orders is None:
+        order_vm_1 = order_vm_2 = order_vm
+    else:
+        order_vm_1, order_vm_2 = list(vm_orders[0]), list(vm_orders[1])
 
     # 1) Build the lines for brams
     brams = [
@@ -132,14 +140,14 @@ def generate_config_text(
                 "func_name": "vmm",
                 "dims": [M, K],
                 "args": ["BRAM_A", "BRAM_x", "BRAM_xA_bias", "BRAM_xA"],
-                "func_info": [order_vm, [unroll_M, unroll_K], intermediate_bias, inline]
+                "func_info": [order_vm_1, [unroll_M, unroll_K], intermediate_bias, inline]
             }),
 
             ("vmm_2", {
                 "func_name": "vmm",
                 "dims": [K, N],
                 "args": ["BRAM_B", "BRAM_xA", "BRAM_xAB_bias", "BRAM_xAB"],
-                "func_info": [order_vm, [unroll_K, unroll_N], intermediate_bias, inline]
+                "func_info": [order_vm_2, [unroll_K, unroll_N], intermediate_bias, inline]
             }),
 
             ("dot_1", {
@@ -163,7 +171,7 @@ def generate_config_text(
                 "func_name": "vmm",
                 "dims": [M, N],
                 "args": ["BRAM_gemm", "BRAM_x", "BRAM_vmm_bias", "BRAM_vmm"],
-                "func_info": [order_vm, [unroll_M, unroll_N], intermediate_bias, inline]
+                "func_info": [order_vm_1, [unroll_M, unroll_N], intermediate_bias, inline]
             }),
 
             ("dot_1", {
@@ -187,7 +195,7 @@ def generate_config_text(
                 "func_name": "mmv",
                 "dims": [M, N],
                 "args": ["BRAM_gemm", "BRAM_y", "BRAM_mmv_bias", "BRAM_mmv"],
-                "func_info": [order_vm, [unroll_M, unroll_N], intermediate_bias, inline]
+                "func_info": [order_vm_1, [unroll_M, unroll_N], intermediate_bias, inline]
             }),
 
             ("dot_1", {
@@ -203,14 +211,14 @@ def generate_config_text(
                 "func_name": "vmm",
                 "dims": [K, N],
                 "args": ["BRAM_B", "BRAM_y", "BRAM_By_bias", "BRAM_By"],
-                "func_info": [order_vm, [unroll_K, unroll_N], intermediate_bias, inline]
+                "func_info": [order_vm_1, [unroll_K, unroll_N], intermediate_bias, inline]
             }),
 
             ("vmm_2", {
                 "func_name": "vmm",
                 "dims": [M, K],
                 "args": ["BRAM_A", "BRAM_By", "BRAM_ABy_bias", "BRAM_ABy"],
-                "func_info": [order_vm, [unroll_M, unroll_K], intermediate_bias, inline]
+                "func_info": [order_vm_2, [unroll_M, unroll_K], intermediate_bias, inline]
             }),
 
             ("dot_1", {
@@ -232,14 +240,14 @@ def generate_config_text(
                 "func_name": "vmm",
                 "dims": [M, K],
                 "args": ["BRAM_A", "BRAM_x", "BRAM_xt_bias", "BRAM_xt"],
-                "func_info": [order_vm, [unroll_M, unroll_N], intermediate_bias, inline]
+                "func_info": [order_vm_1, [unroll_M, unroll_N], intermediate_bias, inline]
             }),
 
             ("vmm_2", {
                 "func_name": "mmv",
                 "dims": [K, N],
                 "args": ["BRAM_B", "BRAM_y", "BRAM_yt_bias", "BRAM_yt"],
-                "func_info": [order_vm, [unroll_K, unroll_N], intermediate_bias, inline]
+                "func_info": [order_vm_2, [unroll_K, unroll_N], intermediate_bias, inline]
             }),
 
             ("dot_1", {
@@ -312,6 +320,13 @@ f'''{{
     return text
 
 # ---- Sweep specification (single source of truth; imported by manifest/ and paper_artifacts/) ----
+# Loop orders are per-op and only exist where an op has them:
+#   * options 2, 3 contain a gemm op: gemm_order is one of the 6 permutations of (i,j,k); the single
+#     vector-matrix op uses the i/j subsequence of it (so vm_order_1 is derived, vm_order_2 is n/a).
+#   * options 1, 4, 5 contain no gemm op (only vmm/mmv + dot_product): there is no 3-loop order, instead
+#     each of the two vector-matrix ops independently picks "ij" or "ji" (4 combinations).
+# The earlier sweep crossed all 6 permutations with every option, so options 1/4/5 contained 3 byte-identical
+# copies of each distinct design (see docs/revision_r2/CHANGELOG_R2.md).
 SWEEP = {
     "M": [64, 128],
     "K": [64, 128],
@@ -319,35 +334,69 @@ SWEEP = {
     "unroll_M": [1, 8],
     "unroll_K": [1, 8],
     "unroll_N": [1, 8],
-    "order": [x for x in itertools.permutations(["i", "j", "k"])],
     "comp_order": ["option_1", "option_2", "option_3", "option_4", "option_5"],
+    "gemm_order": ["".join(x) for x in itertools.permutations(["i", "j", "k"])],   # options 2, 3
+    "vm_order": ["ij", "ji"],                                                       # per vm op, options 1, 4, 5
     "with_bias": [False, True],
     "inline": [True],
     "data_type": ["ap_fixed<16,5>"],
 }
+GEMM_OPTIONS = ("option_2", "option_3")
+
+
+def _vm_of(order):
+    return "".join(x for x in order if x in "ij")
 
 
 def iter_params():
     """Yield one dict of sweep parameters per design, in generation order."""
-    for (m, k, n, um, uk, un, order, comp_order, bias, inline, dtype) in itertools.product(
-            SWEEP["M"], SWEEP["K"], SWEEP["N"],
-            SWEEP["unroll_M"], SWEEP["unroll_K"], SWEEP["unroll_N"],
-            SWEEP["order"], SWEEP["comp_order"], SWEEP["with_bias"], SWEEP["inline"], SWEEP["data_type"]):
-        yield {"M": m, "K": k, "N": n, "unroll_M": um, "unroll_K": uk, "unroll_N": un,
-               "order": "".join(order), "comp_order": comp_order, "with_bias": bias,
-               "inline": inline, "data_type": dtype}
+    for (m, k, n, um, uk, un, comp, bias, inline, dtype) in itertools.product(
+            SWEEP["M"], SWEEP["K"], SWEEP["N"], SWEEP["unroll_M"], SWEEP["unroll_K"], SWEEP["unroll_N"],
+            SWEEP["comp_order"], SWEEP["with_bias"], SWEEP["inline"], SWEEP["data_type"]):
+        if comp in GEMM_OPTIONS:
+            orders = [(g, _vm_of(g), "") for g in SWEEP["gemm_order"]]
+        else:
+            orders = [("", v1, v2) for v1 in SWEEP["vm_order"] for v2 in SWEEP["vm_order"]]
+        for (g, v1, v2) in orders:
+            yield {"M": m, "K": k, "N": n, "unroll_M": um, "unroll_K": uk, "unroll_N": un,
+                   "comp_order": comp, "gemm_order": g, "vm_order_1": v1, "vm_order_2": v2,
+                   "with_bias": bias, "inline": inline, "data_type": dtype}
 
 
 def config_stem(p):
     dtype = p["data_type"].replace('<', '_').replace('>', '_').replace(',', '_')
     return (f"GEMM_config_M{p['M']}_K{p['K']}_N{p['N']}_UM{p['unroll_M']}_UK{p['unroll_K']}_UN{p['unroll_N']}_"
-            f"{p['order']}_BIAS_{p['with_bias']}_INLINE_{p['inline']}_COMPORDER_{p['comp_order']}_{dtype}")
+            f"GORD{p['gemm_order'] or 'na'}_VM1{p['vm_order_1']}_VM2{p['vm_order_2'] or 'na'}_"
+            f"BIAS_{p['with_bias']}_INLINE_{p['inline']}_COMPORDER_{p['comp_order']}_{dtype}")
+
+
+def legacy_stem(p):
+    """Design id this design had in the original (R1) sweep, or None if it did not exist there.
+
+    R1 crossed 6 permutations with every option; for options 1/4/5 only the i/j subsequence mattered, so
+    a design whose two vm orders agree has the same source as the R1 designs with the matching permutation
+    (R1 'ijk' for ij/ij and 'jik' for ji/ji were the first-generated copies). Mixed (ij,ji) designs are new.
+    """
+    if p["comp_order"] in GEMM_OPTIONS:
+        order = p["gemm_order"]
+    elif p["vm_order_1"] == p["vm_order_2"]:
+        order = {"ij": "ijk", "ji": "jik"}[p["vm_order_1"]]
+    else:
+        return None
+    dtype = p["data_type"].replace('<', '_').replace('>', '_').replace(',', '_')
+    return (f"GEMM_config_M{p['M']}_K{p['K']}_N{p['N']}_UM{p['unroll_M']}_UK{p['unroll_K']}_UN{p['unroll_N']}_"
+            f"{order}_BIAS_{p['with_bias']}_INLINE_{p['inline']}_COMPORDER_{p['comp_order']}_{dtype}")
 
 
 def build_config_text(p):
+    if p["comp_order"] in GEMM_OPTIONS:
+        return generate_config_text(
+            p["M"], p["K"], p["N"], p["unroll_M"], p["unroll_K"], p["unroll_N"],
+            tuple(p["gemm_order"]), p["data_type"], p["with_bias"], p["inline"], p["comp_order"])
     return generate_config_text(
         p["M"], p["K"], p["N"], p["unroll_M"], p["unroll_K"], p["unroll_N"],
-        tuple(p["order"]), p["data_type"], p["with_bias"], p["inline"], p["comp_order"])
+        ("i", "j", "k"), p["data_type"], p["with_bias"], p["inline"], p["comp_order"],
+        vm_orders=(p["vm_order_1"], p["vm_order_2"]))
 
 
 def main():

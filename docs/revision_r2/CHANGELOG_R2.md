@@ -28,3 +28,28 @@ Files: `llm/auto_generate_json.py`, `llm/generate_code.py`, `llm/grouped_mha_rop
 (`analysis/results_impl/metrics_llm.csv`, LLM share of `impl1000_reports_lean`), every figure/table that
 uses them (Figs 6–8, Table 5, counts in §4.2), and any LLM entry in the verification whole-design runs.
 GEMM and conv results are unaffected.
+
+## 2026-10-01 — GEMM sweep: per-op loop orders (set up, NOT yet run)
+
+Files: `gemm/auto_generate_json.py` (`SWEEP`, `iter_params`, `config_stem`, `legacy_stem`, `generate_config_text(vm_orders=...)`).
+
+The R1 sweep crossed all 6 loop-order permutations of (i,j,k) with every computation option. Only options 2
+and 3 contain a `gemm` op (the only op that uses the 3-loop order); options 1, 4, 5 contain only
+`vmm`/`mmv` + `dot_product`, which use just the i/j subsequence of the order. So for options 1/4/5 the 6
+permutations collapsed to 2 distinct designs: 1,536 of 3,840 designs were byte-identical copies
+(768 groups of 3, identical csynth metrics in all 768 groups).
+
+New sweep (3,072 designs): options 2/3 keep the 6 gemm orders (their single vm op's order is derived, as
+before); options 1/4/5 let each of their two vm ops independently pick `ij` or `ji` (4 combinations; ij vs ji
+changes csynth results in 88–100% of matched pairs). Sweep total 3,072 + 5,184 + 3,888 = 12,144.
+
+* New names: `..._UN{u}_GORD{ijk|na}_VM1{ij|ji}_VM2{ij|ji|na}_BIAS_...`. Manifest column `legacy_design_id`
+  gives the R1 id. 2,304 designs map to R1 designs and generate byte-identical configs (checked: 0 differences
+  against the R1 config files); 768 are new (the mixed (ij,ji)/(ji,ij) combinations of options 1/4/5).
+* The 1,536 R1 designs that no longer exist are exactly the manifest's former `duplicate_of` rows.
+* **To run (not yet run):** csynth of the 768 new designs (`manifest/designs/gemm.csv`, `csynth_status=pending`).
+* **Impl:** the July GEMM impl sample (820) covers 628 distinct sources: 500 are kept designs directly, 128
+  more kept designs have an impl result only through a byte-identical R1 copy (not adopted automatically).
+  No impl selection has been made for the 768 new designs.
+* Stale: nothing. Existing GEMM csynth/impl results stay valid for the 2,304 mapped designs; the metrics CSVs
+  are still keyed by R1 ids until the 768 new results are collected and re-keyed.
