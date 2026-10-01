@@ -4,6 +4,7 @@
 # ]
 # ///
 
+import argparse
 import os
 import xml.etree.ElementTree as ET
 import pandas as pd
@@ -13,6 +14,11 @@ OUTPUT_CSV = os.path.join(BASE_DIR, "modularization_results.csv")
 OUTPUT_TEX = os.path.join(BASE_DIR, "modularization_table.tex")
 
 REPORT_REL = "project_1/solution1/syn/report"
+
+# By default reports are read in place (<category>/hls_files/<project>/project_1/...), as in the R1 run.
+# --reports-root DIR reads the lean layout written by analysis/run_prebuilt.py instead:
+# DIR/<category>/<project>/project_1/...
+REPORTS_ROOT = None
 
 
 def parse_average_utilization(xml_path):
@@ -47,12 +53,18 @@ def parse_average_utilization(xml_path):
     return ((dsp / avail_dsp) * 100 + (lut / avail_lut) * 100) / 2
 
 
+def _report_dir(category, project):
+    if REPORTS_ROOT:
+        return os.path.join(REPORTS_ROOT, category, project, REPORT_REL)
+    return os.path.join(BASE_DIR, category, "hls_files", project, REPORT_REL)
+
+
 def project_xml(category, project):
-    return os.path.join(BASE_DIR, category, "hls_files", project, REPORT_REL, "csynth.xml")
+    return os.path.join(_report_dir(category, project), "csynth.xml")
 
 
 def function_xml(category, project, function):
-    return os.path.join(BASE_DIR, category, "hls_files", project, REPORT_REL, f"{function}_csynth.xml")
+    return os.path.join(_report_dir(category, project), f"{function}_csynth.xml")
 
 
 # Row-by-row description of the table. shared is a list of function names whose
@@ -269,6 +281,17 @@ def render_latex(rows):
 
 
 def main():
+    global REPORTS_ROOT, OUTPUT_CSV, OUTPUT_TEX
+    ap = argparse.ArgumentParser(description="Recompute the modularization table (Table 7) from csynth reports")
+    ap.add_argument("--reports-root", help="lean report root written by analysis/run_prebuilt.py (default: read in place)")
+    ap.add_argument("--out", help="directory for modularization_results.csv/.tex (default: this directory)")
+    args = ap.parse_args()
+    if args.reports_root:
+        REPORTS_ROOT = os.path.abspath(args.reports_root)
+    if args.out:
+        os.makedirs(args.out, exist_ok=True)
+        OUTPUT_CSV = os.path.join(args.out, "modularization_results.csv")
+        OUTPUT_TEX = os.path.join(args.out, "modularization_table.tex")
     rows = [compute_row(r) for r in ROWS]
 
     df = pd.DataFrame(rows)
