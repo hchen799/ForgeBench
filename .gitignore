@@ -60,3 +60,4 @@ tmux-*.log
 
 # sweep runs (generated designs, lean outputs, logs)
 _sweeps/
+verification/_selfcheck_ops/
