@@ -13,31 +13,13 @@ OUT="${1:-release/_bundle}"
 CKPT_DIR="${CKPT_DIR:-checkpoints/20260720}"
 MISSING=()
 
-rm -rf "$OUT"; mkdir -p "$OUT"/{configs,reports,full_model,logs}
+rm -rf "$OUT"; mkdir -p "$OUT"/{full_model,logs}
 
 have() { [ -e "$1" ] || { MISSING+=("$1"); return 1; }; }
 
-# (i) all sweep JSON configs, one tarball per domain (gitignored */auto_generated_configs)
-for d in gemm conv llm; do
-  if have "$d/auto_generated_configs"; then
-    tar -czf "$OUT/configs/sweep_configs_$d.tar.gz" -C "$d" auto_generated_configs
-  fi
-done
-
-# (ii)+(iii) lean csynth / impl report archives. Split parts are re-joined so the bundle
-# holds whole tarballs (Zenodo allows files up to 50 GB).
-for base in csynth_gemm_lean csynth_conv_lean; do   # July archives: gemm/conv designs (July llm results are stale and not shipped)
-  if [ -f "$CKPT_DIR/$base.tar.gz" ]; then cp "$CKPT_DIR/$base.tar.gz" "$OUT/reports/"
-  elif compgen -G "$CKPT_DIR/${base}_part_*" >/dev/null; then cat "$CKPT_DIR/${base}"_part_* > "$OUT/reports/$base.tar.gz"
-  else MISSING+=("$CKPT_DIR/$base[.tar.gz|_part_*]"); fi
-done
-# R2 archives (checkpoints/r2): conv rerun, LLM csynth+impl, GEMM new designs, modular csynth
-for f in csynth_conv_rerun_lean csynth_llm_lean impl_llm_lean csynth_gemm_new_lean csynth_modular_lean; do
-  have "checkpoints/r2/$f.tar.gz" && cp "checkpoints/r2/$f.tar.gz" "$OUT/reports/"
-done
-for f in impl1000_reports_lean.tar.gz impl60_reports_lean.tar.gz; do
-  have "$CKPT_DIR/$f" && cp "$CKPT_DIR/$f" "$OUT/reports/"
-done
+# (i)-(iii) configs/ and reports/ trees as the manifest paths describe them (regenerated configs + lean csynth/impl/modular
+# reports from the July and R2 archives named in manifest/_common.py), one tarball per domain, each with an inner SHA256SUMS.
+python3 release/assemble_reports.py --out "$OUT" && rm -rf "$OUT/_tree"
 
 # (iv) full-model configs + reports (Table 3): populated once workstream K lands.
 # scale_csynth_r1_lean: July csynth reports of ResNet-18/34 (plain+tiled), saved before the build trees were deleted.

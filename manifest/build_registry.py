@@ -114,17 +114,16 @@ def build_ops():
             op = ops[0][1]
             fn = op["func_name"]
             rows.append({
-                "design_id": f"ops/{domain}/{stem}", "domain": domain, "suite": "ops",
+                "design_id": f"ops/{domain}/{stem}", "domain": domain,
                 "operator": stem.split("__", 1)[0], "paper_table2_row": TABLE2_ROW[stem.split("__", 1)[0]], "variant": stem.split("__", 1)[1] if "__" in stem else "",
                 "op_func": fn, "op_dims": compact(op.get("dims", [])), "op_func_info": compact(op.get("func_info", [])),
                 "template": template_of(op),
                 "generator_function": f"{domain}/generate_code.py:{gen.get(fn, '')}",
                 "golden_function": f"verification/domains/{domain}.py:{gold.get(fn, '')}",
-                "data_type": cfg.get("data_type", ""), "input_range": compact(cfg.get("input_range", "")),
-                "config_path": rel(path), "config_sha256": sha256_file(path),
+                "input_range": compact(cfg.get("input_range", "")), "config_path": rel(path),
             })
-    cols = ["design_id", "domain", "suite", "operator", "paper_table2_row", "variant", "op_func", "op_dims", "op_func_info", "template",
-            "generator_function", "golden_function", "data_type", "input_range", "config_path", "config_sha256"]
+    cols = ["design_id", "domain", "operator", "paper_table2_row", "variant", "op_func", "op_dims", "op_func_info", "template",
+            "generator_function", "golden_function", "input_range", "config_path"]
     return cols, rows
 
 
@@ -212,22 +211,23 @@ def build_modular():
                 construction = "manual"
             else:
                 construction = "generated (config not in repo)"
+            did = f"modular/{cat}/{name}"
+            st = (status.get(did, {}).get("status") or "")
+            ok = st == "ok"
             designs.append({
-                "design_id": f"modular/{cat}/{name}", "domain": cat, "suite": "modular", "name": name, "role": r_,
+                "design_id": did, "domain": cat, "role": r_,
                 "test_cases": ";".join(in_cases.get((cat, name), [])),
                 "construction": construction,
-                "config_path": rel(cfg) if has_cfg else "", "config_sha256": sha256_file(cfg) if has_cfg else "",
-                "hls_dir": rel(ddir), "source_sha256": sha256_file(os.path.join(ddir, "top.cpp")),
+                "config_path": rel(cfg) if has_cfg else "", "design_path": rel(ddir),
                 "has_testbench": "tb_top.cpp" in files,
                 "has_dram_inputs": any(f.startswith(("DRAM_", "BRAM_")) and f.endswith(".txt") for f in files),
-                "csynth_status": (status.get(f"modular/{cat}/{name}", {}).get("status") or "not_run"),
-                "csynth_note": status.get(f"modular/{cat}/{name}", {}).get("notes", ""),
-                "csynth_report_archive": MODULAR_ARCHIVE if f"modular/{cat}/{name}" in reports else "",
-                "csynth_report_path": reports.get(f"modular/{cat}/{name}", ""),
+                "generated": "YES",
+                "csynth": "YES" if ok else ("FAIL" if st else "NO"),
+                "csynth_report": f"reports/modular/{cat}/{name}/csynth.xml" if ok and did in reports else "",
+                "fail_reason": "" if ok or not st else f"csynth: {st}" + (f" ({status[did].get('notes')})" if status[did].get("notes") else ""),
             })
-    dcols = ["design_id", "domain", "suite", "name", "role", "test_cases", "construction", "config_path", "config_sha256",
-             "hls_dir", "source_sha256", "has_testbench", "has_dram_inputs",
-             "csynth_status", "csynth_note", "csynth_report_archive", "csynth_report_path"]
+    dcols = ["design_id", "domain", "role", "test_cases", "construction", "config_path", "design_path", "has_testbench",
+             "has_dram_inputs", "generated", "csynth", "csynth_report", "fail_reason"]
     ccols = ["case_id", "suite_name", "domain", "case_name", "reuse_types", "programs", "modularized_design", "shared_functions"]
     return dcols, designs, ccols, cases
 
