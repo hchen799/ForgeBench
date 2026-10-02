@@ -26,12 +26,15 @@ done
 
 # (ii)+(iii) lean csynth / impl report archives. Split parts are re-joined so the bundle
 # holds whole tarballs (Zenodo allows files up to 50 GB).
-for base in csynth_gemm_lean csynth_conv_lean csynth_llm_lean; do
+for base in csynth_gemm_lean csynth_conv_lean; do   # July archives: gemm/conv designs (July llm results are stale and not shipped)
   if [ -f "$CKPT_DIR/$base.tar.gz" ]; then cp "$CKPT_DIR/$base.tar.gz" "$OUT/reports/"
   elif compgen -G "$CKPT_DIR/${base}_part_*" >/dev/null; then cat "$CKPT_DIR/${base}"_part_* > "$OUT/reports/$base.tar.gz"
   else MISSING+=("$CKPT_DIR/$base[.tar.gz|_part_*]"); fi
 done
-have checkpoints/r2/csynth_conv_rerun_lean.tar.gz && cp checkpoints/r2/csynth_conv_rerun_lean.tar.gz "$OUT/reports/"
+# R2 archives (checkpoints/r2): conv rerun, LLM csynth+impl, GEMM new designs, modular csynth
+for f in csynth_conv_rerun_lean csynth_llm_lean impl_llm_lean csynth_gemm_new_lean csynth_modular_lean; do
+  have "checkpoints/r2/$f.tar.gz" && cp "checkpoints/r2/$f.tar.gz" "$OUT/reports/"
+done
 for f in impl1000_reports_lean.tar.gz impl60_reports_lean.tar.gz; do
   have "$CKPT_DIR/$f" && cp "$CKPT_DIR/$f" "$OUT/reports/"
 done

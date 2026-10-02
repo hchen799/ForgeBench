@@ -1,0 +1,2 @@
+domain,design,impl_status,impl_fail_reason,log
+llm,ATTN_config_S16_D256_H16_HD16_G4_rms_norm_ROPETrue_UHD2_ap_fixed_16_5_,fail,Vivado 2024.1.2 segfault in opt_design stage 'Preparing netlist for logic optimization' (vitis_hls rc=1); reproduced on retry,llm__ATTN_config_S16_D256_H16_HD16_G4_rms_norm_ROPETrue_UHD2_ap_fixed_16_5_.log.gz

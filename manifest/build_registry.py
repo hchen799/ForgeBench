@@ -141,7 +141,38 @@ def slug(text):
     return re.sub(r"[^a-z0-9]+", "_", t.lower()).strip("_")
 
 
+MODULAR_ARCHIVE = "reports/csynth_modular_lean.tar.gz"
+MODULAR_ARCHIVE_LOCAL = os.path.join("checkpoints", "r2", "csynth_modular_lean.tar.gz")
+MODULAR_STATUS = os.path.join("manifest", "evidence", "r2_runs", "modular_csynth_status.csv")
+
+
+def modular_reports():
+    """{design_id: csynth.xml member path} from the modular lean archive (empty if not packaged yet)."""
+    import tarfile
+    path = os.path.join(REPO, MODULAR_ARCHIVE_LOCAL)
+    out = {}
+    if os.path.isfile(path):
+        with tarfile.open(path, "r:gz") as tf:
+            for m in tf.getnames():
+                if m.endswith("project_1/solution1/syn/report/csynth.xml"):
+                    parts = m.split("/")                      # modular/<domain>/<name>/project_1/...
+                    out[f"modular/{parts[1]}/{parts[2]}"] = m
+    return out
+
+
+def modular_status():
+    path = os.path.join(REPO, MODULAR_STATUS)
+    if not os.path.isfile(path):
+        return {}
+    rows = {}
+    with open(path, newline="") as f:
+        for r in csv.DictReader(f):
+            rows[r["design_id"]] = r                          # later rows (retries) win
+    return rows
+
+
 def build_modular():
+    reports, status = modular_reports(), modular_status()
     cases = []
     in_cases = {}                                     # (category, design dir) -> [case_id]
     role = {}
@@ -189,10 +220,14 @@ def build_modular():
                 "hls_dir": rel(ddir), "source_sha256": sha256_file(os.path.join(ddir, "top.cpp")),
                 "has_testbench": "tb_top.cpp" in files,
                 "has_dram_inputs": any(f.startswith(("DRAM_", "BRAM_")) and f.endswith(".txt") for f in files),
-                "csynth_report": "missing" if not os.path.isfile(os.path.join(ddir, "project_1", "solution1", "syn", "report", "csynth.xml")) else "present",
+                "csynth_status": (status.get(f"modular/{cat}/{name}", {}).get("status") or "not_run"),
+                "csynth_note": status.get(f"modular/{cat}/{name}", {}).get("notes", ""),
+                "csynth_report_archive": MODULAR_ARCHIVE if f"modular/{cat}/{name}" in reports else "",
+                "csynth_report_path": reports.get(f"modular/{cat}/{name}", ""),
             })
     dcols = ["design_id", "domain", "suite", "name", "role", "test_cases", "construction", "config_path", "config_sha256",
-             "hls_dir", "source_sha256", "has_testbench", "has_dram_inputs", "csynth_report"]
+             "hls_dir", "source_sha256", "has_testbench", "has_dram_inputs",
+             "csynth_status", "csynth_note", "csynth_report_archive", "csynth_report_path"]
     ccols = ["case_id", "suite_name", "domain", "case_name", "reuse_types", "programs", "modularized_design", "shared_functions"]
     return dcols, designs, ccols, cases
 

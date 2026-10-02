@@ -45,10 +45,14 @@ SOURCES = [
     dict(kind="csynth", domain="conv", name="csynth_conv_lean.tar.gz", local="checkpoints/20260720/csynth_conv_lean.tar.gz"),
     dict(kind="csynth", domain="conv", name="csynth_conv_rerun_lean.tar.gz", local="checkpoints/r2/csynth_conv_rerun_lean.tar.gz"),
     dict(kind="impl", domain=None, name="impl1000_reports_lean.tar.gz", local="checkpoints/20260720/impl1000_reports_lean.tar.gz"),
-    # LLM sources are added once the R2 sweeps are packaged (July LLM results are stale: dropout/shape fix).
+    # R2 LLM sweeps (July LLM results are stale: dropout removed, weight-shape fix, new knob; July LLM members of
+    # impl1000_reports_lean.tar.gz carry old design ids and never match).
+    dict(kind="csynth", domain="llm", name="csynth_llm_lean.tar.gz", local="checkpoints/r2/csynth_llm_lean.tar.gz"),
+    dict(kind="impl", domain=None, name="impl_llm_lean.tar.gz", local="checkpoints/r2/impl_llm_lean.tar.gz"),
 ]
 # July impl selections: gemm/conv designs staged for impl are the finished rows + the unfinished evidence rows.
 IMPL_DOMAINS_WITH_JULY_SELECTION = {"gemm", "conv"}
+IMPL_DOMAINS_WITH_RESULTS = {"gemm", "conv", "llm"}
 
 CSYNTH_TAIL = "project_1/solution1/syn/report/csynth.xml"
 IMPL_TAIL = "project_1/solution1/impl/report/verilog/export_impl.xml"
@@ -121,19 +125,20 @@ def main():
                     slot[k] = v
                     if k.endswith("path"):
                         slot[k + "_archive"] = "reports/" + src["name"]
-    unfinished = {}
-    ev = os.path.join(REPO, "manifest", "evidence", "impl_r1_unfinished", "unfinished_impl_r1.csv")
-    if os.path.isfile(ev):
-        with open(ev, newline="") as f:
-            for r in csv.DictReader(f):
-                unfinished[(r["domain"], r["design"])] = r
+    unfinished = {}                 # (domain, design) -> evidence row, from every manifest/evidence/**/unfinished_impl_*.csv
+    ev_root = os.path.join(REPO, "manifest", "evidence")
+    for root, _, files in sorted(os.walk(ev_root)):
+        for fn in sorted(files):
+            if fn.startswith("unfinished_impl_") and fn.endswith(".csv"):
+                with open(os.path.join(root, fn), newline="") as f:
+                    for r in csv.DictReader(f):
+                        unfinished[(r["domain"], r["design"])] = r
 
     for domain in a.domains:
         gen = load_generator(domain)
-        csynth = read_csv(os.path.join(REPO, "analysis", "results_csynth", f"metrics_{domain}.csv")) \
-            if domain != "llm" else {}                  # July LLM results are stale (see CHANGELOG_R2)
+        csynth = read_csv(os.path.join(REPO, "analysis", "results_csynth", f"metrics_{domain}.csv"))
         impl = read_csv(os.path.join(REPO, "analysis", "results_impl", f"metrics_{domain}.csv")) \
-            if domain in IMPL_DOMAINS_WITH_JULY_SELECTION else {}
+            if domain in IMPL_DOMAINS_WITH_RESULTS else {}
         llm_sel = None
         if domain == "llm":
             with open(os.path.join(REPO, "manifest", "llm_impl_selection.csv"), newline="") as f:
@@ -156,7 +161,7 @@ def main():
             # legacy_design_id: the id this design had in the R1 sweep (its R1 results/reports are filed under it)
             legacy = gen.legacy_stem(p) if hasattr(gen, "legacy_stem") else None
             key = legacy or stem
-            is_new = domain == "llm" or (hasattr(gen, "legacy_stem") and legacy is None)   # no R1/July results exist
+            is_new = hasattr(gen, "legacy_stem") and legacy is None      # gemm design that did not exist in R1
             loc = index.get((domain, key), {})
             m = csynth.get(key)
             r = {"design_id": stem, "legacy_design_id": legacy or "", "domain": domain, "suite": "sweep",
@@ -179,7 +184,7 @@ def main():
                 r["csynth_status"], r["csynth_fail_reason"] = "ok", ""
                 over = [k for k in DEVICE if float(m[k]) > DEVICE[k]]
                 r["over_capacity"], r["over_capacity_resources"] = bool(over), "+".join(over)
-            elif is_new:
+            elif is_new or domain == "llm":
                 r["csynth_status"], r["csynth_fail_reason"] = "pending", "R2 sweep not yet collected"
                 r["over_capacity"] = r["over_capacity_resources"] = ""
             else:
@@ -199,7 +204,7 @@ def main():
                 r["impl_status"], r["impl_fail_reason"] = "ok", ""
             elif uf is not None:
                 r["impl_status"], r["impl_fail_reason"] = uf["impl_status"], uf["impl_fail_reason"]
-            elif is_new and r["impl_selected"] in ("", True):
+            elif (is_new or domain == "llm") and r["impl_selected"] in ("", True):
                 r["impl_status"], r["impl_fail_reason"] = "pending", ""
             else:
                 r["impl_status"], r["impl_fail_reason"] = "not_selected", ""
