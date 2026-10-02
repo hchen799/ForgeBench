@@ -55,3 +55,14 @@ changes csynth results in 88–100% of matched pairs). Sweep total 3,072 + 5,184
   are still keyed by R1 ids until the 768 new results are collected and re-keyed.
 * **Decision (2026-10-01):** after the LLM sweeps finish, GEMM impl is re-sampled and re-run (the July sample no
   longer matches the 3,072-design sweep).
+
+## 2026-10-02 — R2 csynth complete for all sweeps
+* GEMM: the 768 new designs synthesized (768/768 ok, 21 min at 80 jobs). `analysis/results_csynth/metrics_gemm.csv` is now keyed
+  by the new design ids: 2,304 July rows re-keyed (R1 ids -> new ids; July values unchanged) + 768 new rows; the 1,536 rows of
+  R1 duplicate designs were dropped from it (they remain in git history and in `checkpoints/20260720/csynth_gemm_lean.tar.gz`).
+* LLM: csynth 3,888/3,888 ok; impl 999 ok + 1 Vivado 2024.1.2 opt_design segfault (reproduced on retry). 96 of 3,888 exceed ZCU102 BRAM
+  (weight-shape fix enlarged the weight BRAMs).
+* Modular: csynth 38/38 ok after rerunning `gemm/diff_orders_module` with an 8 h limit (it took 7,921 s). Table 7 recomputed from the
+  new reports: 11 of 12 rows identical to R1; 'DNN Blocks' P2 (conv_block_op2) is 43.82 vs R1 21.83 (restoring the commented-out bias
+  array_partition pragma does not change it: 43.95), so Total_Before 108.49 -> 130.48 and % Change -20.25 -> -33.69. Open.
+* Still stale: GEMM impl (July sample no longer matches the sweep; re-sample + re-run pending).

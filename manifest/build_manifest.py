@@ -44,6 +44,7 @@ SOURCES = [
     dict(kind="csynth", domain="gemm", name="csynth_gemm_lean.tar.gz", local="checkpoints/20260720/csynth_gemm_lean.tar.gz"),
     dict(kind="csynth", domain="conv", name="csynth_conv_lean.tar.gz", local="checkpoints/20260720/csynth_conv_lean.tar.gz"),
     dict(kind="csynth", domain="conv", name="csynth_conv_rerun_lean.tar.gz", local="checkpoints/r2/csynth_conv_rerun_lean.tar.gz"),
+    dict(kind="csynth", domain="gemm", name="csynth_gemm_new_lean.tar.gz", local="checkpoints/r2/csynth_gemm_new_lean.tar.gz"),   # R2: the 768 new designs
     dict(kind="impl", domain=None, name="impl1000_reports_lean.tar.gz", local="checkpoints/20260720/impl1000_reports_lean.tar.gz"),
     # R2 LLM sweeps (July LLM results are stale: dropout removed, weight-shape fix, new knob; July LLM members of
     # impl1000_reports_lean.tar.gz carry old design ids and never match).
@@ -163,7 +164,7 @@ def main():
             key = legacy or stem
             is_new = hasattr(gen, "legacy_stem") and legacy is None      # gemm design that did not exist in R1
             loc = index.get((domain, key), {})
-            m = csynth.get(key)
+            m = csynth.get(stem)           # csynth metrics are keyed by current design id (July rows were re-keyed)
             r = {"design_id": stem, "legacy_design_id": legacy or "", "domain": domain, "suite": "sweep",
                  "data_type": p["data_type"], "config_path": cfg_rel, "config_sha256": cfg_sha}
             for k in PARAMS[domain]:
