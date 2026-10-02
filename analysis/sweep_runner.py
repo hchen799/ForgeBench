@@ -65,7 +65,9 @@ def run_one(design, cfg_path, a, tmpl_q):
     try:
         gen = ("import gen_configs; gen_configs.run_hls_flow("
                f"{run_cfg!r}, base_dir={os.path.abspath(a.work_dir)!r}, task={TASKS[a.flow]!r})")
-        g = subprocess.run([sys.executable, "-c", gen], cwd=tmpl, capture_output=True, text=True)
+        # gemm/gen_configs.py imports the repo's `backends` package, which the per-thread generator copy can't see
+        env = dict(os.environ, PYTHONPATH=REPO_ROOT + os.pathsep + os.environ.get("PYTHONPATH", ""))
+        g = subprocess.run([sys.executable, "-c", gen], cwd=tmpl, capture_output=True, text=True, env=env)
         if g.returncode != 0 or not os.path.isfile(os.path.join(work, "run_hls.tcl")):
             return "gen_fail", g.returncode, time.time() - t0
     finally:
