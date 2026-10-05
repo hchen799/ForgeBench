@@ -1597,7 +1597,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     code_lines.append("")
 
     # Define data type.
-    code_lines.append(f"typedef {data_type} data_t;")
+    code_lines.append(f"typedef {_backend().type_decl(data_type)} data_t;")
     code_lines.append("")
 
     # Declare DRAM arrays.

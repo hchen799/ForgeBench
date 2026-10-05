@@ -22,7 +22,7 @@ Target is Nangate 45nm, matching the exploratory `legacy/catapult_exploratory.tc
 from backends.base import (
     ToolBackend,
     effective_pragma_factor,
-    normalize_data_type,
+    normalize_data_type, parse_fixed,
     register,
 )
 
@@ -121,11 +121,13 @@ class CatapultBackend(ToolBackend):
     # -- types -------------------------------------------------------------
 
     def type_decl(self, data_type):
-        kind, a, b = normalize_data_type(data_type)
-        if kind != "fixed":
-            return a
-        # Signed, truncate, wrap — matches ap_fixed<W,I> defaults (AP_TRN/AP_WRAP).
-        return f"ac_fixed<{a},{b},true,AC_TRN,AC_WRAP>"
+        fx = parse_fixed(data_type)
+        if fx is None:
+            return normalize_data_type(data_type)[1]
+        # Signed. A tool spelling without modes (ap_fixed<W,I>) keeps truncate + wrap, matching the ap_fixed defaults;
+        # a generic fixed<W,I> means round + saturate (see backends.base.parse_fixed).
+        w, i, q, o = fx
+        return f"ac_fixed<{w},{i},true,AC_{q.upper()},AC_{o.upper()}>"
 
     def type_suffix(self, data_type):
         """Tool-neutral suffix.
@@ -134,8 +136,12 @@ class CatapultBackend(ToolBackend):
         mode into every function name (`ac_fixed_16_5_true_AC_TRN_AC_WRAP_`)
         would be unreadable, and these names only need to be unique per design.
         """
-        kind, a, b = normalize_data_type(data_type)
-        return f"fixed_{a}_{b}_" if kind == "fixed" else a
+        fx = parse_fixed(data_type)
+        if fx is None:
+            return normalize_data_type(data_type)[1]
+        w, i, q, o = fx
+        mode = "" if (q, o) == ("trn", "wrap") else f"{q}_{o}_"      # default modes keep the historical suffix
+        return f"fixed_{w}_{i}_{mode}"
 
     # -- includes ----------------------------------------------------------
 

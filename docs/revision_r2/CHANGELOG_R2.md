@@ -85,3 +85,13 @@ Files: `gemm/2D_activations_template.cpp`, `llm/activation_template.cpp`, `{gemm
    with `float temp; fscanf("%f")`; neither can resolve wide fixed-point types (`<32,10>` step 2^-22 ~ 2.4e-7), so fixed-point comparisons through
    the stock testbench lost precision. Now: inputs read as `double` (`%lf`), outputs dumped as `(double)` with `%.17g` (exact for any ap_fixed up to 53 bits
    and for float). Testbench only: `tb_top.cpp` of every design changes (279 of 279 sampled), the synthesized files do not, so no csynth/impl result is affected.
+
+## 2026-10-05 — generic fixed-point spelling with explicit rounding/overflow modes (mechanism only; sweep results unchanged)
+Files: `backends/{base,vitis,catapult}.py` (`parse_fixed`), `{conv,llm}/gen_configs.py` (lower the type at config load),
+`gemm/generate_code.py` (testbench typedef goes through the backend), `verification/tests/test_data_types.py`.
+* New generic spelling `fixed<W,I[,quant[,overflow]]>` (quant: trn|rnd, overflow: wrap|sat). A generic `fixed<W,I>` means **round-to-nearest +
+  saturate** (`AP_RND, AP_SAT` / `AC_RND, AC_SAT`), consistent with the full-model designs. Unsupported modes raise.
+* Raw tool spellings are untouched: `ap_*` strings pass through the Vitis backend verbatim, and mode-less `ap_fixed<W,I>` keeps the tool defaults
+  (truncate + wrap; Catapult `AC_TRN, AC_WRAP`). Regression check: 0 of 279 sampled designs changed `top.cpp`/`top.h`/`run_hls.tcl`.
+* Not yet applied to the sweeps: the three `SWEEP` dicts still carry `ap_fixed<16,5>` (truncate + wrap), so existing csynth/impl results remain
+  valid for what they are. Switching the sweeps to the generic default changes every design's arithmetic and requires re-running everything.

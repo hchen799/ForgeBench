@@ -12,7 +12,7 @@ Two quirks are preserved on purpose:
 """
 import re
 
-from backends.base import ToolBackend, normalize_data_type, register
+from backends.base import ToolBackend, normalize_data_type, parse_fixed, register
 
 
 def replace_data_type(data_type):
@@ -36,8 +36,11 @@ class VitisBackend(ToolBackend):
         # untouched so spacing (`ap_fixed<16, 5>`) survives verbatim.
         if data_type.strip().startswith("ap_"):
             return data_type
-        kind, a, b = normalize_data_type(data_type)
-        return f"ap_fixed<{a}, {b}>" if kind == "fixed" else a
+        fx = parse_fixed(data_type)
+        if fx:
+            w, i, q, o = fx
+            return f"ap_fixed<{w}, {i}, AP_{q.upper()}, AP_{o.upper()}>"
+        return normalize_data_type(data_type)[1]
 
     def type_suffix(self, data_type):
         return replace_data_type(self.type_decl(data_type))

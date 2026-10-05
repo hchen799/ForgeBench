@@ -1,6 +1,10 @@
 import os
 import json
 import shutil
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import backends
 from generate_code import (
     generate_top_function,
     generate_top_h,
@@ -27,7 +31,8 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     drams = config["drams"]
     ops = config["ops"]
     output_dram_names = config["output_dram_names"]
-    data_type = config.get("data_type", "ap_fixed<16, 5>")
+    # A generic `fixed<W,I[,rnd,sat]>` spelling is lowered to the tool's C++ type; raw `ap_*` / `float` strings pass through unchanged.
+    data_type = backends.set_current(config.get("tool", "vitis")).type_decl(config.get("data_type", "ap_fixed<16, 5>"))
     top_func_name = config.get("top_func_name", "top")
     fpga_name = config.get("FPGA_name", FPGA_name)
     clock= config.get("clock_period", clock_period)

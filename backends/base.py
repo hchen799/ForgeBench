@@ -38,6 +38,44 @@ def get_backend(name):
 _FIXED_RE = re.compile(r"^\s*(?:ap_|ac_)?fixed\s*<\s*(\d+)\s*,\s*(-?\d+)\s*(?:,[^>]*)?>\s*$")
 
 
+# ---- fixed-point format with explicit quantization / overflow modes -------------------------------------------------
+# Generic spelling:  fixed<W,I>  fixed<W,I,rnd>  fixed<W,I,rnd,sat>   (modes: trn|rnd, wrap|sat; case-insensitive)
+# Tool spellings:    ap_fixed<W,I[,AP_RND[,AP_SAT]]>   ac_fixed<W,I,true,AC_RND,AC_SAT>
+# Defaults: a *generic* `fixed<W,I>` means round-to-nearest + saturate (the arithmetic ForgeBench standardizes on);
+# a tool spelling without modes keeps that tool's own defaults (truncate + wrap), so existing configs are unchanged.
+GENERIC_DEFAULT_MODES = ("rnd", "sat")
+TOOL_DEFAULT_MODES = ("trn", "wrap")
+_MODE_Q = {"trn": "trn", "ap_trn": "trn", "ac_trn": "trn", "rnd": "rnd", "ap_rnd": "rnd", "ac_rnd": "rnd"}
+_MODE_O = {"wrap": "wrap", "ap_wrap": "wrap", "ac_wrap": "wrap", "sat": "sat", "ap_sat": "sat", "ac_sat": "sat"}
+_FIXED_ANY_RE = re.compile(r"^\s*(ap_|ac_)?fixed\s*<\s*(\d+)\s*,\s*(-?\d+)\s*(?:,\s*([^>]*))?>\s*$")
+
+
+def parse_fixed(data_type):
+    """-> (W, I, quant, overflow) with quant in {trn,rnd}, overflow in {wrap,sat}; None if not a fixed-point spelling.
+    Unsupported modes raise ValueError (they must not be silently ignored)."""
+    m = _FIXED_ANY_RE.match(data_type.strip())
+    if not m:
+        return None
+    prefix, w, i, rest = m.group(1), int(m.group(2)), int(m.group(3)), m.group(4)
+    args = [a.strip().lower() for a in rest.split(",")] if rest and rest.strip() else []
+    if prefix == "ac_" and args and args[0] in ("true", "false"):
+        if args[0] == "false":
+            raise ValueError(f"unsigned ac_fixed is not supported: {data_type!r}")
+        args = args[1:]
+    q, o = GENERIC_DEFAULT_MODES if prefix is None else TOOL_DEFAULT_MODES
+    if len(args) > 2:
+        raise ValueError(f"too many mode arguments in {data_type!r}")
+    if len(args) >= 1:
+        if args[0] not in _MODE_Q:
+            raise ValueError(f"unsupported quantization mode {args[0]!r} in {data_type!r} (supported: trn, rnd)")
+        q = _MODE_Q[args[0]]
+    if len(args) == 2:
+        if args[1] not in _MODE_O:
+            raise ValueError(f"unsupported overflow mode {args[1]!r} in {data_type!r} (supported: wrap, sat)")
+        o = _MODE_O[args[1]]
+    return w, i, q, o
+
+
 def normalize_data_type(data_type):
     """Canonicalize a config `data_type` into a tool-neutral form.
 
