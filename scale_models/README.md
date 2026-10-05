@@ -1,5 +1,21 @@
 # `scale_models`
 
+For **all accelerator verification**, start with the
+[central verification guide](verification/README.md): configurable ResNet-18
+and Llama C/C++ versus PyTorch checks (`<16,5>`, `<32,10>`, and other supported
+formats), generic exported-tensor comparison, detailed logs, and recorded results.
+The older dedicated workflows below remain available for archived cases.
+
+For the dedicated `generate_tiled_resnet18.py` accelerator, see
+[the PyTorch golden-model and C-simulation workflow](tiled_resnet18_verification/README.md).
+It supplies reproducible random vectors, independent mathematical and fixed-point
+references, and exact comparisons of all operator checkpoints and logits.
+
+For the dedicated `generate_tiled_llama3.py` accelerator, see
+[the full Llama 3 8B PyTorch and HLS verification workflow](llama3_verification/README.md).
+It includes shared prefill/decode KV caches, a 4-token short test, a configurable
+2048-token long test, and exact fixed-point plus FP64 mathematical comparisons.
+
 This directory generates JSON model configs and HLS projects for the full-model benchmarks in ForgeBench.
 
 Supported model families covered in this README:

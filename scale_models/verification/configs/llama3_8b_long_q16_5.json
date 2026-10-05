@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "family": "llama3",
+  "model": {
+    "profile": "llama3_8b",
+    "max_ctx": 8192
+  },
+  "precision": {
+    "word_bits": 16,
+    "integer_bits": 5
+  },
+  "parameters": {
+    "seed": 42
+  },
+  "test": {
+    "seed": 43,
+    "prefill": 2048,
+    "decode": 2,
+    "trace": "layers"
+  },
+  "execution": {
+    "backend": "vitis",
+    "threads": 16,
+    "cache_gib": 64
+  }
+}

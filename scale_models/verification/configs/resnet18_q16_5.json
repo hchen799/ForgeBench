@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "family": "resnet18",
+  "model": {
+    "tile_c": 128,
+    "tile_h": 14,
+    "tile_w": 14
+  },
+  "precision": {
+    "word_bits": 16,
+    "integer_bits": 5
+  },
+  "parameters": {
+    "seed": 42
+  },
+  "execution": {
+    "backend": "vitis",
+    "threads": 8
+  }
+}
