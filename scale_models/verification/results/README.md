@@ -1,5 +1,11 @@
 # Result inventory and evidence
 
+Results for the **saved production JSON-generated HLS** are recorded separately
+in [existing/validation_summary.json](existing/validation_summary.json), with
+[reproduction instructions](../existing/README.md). Their 18 verifier tests
+pass, but the production designs do not pass both numerical comparisons.
+The inventory and historical results below concern the dedicated workflow.
+
 `validation_summary.json` contains selected completed results, exact metrics,
 source/artifact locations and report/log SHA256 checksums. Paths are relative
 to `scale_models`. `regression_tests.log` records the completed combined test

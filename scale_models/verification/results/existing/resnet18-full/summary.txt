@@ -1,0 +1,5 @@
+ERROR
+Fixed-point comparison: NOT_RUN
+FP64 comparison: NOT_RUN
+Error: C simulation failed (SIGFPE); see /export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/verification/runs/existing_resnet18_full_seed42_v1/case/simulation.log
+

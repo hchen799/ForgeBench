@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "description": "Exact saved production sources covered by the v1 reference pairs. Extend only after arithmetic/interface validation.",
+  "variants": {
+    "resnet18-full": {
+      "reference_version": 1,
+      "sources": {
+        "top.cpp": "5b810b2a367b42f4072c9809284564c27db01cc5e8254f802a61999a2d51a8ce",
+        "top.h": "a2b43f62ddb90f2147440406e65313823a24d5c5f5e82aef255d2b015a7571da"
+      }
+    },
+    "resnet18-tiled": {
+      "reference_version": 1,
+      "sources": {
+        "top.cpp": "77834b957381aaf0cdc14c2bb0d261e4280ad3df6854aa7fa19e997a2c5027e0",
+        "top.h": "514c2fb878f5f3dd348676e543c6021e8c641601126643d6999af63f18f98118"
+      }
+    },
+    "llama3-prefill": {
+      "reference_version": 1,
+      "sources": {
+        "top.cpp": "fcc31d3cb1a22ac512f7b6a5c92a5b4c4fab01f75137f3ae42f413464a382f35",
+        "top.h": "1584171ae4e71c283875b1a5afe41d8e186a35af1dabe932b1b4283353a75498"
+      }
+    },
+    "llama3-decode": {
+      "reference_version": 1,
+      "sources": {
+        "top.cpp": "4f689f0fea44766f0e5a27db6e1990973f47e74931affdc62054e8456f0575f0",
+        "top.h": "c52794d534561e4ff2c4876537194d4a3fc2c86772cbe348efc81c222812ea6b"
+      }
+    }
+  }
+}
