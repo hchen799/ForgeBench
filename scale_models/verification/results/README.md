@@ -11,6 +11,13 @@ This includes 45 new configurable/generic tests and the preserved 32-test suite.
 
 ## What the evidence establishes
 
+### A. C/C++ versus fixed-point PyTorch: exact agreement
+
+The results below concern raw integer-code equality at all selected checkpoints,
+not FP64 numerical accuracy. The full
+[fixed-point result table](../README.md#a-fixed-point-pytorch-comparison) lists
+checkpoint counts, mismatching elements, maximum code errors and exact verdicts.
+
 - New configurable ResNet-18: full-network Vitis C simulation at `<16,5>` and
   `<32,10>`, plus a `<24,8>` run with tile sizes 64/7/7 and a stem output shift.
   All 65 tensor checkpoints and shared-exponent events agree exactly.
@@ -27,6 +34,24 @@ This includes 45 new configurable/generic tests and the preserved 32-test suite.
 - Preserved ResNet seeds 42/43/44 and tiny Llama cache-boundary runs remain
   available. The seed-42 result was re-compared through the new CLI.
 
+### B. Dequantized C/C++ versus FP64 PyTorch: numerical error
+
+The separate [FP64 result table](../README.md#b-fp64-pytorch-comparison) reports
+maximum absolute error, MAE, RMSE and maximum relative error across all logits.
+These metrics use the same actual accelerator outputs as comparison A, converted
+to real values using the configured fixed-point scale. Both references consume
+the same saved quantized input and parameters.
+
+All recorded nominal mathematical verdicts are **`DIAGNOSTIC_ONLY`**, not an
+accuracy PASS. For example, full ResNet-18 `<16,5>` has zero integer mismatches
+against its fixed reference, but maximum absolute logit error
+`0.0006131635532236057` against FP64. Full ResNet-18 `<32,10>` also has zero
+integer mismatches, with FP64 maximum absolute logit error
+`3.2091310631088277e-7`. These statements answer different questions and should
+not be combined into a single undifferentiated "PyTorch comparison passed" claim.
+
+### Artifact provenance
+
 `validated_*` directories are the final new architecture runs. Earlier
 `review_*`, `configurable_smoke_*` and `*_probe` directories are retained
 development evidence; some predate reference-helper fixes and therefore have
@@ -39,7 +64,9 @@ unchanged frozen baseline, not development configurations.
 The central [README](../README.md) has runnable commands. For each selected
 new case, read in this order:
 
-1. `summary.json`: exact, mathematical, and overall verdicts;
+1. `summary.json`: read `implementation_verdict` / `integer_mismatches` for the
+   fixed-point comparison, then `mathematical_verdict` / `logit_errors` for the
+   FP64 comparison; `overall_verdict` is the combined policy result;
 2. `resolved_config.json`: actual dimensions, precision and test schedule;
 3. `verification.log`: comparison contract, data provenance and every tensor;
 4. `comparison.json`: machine-readable per-checkpoint mismatch/error details;

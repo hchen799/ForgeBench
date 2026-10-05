@@ -17,29 +17,82 @@ Neither result establishes trained-model accuracy. Parameters are reproducible
 synthetic random values, not pretrained ResNet or Meta Llama weights. Vitis
 C simulation executes the generated HLS C/C++ on the host, not on an FPGA.
 
+For the meaning, exact locations, naming and counts of verification checkpoints,
+see [Checkpoint definitions and coverage](#checkpoint-definitions-and-coverage).
+
 ## Results at a glance
 
 Validated here with Python 3.9, PyTorch 2.2.0, NumPy 1.24.4 and Vitis HLS
 2024.1.2. New configurable-path runs were completed on 2026-10-03.
-All rows below have **zero integer mismatches**. Numerical errors are against FP64.
+The fixed-point and FP64 comparisons are reported separately below. A **PASS
+in comparison A does not imply zero error or an accuracy PASS in comparison B**.
 
-| Implementation / case | Storage `<W,I>` | Execution | Checkpoints | Max absolute logit error | Logit RMSE | Saturations |
-| --- | --- | --- | ---: | ---: | ---: | ---: |
-| Configurable full ResNet-18, seed 42 | `<16,5>` | Vitis C simulation | 65 | 6.13164e-4 | 2.13101e-4 | 0 |
-| Configurable full ResNet-18, seed 42 | `<32,10>` | Vitis C simulation | 65 | 3.20913e-7 | 1.04816e-7 | 0 |
-| Configurable full ResNet-18, custom tiles/shift, seed 43 | `<24,8>` | Vitis C simulation | 65 | 2.42109e-5 | 7.06171e-6 | 0 |
-| Configurable tiny Llama, 30 prefill + 2 decode | `<16,5>` | Vitis C simulation | 390 | 5.47864e-3 | 1.06748e-3 | 0 |
-| Configurable tiny Llama, 30 prefill + 2 decode | `<32,10>` | Vitis C simulation | 390 | 2.66215e-6 | 5.48875e-7 | 0 |
-| Configurable custom Llama, 31 prefill + 2 decode | `<24,8>` | Native C++ | 312 | 1.52328e-4 | 2.99027e-5 | 0 |
-| Preserved full Llama 3 8B, 4 prefill + 2 decode | `<16,5>` | Vitis C simulation | 1,737 | 1.50993e-2 | 2.87035e-3 | 0 |
-| Preserved full Llama 3 8B, 2048 prefill + 2 decode | `<16,5>` | Vitis C simulation | 12,740 | 6.99633e-2 | 3.90948e-3 | 8 |
+### A. Fixed-point PyTorch comparison
+
+**Compared values:** actual C/C++ stored integer codes versus the fixed-point
+PyTorch reference's stored integer codes, at every selected checkpoint.
+No floating-point tolerance is used. `Max code error` is the largest absolute
+difference between the two integer codes, measured in storage LSBs.
+
+| Implementation / case | Storage `<W,I>` | Execution | Checkpoints | Mismatching elements | Max code error (LSBs) | Exact verdict |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| Configurable full ResNet-18, seed 42 | `<16,5>` | Vitis C simulation | 65 | 0 | 0 | PASS |
+| Configurable full ResNet-18, seed 42 | `<32,10>` | Vitis C simulation | 65 | 0 | 0 | PASS |
+| Configurable full ResNet-18, custom tiles/shift, seed 43 | `<24,8>` | Vitis C simulation | 65 | 0 | 0 | PASS |
+| Configurable tiny Llama, 30 prefill + 2 decode | `<16,5>` | Vitis C simulation | 390 | 0 | 0 | PASS |
+| Configurable tiny Llama, 30 prefill + 2 decode | `<32,10>` | Vitis C simulation | 390 | 0 | 0 | PASS |
+| Configurable custom Llama, 31 prefill + 2 decode | `<24,8>` | Native C++ | 312 | 0 | 0 | PASS |
+| Preserved full Llama 3 8B, 4 prefill + 2 decode | `<16,5>` | Vitis C simulation | 1,737 | 0 | 0 | PASS |
+| Preserved full Llama 3 8B, 2048 prefill + 2 decode | `<16,5>` | Vitis C simulation | 12,740 | 0 | 0 | PASS |
+
+All ResNet shared-exponent event traces also match. These results establish
+agreement with the implementation reference, including its modeled rounding,
+saturation and accelerator-specific arithmetic; they do not establish exact
+agreement with real-valued mathematics.
+
+### B. FP64 PyTorch comparison
+
+**Compared values:** actual C/C++ codes divided by `2^(W-I)` versus the
+mathematical FP64 PyTorch reference, using the same saved quantized input and
+parameters. These are **real-value errors**, not integer-code mismatch counts.
+The table summarizes **all final logits**; per-checkpoint numerical errors are
+available in each run's `comparison.json` and `verification.log`.
+
+| Implementation / case | C/C++ storage `<W,I>` | Max absolute logit error | Logit MAE | Logit RMSE | Max relative logit error |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Configurable full ResNet-18, seed 42 | `<16,5>` | 6.13164e-4 | 1.72449e-4 | 2.13101e-4 | 0.815313 |
+| Configurable full ResNet-18, seed 42 | `<32,10>` | 3.20913e-7 | 8.51179e-8 | 1.04816e-7 | 1.79092e-4 |
+| Configurable full ResNet-18, custom tiles/shift, seed 43 | `<24,8>` | 2.42109e-5 | 5.59242e-6 | 7.06171e-6 | 0.00405161 |
+| Configurable tiny Llama, 30 prefill + 2 decode | `<16,5>` | 5.47864e-3 | 8.37800e-4 | 1.06748e-3 | 9.22496 |
+| Configurable tiny Llama, 30 prefill + 2 decode | `<32,10>` | 2.66215e-6 | 4.24072e-7 | 5.48875e-7 | 0.00830368 |
+| Configurable custom Llama, 31 prefill + 2 decode | `<24,8>` | 1.52328e-4 | 2.34731e-5 | 2.99027e-5 | 0.107260 |
+| Preserved full Llama 3 8B, 4 prefill + 2 decode | `<16,5>` | 1.50993e-2 | 2.28460e-3 | 2.87035e-3 | 16.0451 |
+| Preserved full Llama 3 8B, 2048 prefill + 2 decode | `<16,5>` | 6.99633e-2 | 3.10984e-3 | 3.90948e-3 | 83.8488 |
+
+**Mathematical verdict for every row: `DIAGNOSTIC_ONLY`.** No numerical
+acceptance threshold was requested for these recorded nominal runs, so these
+errors are not labelled as an accuracy PASS. Relative error uses a denominator
+floor of one C/C++ storage LSB: `2^-11` for `<16,5>`, `2^-22` for `<32,10>`,
+and `2^-16` for `<24,8>`. The relative-error numbers are ratios, not percentages;
+large values near zero should be interpreted alongside absolute errors.
+
+Both comparisons use the **same actual C/C++ output**. Since comparison A is
+bit-exact for the rows above, dequantized fixed-reference values would give the
+same numerical errors against FP64. Comparison B nevertheless reports the
+accelerator output against FP64. The second table does not require a different
+accelerator execution.
+
+### Coverage, saturation, and provenance
 
 Each ResNet run compared **8,054,760 codes**, including all 1,000 logits.
 The full-8B short and long cases compared **19,889,664** and **674,368,000**
 codes respectively. The long case includes all **262,924,800 logits**, new
 KV-cache entries, layer outputs, final normalization, and both decode calls.
-Its eight saturation events were in SwiGLU; exact agreement does not make the
-calculation saturation-free. The earlier tiny 8190+2 cache-boundary test also
+All six configurable cases and the preserved full-8B short case recorded zero
+saturations. The long case's eight saturation events were in SwiGLU; exact
+agreement does not make the calculation saturation-free. Saturation observations
+are separate from both integer mismatch counts and FP64 error metrics.
+The earlier tiny 8190+2 cache-boundary test also
 passed, but that is **not** a full-8B 8192-token test.
 
 The full-8B results belong to the frozen earlier `<16,5>` implementation and
@@ -360,7 +413,204 @@ The demo intentionally copies golden values into `actual.npy` and labels this
 in its manifest/log. **It is not evidence of an accelerator passing.** Replace
 the actual tensor with a real export for a real verification case.
 
+## Checkpoint definitions and coverage
+
+### What a checkpoint means here
+
+A **verification checkpoint** is a named tensor recorded at a selected point
+in the computation, such as a convolution output, a residual-block output, or
+a KV-cache update. It is **not a training checkpoint or pretrained weight file**.
+The architecture adapters choose these locations explicitly in their computation
+graphs; they are not randomly sampled.
+
+At each selected location, three corresponding tensors are saved:
+
+| Tensor | Producer | Purpose |
+| --- | --- | --- |
+| Actual fixed-point output | Compiled accelerator C/C++ | The implementation being tested |
+| Expected fixed-point output | Exact integer-code PyTorch reference | Require element-by-element equality of stored codes |
+| Mathematical output | FP64 PyTorch reference | Measure error after dequantizing the actual C/C++ codes |
+
+One checkpoint compares the **entire logical tensor**, not a sample, mean,
+checksum alone, or just its largest value. For example, ResNet `stem.conv`
+has shape `[64,112,112]`, so this one checkpoint compares all **802,816 elements**.
+Physical padding outside the logical tensor is not part of this comparison.
+For `<W,I>` storage, dequantization is `real_value = code / 2^(W-I)`.
+
+The checkpoint count is the number of distinct emitted tensor records. It is
+not the number of elements, parameters, model layers, or saved weight files.
+The three corresponding actual/fixed/FP64 tensors constitute **one** checkpoint,
+not three. Recording the same graph location on different Llama calls produces
+separate checkpoints, identified by their call prefixes.
+
+### ResNet-18: all 65 tensor checkpoints
+
+The adapter records the following outputs for one complete image inference:
+
+| Graph region | Checkpoint names or suffixes | Count |
+| --- | --- | ---: |
+| Stem | `stem.conv`, `stem.bn`, `stem.relu`, `stem.pool` | 4 |
+| Five ordinary residual blocks | `.conv1`, `.bn1`, `.relu1`, `.conv2`, `.bn2`, `.add`, `.out` in each block | 5 × 7 = 35 |
+| Three downsampling residual blocks | The same seven outputs, plus shortcut convolution `.down` | 3 × 8 = 24 |
+| Classification head | `head.gap`, `head.logits` | 2 |
+| Total | `4 + 35 + 24 + 2` | **65** |
+
+Ordinary blocks are `s1_b0`, `s1_b1`, `s2_b1`, `s3_b1`, and `s4_b1`.
+Downsampling blocks are `s2_b0`, `s3_b0`, and `s4_b0`. Stage indices run from
+1 to 4; block indices are 0 or 1 within each stage. A block's `.add` is the
+main/shortcut sum **before** its final ReLU; `.out` is the output **after** that
+ReLU. The `.down` checkpoint is the shortcut convolution output, with no
+shortcut BN in this dedicated accelerator variant.
+
+Examples of complete names and logical shapes:
+
+| Name | Meaning | Shape |
+| --- | --- | --- |
+| `stem.conv` | Initial convolution output | `[64,112,112]` |
+| `stem.pool` | Initial max-pooling output | `[64,56,56]` |
+| `s2_b0.conv1` | Stage 2, block 0, first convolution output | `[128,28,28]` |
+| `s2_b0.add` | That block's residual sum, before ReLU | `[128,28,28]` |
+| `s2_b0.out` | That block's final output, after ReLU | `[128,28,28]` |
+| `head.gap` | Global average-pooling output | `[512]` |
+| `head.logits` | All classification scores, before any softmax | `[1000]` |
+
+ResNet additionally compares its **shared-exponent event trace**. These scalar
+control/arithmetic events are separate from, and not counted among, the 65
+tensor checkpoints. The full run compares 8,054,760 tensor elements in total.
+The recording locations are explicit in [the ResNet graph](models/resnet18/model.py).
+
+### Llama: operator tracing versus layer tracing
+
+The configuration field `test.trace` selects `"ops"` or `"layers"`.
+Let `T` be the number of tokens in the current call, `H = hidden`,
+`K = kv_heads * head_dim`, `F = ffn`, and `V = vocab`. Decode calls have `T=1`;
+a prefill call can contain multiple tokens, including a partial final chunk.
+
+With **`trace: "ops"`**, every Transformer layer records these 18 outputs:
+
+| Per-layer suffix | Meaning | Shape |
+| --- | --- | --- |
+| `attn_norm` | RMSNorm before attention projections | `[T,H]` |
+| `q_proj` | Query projection | `[T,H]` |
+| `k_proj` | Key projection | `[T,K]` |
+| `v_proj` | Value projection | `[T,K]` |
+| `q_rope` | Queries after rotary position encoding | `[T,H]` |
+| `k_rope` | Keys after rotary position encoding | `[T,K]` |
+| `k_cache_update` | Key-cache entries written by this call | `[T,K]` |
+| `v_cache_update` | Value-cache entries written by this call | `[T,K]` |
+| `context` | Attention output after probability-weighted value aggregation | `[T,H]` |
+| `o_proj` | Attention output projection | `[T,H]` |
+| `attn_residual` | First residual addition | `[T,H]` |
+| `ffn_norm` | RMSNorm before the feed-forward network | `[T,H]` |
+| `gate_proj` | Feed-forward gate projection, before SiLU | `[T,F]` |
+| `up_proj` | Feed-forward up projection | `[T,F]` |
+| `silu` | SiLU applied to the gate projection | `[T,F]` |
+| `swiglu` | Elementwise product of the SiLU gate and up projection | `[T,F]` |
+| `down_proj` | Feed-forward down projection | `[T,H]` |
+| `out` | Second residual addition: complete Transformer-layer output | `[T,H]` |
+
+Each call also records `embedding` (`[T,H]`), `final_norm` (`[T,H]`), and
+`logits` (`[T,V]`). Both cache-update checkpoints record the entries actually
+written into cache for the current token range, **not a repeated dump of the
+entire historical cache**. Later attention calls consume the accumulated cache.
+
+With **`trace: "layers"`**, each layer retains only `k_cache_update`,
+`v_cache_update`, and `out`. Each call also retains `final_norm` and `logits`;
+`embedding` and the other intermediate outputs are omitted. This reduces trace
+volume for long contexts. It does **not** reduce the number of compared logits:
+all tokens and all vocabulary entries emitted by every call are still checked.
+
+A complete name looks like `call0000.layer00.q_proj`:
+
+- `call0000`: the first scheduled accelerator call, not necessarily one token;
+- `layer00`: Transformer layer 0;
+- `q_proj`: the query-projection output at that location.
+
+Call and layer indices are zero-based. For the recorded tiny model, this
+checkpoint has shape `[4,64]` in the first four-token prefill call.
+`call0000.logits` has shape `[4,257]` and has no layer prefix because it is the
+model's final output for that call. The PyTorch locations are defined in
+[the Llama graph](models/llama3/model.py); corresponding C++ trace hooks are in
+[the generated-kernel template](models/llama3/kernel.cpp.in).
+
+### How the reported checkpoint counts are calculated
+
+For `L` layers, `P` prefill tokens, `D` one-token decode calls, and prefill
+chunk size `C = test.chunk`, the current contiguous schedule gives:
+
+```text
+number of calls            = ceil(P / C) + D
+checkpoints per call, ops  = 18 * L + 3
+checkpoints per call, layers = 3 * L + 2
+total checkpoints         = number of calls * checkpoints per call
+```
+
+When `test.chunk` is omitted, it defaults to `model.prefill_tile`.
+A partial prefill chunk changes tensor shapes/element counts, but not the
+number of checkpoint locations for that call.
+
+| Recorded case | Trace | Calls | Checkpoints per call | Total |
+| --- | --- | ---: | ---: | ---: |
+| Tiny, 2 layers, 30 prefill + 2 decode, chunk 4 | `ops` | `ceil(30/4)+2 = 10` | `18*2+3 = 39` | **390** |
+| Custom, 2 layers, 31 prefill + 2 decode, chunk 6 | `ops` | `ceil(31/6)+2 = 8` | `18*2+3 = 39` | **312** |
+| Preserved full 8B, 32 layers, 4 prefill + 2 decode, chunk 16 | `ops` | `ceil(4/16)+2 = 3` | `18*32+3 = 579` | **1,737** |
+| Preserved full 8B, 32 layers, 2048 prefill + 2 decode, chunk 16 | `layers` | `2048/16+2 = 130` | `3*32+2 = 98` | **12,740** |
+
+Thus, 12,740 checkpoints do not mean 12,740 model layers. They are the
+individual tensor records emitted across the 130 calls of that test.
+
+### Why these locations, and what they do not prove
+
+Operator boundaries expose where rounding, saturation, normalization,
+projection, nonlinear functions and residual additions affect stored values.
+Layer boundaries and cache writes provide a lower-volume check of long-context
+execution. If a convolution checkpoint agrees but the following BN checkpoint
+does not, the mismatch narrows the investigation to that BN stage or its data
+handling rather than only showing that the final logits are wrong.
+
+These traces do not record every multiply-accumulate, tile-loop iteration,
+attention-score/probability intermediate, internal register, or clock cycle.
+Exact agreement establishes equality of the **selected complete tensors for
+the tested inputs**, not equivalence of every internal state, mathematical
+correctness for all inputs, or RTL/FPGA correctness. The generic comparator's
+coverage is limited to the checkpoints explicitly supplied in its manifest.
+
+### Where to inspect the actual checkpoint records
+
+For an architecture run, `verification.log` and `comparison.json` list every
+selected checkpoint, its shape, mismatch count and numerical errors. The
+golden shape/checksum manifests are `case/reference.json` for Llama and
+`case/fixed/metadata.json` / `case/float/metadata.json` for ResNet.
+
+For example, ResNet `stem.conv` is saved as:
+
+```text
+case/csim/stem.conv.bin     actual C/C++ fixed-point codes
+case/fixed/stem.conv.bin    expected fixed-point codes
+case/float/stem.conv.npy    FP64 mathematical values
+```
+
+Llama uses the complete call/layer-prefixed name as the filename, with `.bin`
+for all three streams; its `float/` stream contains little-endian FP64 values,
+not integer codes. The number of stored fixed-point bytes per element follows
+the configured precision described above.
+
 ## Logs, tolerances, and exit codes
+
+When reading the existing machine-readable reports, keep the two comparisons
+separate:
+
+| Comparison | Summary fields | Per-checkpoint fields in `comparison.json` |
+| --- | --- | --- |
+| A: C/C++ versus fixed-point PyTorch | `implementation_verdict`, `integer_mismatches`, and ResNet `exponent_match` | `integer_mismatches` (Llama/generic) or `mismatches` (ResNet), `max_lsb_error`, optional `first_mismatch` |
+| B: Dequantized C/C++ versus FP64 PyTorch | `mathematical_verdict`, `logit_errors`, `float_atol`, `float_rtol` | `mathematical_errors` (Llama/generic) or `mathematical_error` (ResNet) |
+
+`overall_verdict` combines the requested policies; it is not a replacement for
+either comparison's individual verdict. The generic comparator uses the supplied
+floating-reference dtype and reports `last_checkpoint_errors` rather than
+assuming that an arbitrary exported tensor contains logits. This documentation
+separates the presentation without changing the existing JSON field names or
+rewriting historical logs/results.
 
 The main `verification.log` is written while execution proceeds. It records the
 command, UTC timestamps, library versions, effective model/precision, the two
