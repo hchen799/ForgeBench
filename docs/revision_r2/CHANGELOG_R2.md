@@ -65,4 +65,10 @@ changes csynth results in 88–100% of matched pairs). Sweep total 3,072 + 5,184
 * Modular: csynth 38/38 ok after rerunning `gemm/diff_orders_module` with an 8 h limit (it took 7,921 s). Table 7 recomputed from the
   new reports: 11 of 12 rows identical to R1; 'DNN Blocks' P2 (conv_block_op2) is 43.82 vs R1 21.83 (restoring the commented-out bias
   array_partition pragma does not change it: 43.95), so Total_Before 108.49 -> 130.48 and % Change -20.25 -> -33.69. Open.
-* Still stale: GEMM impl (July sample no longer matches the sweep; re-sample + re-run pending).
+
+## 2026-10-05 — R2 impl complete for all domains
+* GEMM impl re-sampled (1,000 designs: all 384 no-unroll + 88 per unrolled (unroll_M, unroll_K, unroll_N) group, seed 20261002) and re-run
+  (64 jobs, 161 min). First pass 993 ok / 7 fail; all 7 failures were the Vivado 2024.1.2 `opt_design` segfault. A single retry succeeded for
+  6 of them (the crash is intermittent), 1 failed again -> final 999 ok / 1 fail. First-pass statuses are kept in
+  `manifest/evidence/r2_runs/gemm_impl_status_first_pass.csv`. The July GEMM impl metrics are in `legacy/results_r1/`.
+* Implemented subsets now: conv 896 (July sample, unchanged sweep), gemm 999 (+1 fail), llm 999 (+1 fail) = 2,894 designs, all meeting timing at 100 MHz.

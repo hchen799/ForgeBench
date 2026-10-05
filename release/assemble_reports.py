@@ -24,7 +24,7 @@ import tarfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "manifest"))
-from _common import DOMAINS, design_table, index_sources, load_generator   # noqa: E402
+from _common import DOMAINS, design_table, index_sources, load_generator, locate   # noqa: E402
 
 MODULAR_ARCHIVE = os.path.join("checkpoints", "r2", "csynth_modular_lean.tar.gz")
 
@@ -91,7 +91,7 @@ def main():
             os.makedirs(os.path.dirname(cp), exist_ok=True)
             with open(cp, "w") as f:
                 f.write(gen.build_config_text(t["params"]))
-            loc = index.get((domain, t["key"]), {})
+            loc = locate(index, domain, t)
             for col, kind in (("csynth_report", "csynth"), ("impl_report", "impl"), ("impl_power_report", "power")):
                 if row[col]:
                     if kind not in loc:

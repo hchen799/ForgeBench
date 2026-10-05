@@ -28,7 +28,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _common import (DEVICE, DOMAINS, ID_MAP, JULY_IMPL_VALID, REPO, check_id_map, design_table, impl_failures,
-                     index_sources, load_generator, read_metrics, write_id_map)
+                     index_sources, load_generator, locate, read_metrics, write_id_map)
 
 OUT_DIR = os.path.join(REPO, "manifest", "designs")
 
@@ -82,7 +82,7 @@ def main():
             if a.check_disk:
                 with open(os.path.join(REPO, domain, "auto_generated_configs", t["stem"] + ".json"), "rb") as f:
                     assert f.read() == gen.build_config_text(p).encode(), f"disk config differs: {t['stem']}"
-            loc = index.get((domain, t["key"]), {})
+            loc = locate(index, domain, t)
             m, im = csynth.get(did), impl.get(did)
             gen_ok = "source" in loc
             cs_ok = m is not None

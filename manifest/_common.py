@@ -124,6 +124,17 @@ def index_sources():
     return index
 
 
+def locate(index, domain, t):
+    """Report/source locations for one design, merged over the names archives may use: the current generator name
+    (R2 archives) first, then the R1 name (July archives). Preferring the current name means a design re-run in R2 never
+    resolves to its stale July member."""
+    rec = {}
+    for k in (t["stem"], t["legacy"]):
+        for kind, loc in index.get((domain, k), {}).items():
+            rec.setdefault(kind, loc)
+    return rec
+
+
 def impl_failures():
     """{(domain, design_name): reason} from manifest/evidence/**/unfinished_impl_*.csv.
     R1 gemm rows are ignored: the GEMM impl sample was redrawn in R2, so R1 outcomes do not apply to it."""
