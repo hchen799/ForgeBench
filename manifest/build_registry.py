@@ -15,8 +15,7 @@ design_id = "<suite>/<domain>/<name>" (e.g. ops/gemm/dot_product__bias1, modular
     python manifest/build_registry.py
 
 Sources of truth (nothing is hand-typed here except the Table 2 operator labels):
-  ops      verification/op_configs/<domain>/*.json  (same selection rule as verification/prepare_designs:
-           a bare `<op>.json` is skipped when `<op>__*.json` variants exist), the generator dispatch in
+  ops      verification/operators/<operator>/variants/<domain>/*.json (via verification.layout), the generator dispatch in
            <domain>/generate_code.py and the golden dispatch in verification/domains/<domain>.py
   modular  modular_data/<category>/hls_files/*  +  modular_data/parse_synth_resourc_util.py:ROWS
            (ROWS defines each test case: its programs, its modularized design and its shared functions)
@@ -104,17 +103,13 @@ def under_test(cfg):
 
 # ------------------------------------------------------------------ ops
 def build_ops():
+    sys.path.insert(0, REPO)
+    from verification import layout
     rows = []
     for domain in DOMAINS:
-        d = os.path.join(REPO, "verification", "op_configs", domain)
-        names = sorted(f for f in os.listdir(d) if f.endswith(".json"))
-        with_variants = {n.split("__", 1)[0] for n in names if "__" in n}
         gen, gold = generator_dispatch(domain), golden_dispatch(domain)
-        for n in names:
-            stem = n[:-5]
-            if "__" not in stem and stem in with_variants:
-                continue                                    # superseded base config
-            path = os.path.join(d, n)
+        for v in layout.variants(domain):
+            stem, path = v["stem"], v["path"]
             cfg = json.load(open(path))
             ops = under_test(cfg)
             assert len(ops) == 1, (stem, [o[1]["func_name"] for o in ops])
@@ -122,8 +117,8 @@ def build_ops():
             fn = op["func_name"]
             rows.append({
                 "design_id": f"ops/{domain}/{stem}", "domain": domain,
-                "operator": stem.split("__", 1)[0], "paper_table2_row": TABLE2_ROW[stem.split("__", 1)[0]],
-                "in_table2": "YES" if stem.split("__", 1)[0] in TABLE2_DOMAINS[domain] else "NO", "variant": stem.split("__", 1)[1] if "__" in stem else "",
+                "operator": v["operator"], "paper_table2_row": TABLE2_ROW[v["operator"]],
+                "in_table2": "YES" if v["operator"] in TABLE2_DOMAINS[domain] else "NO", "variant": "" if v["variant"] == "default" else v["variant"],
                 "op_func": fn, "op_dims": compact(op.get("dims", [])), "op_func_info": compact(op.get("func_info", [])),
                 "template": template_of(op),
                 "generator_function": f"{domain}/generate_code.py:{gen.get(fn, '')}",

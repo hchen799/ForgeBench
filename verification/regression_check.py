@@ -4,7 +4,7 @@ Regenerates a fixed, seeded sample of designs in scratch directories (the repo i
 the emitted files. Run `--save` before a generator change and `--compare` after; the report separates
   design files   top.cpp, top.h, run_hls.tcl   (what Vitis synthesizes: must not change for existing designs)
   testbench      tb_top.cpp                    (reported separately; changes only when the testbench generator changes)
-Sample per domain: SAMPLE sweep designs (seeded), every operator variant (verification/op_configs) and every
+Sample per domain: SAMPLE sweep designs (seeded), every operator variant (verification/operators) and every
 `<domain>/test_case_configs/*.json` that is valid JSON.
 
     python -m verification.regression_check --save  verification/_regression/before.json
@@ -33,8 +33,10 @@ def sample_configs(domain):
     cfgs = sorted(glob.glob(os.path.join(REPO, domain, "auto_generated_configs", "*.json")))
     for p in random.Random(SEED).sample(cfgs, min(SAMPLE, len(cfgs))):
         out["sweep/" + os.path.basename(p)] = p
-    for p in sorted(glob.glob(os.path.join(REPO, "verification", "op_configs", domain, "*.json"))):
-        out["op/" + os.path.basename(p)] = p
+    sys.path.insert(0, REPO)
+    from verification import layout
+    for v in layout.variants(domain):
+        out["op/" + v["stem"] + ".json"] = v["path"]
     for p in sorted(glob.glob(os.path.join(REPO, domain, "test_case_configs", "*.json"))):
         try:
             json.load(open(p))

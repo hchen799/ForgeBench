@@ -37,7 +37,8 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 from verification import fp
-from verification.csim_runner import (BASE_SEED, csim_build_dir, refresh_inputs, rerun_csim_exe, run_vitis, select_configs)
+from verification import layout
+from verification.csim_runner import BASE_SEED, csim_build_dir, refresh_inputs, rerun_csim_exe, run_vitis
 from verification.fixedpoint import DType, error_metrics, quantize
 from verification.golden_ref import compute_goldens
 from verification.prepare_designs import generate_design
@@ -257,9 +258,8 @@ def main():
 
     jobs = []
     for domain in a.domains:
-        cdir = os.path.join(REPO_ROOT, "verification", "op_configs", domain)
-        for p in select_configs(cdir):
-            stem = os.path.splitext(os.path.basename(p))[0]
+        for v in layout.variants(domain):
+            p, stem = v["path"], v["stem"]
             if a.configs and stem not in a.configs:
                 continue
             if keep is not None and f"ops/{domain}/{stem}" not in keep:

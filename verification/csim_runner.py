@@ -261,7 +261,7 @@ def main():
                     help="full: vitis_hls per trial. exe: vitis_hls once, then re-run "
                          "the Vitis-built csim.exe per trial (much faster).")
     ap.add_argument("--suite", choices=["ops", "designs"], default="ops",
-                    help="ops: verification/op_configs/<domain>. designs: <domain>/test_case_configs.")
+                    help="ops: verification/operators/<operator>/variants/<domain>. designs: <domain>/test_case_configs.")
     ap.add_argument("--configs-dir", default=None, help="override the config directory")
     ap.add_argument("--configs", nargs="*", default=None, help="specific config stems")
     ap.add_argument("--jobs", type=int, default=1, help="parallel Vitis runs (default 1)")
@@ -283,14 +283,16 @@ def main():
     all_jobs = []
     t_prep = time.time()
     for domain in domains:
-        cfg_dir = args.configs_dir or (
-            os.path.join(REPO_ROOT, "verification", "op_configs", domain) if args.suite == "ops"
-            else os.path.join(REPO_ROOT, domain, "test_case_configs"))
-        if args.configs:
-            cfg_paths = [os.path.join(cfg_dir, c if c.endswith(".json") else c + ".json")
-                         for c in args.configs]
+        if args.suite == "ops" and not args.configs_dir:
+            from verification import layout
+            want = {c[:-5] if c.endswith(".json") else c for c in (args.configs or [])}
+            cfg_paths = [v["path"] for v in layout.variants(domain) if not want or v["stem"] in want]
         else:
-            cfg_paths = select_configs(cfg_dir)
+            cfg_dir = args.configs_dir or os.path.join(REPO_ROOT, domain, "test_case_configs")
+            if args.configs:
+                cfg_paths = [os.path.join(cfg_dir, c if c.endswith(".json") else c + ".json") for c in args.configs]
+            else:
+                cfg_paths = select_configs(cfg_dir)
         out_base = os.path.join(out_root, domain)
         os.makedirs(out_base, exist_ok=True)
         print(f">>> preparing {domain}: {len(cfg_paths)} configs")

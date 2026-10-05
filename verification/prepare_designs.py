@@ -111,6 +111,7 @@ def main():
     ap.add_argument("--out", default=None, help="output base dir (default verification/_server/<domain>)")
     ap.add_argument("--configs-dir", default=None,
                     help="directory of config JSONs (default: <domain>/test_case_configs)")
+    ap.add_argument("--ops", action="store_true", help="prepare the operator variants (verification/operators/<operator>/variants/<domain>)")
     ap.add_argument("configs", nargs="*", help="config names (default: all configs in --configs-dir)")
     args = ap.parse_args()
 
@@ -123,7 +124,11 @@ def main():
     os.makedirs(out_base, exist_ok=True)
 
     cfg_dir = args.configs_dir or os.path.join(_domain_dir(args.domain), "test_case_configs")
-    if args.configs:
+    if args.ops:
+        from verification import layout
+        want = {c[:-5] if c.endswith(".json") else c for c in args.configs}
+        cfg_paths = [v["path"] for v in layout.variants(args.domain) if not want or v["stem"] in want]
+    elif args.configs:
         cfg_paths = [os.path.join(cfg_dir, c if c.endswith(".json") else c + ".json") for c in args.configs]
     else:
         names = sorted(f for f in os.listdir(cfg_dir) if f.endswith(".json"))

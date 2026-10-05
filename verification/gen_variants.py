@@ -15,14 +15,15 @@ Operators with no compute-affecting parameter (batchnorm, maxpool,
 adaptive_avgpool, matrix_add, elementwise_mult, layernorm, rmsnorm, dropout,
 matmul) keep their single base config.
 
-Run:  python -m verification.gen_variants        # writes into op_configs/<domain>/
+Run:  python -m verification.gen_variants        # writes into operators/<operator>/variants/<domain>/
 """
 import copy
 import json
 import os
 
+from verification import layout
+
 HERE = os.path.dirname(os.path.abspath(__file__))
-OP = os.path.join(HERE, "op_configs")
 
 ACTS_13 = ["relu", "leaky_relu", "prelu", "rrelu", "thresholded_relu", "relu6",
            "sigmoid", "tanh", "elu", "selu", "gelu", "swish", "softmax"]
@@ -48,14 +49,17 @@ INPUT_RANGE_DEFAULT = [-1.0, 1.0]
 
 
 def _load(domain, name):
-    with open(os.path.join(OP, domain, name)) as f:
+    """Base config of operator `name[:-5]` for `domain` (operators/<operator>/base/<domain>/<operator>.json)."""
+    with open(layout.base_path(name[:-5], domain)) as f:
         return json.load(f)
 
 
 def _write(domain, name, cfg):
     cfg["input_range"] = (INPUT_RANGE_ACTIVATION if _has_activation(cfg)
                           else INPUT_RANGE_DEFAULT)
-    path = os.path.join(OP, domain, name)
+    operator = name[:-5].split("__", 1)[0]
+    path = os.path.join(layout.OPERATORS_DIR, operator, "variants", domain, name)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         json.dump(cfg, f, indent=2)
     return name

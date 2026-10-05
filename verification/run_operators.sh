@@ -2,7 +2,7 @@
 # Operator-level ForgeBench CSIM run (server-side, needs Vitis HLS).
 #
 # Same flow as run_all.sh, but drives the per-operator config suite in
-# verification/op_configs/<domain> instead of the full test_case_configs. Each
+# verification/operators/<operator>/variants/<domain> instead of the full test_case_configs. Each
 # design isolates ONE core operator (load -> op -> store) and CSIMs it against
 # its numpy golden, so a VERIFICATION: FAIL points directly at that operator.
 #
@@ -25,9 +25,8 @@ echo ">>> ForgeBench operator verification run: task=[$TASK] out=$OUTBASE"
 
 for domain in gemm conv llm; do
   echo ">>> Preparing $domain operator designs + goldens"
-  python3 -m verification.prepare_designs "$domain" \
+  python3 -m verification.prepare_designs "$domain" --ops \
     --task "$TASK" \
-    --configs-dir "verification/op_configs/$domain" \
     --out "$OUTBASE/$domain"
 
   for d in "$OUTBASE/$domain"/*/; do

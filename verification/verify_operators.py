@@ -1,6 +1,6 @@
 """Operator-level CSIM verification (local, Vitis-free proxy).
 
-Runs every per-operator config in verification/op_configs/<domain> through the
+Runs every per-operator config in verification/operators/<operator>/variants/<domain> through the
 same golden-oracle self-check as gcc_selfcheck (generate float design -> write
 numpy golden -> g++ compile with shim -> run -> compare), then prints a
 per-operator PASS/FAIL matrix and writes results_operators.csv. Exits nonzero if
@@ -14,7 +14,7 @@ because the emitted C is data-type "float" and compiled with equivalent math.
 VARIANTS: an operator whose computation depends on parameters (e.g. an activation
 function choice, a bias flag, grouped vs. dense attention, RoPE on/off) is
 verified across those variants. Each variant is a separate JSON config named
-``<operator>__<variant>.json`` (double underscore) inside op_configs/<domain>/;
+``<operator>__<variant>.json`` (double underscore) inside operators/<operator>/variants/<domain>/;
 all variants of an operator are grouped under that operator in the report, and
 the ``Variants`` count is how many passed.
 
@@ -35,7 +35,6 @@ from collections import defaultdict
 from verification import gcc_selfcheck
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OP_CONFIGS = os.path.join(REPO_ROOT, "verification", "op_configs")
 DOMAINS = ["gemm", "conv", "llm"]
 
 
@@ -53,9 +52,9 @@ def run_domain(domain, out_base, n_inputs=1):
     the variants were derived from) is skipped so it is not double-counted.
     Operators with no variant files are verified via their single base config.
     """
-    cfg_dir = os.path.join(OP_CONFIGS, domain)
+    from verification import layout
     os.makedirs(out_base, exist_ok=True)
-    all_cfgs = sorted(glob.glob(os.path.join(cfg_dir, "*.json")))
+    all_cfgs = [v["path"] for v in layout.variants(domain)]
     ops_with_variants = {
         _operator_of(os.path.splitext(os.path.basename(c))[0])
         for c in all_cfgs if "__" in os.path.basename(c)
