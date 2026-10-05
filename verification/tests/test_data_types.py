@@ -18,16 +18,19 @@ def test_raw_tool_spellings_unchanged():
     assert C.type_suffix("ap_fixed<16, 5>") == "fixed_16_5_"
 
 
-def test_generic_defaults_to_round_saturate():
-    assert parse_fixed("fixed<16,5>") == (16, 5, "rnd", "sat")
-    assert V.type_decl("fixed<16,5>") == "ap_fixed<16, 5, AP_RND, AP_SAT>"
-    assert C.type_decl("fixed<16,5>") == "ac_fixed<16,5,true,AC_RND,AC_SAT>"
+def test_generic_without_modes_is_the_tool_default():
+    # no mode is ever implied: fixed<W,I> == ap_fixed<W,I> == truncate + wrap
+    assert parse_fixed("fixed<16,5>") == parse_fixed("ap_fixed<16,5>") == (16, 5, "trn", "wrap")
+    assert V.type_decl("fixed<16,5>") == "ap_fixed<16, 5, AP_TRN, AP_WRAP>"
+    assert C.type_decl("fixed<16,5>") == "ac_fixed<16,5,true,AC_TRN,AC_WRAP>"
 
 
 def test_explicit_modes():
+    assert V.type_decl("fixed<16,5,rnd,sat>") == "ap_fixed<16, 5, AP_RND, AP_SAT>"
+    assert C.type_decl("fixed<16,5,rnd,sat>") == "ac_fixed<16,5,true,AC_RND,AC_SAT>"
     assert V.type_decl("fixed<32,10,trn,wrap>") == "ap_fixed<32, 10, AP_TRN, AP_WRAP>"
-    assert parse_fixed("fixed<16,5,RND>") == (16, 5, "rnd", "sat")
-    assert parse_fixed("ap_fixed<16,5,AP_RND>") == (16, 5, "rnd", "wrap")          # tool spelling: missing mode = tool default
+    assert parse_fixed("fixed<16,5,RND>") == (16, 5, "rnd", "wrap")              # an omitted mode is the default, not rnd/sat
+    assert parse_fixed("ap_fixed<16,5,AP_RND>") == (16, 5, "rnd", "wrap")
     assert parse_fixed("ac_fixed<16,5,true,AC_RND,AC_SAT>") == (16, 5, "rnd", "sat")
     assert parse_fixed("float") is None
 

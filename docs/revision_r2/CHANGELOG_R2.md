@@ -95,3 +95,11 @@ Files: `backends/{base,vitis,catapult}.py` (`parse_fixed`), `{conv,llm}/gen_conf
   (truncate + wrap; Catapult `AC_TRN, AC_WRAP`). Regression check: 0 of 279 sampled designs changed `top.cpp`/`top.h`/`run_hls.tcl`.
 * Not yet applied to the sweeps: the three `SWEEP` dicts still carry `ap_fixed<16,5>` (truncate + wrap), so existing csynth/impl results remain
   valid for what they are. Switching the sweeps to the generic default changes every design's arithmetic and requires re-running everything.
+
+## 2026-10-05 (later) — correction: default fixed-point modes stay truncate + wrap; no math shim
+The generic `fixed<W,I>` spelling added earlier the same day was first defined to default to round + saturate. That was reverted: Vitis `hls_math.h`
+only supports fixed-point `exp/sqrt/tanh/sin/cos` for the default modes (see docs/DATA_TYPES.md), so a round+saturate default would break every
+design that uses them. Final behaviour: a spelling without modes (`fixed<W,I>` or `ap_fixed<W,I>`) is truncate + wrap everywhere; round/saturate must be
+requested explicitly (`fixed<W,I,rnd,sat>`) and then inherits Vitis' limitation. A C++ compatibility shim that made the math calls compile for other modes was
+prototyped and removed. The paper should state that the full-scale models use RND/SAT and everything else the tool default. Regression check: 0 of 279 sampled
+designs changed `top.cpp`/`top.h`/`run_hls.tcl`.

@@ -11,8 +11,8 @@ from verification.fixedpoint import DType, quantize
 INC = os.environ.get("VITIS_HLS_INCLUDE") or "/tools/software/xilinx/ARCHIVE/Vitis_HLS/2024.1/include"
 TYPES = ["ap_fixed<16,5>", "ap_fixed<32,10>", "ap_fixed<16,5,AP_RND,AP_SAT>", "ap_fixed<16,5,AP_TRN,AP_SAT>",
          "ap_fixed<16,5,AP_RND,AP_WRAP>", "ap_fixed<24,8,AP_RND,AP_SAT>"]
-GENERIC = {"fixed<16,5>": "ap_fixed<16,5,AP_RND,AP_SAT>", "fixed<32,10>": "ap_fixed<32,10,AP_RND,AP_SAT>",
-           "fixed<16,5,trn,wrap>": "ap_fixed<16,5>"}
+GENERIC = {"fixed<16,5>": "ap_fixed<16,5>", "fixed<32,10>": "ap_fixed<32,10>", "fixed<16,5,trn,wrap>": "ap_fixed<16,5>",
+           "fixed<16,5,rnd,sat>": "ap_fixed<16,5,AP_RND,AP_SAT>"}
 PROBE = r'''
 #include <cstdio>
 #include <ap_fixed.h>

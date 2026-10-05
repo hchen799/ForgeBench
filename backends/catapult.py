@@ -124,8 +124,7 @@ class CatapultBackend(ToolBackend):
         fx = parse_fixed(data_type)
         if fx is None:
             return normalize_data_type(data_type)[1]
-        # Signed. A tool spelling without modes (ap_fixed<W,I>) keeps truncate + wrap, matching the ap_fixed defaults;
-        # a generic fixed<W,I> means round + saturate (see backends.base.parse_fixed).
+        # Signed. Without explicit modes the type is truncate + wrap, matching the ap_fixed defaults (see backends.base.parse_fixed).
         w, i, q, o = fx
         return f"ac_fixed<{w},{i},true,AC_{q.upper()},AC_{o.upper()}>"
 

@@ -41,9 +41,11 @@ _FIXED_RE = re.compile(r"^\s*(?:ap_|ac_)?fixed\s*<\s*(\d+)\s*,\s*(-?\d+)\s*(?:,[
 # ---- fixed-point format with explicit quantization / overflow modes -------------------------------------------------
 # Generic spelling:  fixed<W,I>  fixed<W,I,rnd>  fixed<W,I,rnd,sat>   (modes: trn|rnd, wrap|sat; case-insensitive)
 # Tool spellings:    ap_fixed<W,I[,AP_RND[,AP_SAT]]>   ac_fixed<W,I,true,AC_RND,AC_SAT>
-# Defaults: a *generic* `fixed<W,I>` means round-to-nearest + saturate (the arithmetic ForgeBench standardizes on);
-# a tool spelling without modes keeps that tool's own defaults (truncate + wrap), so existing configs are unchanged.
-GENERIC_DEFAULT_MODES = ("rnd", "sat")
+# Defaults: a spelling without modes -- generic `fixed<W,I>` or a tool spelling `ap_fixed<W,I>` -- means the tool defaults
+# (truncate + wrap). Other modes are never implied; they must be written explicitly, e.g. fixed<16,5,rnd,sat>.
+# NOTE: Vitis hls_math.h (exp, sqrt, tanh, sin, cos) only supports the default modes, so designs that call those functions fail to
+# compile with rnd/sat in Vitis; ForgeBench does not work around that.
+GENERIC_DEFAULT_MODES = ("trn", "wrap")
 TOOL_DEFAULT_MODES = ("trn", "wrap")
 _MODE_Q = {"trn": "trn", "ap_trn": "trn", "ac_trn": "trn", "rnd": "rnd", "ap_rnd": "rnd", "ac_rnd": "rnd"}
 _MODE_O = {"wrap": "wrap", "ap_wrap": "wrap", "ac_wrap": "wrap", "sat": "sat", "ap_sat": "sat", "ac_sat": "sat"}
