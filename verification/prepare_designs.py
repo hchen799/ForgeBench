@@ -29,8 +29,9 @@ def _domain_dir(domain):
     return os.path.join(REPO_ROOT, domain)
 
 
-def generate_design(domain, config_path, out_base, tasks):
-    """Generate a float design with `tasks`; return (run_dir, config_dict).
+def generate_design(domain, config_path, out_base, tasks, data_type="float", config_overrides=None):
+    """Generate a design (float unless `data_type` says otherwise) with `tasks`; return (run_dir, config_dict).
+    `config_overrides` (e.g. a different input_range) is merged into the config before generation.
 
     Generation is serialized per domain with an flock. Two concurrent runs (e.g.
     a `full`-mode and an `exe`-mode sweep side by side) both write the scratch
@@ -41,8 +42,9 @@ def generate_design(domain, config_path, out_base, tasks):
     """
     with open(config_path) as f:
         config = json.load(f)
-    config["data_type"] = "float"
+    config["data_type"] = data_type
     config["task"] = list(tasks)
+    config.update(config_overrides or {})
 
     stem = os.path.splitext(os.path.basename(config_path))[0]
     domain_dir = _domain_dir(domain)

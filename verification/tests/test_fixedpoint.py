@@ -11,12 +11,20 @@ from verification.fixedpoint import DType, quantize
 INC = os.environ.get("VITIS_HLS_INCLUDE") or "/tools/software/xilinx/ARCHIVE/Vitis_HLS/2024.1/include"
 TYPES = ["ap_fixed<16,5>", "ap_fixed<32,10>", "ap_fixed<16,5,AP_RND,AP_SAT>", "ap_fixed<16,5,AP_TRN,AP_SAT>",
          "ap_fixed<16,5,AP_RND,AP_WRAP>", "ap_fixed<24,8,AP_RND,AP_SAT>"]
+GENERIC = {"fixed<16,5>": "ap_fixed<16,5,AP_RND,AP_SAT>", "fixed<32,10>": "ap_fixed<32,10,AP_RND,AP_SAT>",
+           "fixed<16,5,trn,wrap>": "ap_fixed<16,5>"}
 PROBE = r'''
 #include <cstdio>
 #include <ap_fixed.h>
 typedef %(T)s data_t;
 int main() { double x; while (scanf("%%lf", &x) == 1) { data_t v = x; printf("%%.17g\n", (double)v); } }
 '''
+
+
+def test_generic_spelling_means_the_lowered_type():
+    for generic, raw in GENERIC.items():
+        a, b = DType(generic), DType(raw)
+        assert (a.W, a.I, a.q, a.o) == (b.W, b.I, b.q, b.o), (generic, raw)
 
 
 @pytest.mark.skipif(not os.path.isdir(INC), reason="Vitis ap_fixed headers not found")

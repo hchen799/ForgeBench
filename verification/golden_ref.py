@@ -44,8 +44,11 @@ def detect_domain(config):
     )
 
 
-def build_initial_arrays(config, design_dir):
-    """Build the initial name -> float32 ndarray state.
+def build_initial_arrays(config, design_dir, input_transform=None):
+    """Build the initial name -> ndarray state (precision per verification.fp).
+
+    `input_transform`, if given, is applied to every DRAM array as loaded. Fixed-point verification passes the data type's
+    quantizer so the golden is evaluated on exactly the values the design receives after its `(data_t)` input conversion.
 
     DRAMs are loaded from their `.txt` files; BRAMs are zero-initialized to match
     the C, where they are file-scope globals (zero-init) that ops read/write.
@@ -55,16 +58,17 @@ def build_initial_arrays(config, design_dir):
         arrays[bram["name"]] = np.zeros(bram["dims"], dtype=fp.FP)
     for dram in config["drams"]:
         path = os.path.join(design_dir, f"{dram['name']}.txt")
-        arrays[dram["name"]] = load_dram_txt(path, dram["dims"])
+        arr = load_dram_txt(path, dram["dims"])
+        arrays[dram["name"]] = input_transform(arr) if input_transform else arr
     return arrays
 
 
-def compute_goldens(config, design_dir, domain=None):
+def compute_goldens(config, design_dir, domain=None, input_transform=None):
     """Run the golden reference and return {output_name: ndarray}."""
     if domain is None:
         domain = detect_domain(config)
     module = importlib.import_module(f"verification.domains.{domain}")
-    arrays = build_initial_arrays(config, design_dir)
+    arrays = build_initial_arrays(config, design_dir, input_transform)
     module.run(config["ops"], arrays)
     return {name: arrays[name] for name in config["output_dram_names"]}
 

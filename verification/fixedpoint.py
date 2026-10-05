@@ -1,4 +1,4 @@
-"""ap_fixed emulation and error metrics for fixed-point operator verification.
+"""ap_fixed emulation and error metrics for fixed-point operator verification (import after the repo root is on sys.path).
 
 `quantize` reproduces what the generated testbench does to each input (`array[i] = (data_t)temp`, `temp` a double):
 the conversion double -> ap_fixed<W,I,Q,O>. Supported modes: Q in {AP_TRN (default), AP_RND}, O in {AP_WRAP (default), AP_SAT}.
@@ -7,31 +7,29 @@ These are validated bit-for-bit against the real Vitis ap_fixed headers by verif
   AP_TRN   truncate toward -infinity (floor)            AP_WRAP  two's-complement wrap into [-2^(I-1), 2^(I-1))
   AP_RND   round to nearest, ties toward +infinity      AP_SAT   clamp to [-2^(I-1), 2^(I-1) - 2^-F]
 """
-import re
-
 import numpy as np
 
-_DT = re.compile(r"^\s*ap_fixed\s*<\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*(AP_\w+)\s*(?:,\s*(AP_\w+)\s*)?)?>\s*$")
+from backends.base import parse_fixed
 
 
 class DType:
+    """A data type spelled as in a config's `data_type`: 'float', a generic `fixed<W,I[,quant[,overflow]]>` (default round +
+    saturate) or a raw `ap_fixed<W,I[,AP_*[,AP_*]]>` (default truncate + wrap). Parsing is `backends.base.parse_fixed`, the same
+    function the backends use to lower the type, so the verification and the generated design agree on what the string means."""
+
     def __init__(self, text):
         t = text.strip()
         self.text = t
         if t == "float":
             self.kind, self.W, self.I, self.F, self.q, self.o = "float", 32, 0, 0, None, None
             return
-        m = _DT.match(t)
-        if not m:
-            raise ValueError(f"unsupported data type {text!r}: expected 'float' or 'ap_fixed<W,I[,AP_TRN|AP_RND[,AP_WRAP|AP_SAT]]>'")
+        fx = parse_fixed(t)
+        if fx is None:
+            raise ValueError(f"unsupported data type {text!r}: expected 'float', 'fixed<W,I[,trn|rnd[,wrap|sat]]>' or 'ap_fixed<...>'")
         self.kind = "fixed"
-        self.W, self.I = int(m.group(1)), int(m.group(2))
+        self.W, self.I, qq, oo = fx
         self.F = self.W - self.I
-        self.q, self.o = m.group(3) or "AP_TRN", m.group(4) or "AP_WRAP"
-        if self.q not in ("AP_TRN", "AP_RND"):
-            raise ValueError(f"unsupported quantization mode {self.q}")
-        if self.o not in ("AP_WRAP", "AP_SAT"):
-            raise ValueError(f"unsupported overflow mode {self.o}")
+        self.q, self.o = f"AP_{qq.upper()}", f"AP_{oo.upper()}"
         if self.W > 52:
             raise ValueError("W > 52 cannot be emulated exactly in float64")
 
@@ -48,11 +46,8 @@ class DType:
         return 2.0 ** (self.I - 1) - self.lsb
 
     def tag(self):
-        """Short filesystem/column-safe name, e.g. ap_fixed_16_5 or ap_fixed_16_5_RND_SAT."""
-        if self.kind == "float":
-            return "float"
-        extra = "" if (self.q, self.o) == ("AP_TRN", "AP_WRAP") else f"_{self.q[3:]}_{self.o[3:]}"
-        return f"ap_fixed_{self.W}_{self.I}{extra}"
+        """Filesystem/column-safe name, e.g. fixed_16_5_rnd_sat."""
+        return "float" if self.kind == "float" else f"fixed_{self.W}_{self.I}_{self.q[3:].lower()}_{self.o[3:].lower()}"
 
 
 def quantize(x, dt):
