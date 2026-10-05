@@ -1,0 +1,1 @@
+"""Configurable verification adapters."""

@@ -1,0 +1,7 @@
+Recorded 2026-10-03. Python 3.9, PyTorch 2.2.0, NumPy 1.24.4.
+Command (from scale_models):
+VITIS_HLS_INCLUDE=/tools/software/xilinx/ARCHIVE/Vitis_HLS/2024.1/include python -m pytest -q verification/tests verification/legacy/llama3_verification/tests verification/legacy/tiled_resnet18_verification/tests
+
+........................................................................ [ 93%]
+.....                                                                    [100%]
+77 passed in 61.70s (0:01:01)

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "family": "llama3",
+  "model": {
+    "profile": "tiny",
+    "hidden": 60,
+    "ffn": 131,
+    "q_heads": 3,
+    "kv_heads": 1,
+    "head_dim": 20,
+    "vocab": 259,
+    "max_ctx": 33,
+    "prefill_tile": 7,
+    "tile_in": 17,
+    "tile_out": 19,
+    "rope_theta": 10000,
+    "epsilon": 0.00001
+  },
+  "precision": {
+    "word_bits": 24,
+    "integer_bits": 8
+  },
+  "parameters": {
+    "seed": 29
+  },
+  "test": {
+    "seed": 43,
+    "prefill": 31,
+    "decode": 2,
+    "chunk": 6,
+    "trace": "ops"
+  },
+  "execution": {
+    "backend": "native",
+    "threads": 4,
+    "cache_gib": 0.1
+  }
+}

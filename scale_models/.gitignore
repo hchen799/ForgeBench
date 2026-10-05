@@ -1,0 +1,4 @@
+/verification_runs/
+/verification/runs/
+/.pytest_cache/
+!/verification/results/*.log

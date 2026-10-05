@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "family": "llama3",
+  "model": {
+    "profile": "tiny"
+  },
+  "precision": {
+    "word_bits": 32,
+    "integer_bits": 10
+  },
+  "parameters": {
+    "seed": 42
+  },
+  "test": {
+    "seed": 43,
+    "prefill": 30,
+    "decode": 2,
+    "trace": "ops"
+  },
+  "execution": {
+    "backend": "native",
+    "threads": 4,
+    "cache_gib": 0.1
+  }
+}

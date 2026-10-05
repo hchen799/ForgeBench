@@ -1,0 +1,695 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-10-03T20:06:34.425817+00:00",
+  "environment": {
+    "pytorch": "2.2.0",
+    "numpy": "1.24.4",
+    "vitis_hls": "2024.1.2",
+    "host_execution": true
+  },
+  "conclusions": {
+    "exact_comparison": "All selected architecture cases have zero integer mismatches.",
+    "mathematical_acceptance": "DIAGNOSTIC_ONLY for nominal cases; no accuracy threshold imposed.",
+    "pretrained_weights": false,
+    "rtl_cosimulation": false,
+    "board_execution": false,
+    "full_8b_q32_10_tested": false,
+    "full_8b_8192_tokens_tested": false,
+    "new_configurable_full_8b_executed": false
+  },
+  "architecture_runs": [
+    {
+      "id": "validated_resnet_q16_5",
+      "implementation": "configurable_v2",
+      "execution": "vitis",
+      "family": "resnet18",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "rounding": "nearest_ties_positive",
+        "overflow": "saturate",
+        "fractional_bits": 11,
+        "storage_dtype": "<i2",
+        "storage_bytes": 2,
+        "scale": 2048,
+        "lsb": 0.00048828125,
+        "real_minimum": -16.0,
+        "real_maximum": 15.99951171875
+      },
+      "resolved_config": "verification/runs/validated_resnet_q16_5/resolved_config.json",
+      "config_sha256": "94e797b959c5c8dce4cbe55d96c3ec78d6bf743ed5b7822d3f4f010533cc4133",
+      "manifest": "verification/runs/validated_resnet_q16_5/case/manifest.json",
+      "manifest_sha256": "f4d6a14a35ae1ce40640090b1ebfa809b02547fa6e6448bd9b2380c0be6cf033",
+      "summary": {
+        "implementation_verdict": "PASS",
+        "mathematical_verdict": "DIAGNOSTIC_ONLY",
+        "checkpoints": 65,
+        "compared_codes": 8054760,
+        "integer_mismatches": 0,
+        "saturation_count": 0,
+        "float_atol": null,
+        "float_rtol": null,
+        "logit_errors": {
+          "max_abs": 0.0006131635532236057,
+          "mae": 0.00017244851009612928,
+          "rmse": 0.00021310109084550356,
+          "max_relative": 0.815313413774186,
+          "relative_denominator_floor": 0.00048828125
+        },
+        "exponent_match": true,
+        "overall_verdict": "PASS",
+        "fail_on_saturation": false
+      },
+      "comparison": "verification/runs/validated_resnet_q16_5/comparison.json",
+      "comparison_sha256": "35243a386cc7f000fc93605736bc3129e81faa57743fad0194cabb48c6c7fb97",
+      "log": "verification/runs/validated_resnet_q16_5/verification.log",
+      "log_sha256": "cf5b1f01c98770e37ed73ca20f7c70a61841befa4a51cd6a4fefa785e3e8a369",
+      "phase_seconds": {
+        "generate C/C++ HLS project": 0.03283235989511013,
+        "generate input and random parameters": 0.2888516276143491,
+        "PyTorch fixed and FP64 references": 1.048387781251222,
+        "actual Vitis C/C++ simulation": 69.31632864428684,
+        "all-checkpoint comparison": 0.5004317951388657
+      },
+      "sources": {
+        "top.cpp": "daaca177491bf1a594b01e764f4d77b23bb3668bc45d8e8bfd822d43a6122b0c",
+        "top.h": "36b6dae4486ec27900ae0ff36bb687b19e5ec65e8dae5483e12fe49c0ef58138",
+        "resnet18_tiled_scales.h": "16dc86ca31f2b2d7415a36ec8c1522f17c73df3ca7b8f1bcc29bec55ca7f22bb",
+        "verification_trace.h": "05d3453c81de80ed7b32178db76e6c7cee02f56f9df161d590c62ce2cf14e219",
+        "tb_top.cpp": "f63b3ceb110abee26c29b9a8d65eb2fb17b3fde67c4fbaeb919b71ce4509fe16",
+        "run_csim.tcl": "96491c244bc19c81d3ae20b7bb620c8b2017ab4816219a607478f98be5eba8c3",
+        "config.json": "0c42d5b3de165d8a1887029c58dce4abbf6ac1841c195630e7c6df505108b65d"
+      }
+    },
+    {
+      "id": "validated_resnet_q32_10",
+      "implementation": "configurable_v2",
+      "execution": "vitis",
+      "family": "resnet18",
+      "precision": {
+        "word_bits": 32,
+        "integer_bits": 10,
+        "rounding": "nearest_ties_positive",
+        "overflow": "saturate",
+        "fractional_bits": 22,
+        "storage_dtype": "<i4",
+        "storage_bytes": 4,
+        "scale": 4194304,
+        "lsb": 2.384185791015625e-07,
+        "real_minimum": -512.0,
+        "real_maximum": 511.9999997615814
+      },
+      "resolved_config": "verification/runs/validated_resnet_q32_10/resolved_config.json",
+      "config_sha256": "0343346a5dc7e9ac66ee4d69ab4845a8411603ce11f9e05288384b5e7d9994f8",
+      "manifest": "verification/runs/validated_resnet_q32_10/case/manifest.json",
+      "manifest_sha256": "131b08960b70779d9fcfea5ec6e5cefc8271c92e13979f8d06496b464670d1d4",
+      "summary": {
+        "implementation_verdict": "PASS",
+        "mathematical_verdict": "DIAGNOSTIC_ONLY",
+        "checkpoints": 65,
+        "compared_codes": 8054760,
+        "integer_mismatches": 0,
+        "saturation_count": 0,
+        "float_atol": null,
+        "float_rtol": null,
+        "logit_errors": {
+          "max_abs": 3.2091310631088277e-07,
+          "mae": 8.51179426065371e-08,
+          "rmse": 1.0481622798553739e-07,
+          "max_relative": 0.00017909162445945887,
+          "relative_denominator_floor": 2.384185791015625e-07
+        },
+        "exponent_match": true,
+        "overall_verdict": "PASS",
+        "fail_on_saturation": false
+      },
+      "comparison": "verification/runs/validated_resnet_q32_10/comparison.json",
+      "comparison_sha256": "92e891a418c24de8fc31b828a89340a0e8aa102a508691c4a234694c86395c97",
+      "log": "verification/runs/validated_resnet_q32_10/verification.log",
+      "log_sha256": "1b271cecfcf2aa54ce5727e3a0d5b7c2fcb83de5aac2093498c8617d86b65538",
+      "phase_seconds": {
+        "generate C/C++ HLS project": 0.007545777130872011,
+        "generate input and random parameters": 0.3747577238827944,
+        "PyTorch fixed and FP64 references": 3.604440693743527,
+        "actual Vitis C/C++ simulation": 205.9727182108909,
+        "all-checkpoint comparison": 0.6174010103568435
+      },
+      "sources": {
+        "top.cpp": "9534c68ad9161da64e3513e8fe7d812214ee4c16a5579ebc6b47ae78f7891c05",
+        "top.h": "91dcbf88c79c0c1f5bf9acb3770a8c24309201076520b17f629950f3906d7bb5",
+        "resnet18_tiled_scales.h": "16dc86ca31f2b2d7415a36ec8c1522f17c73df3ca7b8f1bcc29bec55ca7f22bb",
+        "verification_trace.h": "05d3453c81de80ed7b32178db76e6c7cee02f56f9df161d590c62ce2cf14e219",
+        "tb_top.cpp": "f63b3ceb110abee26c29b9a8d65eb2fb17b3fde67c4fbaeb919b71ce4509fe16",
+        "run_csim.tcl": "96491c244bc19c81d3ae20b7bb620c8b2017ab4816219a607478f98be5eba8c3",
+        "config.json": "c4e972f8da524c9dac1faab22d7bad5855e3976b2d4df613e0f25ebe7813e4ed"
+      }
+    },
+    {
+      "id": "validated_resnet_custom_q24_8",
+      "implementation": "configurable_v2",
+      "execution": "vitis",
+      "family": "resnet18",
+      "precision": {
+        "word_bits": 24,
+        "integer_bits": 8,
+        "rounding": "nearest_ties_positive",
+        "overflow": "saturate",
+        "fractional_bits": 16,
+        "storage_dtype": "<i4",
+        "storage_bytes": 4,
+        "scale": 65536,
+        "lsb": 1.52587890625e-05,
+        "real_minimum": -128.0,
+        "real_maximum": 127.99998474121094
+      },
+      "resolved_config": "verification/runs/validated_resnet_custom_q24_8/resolved_config.json",
+      "config_sha256": "289d78a757c3600b52751087d7d6903a132094ba6198deed1823ac52ed0b92d0",
+      "manifest": "verification/runs/validated_resnet_custom_q24_8/case/manifest.json",
+      "manifest_sha256": "8146b113eebf65416b92d4db334c0344751a8c5998474a7f31663aea7dfd21ed",
+      "summary": {
+        "implementation_verdict": "PASS",
+        "mathematical_verdict": "DIAGNOSTIC_ONLY",
+        "checkpoints": 65,
+        "compared_codes": 8054760,
+        "integer_mismatches": 0,
+        "saturation_count": 0,
+        "float_atol": null,
+        "float_rtol": null,
+        "logit_errors": {
+          "max_abs": 2.421091590243396e-05,
+          "mae": 5.592424198371242e-06,
+          "rmse": 7.061710407435884e-06,
+          "max_relative": 0.004051613102807093,
+          "relative_denominator_floor": 1.52587890625e-05
+        },
+        "exponent_match": true,
+        "overall_verdict": "PASS",
+        "fail_on_saturation": false
+      },
+      "comparison": "verification/runs/validated_resnet_custom_q24_8/comparison.json",
+      "comparison_sha256": "821a09adbcccc8e81eb3172a8c0b6f651ac0ebbe45247807c994bf6b1df6ce3b",
+      "log": "verification/runs/validated_resnet_custom_q24_8/verification.log",
+      "log_sha256": "5f6227ff46207331e04bb9e348d4d64b48948d1cc6fe0c161c30bf473186075d",
+      "phase_seconds": {
+        "generate C/C++ HLS project": 0.0042687649838626385,
+        "generate input and random parameters": 0.34732080111280084,
+        "PyTorch fixed and FP64 references": 4.523292418103665,
+        "actual Vitis C/C++ simulation": 133.4832493350841,
+        "all-checkpoint comparison": 0.6141950245946646
+      },
+      "sources": {
+        "top.cpp": "8e5e2ebef1be83084b0004f04c2ce4b5a71887d3c62749ebc2d95c7a0b3cf146",
+        "top.h": "fbf293f80a5305dfc82725679b2ea652c3c2bb3b2c5aa9f49efa5e6a1126182e",
+        "resnet18_tiled_scales.h": "daad4c55fd7b3ecdd2e094d6a7a4d21a34a2517e7978884c327cf0199d173a03",
+        "verification_trace.h": "05d3453c81de80ed7b32178db76e6c7cee02f56f9df161d590c62ce2cf14e219",
+        "tb_top.cpp": "f63b3ceb110abee26c29b9a8d65eb2fb17b3fde67c4fbaeb919b71ce4509fe16",
+        "run_csim.tcl": "96491c244bc19c81d3ae20b7bb620c8b2017ab4816219a607478f98be5eba8c3",
+        "config.json": "c51c9c3875aaf935c93e6b344ba6432bbeeed5c415e9e32f4e1aa50b743ba0d9"
+      }
+    },
+    {
+      "id": "validated_llama_q16_5",
+      "implementation": "configurable_v2",
+      "execution": "vitis",
+      "family": "llama3",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "rounding": "nearest_ties_positive",
+        "overflow": "saturate",
+        "fractional_bits": 11,
+        "storage_dtype": "<i2",
+        "storage_bytes": 2,
+        "scale": 2048,
+        "lsb": 0.00048828125,
+        "real_minimum": -16.0,
+        "real_maximum": 15.99951171875
+      },
+      "resolved_config": "verification/runs/validated_llama_q16_5/resolved_config.json",
+      "config_sha256": "443e42d2bb5cf29662088ffacb6b8101333a1cd3a42e22338702253b15e08e0d",
+      "manifest": "verification/runs/validated_llama_q16_5/model/model.json",
+      "manifest_sha256": "de2ffd6c1d711dd79cb700903aac1fd01b9823980f79c520bdf18be352f4056c",
+      "summary": {
+        "implementation_verdict": "PASS",
+        "mathematical_verdict": "DIAGNOSTIC_ONLY",
+        "checkpoints": 390,
+        "compared_codes": 87072,
+        "integer_mismatches": 0,
+        "saturation_count": 0,
+        "float_atol": null,
+        "float_rtol": null,
+        "logit_errors": {
+          "count": 8224,
+          "max_abs": 0.005478637461269642,
+          "mae": 0.000837799536703014,
+          "rmse": 0.0010674838646106285,
+          "max_relative": 9.224961226055711,
+          "relative_denominator_floor": 0.00048828125
+        },
+        "overall_verdict": "PASS",
+        "fail_on_saturation": false
+      },
+      "comparison": "verification/runs/validated_llama_q16_5/comparison.json",
+      "comparison_sha256": "e380e80e0155c16f2f451f0cafd98332612fc47585535301256780e406563829",
+      "log": "verification/runs/validated_llama_q16_5/verification.log",
+      "log_sha256": "1716ebadd9321b2af7cdb9d1b1d389cfcc6f8d52edb515ba6bccac2eb7ad1c8f",
+      "phase_seconds": {
+        "generate C/C++ HLS project": 0.3059440921060741,
+        "generate random parameters": 0.017894634045660496,
+        "generate token input": 0.013054666109383106,
+        "PyTorch fixed and FP64 references": 0.6627220045775175,
+        "actual C/C++ simulation": 11.05985592212528,
+        "all-checkpoint comparison": 0.13929812097921968
+      },
+      "sources": {
+        "config.json": "0fa5ece1c9bbba3295f62395e5f22843ef1d0538303fce2e65999f1203cb196f",
+        "model_config.h": "67e5ccb884d980dbc209e4c630e459b6012f50c61fef599b6e0f0361bb4d4d22",
+        "top.h": "de6c5ec57fea09458d2211b4bcece343058e6d2fc29c3ef71939c9f8dd906bb3",
+        "top.cpp": "0211661a3e3556945197d26f75940c736c1156b1eccdd113ba1b8d12b97eb881",
+        "nonlinear_tables.h": "d71a82c07d981853a620b7b5b4e2df767c591893c8323d5edc92c520967f46fb",
+        "verification_trace.h": "71413da5be81f6da233763a4944b978c9f5f7f3facc48ab78e40155d20ab3968",
+        "tb_top.cpp": "ea912ee4181ff157b968e7db05328c20209c5c37dcb90d8441c27867b7dd7173",
+        "run_csim.tcl": "7b7709f43c1d30817ac9cff1a2609d2503f8089e1875645671eb80c6c1145b24"
+      }
+    },
+    {
+      "id": "validated_llama_q32_10",
+      "implementation": "configurable_v2",
+      "execution": "vitis",
+      "family": "llama3",
+      "precision": {
+        "word_bits": 32,
+        "integer_bits": 10,
+        "rounding": "nearest_ties_positive",
+        "overflow": "saturate",
+        "fractional_bits": 22,
+        "storage_dtype": "<i4",
+        "storage_bytes": 4,
+        "scale": 4194304,
+        "lsb": 2.384185791015625e-07,
+        "real_minimum": -512.0,
+        "real_maximum": 511.9999997615814
+      },
+      "resolved_config": "verification/runs/validated_llama_q32_10/resolved_config.json",
+      "config_sha256": "f5251bb43a43f9c064d3c2bd52ab27535a7944a43fe636ea7ca69d81bcca4e5e",
+      "manifest": "verification/runs/validated_llama_q32_10/model/model.json",
+      "manifest_sha256": "c35c2d3d8bc1d099bc47ca840214ecc22e4a755298cdaf8a44f222276f00b2f5",
+      "summary": {
+        "implementation_verdict": "PASS",
+        "mathematical_verdict": "DIAGNOSTIC_ONLY",
+        "checkpoints": 390,
+        "compared_codes": 87072,
+        "integer_mismatches": 0,
+        "saturation_count": 0,
+        "float_atol": null,
+        "float_rtol": null,
+        "logit_errors": {
+          "count": 8224,
+          "max_abs": 2.6621495320400257e-06,
+          "mae": 4.240718294789732e-07,
+          "rmse": 5.488745478829333e-07,
+          "max_relative": 0.008303679106828783,
+          "relative_denominator_floor": 2.384185791015625e-07
+        },
+        "overall_verdict": "PASS",
+        "fail_on_saturation": false
+      },
+      "comparison": "verification/runs/validated_llama_q32_10/comparison.json",
+      "comparison_sha256": "b264400aeef50c8b1f0b3d7a44d3f7ce7bfdea80bb4c175297d670b4ad6f9c11",
+      "log": "verification/runs/validated_llama_q32_10/verification.log",
+      "log_sha256": "6f22924629b2293ef99002d76c2f4fe673a6632f1da38c4052edf8e3c9e0bbcb",
+      "phase_seconds": {
+        "generate C/C++ HLS project": 0.3450302560813725,
+        "generate random parameters": 0.030699224211275578,
+        "generate token input": 0.016905236057937145,
+        "PyTorch fixed and FP64 references": 1.0257196607999504,
+        "actual C/C++ simulation": 12.291855359915644,
+        "all-checkpoint comparison": 0.14769794093444943
+      },
+      "sources": {
+        "config.json": "5134172cf988dd6d1a5e43f67e7877b4a96980eba8f3342e97e49a670fa5b7ca",
+        "model_config.h": "d2420f3a374b1ba46318367118ff4dbd7eedc2cb030418afa039707c31f8b176",
+        "top.h": "de6c5ec57fea09458d2211b4bcece343058e6d2fc29c3ef71939c9f8dd906bb3",
+        "top.cpp": "0211661a3e3556945197d26f75940c736c1156b1eccdd113ba1b8d12b97eb881",
+        "nonlinear_tables.h": "3ea82929fddd14c14a1b7c0dd6fe772fd78f43f83cf457855d736e55c60d92f7",
+        "verification_trace.h": "71413da5be81f6da233763a4944b978c9f5f7f3facc48ab78e40155d20ab3968",
+        "tb_top.cpp": "ea912ee4181ff157b968e7db05328c20209c5c37dcb90d8441c27867b7dd7173",
+        "run_csim.tcl": "7b7709f43c1d30817ac9cff1a2609d2503f8089e1875645671eb80c6c1145b24"
+      }
+    },
+    {
+      "id": "validated_llama_custom_q24_8",
+      "implementation": "configurable_v2",
+      "execution": "native",
+      "family": "llama3",
+      "precision": {
+        "word_bits": 24,
+        "integer_bits": 8,
+        "rounding": "nearest_ties_positive",
+        "overflow": "saturate",
+        "fractional_bits": 16,
+        "storage_dtype": "<i4",
+        "storage_bytes": 4,
+        "scale": 65536,
+        "lsb": 1.52587890625e-05,
+        "real_minimum": -128.0,
+        "real_maximum": 127.99998474121094
+      },
+      "resolved_config": "verification/runs/validated_llama_custom_q24_8/resolved_config.json",
+      "config_sha256": "268970452335c981a43399ff4c8c74c2becf4a1baa7a160a031d88499c8fc42f",
+      "manifest": "verification/runs/validated_llama_custom_q24_8/model/model.json",
+      "manifest_sha256": "12b9fb9a8d74449cf35fa4b6c758bb23d46b7be4c413f943ac5c091473462046",
+      "summary": {
+        "implementation_verdict": "PASS",
+        "mathematical_verdict": "DIAGNOSTIC_ONLY",
+        "checkpoints": 312,
+        "compared_codes": 89331,
+        "integer_mismatches": 0,
+        "saturation_count": 0,
+        "float_atol": null,
+        "float_rtol": null,
+        "logit_errors": {
+          "count": 8547,
+          "max_abs": 0.000152328305723759,
+          "mae": 2.3473135362981742e-05,
+          "rmse": 2.9902673518804303e-05,
+          "max_relative": 0.10725953697626023,
+          "relative_denominator_floor": 1.52587890625e-05
+        },
+        "overall_verdict": "PASS",
+        "fail_on_saturation": false
+      },
+      "comparison": "verification/runs/validated_llama_custom_q24_8/comparison.json",
+      "comparison_sha256": "c06aa32dd3d457280a1bdac480ecac3acd8b7db1d3b42d405ebc96b5bb960159",
+      "log": "verification/runs/validated_llama_custom_q24_8/verification.log",
+      "log_sha256": "3f9ac88c33a8b05b86c1c0ed3e04b474031e75fa3434c0e4c3f6bee2672cc22b",
+      "phase_seconds": {
+        "generate C/C++ HLS project": 0.3049733289517462,
+        "generate random parameters": 0.01870204182341695,
+        "generate token input": 0.014260020107030869,
+        "PyTorch fixed and FP64 references": 0.7488339529372752,
+        "actual C/C++ simulation": 1.5514609720557928,
+        "all-checkpoint comparison": 0.11969778407365084
+      },
+      "sources": {
+        "config.json": "42e3ed8d7c11818b4a7d233e56ba0512900fadc9e97d6443edf2159d323c7b26",
+        "model_config.h": "1112adb97d3e62edcafa9ed66abf9fc862e4941b474e792df850c87c87c8da7f",
+        "top.h": "de6c5ec57fea09458d2211b4bcece343058e6d2fc29c3ef71939c9f8dd906bb3",
+        "top.cpp": "0211661a3e3556945197d26f75940c736c1156b1eccdd113ba1b8d12b97eb881",
+        "nonlinear_tables.h": "fb6dc711034d9288abe2de25da159db075dc169d806472aa47662e93eaffdb3f",
+        "verification_trace.h": "71413da5be81f6da233763a4944b978c9f5f7f3facc48ab78e40155d20ab3968",
+        "tb_top.cpp": "ea912ee4181ff157b968e7db05328c20209c5c37dcb90d8441c27867b7dd7173",
+        "run_csim.tcl": "7b7709f43c1d30817ac9cff1a2609d2503f8089e1875645671eb80c6c1145b24"
+      }
+    },
+    {
+      "id": "llama3_8b/short",
+      "implementation": "frozen_legacy_v1",
+      "family": "llama3",
+      "execution": "vitis",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "fractional_bits": 11
+      },
+      "model_config": {
+        "profile": "llama3_8b",
+        "layers": 32,
+        "hidden": 4096,
+        "ffn": 14336,
+        "q_heads": 32,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "vocab": 128256,
+        "max_ctx": 8192,
+        "prefill_tile": 16,
+        "tile_in": 128,
+        "tile_out": 128,
+        "rope_theta": 500000.0,
+        "epsilon": 1e-05
+      },
+      "prefill": 4,
+      "decode": 2,
+      "parameter_count": 8030261248,
+      "checkpoints": 1737,
+      "compared_codes": 19889664,
+      "integer_mismatches": 0,
+      "saturation_count": 0,
+      "logit_errors": {
+        "count": 769536,
+        "max_abs": 0.015099260658835378,
+        "mae": 0.0022845966209983494,
+        "rmse": 0.0028703466575113606,
+        "max_relative": 16.045067270747836,
+        "relative_denominator_floor": 0.00048828125
+      },
+      "comparison": "verification/runs/llama3_8b/short/comparison.json",
+      "comparison_sha256": "d698a03e7185f9abe70b729f9dabfb1c567e91d35cf2e21aaa087d7ef87f6188",
+      "simulator_log": "verification/runs/llama3_8b/short/csim.log",
+      "simulator_log_sha256": "f5f09d38da36800018b622572921152e1d10d0b3608f82ad687d48f1c9f07dfd",
+      "recomparison_log": "verification/runs/review_archive_llama3_8b_short/verification.log",
+      "recomparison_log_sha256": "357d2d49d5b68d9c110b699ace1fbf2a78af4158a43aeac4ca14fe03c2604988"
+    },
+    {
+      "id": "llama3_8b/long2048",
+      "implementation": "frozen_legacy_v1",
+      "family": "llama3",
+      "execution": "vitis",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "fractional_bits": 11
+      },
+      "model_config": {
+        "profile": "llama3_8b",
+        "layers": 32,
+        "hidden": 4096,
+        "ffn": 14336,
+        "q_heads": 32,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "vocab": 128256,
+        "max_ctx": 8192,
+        "prefill_tile": 16,
+        "tile_in": 128,
+        "tile_out": 128,
+        "rope_theta": 500000.0,
+        "epsilon": 1e-05
+      },
+      "prefill": 2048,
+      "decode": 2,
+      "parameter_count": 8030261248,
+      "checkpoints": 12740,
+      "compared_codes": 674368000,
+      "integer_mismatches": 0,
+      "saturation_count": 8,
+      "logit_errors": {
+        "count": 262924800,
+        "max_abs": 0.06996331252043593,
+        "mae": 0.0031098447654074944,
+        "rmse": 0.003909475912172491,
+        "max_relative": 83.84884815253372,
+        "relative_denominator_floor": 0.00048828125
+      },
+      "comparison": "verification/runs/llama3_8b/long2048/comparison.json",
+      "comparison_sha256": "0fd860ad021ea96b80ca433380132047f27b3112645595c93300bf0ffffa4bf1",
+      "simulator_log": "verification/runs/llama3_8b/long2048/csim.log",
+      "simulator_log_sha256": "3a828f246863bb68c63b107577069f4113f782d0567e4e316138141780e97e6c",
+      "recomparison_log": "verification/runs/review_archive_llama3_8b_long/verification.log",
+      "recomparison_log_sha256": "e17f780b6e46e640f33a9b92e3eaf355b57d705cce8e8bc1008ed4530211a40c"
+    },
+    {
+      "id": "llama3_tiny_v2/boundary",
+      "implementation": "frozen_legacy_v1",
+      "family": "llama3",
+      "execution": "vitis",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "fractional_bits": 11
+      },
+      "model_config": {
+        "profile": "tiny",
+        "layers": 2,
+        "hidden": 64,
+        "ffn": 128,
+        "q_heads": 4,
+        "kv_heads": 1,
+        "head_dim": 16,
+        "vocab": 257,
+        "max_ctx": 32,
+        "prefill_tile": 4,
+        "tile_in": 32,
+        "tile_out": 32,
+        "rope_theta": 500000.0,
+        "epsilon": 1e-05
+      },
+      "prefill": 30,
+      "decode": 2,
+      "parameter_count": 102848,
+      "checkpoints": 390,
+      "compared_codes": 87072,
+      "integer_mismatches": 0,
+      "saturation_count": 0,
+      "logit_errors": {
+        "count": 8224,
+        "max_abs": 0.004364159253278155,
+        "mae": 0.0007359239789641815,
+        "rmse": 0.0009499067583986967,
+        "max_relative": 2.334214044185207,
+        "relative_denominator_floor": 0.00048828125
+      },
+      "comparison": "verification/runs/llama3_tiny_v2/boundary/comparison.json",
+      "comparison_sha256": "538676bcb338a80c206e6cb81768f296a919d39b64356270bbd8442b40a20588",
+      "simulator_log": "verification/runs/llama3_tiny_v2/boundary/csim.log",
+      "simulator_log_sha256": "f7b4dae4f9c0950ac740d3f83b8a2db718494802a02cca98c3c46eba4a8f3cc1"
+    },
+    {
+      "id": "llama3_tiny_ctx8192/boundary",
+      "implementation": "frozen_legacy_v1",
+      "family": "llama3",
+      "execution": "vitis",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "fractional_bits": 11
+      },
+      "model_config": {
+        "profile": "tiny",
+        "layers": 2,
+        "hidden": 64,
+        "ffn": 128,
+        "q_heads": 4,
+        "kv_heads": 1,
+        "head_dim": 16,
+        "vocab": 257,
+        "max_ctx": 8192,
+        "prefill_tile": 32,
+        "tile_in": 32,
+        "tile_out": 32,
+        "rope_theta": 500000.0,
+        "epsilon": 1e-05
+      },
+      "prefill": 8190,
+      "decode": 2,
+      "parameter_count": 102848,
+      "checkpoints": 2064,
+      "compared_codes": 4202496,
+      "integer_mismatches": 0,
+      "saturation_count": 0,
+      "logit_errors": {
+        "count": 2105344,
+        "max_abs": 0.00939181219301255,
+        "mae": 0.0008992703441130733,
+        "rmse": 0.0011491487522077954,
+        "max_relative": 7.986404352979633,
+        "relative_denominator_floor": 0.00048828125
+      },
+      "comparison": "verification/runs/llama3_tiny_ctx8192/boundary/comparison.json",
+      "comparison_sha256": "6483afcd18db26dc731661fc1f149d1994dbb315bbf6ea4cba9f73273eb34363",
+      "simulator_log": "verification/runs/llama3_tiny_ctx8192/boundary/csim.log",
+      "simulator_log_sha256": "ca9d1eb32d9b927affcd039d4bee26f96ebc9bbed4910ac3803a152c2db3b09d"
+    },
+    {
+      "id": "resnet18/seed42",
+      "implementation": "frozen_legacy_v1",
+      "family": "resnet18",
+      "execution": "Vitis C simulation",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "fractional_bits": 11
+      },
+      "checkpoints": 65,
+      "integer_mismatches": 0,
+      "exponent_match": true,
+      "logit_errors": {
+        "max_abs": 0.0006131635532236057,
+        "mae": 0.00017244851009612928,
+        "rmse": 0.00021310109084550356,
+        "max_relative": 0.815313413774186,
+        "relative_denominator_floor": 0.00048828125
+      },
+      "nominal_warnings": [],
+      "comparison": "verification/runs/resnet18/seed42/report.json",
+      "comparison_sha256": "62bc4c924f46d0607d10c1a0600c6975ad4bc42af9695370852c821bb0768fd1"
+    },
+    {
+      "id": "resnet18/seed43",
+      "implementation": "frozen_legacy_v1",
+      "family": "resnet18",
+      "execution": "reused Vitis-compiled executable",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "fractional_bits": 11
+      },
+      "checkpoints": 65,
+      "integer_mismatches": 0,
+      "exponent_match": true,
+      "logit_errors": {
+        "max_abs": 0.0006383181135350413,
+        "mae": 0.00017537016972832842,
+        "rmse": 0.0002155908192861852,
+        "max_relative": 0.20660796126498351,
+        "relative_denominator_floor": 0.00048828125
+      },
+      "nominal_warnings": [],
+      "comparison": "verification/runs/resnet18/seed43/report.json",
+      "comparison_sha256": "229533cdcfaf2a9b520cf265a049ff0b71412a9fb2e3d9338d47c41a771130a4"
+    },
+    {
+      "id": "resnet18/seed44",
+      "implementation": "frozen_legacy_v1",
+      "family": "resnet18",
+      "execution": "reused Vitis-compiled executable",
+      "precision": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "fractional_bits": 11
+      },
+      "checkpoints": 65,
+      "integer_mismatches": 0,
+      "exponent_match": true,
+      "logit_errors": {
+        "max_abs": 0.0006149630531152583,
+        "mae": 0.00017049810336783677,
+        "rmse": 0.00021034594647176364,
+        "max_relative": 0.37163964513843134,
+        "relative_denominator_floor": 0.00048828125
+      },
+      "nominal_warnings": [],
+      "comparison": "verification/runs/resnet18/seed44/report.json",
+      "comparison_sha256": "1abd036c1cbdfe5e82613e6e507c4fbc209f4a4a6c5736399b029d773c1b7bb4"
+    }
+  ],
+  "comparator_only_demo": {
+    "path": "verification/runs/review_generic",
+    "warning": "Actual tensor copied from golden. Not accelerator evidence."
+  },
+  "negative_tolerance_test": {
+    "path": "verification/runs/validated_tolerance_readonly",
+    "expected_exit_code": 1,
+    "summary": {
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "FAIL",
+      "checkpoints": 390,
+      "compared_codes": 87072,
+      "integer_mismatches": 0,
+      "saturation_count": 0,
+      "float_atol": 0.0,
+      "float_rtol": 0.0,
+      "logit_errors": {
+        "count": 8224,
+        "max_abs": 2.6621495320400257e-06,
+        "mae": 4.240718294789732e-07,
+        "rmse": 5.488745478829333e-07,
+        "max_relative": 0.008303679106828783,
+        "relative_denominator_floor": 2.384185791015625e-07
+      },
+      "overall_verdict": "FAIL",
+      "fail_on_saturation": false
+    },
+    "saved_case_unchanged": true
+  }
+}

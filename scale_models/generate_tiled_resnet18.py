@@ -1,3 +1,4 @@
+import argparse
 import os
 import re
 from dataclasses import dataclass
@@ -173,16 +174,23 @@ def make_top_cpp(blocks: list[BlockSpec], params: list[ParamSpec]) -> str:
         top_params.append(f"    data_t {param.name}{array_suffix(param.dims)}{comma}")
 
     top_calls = [
+        '    VERIFY_CONTEXT("stem");',
+        '    VERIFY_OP("conv");',
         "    stem_conv7x7_tiled_runtime(DRAM_input, DRAM_w_stem, kConvOutputShift[SHIFT_STEM], DRAM_stem);",
+        '    VERIFY_TENSOR("conv", DRAM_stem, 64, 112, 112);',
         "    batchnorm_tiled_runtime<64, 64, 112, 112>(112, 112, DRAM_stem, DRAM_bn_stem, DRAM_stem);",
+        '    VERIFY_TENSOR("bn", DRAM_stem, 64, 112, 112);',
         "    relu_tiled_runtime<64, 64, 112, 112>(112, 112, DRAM_stem, DRAM_stem);",
+        '    VERIFY_TENSOR("relu", DRAM_stem, 64, 112, 112);',
         "    maxpool_pad_tiled_runtime(DRAM_stem, DRAM_feat_ping);",
+        '    VERIFY_TENSOR("pool", DRAM_feat_ping, 64, 56, 56);',
     ]
 
     current = "DRAM_feat_ping"
     next_buf = "DRAM_feat_pong"
     mid = "DRAM_feat_mid"
     for block in blocks:
+        top_calls.append(f'    VERIFY_CONTEXT("{block.prefix}");')
         if block.downsample:
             top_calls.append(
                 f"    run_downsample_block<{block.c_in}, {block.c_out}>("
@@ -204,8 +212,13 @@ def make_top_cpp(blocks: list[BlockSpec], params: list[ParamSpec]) -> str:
 
     top_calls.extend(
         [
-            f"    global_avgpool_runtime({current}, 7, 7, POOL_VEC);",
-            "    fc_tiled_runtime(POOL_VEC, DRAM_fc, kConvOutputShift[SHIFT_FC], DRAM_out);",
+            '    VERIFY_CONTEXT("head");',
+            '    VERIFY_OP("gap");',
+            f"    global_avgpool_runtime<512>({current}, 7, 7, POOL_VEC);",
+            '    VERIFY_VECTOR("gap", POOL_VEC, 512);',
+            '    VERIFY_OP("logits");',
+            "    fc_tiled_runtime<1000, 512>(POOL_VEC, DRAM_fc, kConvOutputShift[SHIFT_FC], DRAM_out);",
+            '    VERIFY_VECTOR("logits", DRAM_out, 1000);',
         ]
     )
 
@@ -214,6 +227,7 @@ def make_top_cpp(blocks: list[BlockSpec], params: list[ParamSpec]) -> str:
 #include <ap_int.h>
 #include "top.h"
 #include "resnet18_tiled_scales.h"
+#include "verification_trace.h"
 
 typedef {ACC_TYPE} acc_t;
 
@@ -247,7 +261,8 @@ inline int out_dim(int size, int pad, int stride, int kernel) {{
 }}
 
 inline acc_t abs_acc(acc_t value) {{
-    return value < 0 ? -value : value;
+    if (value < 0) return -value;
+    return value;
 }}
 
 inline acc_t apply_power_of_two_shift(acc_t value, int shift) {{
@@ -500,12 +515,13 @@ void conv3x3_tiled_runtime(
                 clear_acc_tile(valid_oc, valid_h, valid_w);
                 for (int ci = 0; ci < C_IN; ci += TILE_C) {{
                     int valid_ci = ((ci + TILE_C) <= C_IN) ? TILE_C : (C_IN - ci);
-                    load_patch_from_tensor(input, ci, valid_ci, h_in, w_in, oh, ow, 3, stride, 1, valid_h, valid_w);
-                    load_w3_tile(weights, co, ci, valid_oc, valid_ci);
+                    load_patch_from_tensor<MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(input, ci, valid_ci, h_in, w_in, oh, ow, 3, stride, 1, valid_h, valid_w);
+                    load_w3_tile<C_OUT, C_IN>(weights, co, ci, valid_oc, valid_ci);
                     run_conv3x3_tile(valid_oc, valid_ci, valid_h, valid_w, stride);
                     maybe_rescale_acc_tile(valid_oc, valid_h, valid_w, tile_exp);
+                    VERIFY_EXP(co, oh, ow, ci, tile_exp);
                 }}
-                commit_acc_tile(output, co, oh, ow, valid_oc, valid_h, valid_w, tile_exp, output_shift);
+                commit_acc_tile<MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(output, co, oh, ow, valid_oc, valid_h, valid_w, tile_exp, output_shift);
             }}
         }}
     }}
@@ -533,12 +549,13 @@ void conv1x1_tiled_runtime(
                 clear_acc_tile(valid_oc, valid_h, valid_w);
                 for (int ci = 0; ci < C_IN; ci += TILE_C) {{
                     int valid_ci = ((ci + TILE_C) <= C_IN) ? TILE_C : (C_IN - ci);
-                    load_patch_from_tensor(input, ci, valid_ci, h_in, w_in, oh, ow, 1, stride, 0, valid_h, valid_w);
-                    load_w1_tile(weights, co, ci, valid_oc, valid_ci);
+                    load_patch_from_tensor<MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(input, ci, valid_ci, h_in, w_in, oh, ow, 1, stride, 0, valid_h, valid_w);
+                    load_w1_tile<C_OUT, C_IN>(weights, co, ci, valid_oc, valid_ci);
                     run_conv1x1_tile(valid_oc, valid_ci, valid_h, valid_w, stride);
                     maybe_rescale_acc_tile(valid_oc, valid_h, valid_w, tile_exp);
+                    VERIFY_EXP(co, oh, ow, ci, tile_exp);
                 }}
-                commit_acc_tile(output, co, oh, ow, valid_oc, valid_h, valid_w, tile_exp, output_shift);
+                commit_acc_tile<MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(output, co, oh, ow, valid_oc, valid_h, valid_w, tile_exp, output_shift);
             }}
         }}
     }}
@@ -558,11 +575,12 @@ void stem_conv7x7_tiled_runtime(
                 int valid_w = ((ow + TILE_W) <= 112) ? TILE_W : (112 - ow);
                 int tile_exp = 0;
                 clear_acc_tile(valid_oc, valid_h, valid_w);
-                load_patch_from_tensor(input, 0, 3, 224, 224, oh, ow, 7, 2, 3, valid_h, valid_w);
+                load_patch_from_tensor<3, 224, 224>(input, 0, 3, 224, 224, oh, ow, 7, 2, 3, valid_h, valid_w);
                 load_stem_w7_tile(weights, co, valid_oc);
                 run_stem_conv7x7_tile(valid_oc, valid_h, valid_w);
                 maybe_rescale_acc_tile(valid_oc, valid_h, valid_w, tile_exp);
-                commit_acc_tile(output, co, oh, ow, valid_oc, valid_h, valid_w, tile_exp, output_shift);
+                VERIFY_EXP(co, oh, ow, 0, tile_exp);
+                commit_acc_tile<64, 112, 112>(output, co, oh, ow, valid_oc, valid_h, valid_w, tile_exp, output_shift);
             }}
         }}
     }}
@@ -712,6 +730,7 @@ void global_avgpool_runtime(
             }}
         }}
         maybe_rescale_fc_acc(valid_c, tile_exp);
+        VERIFY_EXP(co, 0, 0, -1, tile_exp);
         for (int c = 0; c < valid_c; ++c) {{
             acc_t value = apply_power_of_two_shift(FC_ACC[c], tile_exp) / (acc_t)(h * w);
             output[co + c] = (data_t)value;
@@ -745,6 +764,7 @@ void fc_tiled_runtime(
                 FC_ACC[oc] = sum;
             }}
             maybe_rescale_fc_acc(valid_oc, tile_exp);
+            VERIFY_EXP(co, 0, 0, ci, tile_exp);
         }}
         for (int oc = 0; oc < valid_oc; ++oc) {{
             output[co + oc] = quantize_acc(FC_ACC[oc], tile_exp, output_shift);
@@ -766,13 +786,22 @@ void run_identity_block(
     int shift1,
     int shift2
 ) {{
+    VERIFY_OP("conv1");
     conv3x3_tiled_runtime<C, C>(h, w, 1, input, w1, shift1, mid);
+    VERIFY_TENSOR("conv1", mid, C, h, w);
     batchnorm_tiled_runtime<C, MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(h, w, mid, bn1, mid);
+    VERIFY_TENSOR("bn1", mid, C, h, w);
     relu_tiled_runtime<C, MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(h, w, mid, mid);
+    VERIFY_TENSOR("relu1", mid, C, h, w);
+    VERIFY_OP("conv2");
     conv3x3_tiled_runtime<C, C>(h, w, 1, mid, w2, shift2, output);
+    VERIFY_TENSOR("conv2", output, C, h, w);
     batchnorm_tiled_runtime<C, MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(h, w, output, bn2, output);
+    VERIFY_TENSOR("bn2", output, C, h, w);
     residual_add_tiled_runtime<C>(h, w, output, input, output);
+    VERIFY_TENSOR("add", output, C, h, w);
     relu_tiled_runtime<C, MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(h, w, output, output);
+    VERIFY_TENSOR("out", output, C, h, w);
 }}
 
 template <int C_IN, int C_OUT>
@@ -793,14 +822,25 @@ void run_downsample_block(
 ) {{
     int h_out = out_dim(h_in, 1, 2, 3);
     int w_out = out_dim(w_in, 1, 2, 3);
+    VERIFY_OP("conv1");
     conv3x3_tiled_runtime<C_IN, C_OUT>(h_in, w_in, 2, input, w1, shift1, mid);
+    VERIFY_TENSOR("conv1", mid, C_OUT, h_out, w_out);
     batchnorm_tiled_runtime<C_OUT, MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(h_out, w_out, mid, bn1, mid);
+    VERIFY_TENSOR("bn1", mid, C_OUT, h_out, w_out);
     relu_tiled_runtime<C_OUT, MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(h_out, w_out, mid, mid);
+    VERIFY_TENSOR("relu1", mid, C_OUT, h_out, w_out);
+    VERIFY_OP("conv2");
     conv3x3_tiled_runtime<C_OUT, C_OUT>(h_out, w_out, 1, mid, w2, shift2, output);
+    VERIFY_TENSOR("conv2", output, C_OUT, h_out, w_out);
     batchnorm_tiled_runtime<C_OUT, MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(h_out, w_out, output, bn2, output);
+    VERIFY_TENSOR("bn2", output, C_OUT, h_out, w_out);
+    VERIFY_OP("down");
     conv1x1_tiled_runtime<C_IN, C_OUT>(h_in, w_in, 2, input, wdown, shift_down, mid);
+    VERIFY_TENSOR("down", mid, C_OUT, h_out, w_out);
     residual_add_tiled_runtime<C_OUT>(h_out, w_out, output, mid, output);
+    VERIFY_TENSOR("add", output, C_OUT, h_out, w_out);
     relu_tiled_runtime<C_OUT, MAX_FEAT_C, MAX_FEAT_H, MAX_FEAT_W>(h_out, w_out, output, output);
+    VERIFY_TENSOR("out", output, C_OUT, h_out, w_out);
 }}
 
 void top(
@@ -858,10 +898,12 @@ exit
 """
 
 
-def emit_project(base_dir: str) -> str:
+def emit_project(base_dir: str, output_dir: str = None) -> str:
+    from tiled_resnet18_verification.codegen import make_testbench, make_trace_header, make_csim_tcl
+
     blocks = build_blocks()
     params = build_params(blocks)
-    output_dir = os.path.join(base_dir, OUTPUT_DIR_NAME)
+    output_dir = output_dir or os.path.join(base_dir, OUTPUT_DIR_NAME)
     os.makedirs(output_dir, exist_ok=True)
 
     files = {
@@ -869,6 +911,9 @@ def emit_project(base_dir: str) -> str:
         "top.cpp": make_top_cpp(blocks, params),
         "resnet18_tiled_scales.h": make_scale_header(blocks),
         "run_hls.tcl": make_tcl(),
+        "verification_trace.h": make_trace_header(),
+        "tb_top.cpp": make_testbench(params),
+        "run_csim.tcl": make_csim_tcl(FPGA_NAME, CLOCK_PERIOD),
     }
     for filename, content in files.items():
         with open(os.path.join(output_dir, filename), "w") as handle:
@@ -877,8 +922,11 @@ def emit_project(base_dir: str) -> str:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Generate tiled ResNet-18 and its C-simulation testbench")
+    parser.add_argument("--output-dir", help="Exact destination directory (default: hls_files/<design>)")
+    args = parser.parse_args()
     base_dir = os.path.join(os.path.dirname(__file__), "hls_files")
-    output_dir = emit_project(base_dir)
+    output_dir = emit_project(base_dir, args.output_dir)
     print(f"Generated tiled ResNet-18 HLS project in {output_dir}")
 
 

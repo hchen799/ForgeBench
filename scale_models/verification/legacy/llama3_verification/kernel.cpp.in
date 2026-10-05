@@ -1,0 +1,276 @@
+// Scaled-integer fixed-point implementation: DRAM and activations are Q5.11.
+// Linear products and sums carry 22 fractional bits in signed 64-bit integers.
+// Maximum dimensions in model_config.h guarantee no reduction overflow.
+#include "top.h"
+#include "nonlinear_tables.h"
+#include "verification_trace.h"
+#include <cstdint>
+
+static int16_t W_TILE[TILE_OUT][TILE_IN];
+static int16_t X_TILE[PREFILL_TILE][TILE_IN];
+static int64_t ACC_TILE[PREFILL_TILE][TILE_OUT];
+static int16_t SCORES[MAX_CTX];
+static uint32_t EXP_WEIGHTS[MAX_CTX];
+
+static int16_t saturate_data(int64_t code) {
+    if (code > 32767) return 32767;
+    if (code < -32768) return -32768;
+    return static_cast<int16_t>(code);
+}
+
+static int64_t floor_shift(int64_t value, int shift) {
+    if (value >= 0) return value >> shift;
+    return -static_cast<int64_t>((static_cast<uint64_t>(-value) + ((uint64_t(1) << shift) - 1)) >> shift);
+}
+
+static int16_t round_data(int64_t value, int fractional_drop) {
+    return saturate_data(floor_shift(value + (int64_t(1) << (fractional_drop - 1)), fractional_drop));
+}
+
+static uint64_t integer_sqrt(uint64_t value) {
+    uint64_t result = 0;
+    // Restoring square root, exactly 32 iterations, synthesizable integer logic.
+    uint64_t bit = uint64_t(1) << 62;
+    for (int step = 0; step < 32; ++step) {
+        if (value >= result + bit) {
+            value -= result + bit;
+            result = (result >> 1) + bit;
+        } else {
+            result >>= 1;
+        }
+        bit >>= 2;
+    }
+    return result;
+}
+
+static uint64_t rounded_sqrt(uint64_t value) {
+    uint64_t root = integer_sqrt(value);
+    // Compare the fractional remainder to root + 1/4 without squaring 2*root.
+    if (value - root * root > root) ++root;
+    return root;
+}
+
+static int16_t rounded_ratio(int64_t numerator, uint64_t denominator) {
+    int64_t q = numerator / static_cast<int64_t>(denominator);
+    int64_t r = numerator % static_cast<int64_t>(denominator);
+    if (r >= 0) {
+        if (uint64_t(r) * 2 >= denominator) ++q;
+    } else if (uint64_t(-r) * 2 > denominator) {
+        --q;
+    }
+    return saturate_data(q);
+}
+
+static void linear(const int16_t *input, const int16_t *weights, int16_t *output,
+                   int rows, int in_dim, int out_dim) {
+    for (int co = 0; co < out_dim; co += TILE_OUT) {
+        int no = (co + TILE_OUT <= out_dim) ? TILE_OUT : out_dim - co;
+        for (int r = 0; r < rows; ++r)
+            for (int o = 0; o < no; ++o) ACC_TILE[r][o] = 0;
+        for (int ci = 0; ci < in_dim; ci += TILE_IN) {
+            int ni = (ci + TILE_IN <= in_dim) ? TILE_IN : in_dim - ci;
+            for (int o = 0; o < no; ++o)
+                for (int i = 0; i < ni; ++i)
+                    W_TILE[o][i] = weights[uint64_t(co + o) * in_dim + ci + i];
+            for (int r = 0; r < rows; ++r)
+                for (int i = 0; i < ni; ++i)
+                    X_TILE[r][i] = input[r * in_dim + ci + i];
+            for (int r = 0; r < rows; ++r) {
+                for (int o = 0; o < no; ++o) {
+                    int64_t sum = ACC_TILE[r][o];
+                    for (int i = 0; i < ni; ++i) {
+                        #pragma HLS pipeline II=1
+                        sum += int64_t(X_TILE[r][i]) * W_TILE[o][i];
+                    }
+                    ACC_TILE[r][o] = sum;
+                }
+            }
+        }
+        for (int r = 0; r < rows; ++r)
+            for (int o = 0; o < no; ++o)
+                output[r * out_dim + co + o] = round_data(ACC_TILE[r][o], 11);
+    }
+}
+
+static void rmsnorm(const int16_t *input, const int16_t *gamma, int16_t *output, int rows) {
+    for (int r = 0; r < rows; ++r) {
+        uint64_t sum = 0;
+        for (int c = 0; c < HIDDEN; ++c) {
+            int64_t x = input[r * HIDDEN + c];
+            sum += x * x;
+        }
+        uint64_t mean = sum / HIDDEN + EPSILON_Q22;
+        uint64_t root = rounded_sqrt(mean << 22);
+        uint64_t inverse = (uint64_t(1) << 44) / root;
+        for (int c = 0; c < HIDDEN; ++c) {
+            int64_t product = int64_t(input[r * HIDDEN + c]) * gamma[c] * static_cast<int64_t>(inverse);
+            output[r * HIDDEN + c] = round_data(product, 33);
+        }
+    }
+}
+
+static void rope(int16_t *values, const int16_t *table, int rows, int heads, int start_pos) {
+    for (int r = 0; r < rows; ++r) {
+        for (int h = 0; h < heads; ++h) {
+            for (int d = 0; d < HEAD_DIM; d += 2) {
+                uint64_t offset = uint64_t(start_pos + r) * HEAD_DIM + d;
+                int16_t cosine = table[offset], sine = table[offset + 1];
+                int index = (r * heads + h) * HEAD_DIM + d;
+                int64_t x = values[index], y = values[index + 1];
+                values[index] = round_data(x * cosine - y * sine, 11);
+                values[index + 1] = round_data(x * sine + y * cosine, 11);
+            }
+        }
+    }
+}
+
+static void attention(const int16_t *q, const int16_t *keys, const int16_t *values,
+                      int16_t *output, int rows, int start_pos) {
+    for (int r = 0; r < rows; ++r) {
+        int visible = start_pos + r + 1; // Future keys never enter softmax.
+        for (int h = 0; h < Q_HEADS; ++h) {
+            int kh = h / (Q_HEADS / KV_HEADS);
+            int16_t maximum = -32768;
+            for (int t = 0; t < visible; ++t) {
+                int64_t score = 0;
+                for (int d = 0; d < HEAD_DIM; ++d)
+                    score += int64_t(q[r * HIDDEN + h * HEAD_DIM + d]) * keys[t * KV_DIM + kh * HEAD_DIM + d];
+                SCORES[t] = round_data(score * SCORE_SCALE_Q22, 33);
+                if (SCORES[t] > maximum) maximum = SCORES[t];
+            }
+            uint64_t denominator = 0;
+            for (int t = 0; t < visible; ++t) {
+                unsigned delta = static_cast<unsigned>(int(maximum) - int(SCORES[t]));
+                EXP_WEIGHTS[t] = EXP_NEG_Q22[delta];
+                denominator += EXP_WEIGHTS[t];
+            }
+            for (int d = 0; d < HEAD_DIM; ++d) {
+                int64_t numerator = 0;
+                for (int t = 0; t < visible; ++t)
+                    numerator += int64_t(EXP_WEIGHTS[t]) * values[t * KV_DIM + kh * HEAD_DIM + d];
+                output[r * HIDDEN + h * HEAD_DIM + d] = rounded_ratio(numerator, denominator);
+            }
+        }
+    }
+}
+
+static void residual(const int16_t *lhs, const int16_t *rhs, int16_t *output, int n) {
+    for (int i = 0; i < n; ++i) output[i] = saturate_data(int(lhs[i]) + int(rhs[i]));
+}
+
+static int run_core(const int32_t *tokens, int token_count, int start_pos, const int16_t *weights,
+                    const int16_t *rope_table, int16_t *key_cache, int16_t *value_cache,
+                    int16_t *scratch, int16_t *logits) {
+    if (token_count < 1 || token_count > PREFILL_TILE || start_pos < 0 || start_pos > MAX_CTX - token_count) return 1;
+    for (int r = 0; r < token_count; ++r) if (tokens[r] < 0 || tokens[r] >= VOCAB) return 2;
+    int16_t *hidden = scratch + SCRATCH_HIDDEN;
+    int16_t *norm = scratch + SCRATCH_NORM;
+    int16_t *q = scratch + SCRATCH_Q;
+    int16_t *k = scratch + SCRATCH_K;
+    int16_t *v = scratch + SCRATCH_V;
+    int16_t *context = scratch + SCRATCH_CONTEXT;
+    int16_t *mid = scratch + SCRATCH_MID;
+    int16_t *gate = scratch + SCRATCH_GATE;
+    int16_t *up = scratch + SCRATCH_UP;
+    int16_t *ffn_out = scratch + SCRATCH_FFN_OUT;
+    for (int r = 0; r < token_count; ++r)
+        for (int c = 0; c < HIDDEN; ++c)
+            hidden[r * HIDDEN + c] = weights[uint64_t(tokens[r]) * HIDDEN + c];
+    LLAMA_TRACE("embedding", hidden, token_count, HIDDEN, false);
+    for (int layer = 0; layer < LAYERS; ++layer) {
+        LLAMA_LAYER(layer);
+        uint64_t base = EMBEDDING_COUNT + uint64_t(layer) * LAYER_WEIGHT_COUNT;
+        rmsnorm(hidden, weights + base + OFFSET_ATTN_NORM, norm, token_count);
+        LLAMA_TRACE("attn_norm", norm, token_count, HIDDEN, false);
+        linear(norm, weights + base + OFFSET_Q_PROJ, q, token_count, HIDDEN, HIDDEN);
+        LLAMA_TRACE("q_proj", q, token_count, HIDDEN, false);
+        linear(norm, weights + base + OFFSET_K_PROJ, k, token_count, HIDDEN, KV_DIM);
+        LLAMA_TRACE("k_proj", k, token_count, KV_DIM, false);
+        linear(norm, weights + base + OFFSET_V_PROJ, v, token_count, HIDDEN, KV_DIM);
+        LLAMA_TRACE("v_proj", v, token_count, KV_DIM, false);
+        rope(q, rope_table, token_count, Q_HEADS, start_pos);
+        rope(k, rope_table, token_count, KV_HEADS, start_pos);
+        LLAMA_TRACE("q_rope", q, token_count, HIDDEN, false);
+        LLAMA_TRACE("k_rope", k, token_count, KV_DIM, false);
+        uint64_t cache_base = uint64_t(layer) * MAX_CTX * KV_DIM;
+        for (int r = 0; r < token_count; ++r)
+            for (int c = 0; c < KV_DIM; ++c) {
+                key_cache[cache_base + uint64_t(start_pos + r) * KV_DIM + c] = k[r * KV_DIM + c];
+                value_cache[cache_base + uint64_t(start_pos + r) * KV_DIM + c] = v[r * KV_DIM + c];
+            }
+        LLAMA_TRACE("k_cache_update", key_cache + cache_base + uint64_t(start_pos) * KV_DIM, token_count, KV_DIM, true);
+        LLAMA_TRACE("v_cache_update", value_cache + cache_base + uint64_t(start_pos) * KV_DIM, token_count, KV_DIM, true);
+        attention(q, key_cache + cache_base, value_cache + cache_base, context, token_count, start_pos);
+        LLAMA_TRACE("context", context, token_count, HIDDEN, false);
+        linear(context, weights + base + OFFSET_O_PROJ, norm, token_count, HIDDEN, HIDDEN);
+        LLAMA_TRACE("o_proj", norm, token_count, HIDDEN, false);
+        residual(hidden, norm, mid, token_count * HIDDEN);
+        LLAMA_TRACE("attn_residual", mid, token_count, HIDDEN, false);
+        rmsnorm(mid, weights + base + OFFSET_FFN_NORM, norm, token_count);
+        LLAMA_TRACE("ffn_norm", norm, token_count, HIDDEN, false);
+        linear(norm, weights + base + OFFSET_GATE_PROJ, gate, token_count, HIDDEN, FFN);
+        LLAMA_TRACE("gate_proj", gate, token_count, FFN, false);
+        linear(norm, weights + base + OFFSET_UP_PROJ, up, token_count, HIDDEN, FFN);
+        LLAMA_TRACE("up_proj", up, token_count, FFN, false);
+        for (int i = 0; i < token_count * FFN; ++i) gate[i] = SILU_Q11[int(gate[i]) + 32768];
+        LLAMA_TRACE("silu", gate, token_count, FFN, false);
+        for (int i = 0; i < token_count * FFN; ++i) gate[i] = round_data(int64_t(gate[i]) * up[i], 11);
+        LLAMA_TRACE("swiglu", gate, token_count, FFN, false);
+        linear(gate, weights + base + OFFSET_DOWN_PROJ, ffn_out, token_count, FFN, HIDDEN);
+        LLAMA_TRACE("down_proj", ffn_out, token_count, HIDDEN, false);
+        residual(mid, ffn_out, hidden, token_count * HIDDEN);
+        LLAMA_TRACE("out", hidden, token_count, HIDDEN, true);
+    }
+    LLAMA_LAYER(-1);
+    rmsnorm(hidden, weights + FINAL_NORM_OFFSET, norm, token_count);
+    LLAMA_TRACE("final_norm", norm, token_count, HIDDEN, true);
+    linear(norm, weights + LM_HEAD_OFFSET, logits, token_count, HIDDEN, VOCAB);
+    LLAMA_TRACE("logits", logits, token_count, VOCAB, true);
+    return 0;
+}
+
+int llama_prefill(const int32_t tokens[PREFILL_TILE], int token_count, int start_pos,
+                  const int16_t weights[WEIGHT_COUNT], const int16_t rope_table[MAX_CTX * HEAD_DIM],
+                  int16_t key_cache[CACHE_COUNT], int16_t value_cache[CACHE_COUNT],
+                  int16_t scratch[SCRATCH_COUNT], int16_t logits[PREFILL_TILE * VOCAB]) {
+    #pragma HLS interface m_axi port=tokens offset=slave bundle=control_data
+    #pragma HLS interface m_axi port=weights offset=slave bundle=model_weights
+    #pragma HLS interface m_axi port=rope_table offset=slave bundle=rope_data
+    #pragma HLS interface m_axi port=key_cache offset=slave bundle=keys
+    #pragma HLS interface m_axi port=value_cache offset=slave bundle=values
+    #pragma HLS interface m_axi port=scratch offset=slave bundle=features
+    #pragma HLS interface m_axi port=logits offset=slave bundle=output_data
+    #pragma HLS interface s_axilite port=tokens bundle=control
+    #pragma HLS interface s_axilite port=weights bundle=control
+    #pragma HLS interface s_axilite port=rope_table bundle=control
+    #pragma HLS interface s_axilite port=key_cache bundle=control
+    #pragma HLS interface s_axilite port=value_cache bundle=control
+    #pragma HLS interface s_axilite port=scratch bundle=control
+    #pragma HLS interface s_axilite port=logits bundle=control
+    #pragma HLS interface s_axilite port=token_count bundle=control
+    #pragma HLS interface s_axilite port=start_pos bundle=control
+    #pragma HLS interface s_axilite port=return bundle=control
+    return run_core(tokens, token_count, start_pos, weights, rope_table, key_cache, value_cache, scratch, logits);
+}
+
+int llama_decode(int32_t token, int position,
+                 const int16_t weights[WEIGHT_COUNT], const int16_t rope_table[MAX_CTX * HEAD_DIM],
+                 int16_t key_cache[CACHE_COUNT], int16_t value_cache[CACHE_COUNT],
+                 int16_t scratch[SCRATCH_COUNT], int16_t logits[VOCAB]) {
+    #pragma HLS interface m_axi port=weights offset=slave bundle=model_weights
+    #pragma HLS interface m_axi port=rope_table offset=slave bundle=rope_data
+    #pragma HLS interface m_axi port=key_cache offset=slave bundle=keys
+    #pragma HLS interface m_axi port=value_cache offset=slave bundle=values
+    #pragma HLS interface m_axi port=scratch offset=slave bundle=features
+    #pragma HLS interface m_axi port=logits offset=slave bundle=output_data
+    #pragma HLS interface s_axilite port=weights bundle=control
+    #pragma HLS interface s_axilite port=rope_table bundle=control
+    #pragma HLS interface s_axilite port=key_cache bundle=control
+    #pragma HLS interface s_axilite port=value_cache bundle=control
+    #pragma HLS interface s_axilite port=scratch bundle=control
+    #pragma HLS interface s_axilite port=logits bundle=control
+    #pragma HLS interface s_axilite port=token bundle=control
+    #pragma HLS interface s_axilite port=position bundle=control
+    #pragma HLS interface s_axilite port=return bundle=control
+    return run_core(&token, 1, position, weights, rope_table, key_cache, value_cache, scratch, logits);
+}
