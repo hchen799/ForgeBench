@@ -107,7 +107,11 @@ def main():
                 changed["testbench"].append(f"{k}:{fn}")
     print(f"compared {len(set(base) & set(snap))} designs ({len(only_base)} only in baseline, {len(only_new)} only now)")
     print(f"design files changed: {len(changed['design'])}   testbench files changed: {len(changed['testbench'])}")
+    from collections import Counter
     for kind in ("design", "testbench"):
+        if changed[kind]:
+            groups = Counter("/".join(x.split(":")[0].split("/")[:2]) for x in changed[kind])   # <domain>/<sweep|op|case>
+            print(f"  {kind} files changed by group: {dict(sorted(groups.items()))}")
         for x in changed[kind][:6]:
             print(f"  {kind}: {x}")
     sys.exit(1 if changed["design"] or only_base else 0)

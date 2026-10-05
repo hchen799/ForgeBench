@@ -26,7 +26,7 @@ void adaptive_avgpool(
                     }}
                 }}
                 if (count > 0)
-                    output[c][oh][ow] = sum / (data_t)count;
+                    output[c][oh][ow] = sum / count;
                 else
                     output[c][oh][ow] = 0;
             }}

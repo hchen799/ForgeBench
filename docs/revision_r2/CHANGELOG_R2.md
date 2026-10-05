@@ -113,3 +113,18 @@ Found by the fixed-point operator pilot: these three activations did not compile
   (the llm template already was).
 Effect: the emitted `top.cpp` of the 8 sampled designs using these functions changes (regression check: 8 of 279, exactly those; no sweep or modular
 design uses them). Float results are unchanged to within ~1e-7 (float verification 10/10 trials pass for all nine variants).
+
+## 2026-10-05 (later) — dimension-derived constants no longer cast to `data_t` (LLM sweep results are STALE; re-run pending)
+Files: `llm/grouped_mha_rope_template.cpp`, `llm/sliding_window_attention_template.cpp`, `llm/rms_norm_template.cpp`, `conv/adaptive_avgpool_template.cpp`,
+`llm/generate_code.py` (passes `SCALE`).
+Found by fixed-point operator verification: `(data_t)head_dim` / `(data_t)DIM` / `(data_t)count` do not fit `ap_fixed<16,5>` (range [-16,16): 16 -> -16,
+32/64/128/... -> 0 under wrap), so the attention scale `1/sqrt((data_t)head_dim)` and RMSNorm's `/(data_t)DIM` divided by zero (CSIM: SIGFPE).
+* attention (mha, swa): `const data_t scale = (data_t){SCALE};` with SCALE = repr(1/sqrt(HEAD_DIM)) computed at generation time.
+* rmsnorm: `sum_sq / {DIM}` (integer divisor, as layernorm already did). adaptive_avgpool: `sum / count` (integer).
+* Effect on the sweeps: **every LLM sweep design changes** (attention scale; half also RMSNorm); GEMM and conv sweep designs are byte-identical (regression
+  check: 0 of the sampled gemm/conv sweep designs changed). Measured on one design (S16 D256 H16 HD32 G2, RMSNorm): as generated BRAM 179 / DSP 88 /
+  FF 38,406 / LUT 38,426 / 2.59M cycles; fixed BRAM 435 / DSP 88 / FF 43,195 / LUT 44,035 / 2.46M cycles -- the broken constant let the tool optimize away
+  part of the attention, so the previous LLM PPA was for a functionally invalid design.
+* **Stale until re-run:** all LLM csynth (3,888) and LLM impl (1,000), Table 5's LLM column, the LLM parts of Figs 6-8 and the counts that use them.
+  Decision (2026-10-05): do not re-run until all operator verification is finished (more template bugs may be found), then re-run once.
+* Also affected, not changed here: hand-written modular LLM designs and `scale_models/` (own template copies) may contain the same constants.

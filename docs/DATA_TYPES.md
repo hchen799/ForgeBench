@@ -9,6 +9,16 @@ The design's numeric type is the `data_type` field of its JSON config. The tool 
 | `fixed<16,5>` (generic) | `ap_fixed<16, 5, AP_TRN, AP_WRAP>` | `ac_fixed<16,5,true,AC_TRN,AC_WRAP>` | same: **truncate + wrap** |
 | `fixed<16,5,rnd,sat>` | `ap_fixed<16, 5, AP_RND, AP_SAT>` | `ac_fixed<16,5,true,AC_RND,AC_SAT>` | round to nearest (ties toward +inf) + saturate |
 
+## Reading `ap_fixed<W,I>`
+
+`W` is the **total** number of bits and `I` is the number of **integer bits including the sign bit**; the fractional bits are `F = W - I`.
+`ap_fixed<16,5>`: 1 sign bit, 4 magnitude bits, 11 fractional bits, so the range is [-2^(I-1), 2^(I-1)) = **[-16, 16)** and the step is 2^-11.
+`ap_fixed<32,10>`: range [-512, 512), step 2^-22. (`ac_fixed<W,I,true,...>` uses the same convention.)
+
+Consequence for generated code: **any compile-time constant derived from a dimension must be computed at generation time, not cast to `data_t`.**
+Under the default wrap mode `(data_t)64` is 0 in `<16,5>` (64 = `1000000`, only the low 5 bits survive) and `(data_t)16` is -16. The attention
+scale `1/sqrt(head_dim)` is therefore emitted as a literal, and dimension divisors are plain integers (see CHANGELOG_R2.md, 2026-10-05).
+
 Rules:
 * **No mode is ever implied.** Without explicit modes the type is truncate (toward -infinity) + wrap (two's complement), the tool default.
   A raw `ap_*` string is passed through to Vitis unchanged, so writing `ap_fixed<16,5>` never changes arithmetic.

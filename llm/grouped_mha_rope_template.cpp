@@ -22,7 +22,7 @@
     const int num_heads = {NUM_HEADS};   // total number of heads (must equal DIM_OUT / HEAD_DIM)
     const int head_dim = {HEAD_DIM};       // dimension per head
     const int heads_per_group = num_heads / groups;
-    const data_t scale = (data_t)1.0 / hls::sqrt((data_t)head_dim);
+    const data_t scale = (data_t){SCALE};   // 1/sqrt(head_dim), computed at generation time (head_dim itself may not fit in data_t)
 
     data_t Q[{SEQ_LENGTH}][{DIM_OUT}];
     data_t K[{SEQ_LENGTH}][{DIM_OUT}];

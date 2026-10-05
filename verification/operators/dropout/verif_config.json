@@ -1,0 +1,6 @@
+{
+  "extends": "../../paper_verif.json",
+  "operators": [
+    "dropout"
+  ]
+}

@@ -811,7 +811,7 @@ def generate_top_h(drams, data_type="float", top_func_name="top"):
     
     return "\n".join(lines)
 
-def generate_testbench_code(drams, output_dram_names, data_type="float", top_func_name="top"):
+def generate_testbench_code(drams, output_dram_names, data_type="float", top_func_name="top", trials=1):
     """
     Generates a C test bench for HLS that:
       - Declares DRAM arrays using the specified dimensions.
@@ -881,10 +881,22 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     # Main function.
     code_lines.append("int main() {")
     
+    # Multi-trial mode (trials > 1, used for CO-SIM): one run loops over per-trial input files <DRAM>.t<k>.txt and writes
+    # <out>_output.t<k>.txt, so RTL elaboration is paid once. trials == 1 emits exactly the historical single-shot testbench.
+    multi = trials > 1
+    if multi:
+        code_lines.append("    char verif_fname[512];")
+        code_lines.append("    double verif_max_abs = 0.0, verif_max_rel = 0.0;")
+        code_lines.append("    long verif_n_mismatch = 0, verif_n_total = 0, verif_n_checked = 0;")
+        code_lines.append(f"    for (int verif_trial = 0; verif_trial < {trials}; verif_trial++) {{")
     # For each DRAM, generate a load call.
     for dram in drams:
         total_elements = prod(dram["dims"])
-        code_lines.append(f"    load_txt_to_array(\"{dram['name']}.txt\", (data_t*){dram['name']}, {total_elements});")
+        if multi:
+            code_lines.append(f"    snprintf(verif_fname, sizeof verif_fname, \"{dram['name']}.t%d.txt\", verif_trial);")
+            code_lines.append(f"    load_txt_to_array(verif_fname, (data_t*){dram['name']}, {total_elements});")
+        else:
+            code_lines.append(f"    load_txt_to_array(\"{dram['name']}.txt\", (data_t*){dram['name']}, {total_elements});")
     code_lines.append("")
     
     # Insert top function call. DRAM arguments in the order of the drams list.
@@ -892,9 +904,10 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     code_lines.append(f"    {top_func_name}({dram_args});")
     code_lines.append("")
 
-    # Golden-reference verification accumulators.
-    code_lines.append("    double verif_max_abs = 0.0, verif_max_rel = 0.0;")
-    code_lines.append("    long verif_n_mismatch = 0, verif_n_total = 0, verif_n_checked = 0;")
+    # Golden-reference verification accumulators (declared before the trial loop in multi-trial mode).
+    if not multi:
+        code_lines.append("    double verif_max_abs = 0.0, verif_max_rel = 0.0;")
+        code_lines.append("    long verif_n_mismatch = 0, verif_n_total = 0, verif_n_checked = 0;")
     code_lines.append("")
 
     # For each output DRAM specified in output_dram_names, dump then compare.
@@ -911,7 +924,11 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         # Keep the existing output dump for debugging.
         code_lines.append(f"    // Write contents of {out_name} to {out_name}_output.txt")
         code_lines.append("    {")
-        code_lines.append(f"        FILE *fp = fopen(\"{out_name}_output.txt\", \"w\");")
+        if multi:
+            code_lines.append(f"        snprintf(verif_fname, sizeof verif_fname, \"{out_name}_output.t%d.txt\", verif_trial);")
+            code_lines.append("        FILE *fp = fopen(verif_fname, \"w\");")
+        else:
+            code_lines.append(f"        FILE *fp = fopen(\"{out_name}_output.txt\", \"w\");")
         code_lines.append("        if (fp != NULL) {")
         code_lines.append(f"            for (int i = 0; i < {total_out}; i++) {{")
         code_lines.append(f"                fprintf(fp, \"%.17g \", (double)((data_t*){out_name})[i]);")
@@ -960,6 +977,8 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         code_lines.append("    }")
         code_lines.append("")
 
+    if multi:
+        code_lines.append("    }  // end of trial loop")
     # Emit a machine-parseable verdict and return nonzero on failure.
     code_lines.append("    if (verif_n_checked == 0) {")
     code_lines.append("        printf(\"VERIFICATION: SKIP (no golden files found)\\n\");")
