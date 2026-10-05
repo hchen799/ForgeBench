@@ -103,3 +103,13 @@ design that uses them. Final behaviour: a spelling without modes (`fixed<W,I>` o
 requested explicitly (`fixed<W,I,rnd,sat>`) and then inherits Vitis' limitation. A C++ compatibility shim that made the math calls compile for other modes was
 prototyped and removed. The paper should state that the full-scale models use RND/SAT and everything else the tool default. Regression check: 0 of 279 sampled
 designs changed `top.cpp`/`top.h`/`run_hls.tcl`.
+
+## 2026-10-05 (later) — activation templates: leaky_relu, prelu, gelu now build in fixed-point
+Files: `gemm/2D_activations_template.cpp`, `conv/activations_template.cpp`, `llm/activation_template.cpp`.
+Found by the fixed-point operator pilot: these three activations did not compile for *any* `ap_fixed` type (not a Vitis math limitation).
+* `leaky_relu`, `prelu`: `cond ? input : alpha * input` mixed `ap_fixed<W,I>` with the wider product type (ambiguous conditional); the else branch is now cast
+  `(data_t)(alpha * input)`.
+* `gelu` (gemm, conv): `0.044715 * x_cube` and `0.5 * x * ...` multiplied a `double` literal with `ap_fixed` (ambiguous); constants are now `(data_t)`
+  (the llm template already was).
+Effect: the emitted `top.cpp` of the 8 sampled designs using these functions changes (regression check: 8 of 279, exactly those; no sweep or modular
+design uses them). Float results are unchanged to within ~1e-7 (float verification 10/10 trials pass for all nine variants).

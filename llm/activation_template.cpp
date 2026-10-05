@@ -22,7 +22,7 @@ void leaky_relu(
 {{
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            output[i][j] = (input[i][j] >= 0) ? input[i][j] : alpha * input[i][j];
+            output[i][j] = (input[i][j] >= 0) ? input[i][j] : (data_t)(alpha * input[i][j]);
         }}
     }}
 }}
@@ -37,7 +37,7 @@ void prelu(
 {{
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            output[i][j] = (input[i][j] >= 0) ? input[i][j] : alpha[j] * input[i][j];
+            output[i][j] = (input[i][j] >= 0) ? input[i][j] : (data_t)(alpha[j] * input[i][j]);
         }}
     }}
 }}

@@ -47,7 +47,7 @@ void leaky_relu(
     for (int c = 0; c < {C}; c++) {{
         for (int i = 0; i < {H}; i++) {{
             for (int j = 0; j < {W}; j++) {{
-                output[c][i][j] = (input[c][i][j] >= 0) ? input[c][i][j] : alpha * input[c][i][j];
+                output[c][i][j] = (input[c][i][j] >= 0) ? input[c][i][j] : (data_t)(alpha * input[c][i][j]);
             }}
         }}
     }}
@@ -64,7 +64,7 @@ void prelu(
     for (int c = 0; c < {C}; c++) {{
         for (int i = 0; i < {H}; i++) {{
             for (int j = 0; j < {W}; j++) {{
-                output[c][i][j] = (input[c][i][j] >= 0) ? input[c][i][j] : alpha[c] * input[c][i][j];
+                output[c][i][j] = (input[c][i][j] >= 0) ? input[c][i][j] : (data_t)(alpha[c] * input[c][i][j]);
             }}
         }}
     }}
@@ -217,8 +217,8 @@ void gelu(
             for (int j = 0; j < {W}; j++) {{
                 data_t x = input[c][i][j];
                 data_t x_cube = x * x * x;
-                data_t tanh_arg = sqrt_2_over_pi * (x + 0.044715 * x_cube);
-                output[c][i][j] = 0.5 * x * (1 + hls::tanh(tanh_arg));
+                data_t tanh_arg = sqrt_2_over_pi * (x + (data_t)0.044715 * x_cube);
+                output[c][i][j] = (data_t)0.5 * x * (1 + hls::tanh(tanh_arg));
             }}
         }}
     }}
