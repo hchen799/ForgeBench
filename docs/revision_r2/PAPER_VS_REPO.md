@@ -38,3 +38,23 @@ edits it. "Repo" means branch FPT_TRETS_2026.
 ## Artifact claims (§3.5)
 * "manifest mapping each design identifier to its parameters and extracted results" and "lean report archives" — now provided by `manifest/` and `release/`; the Zenodo DOI and anonymous link text must be replaced (decision: no anonymous mirror).
 * "documents the approximate runtime and storage to regenerate" — to be written (REPRODUCE.md).
+
+## Full-model verification (Hanqiu, commits f25fd39 / 3ca82fd, `scale_models/verification/`) — reviewed 2026-10-05
+What exists: a configurable harness (`verification/verify.py`, configs in `verification/configs/`) with C/C++ emitters for a tiled
+ResNet-18 and a Llama-3 family model, PyTorch references, exact comparison at every checkpoint, FP64 error characterization, 77 passing
+unit tests, and a machine-readable inventory (`verification/results/validation_summary.json`, 13 architecture runs, Vitis HLS 2024.1.2 C-sim).
+Results: bit-exact (0 mismatching integer codes) against the fixed-point PyTorch reference in all 8 headline runs: ResNet-18 <16,5>/<32,10>/<24,8>
+(65 checkpoints, 8,054,760 codes, all 1,000 logits), tiny Llama <16,5>/<32,10>/<24,8>, and (frozen earlier implementation) full Llama-3 8B <16,5>
+4+2 tokens (1,737 checkpoints) and 2048+2 tokens (12,740 checkpoints, 674,368,000 codes, 262,924,800 logits). FP64 errors are DIAGNOSTIC_ONLY
+(e.g. ResNet <16,5> max abs logit error 6.1e-4; full 8B 2048+2 <16,5> max abs 7.0e-2).
+Open points against R1 and against the paper:
+* Which design is verified vs which design Table 3 reports. The verified C++ comes from dedicated emitters (`generate_tiled_resnet18.py`,
+  `verification/models/*/codegen.py`), not from the operator-template flow (`auto_generate_json.py` -> `gen_configs.py` -> `generate_code.py`) whose
+  JSON configs the README documents for the Table 3 knobs. Must confirm with Hanqiu that they are the same code path (workstream K1).
+* References are the authors' own PyTorch models of the same graphs (custom ResNet without biases/shortcut BN; custom Llama): no torchvision or
+  HuggingFace cross-check, synthetic random weights (`pretrained_weights: false`), no Llama-3.1 `rope_scaling` handling or discussion.
+* No CO-SIM / RTL / board; full 8B at <32,10> and 8192 tokens not run; the new configurable generator was not run at full 8B (only the frozen earlier one was).
+* Per-run logs (`summary.json`, `comparison.json`, `verification.log`) are not in git (`verification/runs` is absent; `verification_runs` symlink dangles);
+  needed for the release bundle.
+* `scale_models/README.md` contains an absolute path under `/usr/scratch/hchen799/...` (scrub before release).
+* §4.1 text "tested through CSIM and C-synthesis" is supported by the 4+2 and 2048+2 full-8B runs if the verified design is the Table 3 design.
