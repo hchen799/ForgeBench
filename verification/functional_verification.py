@@ -15,8 +15,8 @@ For each (operator variant x data type) the engine
 
 The golden is NumPy float64 evaluated on the *quantized* inputs (what the design receives after its `(data_t)` input conversion), so the
 error measured is the design's arithmetic, not input rounding. float rows get PASS/FAIL against rtol/atol; fixed-point rows get error
-metrics and a "faithful" verdict against a bound derived from the format (0.5*LSB*(L+1) for rounding, LSB*(L+1) for truncation, L the
-accumulation length) unless explicit tolerances are configured.
+metrics and a "faithful" verdict against a bound derived from the format (0.5*LSB*(L+stages) for rounding, LSB*(L+stages) for truncation, L the
+accumulation length, plus `stages` dependent roundings and `peak_fraction` of the output's peak) unless explicit tolerances are configured.
 
 Config (all keys optional; later files/overrides win; `extends` takes a path relative to the config file):
 {
@@ -27,7 +27,7 @@ Config (all keys optional; later files/overrides win; `extends` takes a path rel
   "n_trials": 100, "seed_base": 42, "cosim_trials": 20,
   "golden": {"precision": "float64"},
   "inputs": {"range": "auto" | "design" | [lo, hi] | {"DRAM_x": [lo, hi]}, "static_dir": null},
-  "tolerance": {"mode": "format_bound" | "explicit", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5},
+  "tolerance": {"mode": "format_bound" | "explicit", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5, "stages": 4, "peak_fraction": 0.01},
   "range_search": {"enabled": true, "samples": 20, "factor": 1.4142, "float_span": [1e-3, 1e3], "fixed_start": 1e-3, "fixed_stop_hi_multiple": 2,
                    "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8},
   "stress": {"enabled": true, "factor": 4, "trials": 20}
@@ -65,7 +65,7 @@ BUILTIN_DEFAULTS = {
     "n_trials": 100, "seed_base": BASE_SEED, "cosim_trials": 20,
     "golden": {"precision": "float64"},
     "inputs": {"range": "auto", "static_dir": None},
-    "tolerance": {"mode": "format_bound", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5},
+    "tolerance": {"mode": "format_bound", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5, "stages": 4, "peak_fraction": 0.01},
     "range_search": {"enabled": True, "samples": 20, "factor": 2 ** 0.5, "float_span": [1e-3, 1e3], "fixed_start": 1e-3,
                      "fixed_stop_hi_multiple": 2, "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8},
     "stress": {"enabled": True, "factor": 4, "trials": 20},
@@ -128,8 +128,11 @@ def bound_for(cfg, dt, L):
         def fn(g):
             return tol["atol"] + tol["atol_scale"] * float(np.max(np.abs(g))) + tol["rtol"] * np.abs(g)
         return ("explicit(atol,rtol)" if dt.kind == "fixed" else "float(rtol,atol_scale)"), fn, tol["rtol"]
-    t = (0.5 if dt.q == "AP_RND" else 1.0) * dt.lsb * (L + 1)
-    return "format_bound(LSB*(L+1))", (lambda g: np.full(g.shape, t)), t
+    # operating-window criterion: rounding of an L-term accumulation plus `stages` further dependent roundings, plus a fraction of the output's
+    # peak magnitude (covers division/library-math amplification). Overflow and garbage are orders of magnitude outside it.
+    t = (0.5 if dt.q == "AP_RND" else 1.0) * dt.lsb * (L + tol["stages"])
+    pf = tol["peak_fraction"]
+    return (f"format_bound(c*LSB*(L+{tol['stages']})+{pf}*peak)", (lambda g: t + pf * float(np.max(np.abs(g)))), t)
 
 
 def float_bound_no_atol(cfg):
@@ -256,7 +259,7 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
         L = accum_length(op["func_name"], op.get("dims", []))
         kind, boundfn, _ = bound_for(cfg, dt, L)
         row.update({"accum_len": L, "tolerance_kind": kind, "analytic_range": analytic_range(op["func_name"], op.get("dims", []), dt)})
-        row["tol_abs"] = "" if dt.kind == "float" or cfg["tolerance"]["mode"] == "explicit" else f"{boundfn(np.zeros(1))[0]:.6g}"
+        row["tol_abs"] = "" if dt.kind == "float" or cfg["tolerance"]["mode"] == "explicit" else f"{float(np.asarray(boundfn(np.zeros(1))).ravel()[0]):.6g}"
         rs, N = cfg["range_search"], cfg["n_trials"]
         static = cfg["inputs"].get("static_dir")
         rng_spec = cfg["inputs"]["range"]

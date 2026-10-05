@@ -82,10 +82,11 @@ def run_cosim(domain, cfg_path, dtype_text, k, work, input_range=None, keep=Fals
         cp = subprocess.run(["vitis_hls", "-f", "run_hls.tcl"], cwd=run_dir, capture_output=True, text=True)
         log = (cp.stdout or "") + (cp.stderr or "")
         open(os.path.join(run_dir, "vitis_cosim.log"), "w").write(log)
-        c_dir = find_dir_with(run_dir, f"{names[0]}_output.t0.txt")
-        rtl_dirs = [d for d in glob.glob(os.path.join(run_dir, "**", f"{names[0]}_output.t0.txt"), recursive=True)]
-        c_dir = next((os.path.dirname(p) for p in rtl_dirs if os.sep + "csim" + os.sep in p), None)
-        r_dir = next((os.path.dirname(p) for p in rtl_dirs if os.sep + "sim" + os.sep + "verilog" in p), None)
+        # CSIM writes the C outputs in csim/build. In CO-SIM Vitis runs the testbench once more in sim/wrapc_pc with the RTL results
+        # substituted for the DUT's outputs ("C post checking"), so that directory holds the RTL outputs (sim/wrapc holds a C run).
+        hits = glob.glob(os.path.join(run_dir, "**", f"{names[0]}_output.t0.txt"), recursive=True)
+        c_dir = next((os.path.dirname(p) for p in hits if os.sep + "csim" + os.sep in p), None)
+        r_dir = next((os.path.dirname(p) for p in hits if os.sep + "wrapc_pc" + os.sep in p), None)
         if c_dir is None:
             out["status"], out["notes"] = "csim_failed", "no C outputs (CSIM did not run); see vitis_cosim.log"
             return out

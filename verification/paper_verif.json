@@ -1,15 +1,50 @@
 {
   "_comment": "Every verification run reported in the paper (Table 2): all 57 Table-2 variants x data types x {csim, cosim}. Override anything on the command line or in an operator's verif_config.json.",
   "operators": "table2",
-  "datatypes": ["float", "fixed<16,5>", "fixed<32,10>"],
-  "sim": ["csim", "cosim"],
+  "datatypes": [
+    "float",
+    "fixed<16,5>",
+    "fixed<32,10>"
+  ],
+  "sim": [
+    "csim",
+    "cosim"
+  ],
   "n_trials": 100,
   "seed_base": 42,
   "cosim_trials": 20,
-  "golden": {"precision": "float64"},
-  "inputs": {"range": "auto", "static_dir": null},
-  "tolerance": {"mode": "format_bound", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5},
-  "range_search": {"enabled": true, "samples": 20, "factor": 1.4142135623730951, "float_span": [0.001, 1000.0],
-                   "fixed_start": 0.001, "fixed_stop_hi_multiple": 2, "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8},
-  "stress": {"enabled": true, "factor": 4, "trials": 20}
+  "golden": {
+    "precision": "float64"
+  },
+  "inputs": {
+    "range": "auto",
+    "static_dir": null
+  },
+  "tolerance": {
+    "mode": "format_bound",
+    "atol": 1e-05,
+    "rtol": 0.001,
+    "atol_scale": 5e-05,
+    "stages": 4,
+    "peak_fraction": 0.01
+  },
+  "range_search": {
+    "enabled": true,
+    "samples": 20,
+    "factor": 1.4142135623730951,
+    "float_span": [
+      0.001,
+      1000.0
+    ],
+    "fixed_start": 0.001,
+    "fixed_stop_hi_multiple": 2,
+    "bisect_steps": 4,
+    "step_down": 1.19,
+    "max_step_downs": 8
+  },
+  "stress": {
+    "enabled": true,
+    "factor": 4,
+    "trials": 20
+  }
 }
