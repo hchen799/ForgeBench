@@ -26,7 +26,10 @@ OP = os.path.join(HERE, "op_configs")
 
 ACTS_13 = ["relu", "leaky_relu", "prelu", "rrelu", "thresholded_relu", "relu6",
            "sigmoid", "tanh", "elu", "selu", "gelu", "swish", "softmax"]
-ACTS_CONV = ACTS_13 + ["hardsigmoid", "hardswish"]
+# All 15 activation functions exist in every domain's template (hardsigmoid/hardswish were added to the rank-2
+# gemm and llm templates in R2), so every domain verifies all 15.
+ACTS_15 = ACTS_13 + ["hardsigmoid", "hardswish"]
+ACTS_CONV = ACTS_15
 
 # Input ranges written into each config as "input_range" (see the `low`/`high`
 # arguments of generate_dram_txt_files). The generator's historical default,
@@ -157,8 +160,8 @@ def gen_attention(domain, base_name, func_name, do_grouping):
 def main():
     written = []
     # activations
-    written += gen_activation("gemm", ACTS_13)
-    written += gen_activation("llm", ACTS_13)
+    written += gen_activation("gemm", ACTS_15)
+    written += gen_activation("llm", ACTS_15)
     written += gen_activation("conv", ACTS_CONV)
     # gemm-family bias
     written += gen_bias("gemm", "gemm.json", "gemm")

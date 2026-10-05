@@ -44,6 +44,13 @@ TABLE2_ROW = {
     "matrix_add": "Matrix add", "elementwise_mult": "Element-wise Mult.", "dropout": "Dropout",
     "maxpool": "Max pool", "adaptive_avgpool": "Avg pool",
 }
+# Which domain's variants count toward Table 2 (the paper counts each operator once; matrix_add and the activations exist in
+# several domains). Activations are counted for the rank-2 template (gemm domain) and the rank-3 template (conv domain).
+TABLE2_DOMAINS = {
+    "gemm": {"gemm", "vmm", "mmv", "dot_product", "activation"},
+    "conv": {"conv", "batchnorm", "maxpool", "adaptive_avgpool", "matrix_add", "activation"},
+    "llm": {"mha", "swa", "matmul", "layernorm", "rmsnorm", "dropout", "elementwise_mult"},
+}
 REUSE = {"dagger": "tiling", "ddagger": "functional", "ast": "arithmetic"}      # Table 7 footnote marks
 
 
@@ -115,14 +122,15 @@ def build_ops():
             fn = op["func_name"]
             rows.append({
                 "design_id": f"ops/{domain}/{stem}", "domain": domain,
-                "operator": stem.split("__", 1)[0], "paper_table2_row": TABLE2_ROW[stem.split("__", 1)[0]], "variant": stem.split("__", 1)[1] if "__" in stem else "",
+                "operator": stem.split("__", 1)[0], "paper_table2_row": TABLE2_ROW[stem.split("__", 1)[0]],
+                "in_table2": "YES" if stem.split("__", 1)[0] in TABLE2_DOMAINS[domain] else "NO", "variant": stem.split("__", 1)[1] if "__" in stem else "",
                 "op_func": fn, "op_dims": compact(op.get("dims", [])), "op_func_info": compact(op.get("func_info", [])),
                 "template": template_of(op),
                 "generator_function": f"{domain}/generate_code.py:{gen.get(fn, '')}",
                 "golden_function": f"verification/domains/{domain}.py:{gold.get(fn, '')}",
                 "input_range": compact(cfg.get("input_range", "")), "config_path": rel(path),
             })
-    cols = ["design_id", "domain", "operator", "paper_table2_row", "variant", "op_func", "op_dims", "op_func_info", "template",
+    cols = ["design_id", "domain", "operator", "paper_table2_row", "in_table2", "variant", "op_func", "op_dims", "op_func_info", "template",
             "generator_function", "golden_function", "input_range", "config_path"]
     return cols, rows
 
@@ -234,6 +242,8 @@ def build_modular():
 
 def main():
     cols, rows = build_ops()
+    n57 = sum(1 for r in rows if r["in_table2"] == "YES")
+    assert n57 == 57, f"Table 2 selection has {n57} variants, expected 57"
     write_csv("ops.csv", cols, rows)
     dcols, designs, ccols, cases = build_modular()
     write_csv("modular.csv", dcols, designs)

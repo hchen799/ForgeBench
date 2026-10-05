@@ -1287,8 +1287,14 @@ def generate_activation_function(
     elif func_name == "softmax":
         marker_start = "/*==== SOFTMAX FUNCTION START ====*/"
         marker_end = "/*==== SOFTMAX FUNCTION END ====*/"
+    elif func_name == "hardsigmoid":
+        marker_start = "/*==== HARDSIGMOID FUNCTION START ====*/"
+        marker_end = "/*==== HARDSIGMOID FUNCTION END ====*/"
+    elif func_name == "hardswish":
+        marker_start = "/*==== HARDSWISH FUNCTION START ====*/"
+        marker_end = "/*==== HARDSWISH FUNCTION END ====*/"
     else:
-        raise ValueError("Invalid function name. Choose from: relu, leaky_relu, prelu, rrelu, thresholded_relu, relu6, sigmoid, tanh_act, elu, selu, gelu, swish, softmax.")
+        raise ValueError("Invalid function name. Choose from: relu, leaky_relu, prelu, rrelu, thresholded_relu, relu6, sigmoid, tanh_act, elu, selu, gelu, swish, softmax, hardsigmoid, hardswish.")
     
     # 4) Extract the function block.
     start_idx = formatted_code.find(marker_start)
@@ -1608,8 +1614,8 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     code_lines.append("        exit(1);")
     code_lines.append("    }")
     code_lines.append("    for (int i = 0; i < total_size; i++) {")
-    code_lines.append("        float temp;")
-    code_lines.append("        fscanf(fp, \"%f\", &temp);")
+    code_lines.append("        double temp;   // double: a float32 read cannot resolve wide fixed-point types")
+    code_lines.append("        fscanf(fp, \"%lf\", &temp);")
     code_lines.append("        array[i] = (data_t)temp;")
     code_lines.append("    }")
     code_lines.append("    fclose(fp);")
@@ -1652,7 +1658,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         code_lines.append(f"        FILE *fp = fopen(\"{out_name}_output.txt\", \"w\");")
         code_lines.append("        if (fp != NULL) {")
         code_lines.append(f"            for (int i = 0; i < {total_out}; i++) {{")
-        code_lines.append(f"                fprintf(fp, \"%f \", (float)((data_t*){out_name})[i]);")
+        code_lines.append(f"                fprintf(fp, \"%.17g \", (double)((data_t*){out_name})[i]);")
         code_lines.append("            }")
         code_lines.append("            fclose(fp);")
         code_lines.append("        }")

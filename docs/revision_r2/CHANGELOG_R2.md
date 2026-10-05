@@ -72,3 +72,16 @@ changes csynth results in 88–100% of matched pairs). Sweep total 3,072 + 5,184
   6 of them (the crash is intermittent), 1 failed again -> final 999 ok / 1 fail. First-pass statuses are kept in
   `manifest/evidence/r2_runs/gemm_impl_status_first_pass.csv`. The July GEMM impl metrics are in `legacy/results_r1/`.
 * Implemented subsets now: conv 896 (July sample, unchanged sweep), gemm 999 (+1 fail), llm 999 (+1 fail) = 2,894 designs, all meeting timing at 100 MHz.
+
+## 2026-10-05 — activation functions in rank-2 templates; testbench precision (generator changes for verification)
+Files: `gemm/2D_activations_template.cpp`, `llm/activation_template.cpp`, `{gemm,conv,llm}/generate_code.py` (`generate_activation_function`,
+`generate_testbench_code`), `verification/gen_variants.py`, `verification/regression_check.py` (new).
+1. **`hardsigmoid` and `hardswish` added to the rank-2 (gemm, llm) activation templates.** Table 2 claims 15 activation functions x 2 tensor ranks;
+   only the conv (rank-3) template had all 15, the rank-2 templates had 13. Same definitions as the conv template (hardsigmoid = 0 for x<=-3, 1 for x>=3,
+   else (x+3)/6; hardswish = x*hardsigmoid(x)). Additive: existing designs are unchanged (regression check: 0 of 279 sampled designs changed
+   `top.cpp`/`top.h`/`run_hls.tcl`; the template header comment was deliberately left alone because it is copied into emitted `top.cpp`).
+   Verification variants: 4 new configs (`activation__hardsigmoid|hardswish` for gemm and llm); Table 2 selection (`ops.csv: in_table2`) = 57.
+2. **Generated testbench precision (all three domains).** Outputs were dumped with `fprintf("%f ", (float)v)` (6 decimals, float32) and inputs read
+   with `float temp; fscanf("%f")`; neither can resolve wide fixed-point types (`<32,10>` step 2^-22 ~ 2.4e-7), so fixed-point comparisons through
+   the stock testbench lost precision. Now: inputs read as `double` (`%lf`), outputs dumped as `(double)` with `%.17g` (exact for any ap_fixed up to 53 bits
+   and for float). Testbench only: `tb_top.cpp` of every design changes (279 of 279 sampled), the synthesized files do not, so no csynth/impl result is affected.
