@@ -17,6 +17,8 @@ import os
 
 import numpy as np
 
+from verification import fp
+
 from verification.io import load_dram_txt, prod, write_golden
 
 # Ops unique to each domain, used to auto-detect the domain from a config.
@@ -50,7 +52,7 @@ def build_initial_arrays(config, design_dir):
     """
     arrays = {}
     for bram in config.get("brams", []):
-        arrays[bram["name"]] = np.zeros(bram["dims"], dtype=np.float32)
+        arrays[bram["name"]] = np.zeros(bram["dims"], dtype=fp.FP)
     for dram in config["drams"]:
         path = os.path.join(design_dir, f"{dram['name']}.txt")
         arrays[dram["name"]] = load_dram_txt(path, dram["dims"])

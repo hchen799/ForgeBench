@@ -22,79 +22,81 @@ generators' defaults must be kept in sync.
 """
 import numpy as np
 
-_SQRT_2_OVER_PI = np.float32(np.sqrt(2.0 / np.pi))
+from verification import fp
+
+_SQRT_2_OVER_PI = fp.FP(np.sqrt(2.0 / np.pi))
 
 
 def relu(x):
-    return np.maximum(x, 0.0).astype(np.float32)
+    return np.maximum(x, 0.0).astype(fp.FP)
 
 
 def relu6(x, cap=6.0):
-    return np.clip(x, 0.0, cap).astype(np.float32)
+    return np.clip(x, 0.0, cap).astype(fp.FP)
 
 
 def leaky_relu(x, alpha=0.01):
-    return np.where(x >= 0, x, alpha * x).astype(np.float32)
+    return np.where(x >= 0, x, alpha * x).astype(fp.FP)
 
 
 def prelu(x, alpha=0.25):
-    return np.where(x >= 0, x, alpha * x).astype(np.float32)
+    return np.where(x >= 0, x, alpha * x).astype(fp.FP)
 
 
 def rrelu(x, lower=1.0 / 8, upper=1.0 / 3):
     ralpha = (lower + upper) / 2.0
-    return np.where(x >= 0, x, ralpha * x).astype(np.float32)
+    return np.where(x >= 0, x, ralpha * x).astype(fp.FP)
 
 
 def thresholded_relu(x, theta=1.0):
-    return np.where(x > theta, x, 0.0).astype(np.float32)
+    return np.where(x > theta, x, 0.0).astype(fp.FP)
 
 
 def sigmoid(x):
-    return (1.0 / (1.0 + np.exp(-x))).astype(np.float32)
+    return (1.0 / (1.0 + np.exp(-x))).astype(fp.FP)
 
 
 def tanh_act(x):
-    return np.tanh(x).astype(np.float32)
+    return np.tanh(x).astype(fp.FP)
 
 
 def elu(x, alpha=1.0):
-    return np.where(x >= 0, x, alpha * (np.exp(x) - 1.0)).astype(np.float32)
+    return np.where(x >= 0, x, alpha * (np.exp(x) - 1.0)).astype(fp.FP)
 
 
 def selu(x, alpha=1.6732632423543772, lam=1.0507009873554805):
-    return np.where(x >= 0, lam * x, lam * alpha * (np.exp(x) - 1.0)).astype(np.float32)
+    return np.where(x >= 0, lam * x, lam * alpha * (np.exp(x) - 1.0)).astype(fp.FP)
 
 
 def gelu(x):
     # Deliberate variant: tanh approximation, matching the emitted C.
-    x = x.astype(np.float32)
-    inner = _SQRT_2_OVER_PI * (x + np.float32(0.044715) * x * x * x)
-    return (np.float32(0.5) * x * (1.0 + np.tanh(inner))).astype(np.float32)
+    x = x.astype(fp.FP)
+    inner = _SQRT_2_OVER_PI * (x + fp.FP(0.044715) * x * x * x)
+    return (fp.FP(0.5) * x * (1.0 + np.tanh(inner))).astype(fp.FP)
 
 
 def swish(x):
-    return (x * sigmoid(x)).astype(np.float32)
+    return (x * sigmoid(x)).astype(fp.FP)
 
 
 def softmax(x):
     # Row-wise over the last axis (matches the C), stabilized by max-subtraction.
-    x = x.astype(np.float32)
+    x = x.astype(fp.FP)
     shifted = x - np.max(x, axis=-1, keepdims=True)
     e = np.exp(shifted)
-    return (e / np.sum(e, axis=-1, keepdims=True)).astype(np.float32)
+    return (e / np.sum(e, axis=-1, keepdims=True)).astype(fp.FP)
 
 
 def hardsigmoid(x):
     # Matches conv/activations_template.cpp: 0 for x<=-3, 1 for x>=3, else (x+3)/6.
-    x = x.astype(np.float32)
-    return np.clip((x + np.float32(3.0)) / np.float32(6.0), 0.0, 1.0).astype(np.float32)
+    x = x.astype(fp.FP)
+    return np.clip((x + fp.FP(3.0)) / fp.FP(6.0), 0.0, 1.0).astype(fp.FP)
 
 
 def hardswish(x):
     # Matches conv/activations_template.cpp: x * hardsigmoid(x).
-    x = x.astype(np.float32)
-    return (x * hardsigmoid(x)).astype(np.float32)
+    x = x.astype(fp.FP)
+    return (x * hardsigmoid(x)).astype(fp.FP)
 
 
 # Map config activation names -> implementation. "tanh" and "tanh_act" both accepted.

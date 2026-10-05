@@ -45,6 +45,8 @@ Op / arg conventions (see conv/generate_code.py generate_func_def):
 """
 import numpy as np
 
+from verification import fp
+
 from verification.activations import apply_activation
 
 CONV_OPS = {"conv", "batchnorm", "maxpool", "adaptive_avgpool"}
@@ -67,10 +69,10 @@ def _read(arrays, name, shape):
     flat = arrays[name].reshape(-1)
     n = _prod(shape)
     if flat.size < n:
-        buf = np.zeros(n, dtype=np.float32)
-        buf[: flat.size] = flat.astype(np.float32)
+        buf = np.zeros(n, dtype=fp.FP)
+        buf[: flat.size] = flat.astype(fp.FP)
     else:
-        buf = flat[:n].astype(np.float32)
+        buf = flat[:n].astype(fp.FP)
     return buf.reshape(shape)
 
 
@@ -81,7 +83,7 @@ def _write(arrays, name, value):
     that fits is written (mirrors the C writing OOB past a too-small buffer:
     the excess never reaches the compared output DRAM)."""
     flat = arrays[name].reshape(-1)
-    v = np.asarray(value, dtype=np.float32).reshape(-1)
+    v = np.asarray(value, dtype=fp.FP).reshape(-1)
     m = min(flat.size, v.size)
     flat[:m] = v[:m]
 
@@ -118,9 +120,9 @@ def _op_conv(op, arrays):
     # Initialize output to bias (per out-channel) or zero, matching the C.
     if with_bias:
         bias = _read(arrays, b_name, (C_OUT,))
-        out = np.repeat(bias, H_OUT * W_OUT).reshape(C_OUT, H_OUT, W_OUT).astype(np.float32)
+        out = np.repeat(bias, H_OUT * W_OUT).reshape(C_OUT, H_OUT, W_OUT).astype(fp.FP)
     else:
-        out = np.zeros((C_OUT, H_OUT, W_OUT), dtype=np.float32)
+        out = np.zeros((C_OUT, H_OUT, W_OUT), dtype=fp.FP)
 
     ci_per_g = C_IN // groups
     co_per_g = C_OUT // groups
@@ -163,8 +165,8 @@ def _op_batchnorm(op, arrays):
     mean = weights[2].reshape(C, 1, 1)
     var = weights[3].reshape(C, 1, 1)
 
-    norm = (x - mean) / np.sqrt(var + np.float32(eps))
-    out = (gamma * norm + beta).astype(np.float32)
+    norm = (x - mean) / np.sqrt(var + fp.FP(eps))
+    out = (gamma * norm + beta).astype(fp.FP)
     _write(arrays, out_name, out)
 
 
@@ -183,14 +185,14 @@ def _apply_conv_activation(name, x, params=()):
     textbook oracles."""
     key = name.lower()
     if key == "softmax":
-        x = x.astype(np.float32)
+        x = x.astype(fp.FP)
         shifted = x - np.max(x, axis=0, keepdims=True)
         e = np.exp(shifted)
-        return (e / np.sum(e, axis=0, keepdims=True)).astype(np.float32)
+        return (e / np.sum(e, axis=0, keepdims=True)).astype(fp.FP)
     if key == "hardsigmoid":
-        return np.clip((x + 3.0) / 6.0, 0.0, 1.0).astype(np.float32)
+        return np.clip((x + 3.0) / 6.0, 0.0, 1.0).astype(fp.FP)
     if key == "hardswish":
-        return (x * np.clip((x + 3.0) / 6.0, 0.0, 1.0)).astype(np.float32)
+        return (x * np.clip((x + 3.0) / 6.0, 0.0, 1.0)).astype(fp.FP)
     return apply_activation(name, x, params)
 
 
@@ -198,7 +200,7 @@ def _op_maxpool(op, arrays):
     C, H_IN, W_IN, H_OUT, W_OUT, K_H, K_W, S_H, S_W = op["dims"]
     in_name, out_name = op["args"]
     x = _read(arrays, in_name, (C, H_IN, W_IN))
-    out = np.empty((C, H_OUT, W_OUT), dtype=np.float32)
+    out = np.empty((C, H_OUT, W_OUT), dtype=fp.FP)
     for c in range(C):
         for i in range(H_OUT):
             for j in range(W_OUT):
@@ -212,7 +214,7 @@ def _op_adaptive_avgpool(op, arrays):
     C, H_IN, W_IN, H_OUT, W_OUT = op["dims"]
     in_name, out_name = op["args"]
     x = _read(arrays, in_name, (C, H_IN, W_IN))
-    out = np.zeros((C, H_OUT, W_OUT), dtype=np.float32)
+    out = np.zeros((C, H_OUT, W_OUT), dtype=fp.FP)
     for oh in range(H_OUT):
         h_start = int(np.floor(oh * H_IN / H_OUT))
         h_end = min(int(np.ceil((oh + 1) * H_IN / H_OUT)), H_IN)
@@ -222,7 +224,7 @@ def _op_adaptive_avgpool(op, arrays):
             region = x[:, h_start:h_end, w_start:w_end]
             count = (h_end - h_start) * (w_end - w_start)
             if count > 0:
-                out[:, oh, ow] = region.reshape(C, -1).sum(axis=1) / np.float32(count)
+                out[:, oh, ow] = region.reshape(C, -1).sum(axis=1) / fp.FP(count)
     _write(arrays, out_name, out)
 
 
@@ -231,7 +233,7 @@ def _op_matrix_add(op, arrays):
     in1, in2, out_name = op["args"]
     a = _read(arrays, in1, (C, H, W))
     b = _read(arrays, in2, (C, H, W))
-    _write(arrays, out_name, (a + b).astype(np.float32))
+    _write(arrays, out_name, (a + b).astype(fp.FP))
 
 
 _DISPATCH = {

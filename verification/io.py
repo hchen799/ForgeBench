@@ -8,6 +8,8 @@ the same one-value-per-line float format.
 """
 import numpy as np
 
+from verification import fp
+
 
 def prod(dims):
     out = 1
@@ -18,13 +20,13 @@ def prod(dims):
 
 def load_dram_txt(path, dims):
     """Load a DRAM `.txt` file into a float32 array shaped row-major by `dims`."""
-    flat = np.loadtxt(path, dtype=np.float32).reshape(-1)
+    flat = np.loadtxt(path, dtype=fp.FP).reshape(-1)
     n = prod(dims)
     if flat.size != n:
         raise ValueError(
             f"{path}: expected {n} values for dims {dims}, got {flat.size}"
         )
-    return flat.reshape(dims).astype(np.float32)
+    return flat.reshape(dims).astype(fp.FP)
 
 
 def write_golden(path, arr):
@@ -38,6 +40,7 @@ def write_golden(path, arr):
     1e-3 range for the same reason. The testbench reads with `fscanf("%f")`,
     which accepts exponent notation, so this is backward compatible.
     """
-    flat = np.asarray(arr, dtype=np.float32).reshape(-1)
+    flat = np.asarray(arr, dtype=fp.FP).reshape(-1)
     with open(path, "w") as f:
-        f.write("\n".join(f"{v:.9g}" for v in flat))
+        spec = ".9g" if fp.FP is np.float32 else ".17g"     # shortest round-trip format for the working precision
+        f.write("\n".join(format(v, spec) for v in flat))

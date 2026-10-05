@@ -22,6 +22,8 @@ Op / arg conventions:
 """
 import numpy as np
 
+from verification import fp
+
 from verification.activations import apply_activation
 
 GEMM_OPS = {"gemm", "vmm", "mmv", "dot_product"}
@@ -36,13 +38,13 @@ def _prod(dims):
 
 def _read(arrays, name, shape):
     """Read the first prod(shape) elements of `name`, row-major, reshaped."""
-    return arrays[name].reshape(-1)[: _prod(shape)].reshape(shape).astype(np.float32)
+    return arrays[name].reshape(-1)[: _prod(shape)].reshape(shape).astype(fp.FP)
 
 
 def _write(arrays, name, value):
     """Write `value` into the first value.size elements of `name` in place."""
     flat = arrays[name].reshape(-1)
-    v = np.asarray(value, dtype=np.float32).reshape(-1)
+    v = np.asarray(value, dtype=fp.FP).reshape(-1)
     flat[: v.size] = v
 
 
@@ -56,9 +58,9 @@ def _op_gemm(op, arrays):
     M, N, K = op["dims"]
     _order, _unroll, with_bias, _inline = op["func_info"]
     a, b, bias, out = op["args"]
-    res = (_read(arrays, a, (M, N)) @ _read(arrays, b, (N, K))).astype(np.float32)
+    res = (_read(arrays, a, (M, N)) @ _read(arrays, b, (N, K))).astype(fp.FP)
     if with_bias:
-        res = (res + _read(arrays, bias, (M, K))).astype(np.float32)
+        res = (res + _read(arrays, bias, (M, K))).astype(fp.FP)
     _write(arrays, out, res)
 
 
@@ -66,9 +68,9 @@ def _op_mmv(op, arrays):
     M, N = op["dims"]
     _order, _unroll, with_bias, _inline = op["func_info"]
     a, b, bias, out = op["args"]
-    res = (_read(arrays, a, (M, N)) @ _read(arrays, b, (N,))).astype(np.float32)
+    res = (_read(arrays, a, (M, N)) @ _read(arrays, b, (N,))).astype(fp.FP)
     if with_bias:
-        res = (res + _read(arrays, bias, (M,))).astype(np.float32)
+        res = (res + _read(arrays, bias, (M,))).astype(fp.FP)
     _write(arrays, out, res)
 
 
@@ -76,9 +78,9 @@ def _op_vmm(op, arrays):
     M, N = op["dims"]
     _order, _unroll, with_bias, _inline = op["func_info"]
     a, b, bias, out = op["args"]
-    res = (_read(arrays, a, (M, N)).T @ _read(arrays, b, (M,))).astype(np.float32)
+    res = (_read(arrays, a, (M, N)).T @ _read(arrays, b, (M,))).astype(fp.FP)
     if with_bias:
-        res = (res + _read(arrays, bias, (N,))).astype(np.float32)
+        res = (res + _read(arrays, bias, (N,))).astype(fp.FP)
     _write(arrays, out, res)
 
 
@@ -86,9 +88,9 @@ def _op_dot(op, arrays):
     M = op["dims"][0]
     _unroll, with_bias, _inline = op["func_info"]
     a, b, bias, out = op["args"]
-    res = np.array([np.dot(_read(arrays, a, (M,)), _read(arrays, b, (M,)))], dtype=np.float32)
+    res = np.array([np.dot(_read(arrays, a, (M,)), _read(arrays, b, (M,)))], dtype=fp.FP)
     if with_bias:
-        res = (res + _read(arrays, bias, (1,))).astype(np.float32)
+        res = (res + _read(arrays, bias, (1,))).astype(fp.FP)
     _write(arrays, out, res)
 
 

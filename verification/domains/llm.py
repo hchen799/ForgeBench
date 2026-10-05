@@ -38,6 +38,8 @@ import re
 
 import numpy as np
 
+from verification import fp
+
 from verification.activations import apply_activation
 
 _SLICE_RE = re.compile(r"^\s*([A-Za-z_]\w*)\s*\[\s*(\d+)\s*\]\s*$")
@@ -64,13 +66,13 @@ def _resolve(arrays, arg):
 
 def _read(arrays, arg, shape):
     """Read the first prod(shape) elements of `arg`, row-major, reshaped."""
-    return _resolve(arrays, arg).reshape(-1)[: _prod(shape)].reshape(shape).astype(np.float32)
+    return _resolve(arrays, arg).reshape(-1)[: _prod(shape)].reshape(shape).astype(fp.FP)
 
 
 def _write(arrays, arg, value):
     """Write `value` into the first value.size elements of `arg` in place."""
     flat = _resolve(arrays, arg).reshape(-1)
-    v = np.asarray(value, dtype=np.float32).reshape(-1)
+    v = np.asarray(value, dtype=fp.FP).reshape(-1)
     flat[: v.size] = v
 
 
@@ -90,34 +92,34 @@ def _op_matmul(op, arrays):
     else:
         a, w, out = op["args"][0], op["args"][1], op["args"][2]
         bias = None
-    res = (_read(arrays, a, (S, DIN)) @ _read(arrays, w, (DOUT, DIN)).T).astype(np.float32)
+    res = (_read(arrays, a, (S, DIN)) @ _read(arrays, w, (DOUT, DIN)).T).astype(fp.FP)
     if bias is not None:
-        res = (res + _read(arrays, bias, (DOUT,))).astype(np.float32)
+        res = (res + _read(arrays, bias, (DOUT,))).astype(fp.FP)
     _write(arrays, out, res)
 
 
 def _op_layernorm(op, arrays):
     S, DIM = op["dims"][0], op["dims"][1]
-    eps = np.float32(op["dims"][2])
+    eps = fp.FP(op["dims"][2])
     a, gamma, beta, out = op["args"]
     x = _read(arrays, a, (S, DIM))
     g = _read(arrays, gamma, (DIM,))
     b = _read(arrays, beta, (DIM,))
-    mean = x.mean(axis=1, keepdims=True).astype(np.float32)
-    var = (((x - mean) ** 2).mean(axis=1, keepdims=True)).astype(np.float32)
-    norm = ((x - mean) / np.sqrt(var + eps)).astype(np.float32)
-    res = (g * norm + b).astype(np.float32)
+    mean = x.mean(axis=1, keepdims=True).astype(fp.FP)
+    var = (((x - mean) ** 2).mean(axis=1, keepdims=True)).astype(fp.FP)
+    norm = ((x - mean) / np.sqrt(var + eps)).astype(fp.FP)
+    res = (g * norm + b).astype(fp.FP)
     _write(arrays, out, res)
 
 
 def _op_rmsnorm(op, arrays):
     S, DIM = op["dims"][0], op["dims"][1]
-    eps = np.float32(op["dims"][2])
+    eps = fp.FP(op["dims"][2])
     a, gamma, out = op["args"]
     x = _read(arrays, a, (S, DIM))
     g = _read(arrays, gamma, (DIM,))
-    rms = np.sqrt((x * x).mean(axis=1, keepdims=True) + eps).astype(np.float32)
-    res = (g * x / rms).astype(np.float32)
+    rms = np.sqrt((x * x).mean(axis=1, keepdims=True) + eps).astype(fp.FP)
+    res = (g * x / rms).astype(fp.FP)
     _write(arrays, out, res)
 
 
@@ -141,14 +143,14 @@ def _op_dropout(op, arrays):
 def _op_matrix_add(op, arrays):
     S, DIM = op["dims"][0], op["dims"][1]
     a, b, out = op["args"]
-    res = (_read(arrays, a, (S, DIM)) + _read(arrays, b, (S, DIM))).astype(np.float32)
+    res = (_read(arrays, a, (S, DIM)) + _read(arrays, b, (S, DIM))).astype(fp.FP)
     _write(arrays, out, res)
 
 
 def _op_elementwise_mult(op, arrays):
     S, DIM = op["dims"][0], op["dims"][1]
     a, b, out = op["args"]
-    res = (_read(arrays, a, (S, DIM)) * _read(arrays, b, (S, DIM))).astype(np.float32)
+    res = (_read(arrays, a, (S, DIM)) * _read(arrays, b, (S, DIM))).astype(fp.FP)
     _write(arrays, out, res)
 
 
@@ -164,22 +166,22 @@ def _apply_rope(mat, num_heads, head_dim):
         for h in range(num_heads):
             for d in range(0, head_dim, 2):
                 idx = h * head_dim + d
-                theta = np.float32(10000.0) ** np.float32(-(float(d) / float(head_dim)))
-                angle = np.float32(s) * theta
-                c = np.float32(np.cos(angle))
-                sn = np.float32(np.sin(angle))
+                theta = fp.FP(10000.0) ** fp.FP(-(float(d) / float(head_dim)))
+                angle = fp.FP(s) * theta
+                c = fp.FP(np.cos(angle))
+                sn = fp.FP(np.sin(angle))
                 x0 = mat[s, idx]
                 x1 = mat[s, idx + 1]
                 out[s, idx] = x0 * c - x1 * sn
                 out[s, idx + 1] = x0 * sn + x1 * c
-    return out.astype(np.float32)
+    return out.astype(fp.FP)
 
 
 def _stable_softmax_1d(v):
-    v = v.astype(np.float32)
+    v = v.astype(fp.FP)
     m = np.max(v)
-    e = np.exp(v - m).astype(np.float32)
-    return (e / np.sum(e)).astype(np.float32)
+    e = np.exp(v - m).astype(fp.FP)
+    return (e / np.sum(e)).astype(fp.FP)
 
 
 def _op_mha(op, arrays):
@@ -193,16 +195,16 @@ def _op_mha(op, arrays):
     Wq = _read(arrays, wq, (DOUT, DIN))
     Wk = _read(arrays, wk, (DOUT, DIN))
     Wv = _read(arrays, wv, (DOUT, DIN))
-    Q = (x @ Wq.T).astype(np.float32)
-    K = (x @ Wk.T).astype(np.float32)
-    V = (x @ Wv.T).astype(np.float32)
+    Q = (x @ Wq.T).astype(fp.FP)
+    K = (x @ Wk.T).astype(fp.FP)
+    V = (x @ Wv.T).astype(fp.FP)
 
     if use_rope:
         Q = _apply_rope(Q, NH, HD)
         K = _apply_rope(K, NH, HD)
 
-    scale = np.float32(1.0) / np.float32(np.sqrt(float(HD)))
-    output = np.zeros((S, DOUT), dtype=np.float32)
+    scale = fp.FP(1.0) / fp.FP(np.sqrt(float(HD)))
+    output = np.zeros((S, DOUT), dtype=fp.FP)
 
     # C iterates heads as g*heads_per_group + h with heads_per_group = num_heads/groups
     # (integer division). Heads beyond groups*heads_per_group are left un-written
@@ -215,10 +217,10 @@ def _op_mha(op, arrays):
             qh = Q[:, sl]
             kh = K[:, sl]
             vh = V[:, sl]
-            scores = (qh @ kh.T).astype(np.float32) * scale  # [S,S], no causal mask
+            scores = (qh @ kh.T).astype(fp.FP) * scale  # [S,S], no causal mask
             for i in range(S):
                 p = _stable_softmax_1d(scores[i])
-                output[i, sl] = (p @ vh).astype(np.float32)
+                output[i, sl] = (p @ vh).astype(fp.FP)
     _write(arrays, out, output)
 
 
@@ -233,16 +235,16 @@ def _op_swa(op, arrays):
     Wq = _read(arrays, wq, (DOUT, DIN))
     Wk = _read(arrays, wk, (DOUT, DIN))
     Wv = _read(arrays, wv, (DOUT, DIN))
-    Q = (x @ Wq.T).astype(np.float32)
-    K = (x @ Wk.T).astype(np.float32)
-    V = (x @ Wv.T).astype(np.float32)
+    Q = (x @ Wq.T).astype(fp.FP)
+    K = (x @ Wk.T).astype(fp.FP)
+    V = (x @ Wv.T).astype(fp.FP)
 
     if use_rope:
         Q = _apply_rope(Q, NH, HD)
         K = _apply_rope(K, NH, HD)
 
-    scale = np.float32(1.0) / np.float32(np.sqrt(float(HD)))
-    output = np.zeros((S, DOUT), dtype=np.float32)
+    scale = fp.FP(1.0) / fp.FP(np.sqrt(float(HD)))
+    output = np.zeros((S, DOUT), dtype=fp.FP)
 
     for h in range(NH):
         sl = slice(h * HD, h * HD + HD)
@@ -253,9 +255,9 @@ def _op_swa(op, arrays):
             start = max(0, i - window)
             end = min(S - 1, i + window)  # inclusive, matches C
             idxs = np.arange(start, end + 1)
-            scores = (qh[i] @ kh[idxs].T).astype(np.float32) * scale
+            scores = (qh[i] @ kh[idxs].T).astype(fp.FP) * scale
             p = _stable_softmax_1d(scores)
-            output[i, sl] = (p @ vh[idxs]).astype(np.float32)
+            output[i, sl] = (p @ vh[idxs]).astype(fp.FP)
     _write(arrays, out, output)
 
 
