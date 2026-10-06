@@ -206,9 +206,16 @@ void softmax(
 {{
     // Compute softmax along the hidden dimension for each row.
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
+        // Subtract the row max before exp (shift-invariant, so mathematically identical): every exp argument is <= 0,
+        // so exp itself cannot overflow in fixed point.
+        data_t max_val = input[i][0];
+        for (int j = 1; j < {HIDDEN_DIM}; j++) {{
+            if (input[i][j] > max_val) max_val = input[i][j];
+        }}
+
         {ACC} sum = 0;
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            output[i][j] = hls::exp(input[i][j]);
+            output[i][j] = hls::exp(input[i][j] - max_val);
             sum += output[i][j];
         }}
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{

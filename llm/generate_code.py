@@ -107,6 +107,10 @@ def generate_activation_function(
         SEQ_LENGTH=SEQ_LENGTH,
         HIDDEN_DIM=HIDDEN_DIM
     )
+    if _ACC["ACC"] != "data_t":      # softmax: the max-subtraction can span twice the input range, so do it in the accumulator type
+        formatted_code = formatted_code.replace(
+            "hls::exp(input[i][j] - max_val)",
+            "hls::exp((%s)((%s)input[i][j] - (%s)max_val))" % (_ACC["ACCM"], _ACC["ACC"], _ACC["ACC"]))
     
     # 3) Determine marker strings based on the specified activation function.
     func_name = func_name.lower()  # Normalize to lower-case

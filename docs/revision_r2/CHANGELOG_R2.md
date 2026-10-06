@@ -172,3 +172,13 @@ Stale: all LLM sweep results (unchanged from the earlier note).
   `scores` (a `data_t` array) past 16 at |x|~3.4 (max |scores| 14.6 at 3.2, 18.4 at 3.4), so the remaining limit is the storage format,
   addressed by a per-operator `data_type`, not by the accumulator. swa reaches ~11.
 * Engine option `fixed_ranges` ({"weights": 0.1}): DRAMs whose name contains the key keep +-value while the range search scales the others.
+
+## conv / llm softmax subtract the max (now consistent with gemm)
+
+`conv/activations_template.cpp` (per spatial location, over channels) and `llm/activation_template.cpp` (per row) subtract the max before
+`exp`, as the gemm softmax and the attention softmax already did (mathematically identical; every exp argument is <= 0, so exp cannot
+overflow in fixed point). With an accumulator spec the subtraction is done in the accumulator type. Regression check: only softmax designs
+change (2 of the sampled designs); **conv/llm softmax design results are stale.**
+Effect at `<16,5>` (default `data_t` everywhere): llm softmax went from "no faithful range" to a window that covers the whole search range (23.2),
+conv softmax from about 0.9 to 23.2 (max abs error 1.7e-3 and 7.8e-4 for conv and llm).
+Storage `fixed<24,8>` + `fixed<32,10>` RND accumulator inside a `<16,5>` design (weights +-0.1): mha window 7.2, swa 23.2 (full search range).

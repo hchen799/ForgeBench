@@ -252,10 +252,17 @@ void softmax(
     // Compute softmax along the channel dimension for each spatial location.
     for (int i = 0; i < {H}; i++) {{
         for (int j = 0; j < {W}; j++) {{
+            // Subtract the channel max before exp: softmax is shift-invariant, so this is mathematically identical but
+            // keeps every exp argument <= 0 (exp in (0, 1]), so exp itself cannot overflow in fixed point.
+            data_t max_val = input[0][i][j];
+            for (int c = 1; c < {C}; c++) {{
+                if (input[c][i][j] > max_val) max_val = input[c][i][j];
+            }}
+
             {ACC} sum = 0;
             // First pass: compute exponentials and sum
             for (int c = 0; c < {C}; c++) {{
-                output[c][i][j] = hls::exp(input[c][i][j]);
+                output[c][i][j] = hls::exp(input[c][i][j] - max_val);
                 sum += output[c][i][j];
             }}
             // Second pass: normalize
