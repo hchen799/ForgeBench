@@ -76,7 +76,7 @@ def accum_length(op_func, dims):
         if op_func == "matmul":
             return d[1]
         if op_func in ("mha", "swa"):
-            return max(d[0], d[3])                     # context sum over seq, score sum over head_dim
+            return max(d[0], d[1], d[3])               # Q/K/V projections sum over DIM_IN; scores over head_dim; context over seq
         if op_func in ("layernorm", "rmsnorm"):
             return d[1]
         if op_func == "activation":

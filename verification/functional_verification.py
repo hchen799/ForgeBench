@@ -252,7 +252,7 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
            "golden": f"numpy {cfg['golden']['precision']} on " + ("quantized inputs" if dt.kind == "fixed" else "float32 inputs")}
     h = None
     try:
-        base = os.path.join(work, f"{dt.tag()}")
+        base = os.path.join(work, domain, dt.tag())      # domain matters: activation/matrix_add exist in several domains with identical stems
         os.makedirs(base, exist_ok=True)
         h = Harness(domain, path, dt, base, cfg["seed_base"])
         op = op_under_test(h.config)
@@ -380,7 +380,7 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
         if "cosim" in cfg["sim"]:
             from verification.cosim import run_cosim
             ir = run_cfg.get("input_range")
-            cs = run_cosim(domain, path, dt.text, cfg["cosim_trials"], os.path.join(work, f"{dt.tag()}_cosim"), input_range=ir, keep=keep)
+            cs = run_cosim(domain, path, dt.text, cfg["cosim_trials"], os.path.join(work, domain, f"{dt.tag()}_cosim"), input_range=ir, keep=keep)
             tr = cs["trials"]
             row.update({"cosim_status": cs["status"], "cosim_trials": len(tr),
                         "cosim_c_vs_rtl_mismatches": sum(t["c_vs_rtl_mismatch"] for t in tr)})
