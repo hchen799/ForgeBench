@@ -17,7 +17,7 @@ void adaptive_avgpool(
                     w_end = {W_IN};
                 }}
 
-                data_t sum = 0;
+                {ACC} sum = 0;
                 int count = 0;
                 for (int h = h_start; h < h_end; h++) {{
                     for (int w = w_start; w < w_end; w++) {{

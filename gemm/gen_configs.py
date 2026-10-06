@@ -55,7 +55,7 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     with open(os.path.join(run_dir, "top.h"), "w") as f:
         f.write(top_h_code)
     
-    tb_code = generate_testbench_code(drams, output_dram_names, data_type, top_func_name)
+    tb_code = generate_testbench_code(drams, output_dram_names, data_type, top_func_name, trials=config.get("trials", 1))
     with open(os.path.join(run_dir, "tb_top.cpp"), "w") as f:
         f.write(tb_code)
     

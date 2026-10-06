@@ -128,3 +128,16 @@ Found by fixed-point operator verification: `(data_t)head_dim` / `(data_t)DIM` /
 * **Stale until re-run:** all LLM csynth (3,888) and LLM impl (1,000), Table 5's LLM column, the LLM parts of Figs 6-8 and the counts that use them.
   Decision (2026-10-05): do not re-run until all operator verification is finished (more template bugs may be found), then re-run once.
 * Also affected, not changed here: hand-written modular LLM designs and `scale_models/` (own template copies) may contain the same constants.
+
+## Per-operator accumulator parameters (verification phase)
+
+Operators accept `acc_type` (e.g. `fixed<32,10>`, `float`), `acc_rounding` (`trn|rnd`) and `acc_overflow` (`wrap|sat`) in their op
+JSON; unset means the design's `data_t` (generated text is byte-identical to before: `verification/regression_check.py` reports 0 changed
+files). `data_t` stays design-wide. Implemented for layernorm, rmsnorm, batchnorm (epsilon/denominator in the accumulator type),
+adaptive avgpool, llm matmul (per-row accumulator buffer), mha and swa (Q/K/V projections, scores, softmax sum, context), conv
+(per-pixel accumulator buffer, dense and grouped) and the Python-built gemm/mmv/vmm/dot families (local `acc_out` copy, any loop order).
+The verification engine takes an `op_params` block that is applied to the operator under test.
+Effect check (`fixed<16,5>` storage, `fixed<32,10>` RND accumulator, N=10): layernorm/rmsnorm/matmul/conv/avgpool/gemm/dot max abs
+error about 5e-4 (1 LSB); mha/swa 0.008-0.022 (range_hi 0.56-0.94).
+Open: mmv/vmm max abs error (0.018 / 0.005) is identical with and without the accumulator, so it does not come from accumulation; not yet explained.
+Stale: all LLM sweep results (unchanged from the earlier note).

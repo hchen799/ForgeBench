@@ -15,6 +15,15 @@ def _backend():
     return backends.current()
 
 
+# Accumulator types of the operator currently being generated (see backends.base.ToolBackend.acc_decls). Set by _set_acc() before each
+# op's code is produced; templates use {ACC} / {ACCM}; both are `data_t` unless the op carries acc_* fields.
+_ACC = {"ACC": "data_t", "ACCM": "data_t"}
+
+
+def _set_acc(op_info, data_type):
+    acc, accm = (_backend() if "_backend" in globals() else backends.current()).acc_decls(data_type, op_info)
+    _ACC["ACC"], _ACC["ACCM"] = acc, accm
+
 def replace_data_type(data_type: str) -> str:
     """Sanitize a C++ type into a function-name suffix, per the active backend."""
     return _backend().type_suffix(data_type)
@@ -151,6 +160,20 @@ inline is bool
 
 """
 
+def _acc_compute(loop_starts, computation, loop_ends, out_var, dims, inline=False):
+    """The compute loop nest. With an accumulator spec (acc_type / acc_rounding / acc_overflow) the reduction runs in a local
+    `{ACC} acc_out[...]` copy of the (bias-initialised) output and is converted to data_t once at the end, whatever the loop order."""
+    default = f"{loop_starts}    {computation}\n{loop_ends}"
+    if _ACC["ACC"] == "data_t":
+        return default
+    idx = "".join(f"[_a{d}]" for d in range(len(dims)))
+    nest = lambda body: "".join(f"for (int _a{d} = 0; _a{d} < {n}; _a{d}++) " for d, n in enumerate(dims)) + body + "\n"
+    comp = computation.replace(out_var, "acc_out")
+    out = (f"{_ACC['ACC']} acc_out{''.join(f'[{n}]' for n in dims)};\n" + nest(f"acc_out{idx} = {out_var}{idx};")
+           + f"{loop_starts}    {comp}\n{loop_ends}" + nest(f"{out_var}{idx} = (data_t)acc_out{idx};").rstrip("\n"))
+    return "{\n" + out + "\n}\n" if inline else out + "\n"
+
+
 def generate_gemm_function(
         data_type="float",
         func_type="gemm",
@@ -257,8 +280,7 @@ def generate_gemm_function(
 {bias_loop_starts}    {init_out}
 {bias_loop_ends}
 
-{loop_starts}    {computation}
-{loop_ends}}}
+{_acc_compute(loop_starts, computation, loop_ends, "output", [M,K], False)}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
 //////////////////////////////////////////
 // END: {function_name.upper()} FUNCTION{' with BIAS' if with_bias else ''}
@@ -411,8 +433,7 @@ def call_gemm_inline(
 {bias_loop_starts}    {init_out}
 {bias_loop_ends}
 
-{loop_starts}    {computation}
-{loop_ends}//////////////////////////////////////////
+{_acc_compute(loop_starts, computation, loop_ends, output_var, [M,K], True)}//////////////////////////////////////////
 // End: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
 """
@@ -539,8 +560,7 @@ def generate_mmv_function(
 {bias_loop_starts}    {init_out}
 {bias_loop_ends}
 
-{loop_starts}    {computation}
-{loop_ends}}}
+{_acc_compute(loop_starts, computation, loop_ends, "output", [M], False)}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
 //////////////////////////////////////////
 // END: {function_name.upper()} FUNCTION{' with BIAS' if with_bias else ''}
@@ -689,8 +709,7 @@ def call_mmv_inline(
 {bias_loop_starts}    {init_out}
 {bias_loop_ends}
 
-{loop_starts}    {computation}
-{loop_ends}//////////////////////////////////////////
+{_acc_compute(loop_starts, computation, loop_ends, output_var, [M], True)}//////////////////////////////////////////
 // End: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
 """
@@ -820,8 +839,7 @@ def generate_vmm_function(
 {bias_loop_starts}    {init_out}
 {bias_loop_ends}
 
-{loop_starts}    {computation}
-{loop_ends}}}
+{_acc_compute(loop_starts, computation, loop_ends, "output", [N], False)}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
 //////////////////////////////////////////
 // END: {function_name.upper()} FUNCTION{' with BIAS' if with_bias else ''}
@@ -975,8 +993,7 @@ def call_vmm_inline(
 {bias_loop_starts}    {init_out}
 {bias_loop_ends}
 
-{loop_starts}    {computation}
-{loop_ends}//////////////////////////////////////////
+{_acc_compute(loop_starts, computation, loop_ends, output_var, [N], True)}//////////////////////////////////////////
 // End: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
 """
@@ -1068,8 +1085,7 @@ def generate_dot_function(
 {partitioning}
 {init_out}
 
-{loop_starts}    {computation}
-{loop_ends}}}
+{_acc_compute(loop_starts, computation, loop_ends, "output", [1], False)}}}
 /*==== {function_name.upper()} FUNCTION END ====*/
 //////////////////////////////////////////
 // END: {function_name.upper()} FUNCTION{' with BIAS' if with_bias else ''}
@@ -1181,8 +1197,7 @@ def call_dot_inline(
 {partitioning}
 {init_out}
 
-{loop_starts}    {computation}
-{loop_ends}//////////////////////////////////////////
+{_acc_compute(loop_starts, computation, loop_ends, output_var, [1], True)}//////////////////////////////////////////
 // End: Inline implementation of {function_name.upper()}
 //////////////////////////////////////////
 """
@@ -1235,7 +1250,7 @@ def generate_activation_function(
         template_code = f.read()
     
     # 2) Substitute common placeholders.
-    formatted_code = template_code.format(
+    formatted_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         H=H,
         W=W
@@ -1339,6 +1354,7 @@ def generate_activation_function(
     return output_code, emitted_name + dim_suffix
 
 def generate_func_def(op_info, data_type):
+    _set_acc(op_info, data_type)
     
     if op_info['func_name'] == 'load':
         code_line, full_func_name = generate_load_function(op_info["dims"], data_type, func_prefix="load")
@@ -1559,7 +1575,7 @@ def generate_top_h(drams, data_type="float", top_func_name="top"):
     
     return "\n".join(lines)
 
-def generate_testbench_code(drams, output_dram_names, data_type="float", top_func_name="top"):
+def generate_testbench_code(drams, output_dram_names, data_type="float", top_func_name="top", trials=1):
     """
     Generates a C test bench for HLS that:
       - Declares DRAM arrays using the specified dimensions.
@@ -1625,10 +1641,22 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     # Main function.
     code_lines.append("int main() {")
 
+    # Multi-trial mode (trials > 1, used for CO-SIM): one run loops over per-trial input files <DRAM>.t<k>.txt and writes
+    # <out>_output.t<k>.txt, so RTL elaboration is paid once. trials == 1 emits exactly the historical single-shot testbench.
+    multi = trials > 1
+    if multi:
+        code_lines.append("    char verif_fname[512];")
+        code_lines.append("    double verif_max_abs = 0.0, verif_max_rel = 0.0;")
+        code_lines.append("    long verif_n_mismatch = 0, verif_n_total = 0, verif_n_checked = 0;")
+        code_lines.append(f"    for (int verif_trial = 0; verif_trial < {trials}; verif_trial++) {{")
     # For each DRAM, generate a load call.
     for dram in drams:
         total_elements = prod(dram["dims"])
-        code_lines.append(f"    load_txt_to_array(\"{dram['name']}.txt\", (data_t*){dram['name']}, {total_elements});")
+        if multi:
+            code_lines.append(f"    snprintf(verif_fname, sizeof verif_fname, \"{dram['name']}.t%d.txt\", verif_trial);")
+            code_lines.append(f"    load_txt_to_array(verif_fname, (data_t*){dram['name']}, {total_elements});")
+        else:
+            code_lines.append(f"    load_txt_to_array(\"{dram['name']}.txt\", (data_t*){dram['name']}, {total_elements});")
     code_lines.append("")
 
     # Insert top function call. DRAM arguments in the order of the drams list.
@@ -1636,9 +1664,10 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     code_lines.append(f"    {top_func_name}({dram_args});")
     code_lines.append("")
 
-    # Golden-reference verification accumulators.
-    code_lines.append("    double verif_max_abs = 0.0, verif_max_rel = 0.0;")
-    code_lines.append("    long verif_n_mismatch = 0, verif_n_total = 0, verif_n_checked = 0;")
+    # Golden-reference verification accumulators (declared before the trial loop in multi-trial mode).
+    if not multi:
+        code_lines.append("    double verif_max_abs = 0.0, verif_max_rel = 0.0;")
+        code_lines.append("    long verif_n_mismatch = 0, verif_n_total = 0, verif_n_checked = 0;")
     code_lines.append("")
 
     # For each output DRAM specified in output_dram_names, dump then compare.
@@ -1655,7 +1684,11 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         # Keep the existing output dump for debugging.
         code_lines.append(f"    // Write contents of {out_name} to {out_name}_output.txt")
         code_lines.append("    {")
-        code_lines.append(f"        FILE *fp = fopen(\"{out_name}_output.txt\", \"w\");")
+        if multi:
+            code_lines.append(f"        snprintf(verif_fname, sizeof verif_fname, \"{out_name}_output.t%d.txt\", verif_trial);")
+            code_lines.append("        FILE *fp = fopen(verif_fname, \"w\");")
+        else:
+            code_lines.append(f"        FILE *fp = fopen(\"{out_name}_output.txt\", \"w\");")
         code_lines.append("        if (fp != NULL) {")
         code_lines.append(f"            for (int i = 0; i < {total_out}; i++) {{")
         code_lines.append(f"                fprintf(fp, \"%.17g \", (double)((data_t*){out_name})[i]);")
@@ -1704,6 +1737,8 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         code_lines.append("    }")
         code_lines.append("")
 
+    if multi:
+        code_lines.append("    }  // end of trial loop")
     # Emit a machine-parseable verdict and return nonzero on failure.
     code_lines.append("    if (verif_n_checked == 0) {")
     code_lines.append("        printf(\"VERIFICATION: SKIP (no golden files found)\\n\");")

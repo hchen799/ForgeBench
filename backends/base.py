@@ -112,6 +112,36 @@ class ToolBackend:
         """Sanitized form used to build unique function names."""
         raise NotImplementedError
 
+    def acc_decls(self, data_type, op_info):
+        """C++ types for an operator's accumulator/intermediates: (ACC, ACCM).
+
+        An op may carry optional fields `acc_type` (width, e.g. "fixed<32,10>" or "float"), `acc_rounding` (trn|rnd) and
+        `acc_overflow` (wrap|sat). Without any of them both are the design's `data_t` and templates expand to their historical text.
+        Modes: explicit field > modes written in `acc_type` > the design's data_type modes. A rounding/overflow field alone keeps the design's width.
+        ACCM is the same width with the default modes (truncate + wrap): Vitis hls_math (exp, sqrt, ...) only accepts those, so templates
+        call math functions on ACCM values.
+        """
+        t, r, o = op_info.get("acc_type"), op_info.get("acc_rounding"), op_info.get("acc_overflow")
+        if t is None and r is None and o is None:
+            return "data_t", "data_t"
+        if t is not None and t.strip() == "float":
+            return "float", "float"
+        base = parse_fixed(data_type)
+        spec = parse_fixed(t) if t is not None else base
+        if spec is None:                                  # float design with only rounding/overflow fields: nothing to apply
+            if t is not None:
+                raise ValueError(f"unsupported acc_type {t!r}")
+            return "data_t", "data_t"
+        w, i, q, ov = spec
+        if t is None and base is not None:
+            q, ov = base[2], base[3]
+        for name, val, allowed in (("acc_rounding", r, ("trn", "rnd")), ("acc_overflow", o, ("wrap", "sat"))):
+            if val is not None and val.lower() not in allowed:
+                raise ValueError(f"{name} must be one of {allowed}, got {val!r}")
+        q = r.lower() if r is not None else q
+        ov = o.lower() if o is not None else ov
+        return self.type_decl(f"fixed<{w},{i},{q},{ov}>"), self.type_decl(f"fixed<{w},{i},trn,wrap>")
+
     # -- includes ----------------------------------------------------------
 
     def includes_top_cpp(self):

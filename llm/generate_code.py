@@ -1,6 +1,28 @@
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import backends
 import math
 import re
 import random
+
+# Accumulator types of the operator currently being generated (see backends.base.ToolBackend.acc_decls). Set by _set_acc() before each
+# op's code is produced; templates use {ACC} / {ACCM}; both are `data_t` unless the op carries acc_* fields.
+_ACC = {"ACC": "data_t", "ACCM": "data_t"}
+
+
+def _set_acc(op_info, data_type):
+    acc, accm = (_backend() if "_backend" in globals() else backends.current()).acc_decls(data_type, op_info)
+    _ACC["ACC"], _ACC["ACCM"] = acc, accm
+
+
+def _sqrt_arg(expr, eps):
+    """Argument of hls::sqrt for `expr + eps`. Historical text by default; with an accumulator the sum is formed in ACC (so a small epsilon is
+    representable) and cast to ACCM, the default-mode type Vitis hls_math accepts."""
+    if _ACC["ACC"] == "data_t":
+        return f"{expr} + (data_t){eps}"
+    return f"({_ACC['ACCM']})({expr} + ({_ACC['ACC']}){eps})"
 
 def replace_data_type(data_type: str) -> str:
     # Replace all occurrences of <, >, and , with an underscore
@@ -79,7 +101,7 @@ def generate_activation_function(
         template_code = f.read()
     
     # 2) Substitute common placeholders.
-    formatted_code = template_code.format(
+    formatted_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         SEQ_LENGTH=SEQ_LENGTH,
         HIDDEN_DIM=HIDDEN_DIM
@@ -316,11 +338,12 @@ def generate_layer_norm_code(
         template_code = f.read()
     
     # 2) Substitute placeholders.
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         SEQ_LENGTH=SEQ_LENGTH,
         DIM=DIM,
-        EPSILON=EPSILON
+        EPSILON=EPSILON,
+        SQRT_ARG=_sqrt_arg("variance", EPSILON)
     )
     
     DATA_TYPE = replace_data_type(DATA_TYPE)
@@ -357,11 +380,12 @@ def generate_rms_norm_code(
         template_code = f.read()
     
     # 2) Substitute placeholders.
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         SEQ_LENGTH=SEQ_LENGTH,
         DIM=DIM,
-        EPSILON=EPSILON
+        EPSILON=EPSILON,
+        SQRT_ARG=_sqrt_arg(f"sum_sq / {DIM}", EPSILON)
     )
     
     DATA_TYPE = replace_data_type(DATA_TYPE)
@@ -377,6 +401,48 @@ def generate_rms_norm_code(
     )
     
     return new_generated_code, func_name
+
+
+def _acc_rewrite(code, pairs):
+    """Accumulator-type variant of a generated kernel: apply literal (old, new) rewrites; every `old` must be present.
+
+    Used only when the operator sets acc_type / acc_rounding / acc_overflow, so the default text is untouched.
+    """
+    if _ACC["ACC"] == "data_t":
+        return code
+    A = _ACC["ACC"]
+    for old, new in pairs:
+        old, new = old.replace("<A>", A), new.replace("<A>", A)
+        if old not in code:
+            raise ValueError(f"accumulator rewrite: pattern not found: {old!r}")
+        code = code.replace(old, new)
+    return code
+
+
+_MHA_ACC = [
+    ("            Q[seq][dout] = 0;\n            K[seq][dout] = 0;\n            V[seq][dout] = 0;\n",
+     "            <A> q_acc = 0, k_acc = 0, v_acc = 0;\n"),
+    ("                Q[seq][dout] += input[seq][din] * W_q[dout][din];\n                K[seq][dout] += input[seq][din] * W_k[dout][din];\n                V[seq][dout] += input[seq][din] * W_v[dout][din];\n            }\n",
+     "                q_acc += input[seq][din] * W_q[dout][din];\n                k_acc += input[seq][din] * W_k[dout][din];\n                v_acc += input[seq][din] * W_v[dout][din];\n            }\n            Q[seq][dout] = (data_t)q_acc;\n            K[seq][dout] = (data_t)k_acc;\n            V[seq][dout] = (data_t)v_acc;\n"),
+    ("                    scores[i][j] = 0;\n", "                    <A> s_acc = 0;\n"),
+    ("                        scores[i][j] += Q[i][idx] * K[j][idx];\n                    }\n                    scores[i][j] *= scale;\n",
+     "                        s_acc += Q[i][idx] * K[j][idx];\n                    }\n                    scores[i][j] = (data_t)(s_acc * scale);\n"),
+    ("                data_t sum_exp = 0;\n", "                <A> sum_exp = 0;\n"),
+    ("                    data_t context = 0;\n", "                    <A> context = 0;\n"),
+    ("                    output[i][head_index * head_dim + d] = context;\n", "                    output[i][head_index * head_dim + d] = (data_t)context;\n"),
+]
+
+_SWA_ACC = [
+    ("            Q[i][d] = 0;\n            K[i][d] = 0;\n            V[i][d] = 0;\n", "            <A> q_acc = 0, k_acc = 0, v_acc = 0;\n"),
+    ("                Q[i][d] += input[i][j] * W_q[d][j];\n                K[i][d] += input[i][j] * W_k[d][j];\n                V[i][d] += input[i][j] * W_v[d][j];\n            }\n",
+     "                q_acc += input[i][j] * W_q[d][j];\n                k_acc += input[i][j] * W_k[d][j];\n                v_acc += input[i][j] * W_v[d][j];\n            }\n            Q[i][d] = (data_t)q_acc;\n            K[i][d] = (data_t)k_acc;\n            V[i][d] = (data_t)v_acc;\n"),
+    ("                data_t sum = 0;\n", "                <A> sum = 0;\n"),
+    ("                scores[j] = sum * scale;\n", "                scores[j] = (data_t)(sum * scale);\n"),
+    ("            data_t sum_exp = 0;\n", "            <A> sum_exp = 0;\n"),
+    ("                data_t context = 0;\n", "                <A> context = 0;\n"),
+    ("                output[i][h * head_dim + d] = context;\n", "                output[i][h * head_dim + d] = (data_t)context;\n"),
+]
+
 
 
 def generate_matmul_code(
@@ -411,15 +477,43 @@ def generate_matmul_code(
         bias_arg = ""
         init_val = "((data_t)0)"
     
+    if _ACC["ACC"] == "data_t":
+        body = '''    // Initialize output to {INIT_VAL}
+    for (int i = 0; i < {SEQ_LENGTH}; i++) {{
+        for (int j = 0; j < {DIM_OUT}; j++) {{
+            output[i][j] = {INIT_VAL};
+        }}
+    }}
+
+    // Matrix multiplication
+    for (int i = 0; i < {SEQ_LENGTH}; i++) {{
+        for (int k = 0; k < {DIM_IN}; k++) {{
+            for (int j = 0; j < {DIM_OUT}; j++) {{
+                output[i][j] += input[i][k] * weights[j][k];
+            }}
+        }}
+    }}
+'''
+    else:   # accumulate each output row in the accumulator type, round/narrow to data_t once
+        body = '''    // Matrix multiplication ({ACC} accumulators, converted to data_t once per output)
+    for (int i = 0; i < {SEQ_LENGTH}; i++) {{
+        {ACC} acc[{DIM_OUT}];
+        for (int j = 0; j < {DIM_OUT}; j++) {{
+            acc[j] = {INIT_VAL};
+        }}
+        for (int k = 0; k < {DIM_IN}; k++) {{
+            for (int j = 0; j < {DIM_OUT}; j++) {{
+                acc[j] += input[i][k] * weights[j][k];
+            }}
+        }}
+        for (int j = 0; j < {DIM_OUT}; j++) {{
+            output[i][j] = ({ACCM})acc[j];
+        }}
+    }}
+'''
     # Substitute placeholders in the template.
-    generated_code = template_code.format(
-        DATA_TYPE=DATA_TYPE,
-        SEQ_LENGTH=SEQ_LENGTH,
-        DIM_IN=DIM_IN,
-        DIM_OUT=DIM_OUT,
-        BIAS_ARG=bias_arg,
-        INIT_VAL=init_val
-    )
+    fields = dict(_ACC, DATA_TYPE=DATA_TYPE, SEQ_LENGTH=SEQ_LENGTH, DIM_IN=DIM_IN, DIM_OUT=DIM_OUT, BIAS_ARG=bias_arg, INIT_VAL=init_val)
+    generated_code = template_code.format(**dict(fields, BODY=body.format(**fields)))
     
     DATA_TYPE = replace_data_type(DATA_TYPE)
     if use_bias == True:
@@ -458,7 +552,7 @@ def generate_dropout_code(
         template_code = f.read()
     
     # 2) Substitute placeholders.
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         SEQ_LENGTH=SEQ_LENGTH,
         DIM=DIM
@@ -537,7 +631,7 @@ def generate_grouped_mha_code(
     with open(template_path, "r") as f:
         template_code = f.read()
 
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         SEQ_LENGTH=SEQ_LENGTH,
         DIM_IN=DIM_IN,
@@ -550,6 +644,7 @@ def generate_grouped_mha_code(
         HD_UNROLL_SCORES=hd_unroll_scores,
         HD_UNROLL_CONTEXT=hd_unroll_context
     )
+    generated_code = _acc_rewrite(generated_code, _MHA_ACC)
 
     DATA_TYPE = replace_data_type(DATA_TYPE)
     if use_rope == True:
@@ -613,7 +708,7 @@ def generate_sliding_window_attention_code(
     with open(template_path, "r") as f:
         template_code = f.read()
 
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         SEQ_LENGTH=SEQ_LENGTH,
         DIM_IN=DIM_IN,
@@ -623,6 +718,7 @@ def generate_sliding_window_attention_code(
         ROPE_INLINE=rope_inline,
         SCALE=repr(1.0 / math.sqrt(HEAD_DIM))
     )
+    generated_code = _acc_rewrite(generated_code, _SWA_ACC)
 
     DATA_TYPE = replace_data_type(DATA_TYPE)
     if use_rope == True:
@@ -669,7 +765,7 @@ def generate_matrix_add_code(
         template_code = f.read()
     
     # Substitute the placeholders.
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         SEQ_LENGTH = SEQ_LENGTH,
         DIM = DIM
@@ -718,7 +814,7 @@ def generate_elementwise_mult_code(
         template_code = f.read()
     
     # Substitute the placeholders.
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         SEQ_LENGTH = SEQ_LENGTH,
         DIM = DIM
@@ -743,6 +839,7 @@ def generate_elementwise_mult_code(
  
 
 def generate_func_def(op_info, data_type):
+    _set_acc(op_info, data_type)
     
     if op_info['func_name'] == 'load':
         code_line, full_func_name = generate_load_function(op_info["dims"], data_type, func_prefix="load")

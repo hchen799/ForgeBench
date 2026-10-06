@@ -6,11 +6,11 @@ void rms_norm(
 )
 {{
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
-        data_t sum_sq = (data_t)0;
+        {ACC} sum_sq = ({ACC})0;
         for (int j = 0; j < {DIM}; j++) {{
             sum_sq += input[i][j] * input[i][j];
         }}
-        data_t rms = hls::sqrt(sum_sq / {DIM} + (data_t){EPSILON});
+        {ACC} rms = hls::sqrt({SQRT_ARG});
         for (int j = 0; j < {DIM}; j++) {{
             output[i][j] = gamma[j] * input[i][j] / rms;
         }}

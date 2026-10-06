@@ -22,7 +22,7 @@ void batch_norm(
     for (int c = 0; c < {C_OUT}; c++) {{
         for (int h = 0; h < {H}; h++) {{
             for (int w = 0; w < {W}; w++) {{
-                data_t norm = (input[c][h][w] - weights[2][c]) / hls::sqrt(weights[3][c] + (data_t){EPSILON});
+                {ACC} norm = (input[c][h][w] - weights[2][c]) / hls::sqrt({SQRT_ARG});
                 output[c][h][w] = weights[0][c] * norm + weights[1][c];
             }}
         }}

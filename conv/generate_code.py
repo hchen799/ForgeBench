@@ -1,7 +1,29 @@
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import backends
 import re
 import random
 import json
 import os
+
+# Accumulator types of the operator currently being generated (see backends.base.ToolBackend.acc_decls). Set by _set_acc() before each
+# op's code is produced; templates use {ACC} / {ACCM}; both are `data_t` unless the op carries acc_* fields.
+_ACC = {"ACC": "data_t", "ACCM": "data_t"}
+
+
+def _set_acc(op_info, data_type):
+    acc, accm = (_backend() if "_backend" in globals() else backends.current()).acc_decls(data_type, op_info)
+    _ACC["ACC"], _ACC["ACCM"] = acc, accm
+
+
+def _sqrt_arg(expr, eps):
+    """Argument of hls::sqrt for `expr + eps`. Historical text by default; with an accumulator the sum is formed in ACC (so a small epsilon is
+    representable) and cast to ACCM, the default-mode type Vitis hls_math accepts."""
+    if _ACC["ACC"] == "data_t":
+        return f"{expr} + (data_t){eps}"
+    return f"({_ACC['ACCM']})({expr} + ({_ACC['ACC']}){eps})"
 
 def replace_data_type(data_type: str) -> str:
     # Replace all occurrences of <, >, and , with an underscore
@@ -125,6 +147,24 @@ def generate_store_function(
     
     return "\n".join(code_lines), func_name
 
+def _acc_conv_block(block, c_out):
+    """Accumulator-type variant of a conv kernel: the kh/kw reduction of each output pixel runs in a per-pixel `{ACC} acc[C_OUT]`
+    buffer (loaded from the bias-initialised output, converted to data_t once), instead of accumulating in the data_t output."""
+    A = _ACC["ACC"]
+    m = re.search(r"^([ ]*)for \(int kh = 0;[^\n]*\{\n", block, re.M)
+    if not m or "output[co][i][j] += " not in block:
+        raise ValueError("accumulator rewrite: conv kernel structure not recognised")
+    depth, k = 1, m.end()
+    while depth:
+        depth += {"{": 1, "}": -1}.get(block[k], 0)
+        k += 1
+    ind = m.group(1)
+    pre = (f"{ind}{A} acc[{c_out}];\n{ind}for (int co = 0; co < {c_out}; co++) acc[co] = output[co][i][j];\n")
+    post = (f"\n{ind}for (int co = 0; co < {c_out}; co++) output[co][i][j] = (data_t)acc[co];")
+    body = block[m.start():k].replace("output[co][i][j] += ", "acc[co] += ")
+    return block[:m.start()] + pre + body + post + block[k:]
+
+
 def generate_conv_function(
     template_path,         # Path to conv_template.cpp
     func_type="conv2d",    # "conv2d" or "group_conv2d"
@@ -180,7 +220,7 @@ def generate_conv_function(
         bias_partition_pragma = ""
 
     # 3) Perform common placeholder substitution for header values.
-    formatted_code = template_code.format(
+    formatted_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         C_IN=C_IN,
         C_OUT=C_OUT,
@@ -222,6 +262,8 @@ def generate_conv_function(
 
     # Include the markers if desired or remove them.
     function_block = formatted_code[start_index + len(start_marker): end_index].strip()
+    if _ACC["ACC"] != "data_t":
+        function_block = _acc_conv_block(function_block, C_OUT)
 
     # Append dimension suffix to the function name using regex substitution.
     DATA_TYPE_modified = replace_data_type(DATA_TYPE) # (or use a conversion function if needed)
@@ -275,12 +317,13 @@ def generate_batch_norm_code(
         template_code = f.read()
     
     # 2) Substitute the placeholders with actual parameters
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         C_OUT=C_OUT,
         H=H,
         W=W,
-        EPSILON=EPSILON
+        EPSILON=EPSILON,
+        SQRT_ARG=_sqrt_arg("weights[3][c]", EPSILON)
     )
     DATA_TYPE = replace_data_type(DATA_TYPE)
     dim_suffix = f"_{C_OUT}_{H}_{W}_{DATA_TYPE}"
@@ -366,7 +409,7 @@ def generate_activation_function(
         template_code = f.read()
     
     # 2) Substitute common placeholders.
-    formatted_code = template_code.format(
+    formatted_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         C=C,
         H=H,
@@ -496,7 +539,7 @@ def generate_maxpool_code(
         template_code = f.read()
     
     # 2) Substitute the placeholders with provided parameters
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         C=C,
         H_IN=H_IN,
@@ -545,7 +588,7 @@ def generate_adaptive_avgpool_code(
     with open(template_path, "r") as f:
         template_code = f.read()
     
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         C=C,
         H_IN=H_IN,
@@ -598,7 +641,7 @@ def generate_matrix_add_code(
         template_code = f.read()
     
     # Substitute the placeholders.
-    generated_code = template_code.format(
+    generated_code = template_code.format(**_ACC, 
         DATA_TYPE=DATA_TYPE,
         C=C,
         H=H,
@@ -625,6 +668,7 @@ def generate_matrix_add_code(
 
 
 def generate_func_def(op_info, data_type):
+    _set_acc(op_info, data_type)
     
     if op_info['func_name'] == 'load':
         code_line, full_func_name = generate_load_function(op_info["dims"], data_type, func_prefix="load")
