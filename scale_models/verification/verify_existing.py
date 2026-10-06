@@ -41,7 +41,9 @@ class Tee:
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--family", choices=("resnet18", "llama3"), required=True)
+    parser.add_argument(
+        "--family", choices=("resnet18", "resnet50", "llama3"), required=True
+    )
     parser.add_argument("--project", required=True, type=Path)
     parser.add_argument("--config", type=Path)
     parser.add_argument("--decode-project", type=Path)
@@ -130,8 +132,8 @@ def main(argv=None):
                 )
             report["reference_pairs"] = {
                 p.variant: dict(
-                    fp64=f"{p.variant}-fp64-v{p.contract_version}",
-                    fixed=f"{p.variant}-ap-trn-wrap-v{p.contract_version}",
+                    fp64=f"{p.variant}-fp64-q{p.format.word}_{p.format.integer}-v{p.contract_version}",
+                    fixed=f"{p.variant}-ap-trn-wrap-q{p.format.word}_{p.format.integer}-v{p.contract_version}",
                 )
                 for p in projects
             }
@@ -162,7 +164,7 @@ def main(argv=None):
                 }
                 result = (
                     run_resnet(project, output, args)
-                    if args.family == "resnet18"
+                    if args.family.startswith("resnet")
                     else run_llama(project, decode, output, args, tokens)
                 )
                 report.update(result)

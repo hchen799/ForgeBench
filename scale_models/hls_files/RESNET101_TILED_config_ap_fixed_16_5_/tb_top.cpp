@@ -37,6 +37,7 @@ data_t DRAM_w_s1_b2_3[256][64][1][1];
 data_t DRAM_bn_s1_b2_3[4][256];
 data_t DRAM_s2_mid1[128][28][28];
 data_t DRAM_s2_mid2[128][28][28];
+data_t DRAM_s2_pre_downsample[128][56][56];
 data_t DRAM_s2_skip[512][28][28];
 data_t DRAM_s2_b0[512][28][28];
 data_t DRAM_w_s2_b0_1[128][256][1][1];
@@ -69,6 +70,7 @@ data_t DRAM_w_s2_b3_3[512][128][1][1];
 data_t DRAM_bn_s2_b3_3[4][512];
 data_t DRAM_s3_mid1[256][14][14];
 data_t DRAM_s3_mid2[256][14][14];
+data_t DRAM_s3_pre_downsample[256][28][28];
 data_t DRAM_s3_skip[1024][14][14];
 data_t DRAM_s3_b0[1024][14][14];
 data_t DRAM_w_s3_b0_1[256][512][1][1];
@@ -234,6 +236,7 @@ data_t DRAM_w_s3_b22_3[1024][256][1][1];
 data_t DRAM_bn_s3_b22_3[4][1024];
 data_t DRAM_s4_mid1[512][7][7];
 data_t DRAM_s4_mid2[512][7][7];
+data_t DRAM_s4_pre_downsample[512][14][14];
 data_t DRAM_s4_skip[2048][7][7];
 data_t DRAM_s4_b0[2048][7][7];
 data_t DRAM_w_s4_b0_1[512][1024][1][1];
@@ -261,16 +264,16 @@ data_t DRAM_gap[2048][1][1];
 data_t DRAM_fc[1000][2048][1][1];
 data_t DRAM_out[1000][1][1];
 
-void load_txt_to_array(const char *filename, data_t *array, int total_size) {
+template<class T> void load_txt_to_array(const char *filename, T *array, size_t total_size) {
     FILE *fp = fopen(filename, "r");
     if (fp == NULL) {
         printf("Failed to open %s\n", filename);
         exit(1);
     }
-    for (int i = 0; i < total_size; i++) {
-        float temp;
-        fscanf(fp, "%f", &temp);
-        array[i] = (data_t)temp;
+    for (size_t i = 0; i < total_size; i++) {
+        double temp;
+        if (fscanf(fp, "%lf", &temp) != 1) { fprintf(stderr, "Short/invalid input: %s\n", filename); exit(1); }
+        array[i] = (T)temp;
     }
     fclose(fp);
 }
@@ -308,6 +311,7 @@ int main() {
     load_txt_to_array("DRAM_bn_s1_b2_3.txt", (data_t*)DRAM_bn_s1_b2_3, 1024);
     load_txt_to_array("DRAM_s2_mid1.txt", (data_t*)DRAM_s2_mid1, 100352);
     load_txt_to_array("DRAM_s2_mid2.txt", (data_t*)DRAM_s2_mid2, 100352);
+    load_txt_to_array("DRAM_s2_pre_downsample.txt", (data_t*)DRAM_s2_pre_downsample, 401408);
     load_txt_to_array("DRAM_s2_skip.txt", (data_t*)DRAM_s2_skip, 401408);
     load_txt_to_array("DRAM_s2_b0.txt", (data_t*)DRAM_s2_b0, 401408);
     load_txt_to_array("DRAM_w_s2_b0_1.txt", (data_t*)DRAM_w_s2_b0_1, 32768);
@@ -340,6 +344,7 @@ int main() {
     load_txt_to_array("DRAM_bn_s2_b3_3.txt", (data_t*)DRAM_bn_s2_b3_3, 2048);
     load_txt_to_array("DRAM_s3_mid1.txt", (data_t*)DRAM_s3_mid1, 50176);
     load_txt_to_array("DRAM_s3_mid2.txt", (data_t*)DRAM_s3_mid2, 50176);
+    load_txt_to_array("DRAM_s3_pre_downsample.txt", (data_t*)DRAM_s3_pre_downsample, 200704);
     load_txt_to_array("DRAM_s3_skip.txt", (data_t*)DRAM_s3_skip, 200704);
     load_txt_to_array("DRAM_s3_b0.txt", (data_t*)DRAM_s3_b0, 200704);
     load_txt_to_array("DRAM_w_s3_b0_1.txt", (data_t*)DRAM_w_s3_b0_1, 131072);
@@ -505,6 +510,7 @@ int main() {
     load_txt_to_array("DRAM_bn_s3_b22_3.txt", (data_t*)DRAM_bn_s3_b22_3, 4096);
     load_txt_to_array("DRAM_s4_mid1.txt", (data_t*)DRAM_s4_mid1, 25088);
     load_txt_to_array("DRAM_s4_mid2.txt", (data_t*)DRAM_s4_mid2, 25088);
+    load_txt_to_array("DRAM_s4_pre_downsample.txt", (data_t*)DRAM_s4_pre_downsample, 100352);
     load_txt_to_array("DRAM_s4_skip.txt", (data_t*)DRAM_s4_skip, 100352);
     load_txt_to_array("DRAM_s4_b0.txt", (data_t*)DRAM_s4_b0, 100352);
     load_txt_to_array("DRAM_w_s4_b0_1.txt", (data_t*)DRAM_w_s4_b0_1, 524288);
@@ -532,7 +538,7 @@ int main() {
     load_txt_to_array("DRAM_fc.txt", (data_t*)DRAM_fc, 2048000);
     load_txt_to_array("DRAM_out.txt", (data_t*)DRAM_out, 1000);
 
-    top(DRAM_input, DRAM_w_stem, DRAM_bn_stem, DRAM_stem_feat, DRAM_stem_pool, DRAM_s1_mid1, DRAM_s1_mid2, DRAM_s1_skip, DRAM_s1_b0, DRAM_w_s1_b0_1, DRAM_bn_s1_b0_1, DRAM_w_s1_b0_2, DRAM_bn_s1_b0_2, DRAM_w_s1_b0_3, DRAM_bn_s1_b0_3, DRAM_w_s1_b0_down, DRAM_s1_b1, DRAM_w_s1_b1_1, DRAM_bn_s1_b1_1, DRAM_w_s1_b1_2, DRAM_bn_s1_b1_2, DRAM_w_s1_b1_3, DRAM_bn_s1_b1_3, DRAM_s1_b2, DRAM_w_s1_b2_1, DRAM_bn_s1_b2_1, DRAM_w_s1_b2_2, DRAM_bn_s1_b2_2, DRAM_w_s1_b2_3, DRAM_bn_s1_b2_3, DRAM_s2_mid1, DRAM_s2_mid2, DRAM_s2_skip, DRAM_s2_b0, DRAM_w_s2_b0_1, DRAM_bn_s2_b0_1, DRAM_w_s2_b0_2, DRAM_bn_s2_b0_2, DRAM_w_s2_b0_3, DRAM_bn_s2_b0_3, DRAM_w_s2_b0_down, DRAM_s2_b1, DRAM_w_s2_b1_1, DRAM_bn_s2_b1_1, DRAM_w_s2_b1_2, DRAM_bn_s2_b1_2, DRAM_w_s2_b1_3, DRAM_bn_s2_b1_3, DRAM_s2_b2, DRAM_w_s2_b2_1, DRAM_bn_s2_b2_1, DRAM_w_s2_b2_2, DRAM_bn_s2_b2_2, DRAM_w_s2_b2_3, DRAM_bn_s2_b2_3, DRAM_s2_b3, DRAM_w_s2_b3_1, DRAM_bn_s2_b3_1, DRAM_w_s2_b3_2, DRAM_bn_s2_b3_2, DRAM_w_s2_b3_3, DRAM_bn_s2_b3_3, DRAM_s3_mid1, DRAM_s3_mid2, DRAM_s3_skip, DRAM_s3_b0, DRAM_w_s3_b0_1, DRAM_bn_s3_b0_1, DRAM_w_s3_b0_2, DRAM_bn_s3_b0_2, DRAM_w_s3_b0_3, DRAM_bn_s3_b0_3, DRAM_w_s3_b0_down, DRAM_s3_b1, DRAM_w_s3_b1_1, DRAM_bn_s3_b1_1, DRAM_w_s3_b1_2, DRAM_bn_s3_b1_2, DRAM_w_s3_b1_3, DRAM_bn_s3_b1_3, DRAM_s3_b2, DRAM_w_s3_b2_1, DRAM_bn_s3_b2_1, DRAM_w_s3_b2_2, DRAM_bn_s3_b2_2, DRAM_w_s3_b2_3, DRAM_bn_s3_b2_3, DRAM_s3_b3, DRAM_w_s3_b3_1, DRAM_bn_s3_b3_1, DRAM_w_s3_b3_2, DRAM_bn_s3_b3_2, DRAM_w_s3_b3_3, DRAM_bn_s3_b3_3, DRAM_s3_b4, DRAM_w_s3_b4_1, DRAM_bn_s3_b4_1, DRAM_w_s3_b4_2, DRAM_bn_s3_b4_2, DRAM_w_s3_b4_3, DRAM_bn_s3_b4_3, DRAM_s3_b5, DRAM_w_s3_b5_1, DRAM_bn_s3_b5_1, DRAM_w_s3_b5_2, DRAM_bn_s3_b5_2, DRAM_w_s3_b5_3, DRAM_bn_s3_b5_3, DRAM_s3_b6, DRAM_w_s3_b6_1, DRAM_bn_s3_b6_1, DRAM_w_s3_b6_2, DRAM_bn_s3_b6_2, DRAM_w_s3_b6_3, DRAM_bn_s3_b6_3, DRAM_s3_b7, DRAM_w_s3_b7_1, DRAM_bn_s3_b7_1, DRAM_w_s3_b7_2, DRAM_bn_s3_b7_2, DRAM_w_s3_b7_3, DRAM_bn_s3_b7_3, DRAM_s3_b8, DRAM_w_s3_b8_1, DRAM_bn_s3_b8_1, DRAM_w_s3_b8_2, DRAM_bn_s3_b8_2, DRAM_w_s3_b8_3, DRAM_bn_s3_b8_3, DRAM_s3_b9, DRAM_w_s3_b9_1, DRAM_bn_s3_b9_1, DRAM_w_s3_b9_2, DRAM_bn_s3_b9_2, DRAM_w_s3_b9_3, DRAM_bn_s3_b9_3, DRAM_s3_b10, DRAM_w_s3_b10_1, DRAM_bn_s3_b10_1, DRAM_w_s3_b10_2, DRAM_bn_s3_b10_2, DRAM_w_s3_b10_3, DRAM_bn_s3_b10_3, DRAM_s3_b11, DRAM_w_s3_b11_1, DRAM_bn_s3_b11_1, DRAM_w_s3_b11_2, DRAM_bn_s3_b11_2, DRAM_w_s3_b11_3, DRAM_bn_s3_b11_3, DRAM_s3_b12, DRAM_w_s3_b12_1, DRAM_bn_s3_b12_1, DRAM_w_s3_b12_2, DRAM_bn_s3_b12_2, DRAM_w_s3_b12_3, DRAM_bn_s3_b12_3, DRAM_s3_b13, DRAM_w_s3_b13_1, DRAM_bn_s3_b13_1, DRAM_w_s3_b13_2, DRAM_bn_s3_b13_2, DRAM_w_s3_b13_3, DRAM_bn_s3_b13_3, DRAM_s3_b14, DRAM_w_s3_b14_1, DRAM_bn_s3_b14_1, DRAM_w_s3_b14_2, DRAM_bn_s3_b14_2, DRAM_w_s3_b14_3, DRAM_bn_s3_b14_3, DRAM_s3_b15, DRAM_w_s3_b15_1, DRAM_bn_s3_b15_1, DRAM_w_s3_b15_2, DRAM_bn_s3_b15_2, DRAM_w_s3_b15_3, DRAM_bn_s3_b15_3, DRAM_s3_b16, DRAM_w_s3_b16_1, DRAM_bn_s3_b16_1, DRAM_w_s3_b16_2, DRAM_bn_s3_b16_2, DRAM_w_s3_b16_3, DRAM_bn_s3_b16_3, DRAM_s3_b17, DRAM_w_s3_b17_1, DRAM_bn_s3_b17_1, DRAM_w_s3_b17_2, DRAM_bn_s3_b17_2, DRAM_w_s3_b17_3, DRAM_bn_s3_b17_3, DRAM_s3_b18, DRAM_w_s3_b18_1, DRAM_bn_s3_b18_1, DRAM_w_s3_b18_2, DRAM_bn_s3_b18_2, DRAM_w_s3_b18_3, DRAM_bn_s3_b18_3, DRAM_s3_b19, DRAM_w_s3_b19_1, DRAM_bn_s3_b19_1, DRAM_w_s3_b19_2, DRAM_bn_s3_b19_2, DRAM_w_s3_b19_3, DRAM_bn_s3_b19_3, DRAM_s3_b20, DRAM_w_s3_b20_1, DRAM_bn_s3_b20_1, DRAM_w_s3_b20_2, DRAM_bn_s3_b20_2, DRAM_w_s3_b20_3, DRAM_bn_s3_b20_3, DRAM_s3_b21, DRAM_w_s3_b21_1, DRAM_bn_s3_b21_1, DRAM_w_s3_b21_2, DRAM_bn_s3_b21_2, DRAM_w_s3_b21_3, DRAM_bn_s3_b21_3, DRAM_s3_b22, DRAM_w_s3_b22_1, DRAM_bn_s3_b22_1, DRAM_w_s3_b22_2, DRAM_bn_s3_b22_2, DRAM_w_s3_b22_3, DRAM_bn_s3_b22_3, DRAM_s4_mid1, DRAM_s4_mid2, DRAM_s4_skip, DRAM_s4_b0, DRAM_w_s4_b0_1, DRAM_bn_s4_b0_1, DRAM_w_s4_b0_2, DRAM_bn_s4_b0_2, DRAM_w_s4_b0_3, DRAM_bn_s4_b0_3, DRAM_w_s4_b0_down, DRAM_s4_b1, DRAM_w_s4_b1_1, DRAM_bn_s4_b1_1, DRAM_w_s4_b1_2, DRAM_bn_s4_b1_2, DRAM_w_s4_b1_3, DRAM_bn_s4_b1_3, DRAM_s4_b2, DRAM_w_s4_b2_1, DRAM_bn_s4_b2_1, DRAM_w_s4_b2_2, DRAM_bn_s4_b2_2, DRAM_w_s4_b2_3, DRAM_bn_s4_b2_3, DRAM_gap, DRAM_fc, DRAM_out);
+    top(DRAM_input, DRAM_w_stem, DRAM_bn_stem, DRAM_stem_feat, DRAM_stem_pool, DRAM_s1_mid1, DRAM_s1_mid2, DRAM_s1_skip, DRAM_s1_b0, DRAM_w_s1_b0_1, DRAM_bn_s1_b0_1, DRAM_w_s1_b0_2, DRAM_bn_s1_b0_2, DRAM_w_s1_b0_3, DRAM_bn_s1_b0_3, DRAM_w_s1_b0_down, DRAM_s1_b1, DRAM_w_s1_b1_1, DRAM_bn_s1_b1_1, DRAM_w_s1_b1_2, DRAM_bn_s1_b1_2, DRAM_w_s1_b1_3, DRAM_bn_s1_b1_3, DRAM_s1_b2, DRAM_w_s1_b2_1, DRAM_bn_s1_b2_1, DRAM_w_s1_b2_2, DRAM_bn_s1_b2_2, DRAM_w_s1_b2_3, DRAM_bn_s1_b2_3, DRAM_s2_mid1, DRAM_s2_mid2, DRAM_s2_pre_downsample, DRAM_s2_skip, DRAM_s2_b0, DRAM_w_s2_b0_1, DRAM_bn_s2_b0_1, DRAM_w_s2_b0_2, DRAM_bn_s2_b0_2, DRAM_w_s2_b0_3, DRAM_bn_s2_b0_3, DRAM_w_s2_b0_down, DRAM_s2_b1, DRAM_w_s2_b1_1, DRAM_bn_s2_b1_1, DRAM_w_s2_b1_2, DRAM_bn_s2_b1_2, DRAM_w_s2_b1_3, DRAM_bn_s2_b1_3, DRAM_s2_b2, DRAM_w_s2_b2_1, DRAM_bn_s2_b2_1, DRAM_w_s2_b2_2, DRAM_bn_s2_b2_2, DRAM_w_s2_b2_3, DRAM_bn_s2_b2_3, DRAM_s2_b3, DRAM_w_s2_b3_1, DRAM_bn_s2_b3_1, DRAM_w_s2_b3_2, DRAM_bn_s2_b3_2, DRAM_w_s2_b3_3, DRAM_bn_s2_b3_3, DRAM_s3_mid1, DRAM_s3_mid2, DRAM_s3_pre_downsample, DRAM_s3_skip, DRAM_s3_b0, DRAM_w_s3_b0_1, DRAM_bn_s3_b0_1, DRAM_w_s3_b0_2, DRAM_bn_s3_b0_2, DRAM_w_s3_b0_3, DRAM_bn_s3_b0_3, DRAM_w_s3_b0_down, DRAM_s3_b1, DRAM_w_s3_b1_1, DRAM_bn_s3_b1_1, DRAM_w_s3_b1_2, DRAM_bn_s3_b1_2, DRAM_w_s3_b1_3, DRAM_bn_s3_b1_3, DRAM_s3_b2, DRAM_w_s3_b2_1, DRAM_bn_s3_b2_1, DRAM_w_s3_b2_2, DRAM_bn_s3_b2_2, DRAM_w_s3_b2_3, DRAM_bn_s3_b2_3, DRAM_s3_b3, DRAM_w_s3_b3_1, DRAM_bn_s3_b3_1, DRAM_w_s3_b3_2, DRAM_bn_s3_b3_2, DRAM_w_s3_b3_3, DRAM_bn_s3_b3_3, DRAM_s3_b4, DRAM_w_s3_b4_1, DRAM_bn_s3_b4_1, DRAM_w_s3_b4_2, DRAM_bn_s3_b4_2, DRAM_w_s3_b4_3, DRAM_bn_s3_b4_3, DRAM_s3_b5, DRAM_w_s3_b5_1, DRAM_bn_s3_b5_1, DRAM_w_s3_b5_2, DRAM_bn_s3_b5_2, DRAM_w_s3_b5_3, DRAM_bn_s3_b5_3, DRAM_s3_b6, DRAM_w_s3_b6_1, DRAM_bn_s3_b6_1, DRAM_w_s3_b6_2, DRAM_bn_s3_b6_2, DRAM_w_s3_b6_3, DRAM_bn_s3_b6_3, DRAM_s3_b7, DRAM_w_s3_b7_1, DRAM_bn_s3_b7_1, DRAM_w_s3_b7_2, DRAM_bn_s3_b7_2, DRAM_w_s3_b7_3, DRAM_bn_s3_b7_3, DRAM_s3_b8, DRAM_w_s3_b8_1, DRAM_bn_s3_b8_1, DRAM_w_s3_b8_2, DRAM_bn_s3_b8_2, DRAM_w_s3_b8_3, DRAM_bn_s3_b8_3, DRAM_s3_b9, DRAM_w_s3_b9_1, DRAM_bn_s3_b9_1, DRAM_w_s3_b9_2, DRAM_bn_s3_b9_2, DRAM_w_s3_b9_3, DRAM_bn_s3_b9_3, DRAM_s3_b10, DRAM_w_s3_b10_1, DRAM_bn_s3_b10_1, DRAM_w_s3_b10_2, DRAM_bn_s3_b10_2, DRAM_w_s3_b10_3, DRAM_bn_s3_b10_3, DRAM_s3_b11, DRAM_w_s3_b11_1, DRAM_bn_s3_b11_1, DRAM_w_s3_b11_2, DRAM_bn_s3_b11_2, DRAM_w_s3_b11_3, DRAM_bn_s3_b11_3, DRAM_s3_b12, DRAM_w_s3_b12_1, DRAM_bn_s3_b12_1, DRAM_w_s3_b12_2, DRAM_bn_s3_b12_2, DRAM_w_s3_b12_3, DRAM_bn_s3_b12_3, DRAM_s3_b13, DRAM_w_s3_b13_1, DRAM_bn_s3_b13_1, DRAM_w_s3_b13_2, DRAM_bn_s3_b13_2, DRAM_w_s3_b13_3, DRAM_bn_s3_b13_3, DRAM_s3_b14, DRAM_w_s3_b14_1, DRAM_bn_s3_b14_1, DRAM_w_s3_b14_2, DRAM_bn_s3_b14_2, DRAM_w_s3_b14_3, DRAM_bn_s3_b14_3, DRAM_s3_b15, DRAM_w_s3_b15_1, DRAM_bn_s3_b15_1, DRAM_w_s3_b15_2, DRAM_bn_s3_b15_2, DRAM_w_s3_b15_3, DRAM_bn_s3_b15_3, DRAM_s3_b16, DRAM_w_s3_b16_1, DRAM_bn_s3_b16_1, DRAM_w_s3_b16_2, DRAM_bn_s3_b16_2, DRAM_w_s3_b16_3, DRAM_bn_s3_b16_3, DRAM_s3_b17, DRAM_w_s3_b17_1, DRAM_bn_s3_b17_1, DRAM_w_s3_b17_2, DRAM_bn_s3_b17_2, DRAM_w_s3_b17_3, DRAM_bn_s3_b17_3, DRAM_s3_b18, DRAM_w_s3_b18_1, DRAM_bn_s3_b18_1, DRAM_w_s3_b18_2, DRAM_bn_s3_b18_2, DRAM_w_s3_b18_3, DRAM_bn_s3_b18_3, DRAM_s3_b19, DRAM_w_s3_b19_1, DRAM_bn_s3_b19_1, DRAM_w_s3_b19_2, DRAM_bn_s3_b19_2, DRAM_w_s3_b19_3, DRAM_bn_s3_b19_3, DRAM_s3_b20, DRAM_w_s3_b20_1, DRAM_bn_s3_b20_1, DRAM_w_s3_b20_2, DRAM_bn_s3_b20_2, DRAM_w_s3_b20_3, DRAM_bn_s3_b20_3, DRAM_s3_b21, DRAM_w_s3_b21_1, DRAM_bn_s3_b21_1, DRAM_w_s3_b21_2, DRAM_bn_s3_b21_2, DRAM_w_s3_b21_3, DRAM_bn_s3_b21_3, DRAM_s3_b22, DRAM_w_s3_b22_1, DRAM_bn_s3_b22_1, DRAM_w_s3_b22_2, DRAM_bn_s3_b22_2, DRAM_w_s3_b22_3, DRAM_bn_s3_b22_3, DRAM_s4_mid1, DRAM_s4_mid2, DRAM_s4_pre_downsample, DRAM_s4_skip, DRAM_s4_b0, DRAM_w_s4_b0_1, DRAM_bn_s4_b0_1, DRAM_w_s4_b0_2, DRAM_bn_s4_b0_2, DRAM_w_s4_b0_3, DRAM_bn_s4_b0_3, DRAM_w_s4_b0_down, DRAM_s4_b1, DRAM_w_s4_b1_1, DRAM_bn_s4_b1_1, DRAM_w_s4_b1_2, DRAM_bn_s4_b1_2, DRAM_w_s4_b1_3, DRAM_bn_s4_b1_3, DRAM_s4_b2, DRAM_w_s4_b2_1, DRAM_bn_s4_b2_1, DRAM_w_s4_b2_2, DRAM_bn_s4_b2_2, DRAM_w_s4_b2_3, DRAM_bn_s4_b2_3, DRAM_gap, DRAM_fc, DRAM_out);
 
     // Write contents of DRAM_out to DRAM_out_output.txt
     {

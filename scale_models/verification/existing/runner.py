@@ -26,7 +26,9 @@ def save_tensor(path, value, fixed):
 
 def prepare_inputs(project, folder, seed):
     folder.mkdir()
-    needed = sum(math.prod(s) * 2 for s in project.inputs.values())
+    fmt = getattr(project, "format", DATA)
+    dtype = "<i2" if fmt.word == 16 else "<i4"
+    needed = sum(math.prod(s) * (fmt.word // 8) for s in project.inputs.values())
     if shutil.disk_usage(folder).free < needed + (1 << 30):
         raise ValueError("insufficient space for parameter store")
     entries = {}
@@ -43,7 +45,9 @@ def prepare_inputs(project, folder, seed):
         path = folder / (name + ".bin")
         bn = name.startswith("DRAM_bn_")
         norm = "norm" in name and project.family == "llama3"
-        fan_in = math.prod(shape[1:]) if project.family == "resnet18" else shape[-1]
+        fan_in = (
+            math.prod(shape[1:]) if project.family.startswith("resnet") else shape[-1]
+        )
         bound = (
             1.0
             if name == "DRAM_input"
@@ -66,11 +70,11 @@ def prepare_inputs(project, folder, seed):
                         if norm
                         else rng.uniform(-bound, bound, n)
                     )
-                codes = DATA.quantize(real).numpy().astype("<i2")
+                codes = fmt.quantize(real).numpy().astype(dtype)
                 f.write(codes.tobytes())
         entries[name] = dict(
             shape=shape,
-            dtype="<i2",
+            dtype=dtype,
             sha256=sha(path),
             seed=key,
             distribution="bn_rows" if bn else "norm_uniform" if norm else "uniform",
@@ -79,7 +83,7 @@ def prepare_inputs(project, folder, seed):
         print("Prepared", name, shape, flush=True)
     write_json(
         folder / "manifest.json",
-        dict(seed=seed, arithmetic=DATA.describe(), tensors=entries),
+        dict(seed=seed, arithmetic=fmt.describe(), tensors=entries),
     )
     return entries
 
@@ -88,7 +92,8 @@ def validate_inputs(folder, entries):
     for name, entry in entries.items():
         path = folder / (name + ".bin")
         if (
-            path.stat().st_size != math.prod(entry["shape"]) * 2
+            path.stat().st_size
+            != math.prod(entry["shape"]) * np.dtype(entry.get("dtype", "<i2")).itemsize
             or sha(path) != entry["sha256"]
         ):
             raise ValueError("input changed or truncated: " + name)
@@ -201,7 +206,7 @@ exit
     return result
 
 
-def compare_arrays(actual, fixed, floating, max_abs=0.1, relative_l2=0.01):
+def compare_arrays(actual, fixed, floating, max_abs=0.1, relative_l2=0.01, fmt=DATA):
     actual, fixed, floating = (
         np.asarray(actual),
         np.asarray(fixed),
@@ -215,11 +220,12 @@ def compare_arrays(actual, fixed, floating, max_abs=0.1, relative_l2=0.01):
         raise ValueError("empty or nonfinite comparison tensor")
     if actual.dtype.kind != "i" or fixed.dtype.kind != "i":
         raise ValueError("actual/fixed values must be raw signed integer codes")
-    if any(np.any((x < -32768) | (x > 32767)) for x in (actual, fixed)):
-        raise ValueError("raw code outside ap_fixed<16,5> range")
+    limit = 1 << (fmt.word - 1)
+    if any(np.any((x < -limit) | (x >= limit)) for x in (actual, fixed)):
+        raise ValueError("raw code outside declared fixed-point range")
     a = actual.astype(np.int64)
     delta_code = a - fixed.astype(np.int64)
-    delta = a.astype(np.float64) / 2048 - floating
+    delta = a.astype(np.float64) / fmt.scale - floating
     reference_norm = float(np.linalg.norm(floating.reshape(-1)))
     error_norm = float(np.linalg.norm(delta.reshape(-1)))
     rel = error_norm / reference_norm if reference_norm else None
@@ -246,16 +252,17 @@ def compare_arrays(actual, fixed, floating, max_abs=0.1, relative_l2=0.01):
     return report
 
 
-def compare_case(case, outputs):
+def compare_case(case, outputs, fmt=DATA):
     records = {}
+    dtype = "<i2" if fmt.word == 16 else "<i4"
     for label, (_, shape) in outputs.items():
         path = case / "actual" / (label + ".bin")
-        if path.stat().st_size != math.prod(shape) * 2:
+        if path.stat().st_size != math.prod(shape) * (fmt.word // 8):
             raise ValueError("incorrect accelerator output size: " + str(path))
-        a = np.fromfile(path, dtype="<i2").reshape(shape)
+        a = np.fromfile(path, dtype=dtype).reshape(shape)
         f = np.load(case / "fixed" / (label + ".npy"), allow_pickle=False)
         golden = np.load(case / "fp64" / (label + ".npy"), allow_pickle=False)
-        records[label] = compare_arrays(a, f, golden)
+        records[label] = compare_arrays(a, f, golden, fmt=fmt)
         records[label]["sha256"] = dict(
             actual=sha(path),
             fixed=sha(case / "fixed" / (label + ".npy")),
@@ -274,13 +281,17 @@ def compare_case(case, outputs):
 
 
 def run_resnet(project, output, args):
+    Reference = ResNetReference
+    if project.format.word == 32:
+        from .wide import ResNetReference32 as Reference
+    dtype = "<i2" if project.format.word == 16 else "<i4"
     inputs = output / "inputs"
     entries = prepare_inputs(project, inputs, args.seed)
     case = output / "case"
     case.mkdir()
     tensors = {
         n: torch.from_numpy(
-            np.fromfile(inputs / (n + ".bin"), dtype="<i2").reshape(s).astype(np.int64)
+            np.fromfile(inputs / (n + ".bin"), dtype=dtype).reshape(s).astype(np.int64)
         )
         for n, s in project.inputs.items()
     }
@@ -293,7 +304,9 @@ def run_resnet(project, output, args):
             if name in project.outputs:
                 save_tensor(folder / (name + ".npy"), value, fixed)
 
-        ResNetReference(project.variant, fixed).run(tensors, checkpoint)
+        Reference(project.variant, fixed, project.contract_version).run(
+            tensors, checkpoint
+        )
     validate_inputs(inputs, entries)
     simulation = simulate(
         project,
@@ -306,15 +319,19 @@ def run_resnet(project, output, args):
         args.timeout,
     )
     validate_inputs(inputs, entries)
-    records = compare_case(case, project.outputs)
+    records = compare_case(case, project.outputs, project.format)
     return dict(
-        cases={"resnet18": records}, simulation=simulation, input_manifest=entries
+        cases={project.family: records}, simulation=simulation, input_manifest=entries
     )
 
 
 def llama_preflight(project, decode, args):
     if project.variant != "llama3-prefill" or decode.variant != "llama3-decode":
         raise ValueError("Llama requires a prefill project and a decode project")
+    if project.dtype != decode.dtype:
+        raise ValueError("prefill/decode data formats differ")
+    if project.contract_version != decode.contract_version:
+        raise ValueError("prefill/decode arithmetic versions differ")
     if project.inputs != decode.inputs or project.max_ctx != decode.max_ctx:
         raise ValueError("prefill/decode parameter or cache layouts differ")
     if (
@@ -339,7 +356,9 @@ def llama_preflight(project, decode, args):
         ("prefill length", [args.prefill]),
         ("decode positions", list(range(args.prefill, args.prefill + args.decode))),
     ):
-        if any(int(DATA.quantize(v)) != v * 2048 for v in values):
+        if project.contract_version == 1 and any(
+            int(DATA.quantize(v)) != v * 2048 for v in values
+        ):
             failures.append(
                 role + " cannot be represented by the existing data_t interface"
             )
@@ -349,10 +368,17 @@ def llama_preflight(project, decode, args):
     # before allocating 8B weights. Invalid arithmetic cannot get a PASS.
     from .llama import FixedOps
 
+    if project.contract_version == 2:
+        from .repaired import LlamaOps as FixedOps
+    if getattr(project, "format", DATA).word == 32:
+        from .wide import LlamaOps as FixedOps
+
     try:
         FixedOps(project.tile_in, project.hidden_chunk).rmsnorm(
             torch.zeros((1, 4096), dtype=torch.int64),
-            torch.full((4096,), 2048, dtype=torch.int64),
+            torch.full(
+                (4096,), getattr(project, "format", DATA).scale, dtype=torch.int64
+            ),
         )
     except ArithmeticFault as exc:
         failures.append(str(exc))
@@ -370,20 +396,30 @@ def llama_preflight(project, decode, args):
 
 def run_llama(project, decode, output, args, tokens):
     from .llama import FixedOps
+
+    if project.contract_version == 2:
+        from .repaired import LlamaOps as FixedOps
+    if getattr(project, "format", DATA).word == 32:
+        from .wide import LlamaOps as FixedOps
     from .vendor_math import VendorRope
 
     vendor_root = args.vitis.parent.parent
-    provider = VendorRope(vendor_root)
+    Provider = VendorRope
+    Reference = LlamaReference
+    if project.format.word == 32:
+        from .wide import Rope32 as Provider, LlamaReference32 as Reference
+    dtype = "<i2" if project.format.word == 16 else "<i4"
+    provider = Provider(vendor_root)
     dependencies = provider.provenance()
     write_json(output / "fixed_reference_dependencies.json", dependencies)
     project.vendor_root = decode.vendor_root = vendor_root
     inputs = output / "inputs"
     entries = prepare_inputs(project, inputs, args.seed)
     validate_inputs(inputs, entries)
-    weights = Weights(inputs, project.inputs)
+    weights = Weights(inputs, project.inputs, dtype)
     refs = {
-        "fixed": LlamaReference(project, weights, True),
-        "fp64": LlamaReference(project, weights, False),
+        "fixed": Reference(project, weights, True),
+        "fp64": Reference(project, weights, False),
     }
     cases, simulations, coefficient_files = {}, {}, {}
     previous = None
@@ -412,12 +448,14 @@ def run_llama(project, decode, output, args, tokens):
             )
         token_name = "DRAM_token_ids" if call == 0 else "DRAM_token_id"
         control_name = "DRAM_prefill_len" if call == 0 else "DRAM_decode_pos"
-        ids = np.zeros(design.ports[token_name], dtype="<i2")
-        ids[:rows] = np.array(tokens[start : start + rows]) * 2048
+        control_dtype = "<i4" if design.port_types[token_name] == "int32_t" else "<i2"
+        control_scale = 1 if control_dtype == "<i4" else 2048
+        ids = np.zeros(design.ports[token_name], dtype=control_dtype)
+        ids[:rows] = np.array(tokens[start : start + rows]) * control_scale
         ids.tofile(case / (token_name + ".bin"))
-        np.array([(rows if call == 0 else start) * 2048], dtype="<i2").tofile(
-            case / (control_name + ".bin")
-        )
+        np.array(
+            [(rows if call == 0 else start) * control_scale], dtype=control_dtype
+        ).tofile(case / (control_name + ".bin"))
         input_names = set(design.inputs) | {token_name, control_name}
         if previous:
             for name, label in (
@@ -443,7 +481,7 @@ def run_llama(project, decode, output, args, tokens):
             array = np.memmap(
                 case / "actual" / (label + "_full.bin"),
                 mode="r",
-                dtype="<i2",
+                dtype=dtype,
                 shape=shape,
             )
             np.ascontiguousarray(array[:, : start + rows]).tofile(
@@ -456,7 +494,7 @@ def run_llama(project, decode, output, args, tokens):
                 for n in ("k_cache", "v_cache")
             },
         }
-        cases[f"call{call:04d}"] = compare_case(case, selected)
+        cases[f"call{call:04d}"] = compare_case(case, selected, project.format)
         previous = case
     validate_inputs(inputs, entries)
     return dict(

@@ -5,8 +5,8 @@
 
 typedef ap_fixed<16,5> data_t;
 
-data_t DRAM_token_ids[2048];
-data_t DRAM_prefill_len[1];
+int32_t DRAM_token_ids[2048];
+int32_t DRAM_prefill_len[1];
 data_t DRAM_embedding[128256][4096];
 data_t DRAM_final_norm[4096];
 data_t DRAM_lm_head[128256][4096];
@@ -36,23 +36,23 @@ data_t DRAM_k_cache[32][2048][8][128];
 data_t DRAM_v_cache[32][2048][8][128];
 data_t DRAM_logits[2048][128256];
 
-void load_txt_to_array(const char *filename, data_t *array, int total_size) {
+template<class T> void load_txt_to_array(const char *filename, T *array, size_t total_size) {
     FILE *fp = fopen(filename, "r");
     if (fp == NULL) {
         printf("Failed to open %s\n", filename);
         exit(1);
     }
-    for (int i = 0; i < total_size; i++) {
-        float temp;
-        fscanf(fp, "%f", &temp);
-        array[i] = (data_t)temp;
+    for (size_t i = 0; i < total_size; i++) {
+        double temp;
+        if (fscanf(fp, "%lf", &temp) != 1) { fprintf(stderr, "Short/invalid input: %s\n", filename); exit(1); }
+        array[i] = (T)temp;
     }
     fclose(fp);
 }
 
 int main() {
-    load_txt_to_array("DRAM_token_ids.txt", (data_t*)DRAM_token_ids, 2048);
-    load_txt_to_array("DRAM_prefill_len.txt", (data_t*)DRAM_prefill_len, 1);
+    load_txt_to_array("DRAM_token_ids.txt", (int32_t*)DRAM_token_ids, 2048);
+    load_txt_to_array("DRAM_prefill_len.txt", (int32_t*)DRAM_prefill_len, 1);
     load_txt_to_array("DRAM_embedding.txt", (data_t*)DRAM_embedding, 525336576);
     load_txt_to_array("DRAM_final_norm.txt", (data_t*)DRAM_final_norm, 4096);
     load_txt_to_array("DRAM_lm_head.txt", (data_t*)DRAM_lm_head, 525336576);

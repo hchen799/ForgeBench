@@ -1,0 +1,17 @@
+{
+  "command": "python -m pytest verification/tests -q --disable-warnings --maxfail=1",
+  "working_directory": "scale_models",
+  "passed": 87,
+  "elapsed_seconds": 157.31,
+  "log": "regression.log",
+  "log_sha256": "0cbaeb1a3031fdcaf41f2b9989bc4afa6f3d09fa1f6f2273adbb422904df4b2c",
+  "test_sources": {
+    "tests/test_configurable.py": "651ecb469d9d8fc16ee6a869d7fd7e495f3f6c4ecab1cabc98c388122aa88c01",
+    "tests/test_existing.py": "6aa69115f8e2572bf2c02559ed34271129eefdd926452b1e1a82878648b46166",
+    "tests/test_production.py": "cc16b0efd74c5ccbdaca7d340c6182f769a1decfa90d8a0cb246023cbadbd5a7",
+    "tests/test_production_graph.py": "182d968373c76e0d072598bac0e4af4c7da9d7b632314f6ad66e87a5092723a4",
+    "tests/test_production_wide.py": "8550f3b6e107c623c1b68886959ab8d8ab7ddb48988f9ddfef50be0fea951f79",
+    "tests/test_resnet_formats.py": "9f0f3e5846938d725e4afbaebfbb3bc14debd7369497868ad4080c3f499513fc"
+  },
+  "exit_code": 0
+}

@@ -1,0 +1,6399 @@
+{
+  "brams": [
+    {
+      "name": "BRAM_in_patch_stem",
+      "dims": [
+        32,
+        33,
+        33
+      ]
+    },
+    {
+      "name": "BRAM_in_patch_stride2_k3",
+      "dims": [
+        32,
+        29,
+        29
+      ]
+    },
+    {
+      "name": "BRAM_in_patch_stride2_k1",
+      "dims": [
+        32,
+        27,
+        27
+      ]
+    },
+    {
+      "name": "BRAM_in_patch_stride1_k3",
+      "dims": [
+        32,
+        16,
+        16
+      ]
+    },
+    {
+      "name": "BRAM_in_patch_1",
+      "dims": [
+        32,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "BRAM_pool_patch",
+      "dims": [
+        128,
+        29,
+        29
+      ]
+    },
+    {
+      "name": "BRAM_out_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "dtype": "acc_t"
+    },
+    {
+      "name": "BRAM_skip_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ]
+    },
+    {
+      "name": "BRAM_weight_tile_7",
+      "dims": [
+        128,
+        32,
+        7,
+        7
+      ]
+    },
+    {
+      "name": "BRAM_weight_tile_3",
+      "dims": [
+        128,
+        32,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_weight_tile_1",
+      "dims": [
+        128,
+        32,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "BRAM_bn_tile",
+      "dims": [
+        4,
+        128
+      ]
+    },
+    {
+      "name": "BRAM_gap_tile",
+      "dims": [
+        128,
+        7,
+        7
+      ]
+    },
+    {
+      "name": "BRAM_gap_out",
+      "dims": [
+        128,
+        1,
+        1
+      ],
+      "dtype": "acc_t"
+    },
+    {
+      "name": "BRAM_fc_out",
+      "dims": [
+        128,
+        1,
+        1
+      ],
+      "dtype": "acc_t"
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_input",
+      "dims": [
+        3,
+        224,
+        224
+      ],
+      "bundle": "mem_input"
+    },
+    {
+      "name": "DRAM_w_stem",
+      "dims": [
+        64,
+        3,
+        7,
+        7
+      ],
+      "bundle": "mem_w_stem"
+    },
+    {
+      "name": "DRAM_bn_stem",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_stem"
+    },
+    {
+      "name": "DRAM_stem_feat",
+      "dims": [
+        64,
+        112,
+        112
+      ],
+      "bundle": "mem_stem_feat"
+    },
+    {
+      "name": "DRAM_stem_pool",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "bundle": "mem_stem_pool"
+    },
+    {
+      "name": "DRAM_s1_mid1",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "bundle": "mem_s1_mid1"
+    },
+    {
+      "name": "DRAM_s1_b0",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "bundle": "mem_s1_b0"
+    },
+    {
+      "name": "DRAM_w_s1_b0_1",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s1_b0_1"
+    },
+    {
+      "name": "DRAM_bn_s1_b0_1",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_s1_b0_1"
+    },
+    {
+      "name": "DRAM_w_s1_b0_2",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s1_b0_2"
+    },
+    {
+      "name": "DRAM_bn_s1_b0_2",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_s1_b0_2"
+    },
+    {
+      "name": "DRAM_s1_b1",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "bundle": "mem_s1_b1"
+    },
+    {
+      "name": "DRAM_w_s1_b1_1",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s1_b1_1"
+    },
+    {
+      "name": "DRAM_bn_s1_b1_1",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_s1_b1_1"
+    },
+    {
+      "name": "DRAM_w_s1_b1_2",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s1_b1_2"
+    },
+    {
+      "name": "DRAM_bn_s1_b1_2",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_s1_b1_2"
+    },
+    {
+      "name": "DRAM_s2_mid1",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "bundle": "mem_s2_mid1"
+    },
+    {
+      "name": "DRAM_s2_skip",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "bundle": "mem_s2_skip"
+    },
+    {
+      "name": "DRAM_s2_b0",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "bundle": "mem_s2_b0"
+    },
+    {
+      "name": "DRAM_w_s2_b0_1",
+      "dims": [
+        128,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s2_b0_1"
+    },
+    {
+      "name": "DRAM_bn_s2_b0_1",
+      "dims": [
+        4,
+        128
+      ],
+      "bundle": "mem_bn_s2_b0_1"
+    },
+    {
+      "name": "DRAM_w_s2_b0_2",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s2_b0_2"
+    },
+    {
+      "name": "DRAM_bn_s2_b0_2",
+      "dims": [
+        4,
+        128
+      ],
+      "bundle": "mem_bn_s2_b0_2"
+    },
+    {
+      "name": "DRAM_w_s2_b0_down",
+      "dims": [
+        128,
+        64,
+        1,
+        1
+      ],
+      "bundle": "mem_w_s2_b0_down"
+    },
+    {
+      "name": "DRAM_s2_b1",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "bundle": "mem_s2_b1"
+    },
+    {
+      "name": "DRAM_w_s2_b1_1",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s2_b1_1"
+    },
+    {
+      "name": "DRAM_bn_s2_b1_1",
+      "dims": [
+        4,
+        128
+      ],
+      "bundle": "mem_bn_s2_b1_1"
+    },
+    {
+      "name": "DRAM_w_s2_b1_2",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s2_b1_2"
+    },
+    {
+      "name": "DRAM_bn_s2_b1_2",
+      "dims": [
+        4,
+        128
+      ],
+      "bundle": "mem_bn_s2_b1_2"
+    },
+    {
+      "name": "DRAM_s3_mid1",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "bundle": "mem_s3_mid1"
+    },
+    {
+      "name": "DRAM_s3_skip",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "bundle": "mem_s3_skip"
+    },
+    {
+      "name": "DRAM_s3_b0",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "bundle": "mem_s3_b0"
+    },
+    {
+      "name": "DRAM_w_s3_b0_1",
+      "dims": [
+        256,
+        128,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s3_b0_1"
+    },
+    {
+      "name": "DRAM_bn_s3_b0_1",
+      "dims": [
+        4,
+        256
+      ],
+      "bundle": "mem_bn_s3_b0_1"
+    },
+    {
+      "name": "DRAM_w_s3_b0_2",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s3_b0_2"
+    },
+    {
+      "name": "DRAM_bn_s3_b0_2",
+      "dims": [
+        4,
+        256
+      ],
+      "bundle": "mem_bn_s3_b0_2"
+    },
+    {
+      "name": "DRAM_w_s3_b0_down",
+      "dims": [
+        256,
+        128,
+        1,
+        1
+      ],
+      "bundle": "mem_w_s3_b0_down"
+    },
+    {
+      "name": "DRAM_s3_b1",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "bundle": "mem_s3_b1"
+    },
+    {
+      "name": "DRAM_w_s3_b1_1",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s3_b1_1"
+    },
+    {
+      "name": "DRAM_bn_s3_b1_1",
+      "dims": [
+        4,
+        256
+      ],
+      "bundle": "mem_bn_s3_b1_1"
+    },
+    {
+      "name": "DRAM_w_s3_b1_2",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s3_b1_2"
+    },
+    {
+      "name": "DRAM_bn_s3_b1_2",
+      "dims": [
+        4,
+        256
+      ],
+      "bundle": "mem_bn_s3_b1_2"
+    },
+    {
+      "name": "DRAM_s4_mid1",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "bundle": "mem_s4_mid1"
+    },
+    {
+      "name": "DRAM_s4_skip",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "bundle": "mem_s4_skip"
+    },
+    {
+      "name": "DRAM_s4_b0",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "bundle": "mem_s4_b0"
+    },
+    {
+      "name": "DRAM_w_s4_b0_1",
+      "dims": [
+        512,
+        256,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s4_b0_1"
+    },
+    {
+      "name": "DRAM_bn_s4_b0_1",
+      "dims": [
+        4,
+        512
+      ],
+      "bundle": "mem_bn_s4_b0_1"
+    },
+    {
+      "name": "DRAM_w_s4_b0_2",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s4_b0_2"
+    },
+    {
+      "name": "DRAM_bn_s4_b0_2",
+      "dims": [
+        4,
+        512
+      ],
+      "bundle": "mem_bn_s4_b0_2"
+    },
+    {
+      "name": "DRAM_w_s4_b0_down",
+      "dims": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "bundle": "mem_w_s4_b0_down"
+    },
+    {
+      "name": "DRAM_s4_b1",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "bundle": "mem_s4_b1"
+    },
+    {
+      "name": "DRAM_w_s4_b1_1",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s4_b1_1"
+    },
+    {
+      "name": "DRAM_bn_s4_b1_1",
+      "dims": [
+        4,
+        512
+      ],
+      "bundle": "mem_bn_s4_b1_1"
+    },
+    {
+      "name": "DRAM_w_s4_b1_2",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s4_b1_2"
+    },
+    {
+      "name": "DRAM_bn_s4_b1_2",
+      "dims": [
+        4,
+        512
+      ],
+      "bundle": "mem_bn_s4_b1_2"
+    },
+    {
+      "name": "DRAM_gap",
+      "dims": [
+        512,
+        1,
+        1
+      ],
+      "bundle": "mem_gap"
+    },
+    {
+      "name": "DRAM_fc",
+      "dims": [
+        1000,
+        512,
+        1,
+        1
+      ],
+      "bundle": "mem_fc"
+    },
+    {
+      "name": "DRAM_out",
+      "dims": [
+        1000,
+        1,
+        1
+      ],
+      "bundle": "mem_out"
+    }
+  ],
+  "ops": {
+    "stem_conv_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "64",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "stem_conv_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "112",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "stem_conv_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "112",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "stem_conv_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "stem_conv_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "3",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "stem_conv_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        3,
+        224,
+        224,
+        32,
+        33,
+        33,
+        2,
+        3
+      ],
+      "args": [
+        "DRAM_input",
+        "BRAM_in_patch_stem",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "stem_conv_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        64,
+        3,
+        7,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_stem",
+        "BRAM_weight_tile_7",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "stem_conv_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        33,
+        33,
+        128,
+        32,
+        7,
+        128,
+        14,
+        14,
+        2,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stem",
+        "BRAM_weight_tile_7",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "stem_conv_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "stem_conv_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "stem_conv_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        64,
+        128
+      ],
+      "args": [
+        "DRAM_bn_stem",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "stem_conv_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "stem_conv_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "stem_conv_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        64,
+        112,
+        112,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_stem_feat",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "stem_conv_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "stem_conv_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "stem_conv_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "stem_pool_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "64",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "stem_pool_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "56",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "stem_pool_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "56",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "stem_pool_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        64,
+        112,
+        112,
+        128,
+        29,
+        29,
+        2,
+        1
+      ],
+      "args": [
+        "DRAM_stem_feat",
+        "BRAM_pool_patch",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "stem_pool_maxpool": {
+      "func_name": "maxpool_tile",
+      "dims": [
+        128,
+        29,
+        29,
+        128,
+        14,
+        14,
+        3,
+        3,
+        2,
+        2
+      ],
+      "args": [
+        "BRAM_pool_patch",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "stem_pool_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_stem_pool",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "stem_pool_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "stem_pool_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "stem_pool_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_conv1_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "64",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s1_b0_conv1_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "56",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s1_b0_conv1_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "56",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s1_b0_conv1_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s1_b0_conv1_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "64",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s1_b0_conv1_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        64,
+        56,
+        56,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_stem_pool",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s1_b0_conv1_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        64,
+        64,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s1_b0_1",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s1_b0_conv1_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv1_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_conv1_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv1_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        64,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s1_b0_1",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s1_b0_conv1_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv1_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv1_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s1_mid1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv1_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_conv1_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_conv1_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_conv2_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "64",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s1_b0_conv2_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "56",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s1_b0_conv2_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "56",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s1_b0_conv2_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s1_b0_conv2_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "64",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s1_b0_conv2_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        64,
+        56,
+        56,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s1_mid1",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s1_b0_conv2_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        64,
+        64,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s1_b0_2",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s1_b0_conv2_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv2_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_conv2_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv2_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        64,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s1_b0_2",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s1_b0_conv2_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv2_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s1_b0",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_conv2_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_conv2_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_conv2_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_residual_add_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "64",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s1_b0_residual_add_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "56",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s1_b0_residual_add_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "56",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s1_b0_residual_load_main_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s1_b0",
+        "BRAM_out_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s1_b0_residual_load_skip_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_stem_pool",
+        "BRAM_skip_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s1_b0_residual_add_tile": {
+      "func_name": "matrix_add_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_skip_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_residual_relu_tile": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_residual_store_tile": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s1_b0",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b0_residual_add_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_residual_add_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b0_residual_add_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_conv1_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "64",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s1_b1_conv1_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "56",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s1_b1_conv1_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "56",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s1_b1_conv1_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s1_b1_conv1_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "64",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s1_b1_conv1_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        64,
+        56,
+        56,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s1_b0",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s1_b1_conv1_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        64,
+        64,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s1_b1_1",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s1_b1_conv1_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv1_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_conv1_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv1_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        64,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s1_b1_1",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s1_b1_conv1_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv1_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv1_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s1_mid1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv1_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_conv1_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_conv1_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_conv2_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "64",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s1_b1_conv2_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "56",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s1_b1_conv2_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "56",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s1_b1_conv2_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s1_b1_conv2_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "64",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s1_b1_conv2_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        64,
+        56,
+        56,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s1_mid1",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s1_b1_conv2_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        64,
+        64,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s1_b1_2",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s1_b1_conv2_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv2_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_conv2_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv2_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        64,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s1_b1_2",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s1_b1_conv2_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv2_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s1_b1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_conv2_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_conv2_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_conv2_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_residual_add_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "64",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s1_b1_residual_add_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "56",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s1_b1_residual_add_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "56",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s1_b1_residual_load_main_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s1_b1",
+        "BRAM_out_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s1_b1_residual_load_skip_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s1_b0",
+        "BRAM_skip_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s1_b1_residual_add_tile": {
+      "func_name": "matrix_add_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_skip_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_residual_relu_tile": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_residual_store_tile": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        64,
+        56,
+        56,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s1_b1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s1_b1_residual_add_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_residual_add_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s1_b1_residual_add_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_conv1_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "128",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s2_b0_conv1_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "28",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s2_b0_conv1_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "28",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s2_b0_conv1_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s2_b0_conv1_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "64",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s2_b0_conv1_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        64,
+        56,
+        56,
+        32,
+        29,
+        29,
+        2,
+        1
+      ],
+      "args": [
+        "DRAM_s1_b1",
+        "BRAM_in_patch_stride2_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b0_conv1_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        128,
+        64,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s2_b0_1",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s2_b0_conv1_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        29,
+        29,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        2,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride2_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv1_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_conv1_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv1_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        128,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s2_b0_1",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s2_b0_conv1_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv1_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv1_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s2_mid1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv1_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_conv1_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_conv1_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_conv2_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "128",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s2_b0_conv2_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "28",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s2_b0_conv2_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "28",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s2_b0_conv2_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s2_b0_conv2_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "128",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s2_b0_conv2_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        128,
+        28,
+        28,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s2_mid1",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b0_conv2_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        128,
+        128,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s2_b0_2",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s2_b0_conv2_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv2_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_conv2_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv2_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        128,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s2_b0_2",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s2_b0_conv2_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv2_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s2_b0",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_conv2_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_conv2_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_conv2_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_down_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "128",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s2_b0_down_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "28",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s2_b0_down_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "28",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s2_b0_down_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s2_b0_down_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "64",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s2_b0_down_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        64,
+        56,
+        56,
+        32,
+        27,
+        27,
+        2,
+        0
+      ],
+      "args": [
+        "DRAM_s1_b1",
+        "BRAM_in_patch_stride2_k1",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b0_down_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        128,
+        64,
+        1,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s2_b0_down",
+        "BRAM_weight_tile_1",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s2_b0_down_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        27,
+        27,
+        128,
+        32,
+        1,
+        128,
+        14,
+        14,
+        2,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride2_k1",
+        "BRAM_weight_tile_1",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_down_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_down_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_down_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s2_skip",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_down_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_down_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_down_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_residual_add_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "128",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s2_b0_residual_add_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "28",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s2_b0_residual_add_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "28",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s2_b0_residual_load_main_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s2_b0",
+        "BRAM_out_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b0_residual_load_skip_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s2_skip",
+        "BRAM_skip_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b0_residual_add_tile": {
+      "func_name": "matrix_add_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_skip_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_residual_relu_tile": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_residual_store_tile": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s2_b0",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b0_residual_add_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_residual_add_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b0_residual_add_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_conv1_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "128",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s2_b1_conv1_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "28",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s2_b1_conv1_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "28",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s2_b1_conv1_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s2_b1_conv1_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "128",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s2_b1_conv1_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        128,
+        28,
+        28,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s2_b0",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b1_conv1_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        128,
+        128,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s2_b1_1",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s2_b1_conv1_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv1_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_conv1_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv1_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        128,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s2_b1_1",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s2_b1_conv1_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv1_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv1_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s2_mid1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv1_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_conv1_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_conv1_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_conv2_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "128",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s2_b1_conv2_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "28",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s2_b1_conv2_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "28",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s2_b1_conv2_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s2_b1_conv2_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "128",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s2_b1_conv2_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        128,
+        28,
+        28,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s2_mid1",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b1_conv2_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        128,
+        128,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s2_b1_2",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s2_b1_conv2_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv2_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_conv2_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv2_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        128,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s2_b1_2",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s2_b1_conv2_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv2_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s2_b1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_conv2_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_conv2_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_conv2_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_residual_add_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "128",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s2_b1_residual_add_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "28",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s2_b1_residual_add_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "28",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s2_b1_residual_load_main_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s2_b1",
+        "BRAM_out_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b1_residual_load_skip_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s2_b0",
+        "BRAM_skip_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s2_b1_residual_add_tile": {
+      "func_name": "matrix_add_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_skip_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_residual_relu_tile": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_residual_store_tile": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        128,
+        28,
+        28,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s2_b1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s2_b1_residual_add_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_residual_add_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s2_b1_residual_add_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_conv1_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "256",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s3_b0_conv1_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "14",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s3_b0_conv1_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "14",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s3_b0_conv1_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s3_b0_conv1_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "128",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s3_b0_conv1_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        128,
+        28,
+        28,
+        32,
+        29,
+        29,
+        2,
+        1
+      ],
+      "args": [
+        "DRAM_s2_b1",
+        "BRAM_in_patch_stride2_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b0_conv1_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        256,
+        128,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s3_b0_1",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s3_b0_conv1_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        29,
+        29,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        2,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride2_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv1_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_conv1_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv1_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        256,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s3_b0_1",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s3_b0_conv1_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv1_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv1_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s3_mid1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv1_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_conv1_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_conv1_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_conv2_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "256",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s3_b0_conv2_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "14",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s3_b0_conv2_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "14",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s3_b0_conv2_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s3_b0_conv2_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "256",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s3_b0_conv2_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        256,
+        14,
+        14,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s3_mid1",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b0_conv2_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        256,
+        256,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s3_b0_2",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s3_b0_conv2_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv2_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_conv2_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv2_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        256,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s3_b0_2",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s3_b0_conv2_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv2_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s3_b0",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_conv2_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_conv2_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_conv2_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_down_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "256",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s3_b0_down_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "14",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s3_b0_down_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "14",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s3_b0_down_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s3_b0_down_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "128",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s3_b0_down_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        128,
+        28,
+        28,
+        32,
+        27,
+        27,
+        2,
+        0
+      ],
+      "args": [
+        "DRAM_s2_b1",
+        "BRAM_in_patch_stride2_k1",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b0_down_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        256,
+        128,
+        1,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s3_b0_down",
+        "BRAM_weight_tile_1",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s3_b0_down_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        27,
+        27,
+        128,
+        32,
+        1,
+        128,
+        14,
+        14,
+        2,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride2_k1",
+        "BRAM_weight_tile_1",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_down_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_down_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_down_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s3_skip",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_down_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_down_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_down_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_residual_add_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "256",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s3_b0_residual_add_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "14",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s3_b0_residual_add_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "14",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s3_b0_residual_load_main_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s3_b0",
+        "BRAM_out_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b0_residual_load_skip_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s3_skip",
+        "BRAM_skip_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b0_residual_add_tile": {
+      "func_name": "matrix_add_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_skip_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_residual_relu_tile": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_residual_store_tile": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s3_b0",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b0_residual_add_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_residual_add_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b0_residual_add_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_conv1_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "256",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s3_b1_conv1_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "14",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s3_b1_conv1_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "14",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s3_b1_conv1_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s3_b1_conv1_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "256",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s3_b1_conv1_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        256,
+        14,
+        14,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s3_b0",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b1_conv1_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        256,
+        256,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s3_b1_1",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s3_b1_conv1_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv1_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_conv1_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv1_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        256,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s3_b1_1",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s3_b1_conv1_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv1_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv1_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s3_mid1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv1_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_conv1_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_conv1_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_conv2_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "256",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s3_b1_conv2_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "14",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s3_b1_conv2_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "14",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s3_b1_conv2_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s3_b1_conv2_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "256",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s3_b1_conv2_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        256,
+        14,
+        14,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s3_mid1",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b1_conv2_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        256,
+        256,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s3_b1_2",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s3_b1_conv2_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv2_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_conv2_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv2_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        256,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s3_b1_2",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s3_b1_conv2_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv2_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s3_b1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_conv2_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_conv2_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_conv2_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_residual_add_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "256",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s3_b1_residual_add_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "14",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s3_b1_residual_add_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "14",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s3_b1_residual_load_main_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s3_b1",
+        "BRAM_out_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b1_residual_load_skip_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s3_b0",
+        "BRAM_skip_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s3_b1_residual_add_tile": {
+      "func_name": "matrix_add_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_skip_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_residual_relu_tile": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_residual_store_tile": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        256,
+        14,
+        14,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s3_b1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s3_b1_residual_add_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_residual_add_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s3_b1_residual_add_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_conv1_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "512",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s4_b0_conv1_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "7",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s4_b0_conv1_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "7",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s4_b0_conv1_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s4_b0_conv1_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "256",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s4_b0_conv1_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        256,
+        14,
+        14,
+        32,
+        29,
+        29,
+        2,
+        1
+      ],
+      "args": [
+        "DRAM_s3_b1",
+        "BRAM_in_patch_stride2_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b0_conv1_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        512,
+        256,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s4_b0_1",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s4_b0_conv1_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        29,
+        29,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        2,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride2_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv1_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_conv1_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv1_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        512,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s4_b0_1",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s4_b0_conv1_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv1_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv1_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s4_mid1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv1_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_conv1_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_conv1_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_conv2_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "512",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s4_b0_conv2_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "7",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s4_b0_conv2_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "7",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s4_b0_conv2_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s4_b0_conv2_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "512",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s4_b0_conv2_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        512,
+        7,
+        7,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s4_mid1",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b0_conv2_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        512,
+        512,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s4_b0_2",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s4_b0_conv2_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv2_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_conv2_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv2_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        512,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s4_b0_2",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s4_b0_conv2_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv2_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s4_b0",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_conv2_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_conv2_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_conv2_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_down_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "512",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s4_b0_down_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "7",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s4_b0_down_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "7",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s4_b0_down_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s4_b0_down_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "256",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s4_b0_down_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        256,
+        14,
+        14,
+        32,
+        27,
+        27,
+        2,
+        0
+      ],
+      "args": [
+        "DRAM_s3_b1",
+        "BRAM_in_patch_stride2_k1",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b0_down_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        512,
+        256,
+        1,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s4_b0_down",
+        "BRAM_weight_tile_1",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s4_b0_down_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        27,
+        27,
+        128,
+        32,
+        1,
+        128,
+        14,
+        14,
+        2,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride2_k1",
+        "BRAM_weight_tile_1",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_down_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_down_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_down_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s4_skip",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_down_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_down_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_down_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_residual_add_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "512",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s4_b0_residual_add_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "7",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s4_b0_residual_add_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "7",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s4_b0_residual_load_main_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s4_b0",
+        "BRAM_out_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b0_residual_load_skip_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s4_skip",
+        "BRAM_skip_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b0_residual_add_tile": {
+      "func_name": "matrix_add_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_skip_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_residual_relu_tile": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_residual_store_tile": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s4_b0",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b0_residual_add_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_residual_add_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b0_residual_add_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_conv1_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "512",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s4_b1_conv1_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "7",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s4_b1_conv1_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "7",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s4_b1_conv1_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s4_b1_conv1_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "512",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s4_b1_conv1_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        512,
+        7,
+        7,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s4_b0",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b1_conv1_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        512,
+        512,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s4_b1_1",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s4_b1_conv1_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv1_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_conv1_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv1_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        512,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s4_b1_1",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s4_b1_conv1_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv1_relu": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv1_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s4_mid1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv1_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_conv1_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_conv1_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_conv2_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "512",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s4_b1_conv2_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "7",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s4_b1_conv2_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "7",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s4_b1_conv2_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile"
+      ]
+    },
+    "s4_b1_conv2_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "512",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "s4_b1_conv2_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        512,
+        7,
+        7,
+        32,
+        16,
+        16,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_s4_mid1",
+        "BRAM_in_patch_stride1_k3",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b1_conv2_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        512,
+        512,
+        3,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_w_s4_b1_2",
+        "BRAM_weight_tile_3",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "s4_b1_conv2_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        16,
+        16,
+        128,
+        32,
+        3,
+        128,
+        14,
+        14,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_stride1_k3",
+        "BRAM_weight_tile_3",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv2_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_conv2_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv2_load_bn": {
+      "func_name": "load_bn_tile",
+      "dims": [
+        512,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s4_b1_2",
+        "BRAM_bn_tile",
+        "co_base"
+      ]
+    },
+    "s4_b1_conv2_batchnorm": {
+      "func_name": "batchnorm_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_bn_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv2_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s4_b1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_conv2_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_conv2_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_conv2_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_residual_add_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "512",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "s4_b1_residual_add_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "7",
+        "14",
+        "valid_oh",
+        "14"
+      ]
+    },
+    "s4_b1_residual_add_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "7",
+        "14",
+        "valid_ow",
+        "14"
+      ]
+    },
+    "s4_b1_residual_load_main_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s4_b1",
+        "BRAM_out_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b1_residual_load_skip_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "DRAM_s4_b0",
+        "BRAM_skip_tile",
+        "co_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "s4_b1_residual_add_tile": {
+      "func_name": "matrix_add_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_skip_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_residual_relu_tile": {
+      "func_name": "activation_tile",
+      "dims": [
+        128,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_tile",
+        "relu"
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "BRAM_out_tile",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_residual_store_tile": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        14,
+        14
+      ],
+      "args": [
+        "BRAM_out_tile",
+        "DRAM_s4_b1",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "s4_b1_residual_add_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_residual_add_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "s4_b1_residual_add_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "global_pool_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "512",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "global_pool_clear_acc": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        1,
+        1
+      ],
+      "args": [
+        "BRAM_gap_out"
+      ]
+    },
+    "global_pool_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "gh_base",
+        "0",
+        "7",
+        "7",
+        "valid_gh",
+        "7"
+      ]
+    },
+    "global_pool_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "gw_base",
+        "0",
+        "7",
+        "7",
+        "valid_gw",
+        "7"
+      ]
+    },
+    "global_pool_load_tile": {
+      "func_name": "load_fmap_tile",
+      "dims": [
+        512,
+        7,
+        7,
+        128,
+        7,
+        7
+      ],
+      "args": [
+        "DRAM_s4_b1",
+        "BRAM_gap_tile",
+        "co_base",
+        "gh_base",
+        "gw_base"
+      ]
+    },
+    "global_pool_accumulate": {
+      "func_name": "avgpool_accumulate_tile",
+      "dims": [
+        128,
+        7,
+        7
+      ],
+      "args": [
+        "BRAM_gap_tile",
+        "BRAM_gap_out",
+        "valid_co",
+        "valid_gh",
+        "valid_gw"
+      ]
+    },
+    "global_pool_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "global_pool_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "global_pool_finalize": {
+      "func_name": "avgpool_finalize_tile",
+      "dims": [
+        128,
+        49
+      ],
+      "args": [
+        "BRAM_gap_out",
+        "BRAM_gap_out",
+        "valid_co"
+      ]
+    },
+    "global_pool_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        512,
+        1,
+        1,
+        128,
+        1,
+        1
+      ],
+      "args": [
+        "BRAM_gap_out",
+        "DRAM_gap",
+        "co_base",
+        "0",
+        "0",
+        "valid_co",
+        "1",
+        "1"
+      ]
+    },
+    "global_pool_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "fc_co_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "co_base",
+        "0",
+        "1000",
+        "128",
+        "valid_co",
+        "128"
+      ]
+    },
+    "fc_oh_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "oh_base",
+        "0",
+        "1",
+        "1",
+        "valid_oh",
+        "1"
+      ]
+    },
+    "fc_ow_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ow_base",
+        "0",
+        "1",
+        "1",
+        "valid_ow",
+        "1"
+      ]
+    },
+    "fc_clear_out": {
+      "func_name": "clear_tile",
+      "dims": [
+        128,
+        1,
+        1
+      ],
+      "args": [
+        "BRAM_fc_out"
+      ]
+    },
+    "fc_ci_loop": {
+      "func_name": "loop_begin",
+      "dims": [],
+      "args": [
+        "ci_base",
+        "0",
+        "512",
+        "32",
+        "valid_ci",
+        "32"
+      ]
+    },
+    "fc_load_patch": {
+      "func_name": "load_fmap_patch",
+      "dims": [
+        512,
+        1,
+        1,
+        32,
+        1,
+        1,
+        1,
+        0
+      ],
+      "args": [
+        "DRAM_gap",
+        "BRAM_in_patch_1",
+        "ci_base",
+        "oh_base",
+        "ow_base"
+      ]
+    },
+    "fc_load_weight": {
+      "func_name": "load_weight_tile",
+      "dims": [
+        1000,
+        512,
+        1,
+        128,
+        32
+      ],
+      "args": [
+        "DRAM_fc",
+        "BRAM_weight_tile_1",
+        "co_base",
+        "ci_base"
+      ]
+    },
+    "fc_conv": {
+      "func_name": "conv_tile",
+      "dims": [
+        32,
+        1,
+        1,
+        128,
+        32,
+        1,
+        128,
+        1,
+        1,
+        1,
+        8,
+        64
+      ],
+      "args": [
+        "BRAM_in_patch_1",
+        "BRAM_weight_tile_1",
+        "BRAM_fc_out",
+        "valid_co",
+        "valid_ci",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "fc_ci_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "fc_quantize": {
+      "func_name": "quantize_tile",
+      "dims": [
+        128,
+        1,
+        1
+      ],
+      "args": [
+        "BRAM_fc_out",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "fc_store": {
+      "func_name": "store_fmap_tile",
+      "dims": [
+        1000,
+        1,
+        1,
+        128,
+        1,
+        1
+      ],
+      "args": [
+        "BRAM_fc_out",
+        "DRAM_out",
+        "co_base",
+        "oh_base",
+        "ow_base",
+        "valid_co",
+        "valid_oh",
+        "valid_ow"
+      ]
+    },
+    "fc_ow_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "fc_oh_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    },
+    "fc_co_loop_end": {
+      "func_name": "loop_end",
+      "dims": [],
+      "args": []
+    }
+  },
+  "output_dram_names": [
+    "DRAM_out"
+  ],
+  "FPGA_name": "xczu9eg-ffvb1156-2-e",
+  "clock_period": 10,
+  "task": [
+    "csynth"
+  ],
+  "data_type": "ap_fixed<32,10>",
+  "production_revision": 2,
+  "top_func_name": "top"
+}

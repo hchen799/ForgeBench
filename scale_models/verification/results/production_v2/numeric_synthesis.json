@@ -1,0 +1,7 @@
+{
+  "scope": "division, square root, and exp helpers only; not full model synthesis",
+  "status": "PASS",
+  "tool": "Vitis HLS 2024.1.2",
+  "source_sha256": "96d77fc7747a0267ba26e0ac13e652d02f394b5648649ef982de55be2ffc7dae",
+  "log_sha256": "18b6fdd7b8422ae0eb20b1f0194bc670701f0a9268e7a4017dd7e9610182db04"
+}

@@ -1,6 +1,7 @@
 import os
 import json
 import shutil
+from production_types import REVISION, annotate_storage
 from generate_code import (
     generate_top_function,
     generate_top_h,
@@ -23,27 +24,27 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     run_name = os.path.splitext(os.path.basename(config_path))[0]
     run_dir = create_run_directory(run_name, base_dir)
     
-    brams = config["brams"]
-    drams = config["drams"]
     ops = config["ops"]
+    brams, drams = annotate_storage(config["brams"], config["drams"], ops)
     output_dram_names = config["output_dram_names"]
     data_type = config.get("data_type", "ap_fixed<16, 5>")
     top_func_name = config.get("top_func_name", "top")
     fpga_name = config.get("FPGA_name", FPGA_name)
     clock= config.get("clock_period", clock_period)
     tasks = config.get("task", task)
-
-    
-    # Generate and save files in run directory
+    config.update(brams=brams, drams=drams, production_revision=REVISION)
+    # Validate and construct the code before replacing any saved project file.
     top_code = generate_top_function(brams, drams, ops, data_type, top_func_name)
+    top_h_code = generate_top_h(drams, data_type, top_func_name)
+    tb_code = generate_testbench_code(drams, output_dram_names, data_type, top_func_name)
+
+    # Generate and save files in run directory
     with open(os.path.join(run_dir, "top.cpp"), "w") as f:
         f.write(top_code)
     
-    top_h_code = generate_top_h(drams, data_type, top_func_name)
     with open(os.path.join(run_dir, "top.h"), "w") as f:
         f.write(top_h_code)
     
-    tb_code = generate_testbench_code(drams, output_dram_names, data_type, top_func_name)
     with open(os.path.join(run_dir, "tb_top.cpp"), "w") as f:
         f.write(tb_code)
     
@@ -54,6 +55,9 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     #         shutil.move(dram_txt, os.path.join(run_dir, dram_txt))
     
     generate_full_tcl_file(drams, fpga_name, clock, tasks, output_filename=os.path.join(run_dir, "run_hls.tcl"))
+    with open(os.path.join(run_dir, "resolved_config.json"), "w") as f:
+        json.dump(config, f, indent=2)
+        f.write("\n")
     print(f"Generated files for {run_name} in {run_dir}")
 
 

@@ -24,13 +24,14 @@ from .arithmetic import (
 
 
 class Weights:
-    def __init__(self, folder, shapes):
+    def __init__(self, folder, shapes, dtype="<i2"):
         self.folder, self.shapes = Path(folder), shapes
+        self.dtype = dtype
 
     def get(self, name, layer=None):
         shape = self.shapes[name]
         array = np.memmap(
-            self.folder / (name + ".bin"), dtype="<i2", mode="r", shape=shape
+            self.folder / (name + ".bin"), dtype=self.dtype, mode="r", shape=shape
         )
         if layer is not None:
             array = array[layer]
@@ -197,6 +198,14 @@ class LlamaReference:
             if fixed
             else FP64Ops()
         )
+        if fixed and getattr(project, "contract_version", 1) == 2:
+            from .repaired import LlamaOps
+
+            self.ops = LlamaOps(
+                project.tile_in,
+                project.hidden_chunk,
+                getattr(project, "vendor_root", None),
+            )
         shape = project.ports["DRAM_k_cache"]
         self.layers, _, self.kv_heads, self.head_dim = shape
         self.hidden = project.ports["DRAM_embedding"][1]

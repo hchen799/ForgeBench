@@ -32,19 +32,12 @@ void conv2d(
     #pragma HLS array_partition variable=kernel type=cyclic factor={ARRAY_FACTOR_KERNEL2} dim=2
     // #pragma HLS array_partition variable=bias   type=cyclic factor={ARRAY_FACTOR_BIAS}   dim=1
     #pragma HLS array_partition variable=output type=cyclic factor={ARRAY_FACTOR_OUTPUT}  dim=1
-    // Initialize output to {BIAS_INIT_EXPR}, with co in the innermost loop
-    for (int i = 0; i < {H_OUT}; i++) {{
-        for (int j = 0; j < {W_OUT}; j++) {{
-            for (int co = 0; co < {C_OUT}; co++) {{
-            #pragma HLS unroll factor={UNROLL_FACTOR_C_OUT}
-                output[co][i][j] = {BIAS_INIT_EXPR};
-            }}
-        }}
-    }}
-
     // Perform convolution (co in the innermost loop)
     for (int i = 0; i < {H_OUT}; i++) {{
         for (int j = 0; j < {W_OUT}; j++) {{
+            acc_t sums[{C_OUT}];
+            #pragma HLS array_partition variable=sums type=cyclic factor={ARRAY_FACTOR_OUTPUT}
+            for (int co=0; co<{C_OUT}; ++co) sums[co] = {BIAS_INIT_EXPR};
             for (int kh = 0; kh < {K}; kh++) {{
                 for (int kw = 0; kw < {K}; kw++) {{
                     int in_row = i * {STRIDE} - {PAD} + kh;
@@ -54,12 +47,13 @@ void conv2d(
                         #pragma HLS unroll factor={UNROLL_FACTOR_C_IN}
                             for (int co = 0; co < {C_OUT}; co++) {{
                                 #pragma HLS unroll factor={UNROLL_FACTOR_C_OUT}
-                                output[co][i][j] += input[ci][in_row][in_col] * kernel[co][ci][kh][kw];
+                                sums[co] += {PRODUCT_EXPR};
                             }}
                         }}
                     }}
                 }}
             }}
+            for (int co=0; co<{C_OUT}; ++co) output[co][i][j] = sums[co];
         }}
     }}
 }}

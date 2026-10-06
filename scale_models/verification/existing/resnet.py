@@ -1,8 +1,7 @@
-"""FP64 and AP_TRN/AP_WRAP PyTorch models for production ResNet-18.
+"""Independent FP64 and fixed PyTorch graphs for production ResNet-18/50.
 
-The intended graph is shared; full-buffer and tiled versions have separately
-named reference contracts. Both saved versions accumulate each conv product
-into data_t, unlike the dedicated accelerator's wide/shared-exponent scheme.
+Source contracts select legacy v1 arithmetic or repaired v2 wide reductions.
+The bottleneck graph preserves the production projection without extra BN.
 """
 import torch
 import torch.nn.functional as F
@@ -61,7 +60,7 @@ class FixedOps:
 
 
 @torch.inference_mode()
-def forward(tensors, ops, checkpoint):
+def forward(tensors, ops, checkpoint, depth=18):
     """Explicit independent graph: never interpret JSON ops or generated C++."""
 
     def emit(name, value):
@@ -75,32 +74,50 @@ def forward(tensors, ops, checkpoint):
     emit("stem", x)
     x = F.max_pool2d(F.pad(x[None].double(), (1, 1, 1, 1)), 3, 2)[0].to(x.dtype)
     emit("pool", x)
+    blocks = (2, 2, 2, 2) if depth == 18 else (3, 4, 6, 3)
     for stage in range(1, 5):
-        for block in range(2):
+        for block in range(blocks[stage - 1]):
             name = f"s{stage}_b{block}"
             stride = 2 if stage > 1 and block == 0 else 1
             skip = x
-            y = ops.conv(x, tensors[f"DRAM_w_{name}_1"], stride, 1)
+            bottleneck = depth == 50
+            y = ops.conv(
+                x,
+                tensors[f"DRAM_w_{name}_1"],
+                1 if bottleneck else stride,
+                0 if bottleneck else 1,
+            )
             y = ops.bn(y, tensors[f"DRAM_bn_{name}_1"]).clamp_min(0)
-            y = ops.conv(y, tensors[f"DRAM_w_{name}_2"], 1, 1)
+            y = ops.conv(y, tensors[f"DRAM_w_{name}_2"], stride if bottleneck else 1, 1)
             y = ops.bn(y, tensors[f"DRAM_bn_{name}_2"])
-            if stride == 2:
-                skip = ops.conv(skip, tensors[f"DRAM_w_{name}_down"], 2)
+            if bottleneck:
+                y = ops.conv(y.clamp_min(0), tensors[f"DRAM_w_{name}_3"])
+                y = ops.bn(y, tensors[f"DRAM_bn_{name}_3"])
+            if f"DRAM_w_{name}_down" in tensors:
+                skip = ops.conv(skip, tensors[f"DRAM_w_{name}_down"], stride)
             x = emit(name, ops.add(y, skip).clamp_min(0))
     x = emit("gap", ops.gap(x))
-    return emit("logits", ops.fc(x, tensors["DRAM_fc"].reshape(1000, 512)))
+    return emit("logits", ops.fc(x, tensors["DRAM_fc"].reshape(1000, -1)))
 
 
 class ResNetReference:
-    def __init__(self, variant, fixed):
-        if variant not in ("resnet18-full", "resnet18-tiled"):
+    def __init__(self, variant, fixed, version=1):
+        if variant not in (
+            "resnet18-full",
+            "resnet18-tiled",
+            "resnet50-full",
+            "resnet50-tiled",
+        ):
             raise ValueError("unsupported ResNet reference variant")
         self.variant, self.fixed = variant, fixed
-        self.ops = FixedOps() if fixed else FP64Ops()
+        from .repaired import ResNetOps
+
+        self.ops = (ResNetOps() if version == 2 else FixedOps()) if fixed else FP64Ops()
+        self.depth = 50 if variant.startswith("resnet50") else 18
 
     def run(self, tensors, checkpoint):
         values = {
             name: tensor.long() if self.fixed else tensor.double() / DATA.scale
             for name, tensor in tensors.items()
         }
-        return forward(values, self.ops, checkpoint)
+        return forward(values, self.ops, checkpoint, self.depth)

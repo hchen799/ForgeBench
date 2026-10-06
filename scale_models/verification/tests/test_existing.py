@@ -218,8 +218,8 @@ def test_saved_resnet_interface(name):
     )
     assert len(project.outputs) == 12
     assert project.outputs["logits"][1] == (1000,)
-    if name == "RESNET18":
-        assert any(f["kind"] == "unread_parameter_ports" for f in project.findings)
+    assert project.contract_version == 2
+    assert not project.findings
     project.assert_unchanged()
 
 
@@ -230,11 +230,9 @@ def test_saved_llama_interface():
     p = Project(folder, "llama3")
     assert p.variant == "llama3-prefill"
     assert p.max_ctx == 2048
-    assert {f["kind"] for f in p.findings} >= {
-        "zero_rms_divisor",
-        "control_range",
-        "zero_attention_divisor",
-    }
+    assert p.contract_version == 2
+    assert not p.findings
+    assert p.port_types["DRAM_token_ids"] == "int32_t"
 
 
 def test_llama_linear_and_norm(vendor):
@@ -319,12 +317,22 @@ def test_corrupted_input(tmp_path):
         validate_inputs(tmp_path, entry)
 
 
-def test_llama_preflight_rejects_arithmetic_even_with_small_token_ids(tmp_path):
+def test_llama_preflight_and_inspection_do_not_execute(tmp_path):
     prefill = SCALE / "hls_files/LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_16_5_"
     decode = SCALE / "hls_files/LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_16_5_"
     if not prefill.exists() or not decode.exists():
         pytest.skip("production Llama pair absent")
-    output = tmp_path / "invalid_llama"
+    old_prefill = Project(prefill, "llama3")
+    old_decode = Project(decode, "llama3")
+    old_prefill.contract_version = old_decode.contract_version = 1
+    _, failures = llama_preflight(
+        old_prefill,
+        old_decode,
+        SimpleNamespace(prefill=4, decode=2, tokens="1,2,3,4,5,6", seed=42),
+    )
+    assert len(failures) == 2
+    assert "RMSNorm" in failures[0] and "attention" in failures[1]
+    output = tmp_path / "inspected_llama"
     result = subprocess.run(
         [
             sys.executable,
@@ -336,7 +344,8 @@ def test_llama_preflight_rejects_arithmetic_even_with_small_token_ids(tmp_path):
             "--decode-project",
             str(decode),
             "--tokens",
-            "1,2,3,4,5,6",
+            "128000,43,160,2000,31,27",
+            "--inspect-only",
             "--output",
             str(output),
         ],
@@ -344,15 +353,13 @@ def test_llama_preflight_rejects_arithmetic_even_with_small_token_ids(tmp_path):
         text=True,
         timeout=60,
     )
-    assert result.returncode == 2, result.stdout + result.stderr
+    assert result.returncode == 0, result.stdout + result.stderr
     report = json.loads((output / "summary.json").read_text())
-    assert report["status"] == "INVALID_DESIGN"
+    assert report["status"] == "INSPECTED_NOT_EXECUTED"
     assert (
         report["implementation_verdict"] == report["mathematical_verdict"] == "NOT_RUN"
     )
-    assert len(report["preflight_failures"]) == 2
-    assert "RMSNorm" in report["preflight_failures"][0]
-    assert "attention" in report["preflight_failures"][1]
+    assert not report["preflight_failures"]
     assert len(report["reference_pairs"]) == 2
     assert report["original_sources_unchanged"]
     assert not report["accelerator_executed"]
