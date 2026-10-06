@@ -164,8 +164,6 @@ s4_b0 PASS FAIL max_abs= 0.02554083777927163
 s4_b1 PASS FAIL max_abs= 0.025272013081750533
 s4_b2 PASS FAIL max_abs= 0.025860816016499477
 FAIL
-Fixed-point comparison: PASS
-FP64 comparison: FAIL
 
 
 

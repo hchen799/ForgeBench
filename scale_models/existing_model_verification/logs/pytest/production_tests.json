@@ -1,6 +1,0 @@
-{
-  "command": "python -m pytest existing_model_verification/tests -q",
-  "exit_code": 0,
-  "elapsed_seconds": 108.99,
-  "sha256": "68a0dcd8a5644090b23a391d4602708d7aeb4878c779f510f9894d53f3b2b111"
-}

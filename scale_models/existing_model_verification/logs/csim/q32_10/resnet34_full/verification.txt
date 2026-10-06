@@ -131,8 +131,6 @@ s4_b0 PASS PASS max_abs= 2.8672559089670813e-05
 s4_b1 PASS PASS max_abs= 2.9860867948983127e-05
 s4_b2 PASS PASS max_abs= 3.92471719141696e-05
 PASS
-Fixed-point comparison: PASS
-FP64 comparison: PASS
 
 Final layer output comparison:
   resnet34/logits: shape=[1000] codes=PASS mismatches=0 max_code_error=0 FP64=PASS max_abs=2.52893738164e-05 relative_l2=2.187545985899053e-06 limits(max_abs=0.1, relative_l2=0.05)

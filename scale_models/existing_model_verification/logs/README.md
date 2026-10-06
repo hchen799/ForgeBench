@@ -13,8 +13,3 @@ The ctx2048 directory is named `llama3_8b`; the ctx8192 directory is
 Files are renamed from `.log` to `.txt` because the repository globally ignores
 `*.log`. Reports under `../results/` are the authoritative machine-readable
 records; these logs preserve compiler and execution evidence.
-
-`pytest/production_tests.txt` records the current 51-test production suite;
-`pytest/full_verification_tests.txt` records the current 96-test combined
-regression. Older `87_tests` files are retained as historical evidence from the
-previous model set.

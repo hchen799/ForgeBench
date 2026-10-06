@@ -23,8 +23,6 @@ logits PASS PASS max_abs= 1.414960534829035e-05
 k_cache PASS PASS max_abs= 1.2496381620374919e-05
 v_cache PASS PASS max_abs= 1.0953633355903492e-05
 PASS
-Fixed-point comparison: PASS
-FP64 comparison: PASS
 
 
 

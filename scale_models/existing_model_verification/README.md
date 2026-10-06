@@ -20,6 +20,37 @@ relative L2 error <= **5%** at every observed tensor. Maximum absolute error is
 reported as a diagnostic; only an all-zero FP64 tensor uses the documented 0.1
 absolute fallback because relative L2 is undefined.
 
+Relative L2 error is calculated as:
+
+```text
+relative_l2 = ||y_hls - y_fp64||_2 / ||y_fp64||_2
+relative_l2_percent = relative_l2 * 100
+```
+
+Here, `y_fp64` is the output of the independent FP64 PyTorch graph. The HLS
+output is stored as signed fixed-point integer codes and is converted to real
+values before comparison:
+
+```text
+y_hls = hls_integer_code / 2^(W - I)
+```
+
+Therefore, `ap_fixed<16,5>` uses `hls_integer_code / 2^11`, while
+`ap_fixed<32,10>` uses `hls_integer_code / 2^22`. For a tensor with elements
+indexed by `i`, the calculation can also be written as:
+
+```text
+relative_l2 = sqrt(sum_i((y_hls[i] - y_fp64[i])^2))
+              / sqrt(sum_i(y_fp64[i]^2))
+```
+
+For example, the recorded ResNet-34 Q16.5 logits result is
+`relative_l2 = 0.0076489937`; multiplying by 100 gives `0.76489937%`, which is
+below the 5% threshold. This metric is calculated separately for every
+observed intermediate tensor and final output. The table below displays the
+final-logit values, while the run verdict requires every observed tensor to
+pass.
+
 | Model and implementation | `ap_fixed<16,5>` logits relative L2 | `ap_fixed<32,10>` logits relative L2 |
 |---|---:|---:|
 | ResNet-18 full, tiled | PASS (0.5113%) | PASS (0.000192%) |

@@ -75,8 +75,6 @@ s3_b1 PASS PASS max_abs= 0.011129191038952602
 s4_b0 PASS PASS max_abs= 0.010702430028567633
 s4_b1 PASS PASS max_abs= 0.011408643632097482
 PASS
-Fixed-point comparison: PASS
-FP64 comparison: PASS
 
 
 

@@ -470,8 +470,6 @@ s4_b0 PASS FAIL max_abs= 0.2091897876969515
 s4_b1 PASS FAIL max_abs= 0.2280154166843431
 s4_b2 PASS FAIL max_abs= 0.20789465851491862
 FAIL
-Fixed-point comparison: PASS
-FP64 comparison: FAIL
 
 Final layer output comparison:
   resnet152/logits: shape=[1000] codes=PASS mismatches=0 max_code_error=0 FP64=FAIL max_abs=0.116541724115 relative_l2=0.020461992978034103 limits(max_abs=0.1, relative_l2=0.05)
