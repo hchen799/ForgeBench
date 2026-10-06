@@ -17,6 +17,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from existing_model_verification.references.project import Project, sha, write_json
 from existing_model_verification.references.runner import (
+    MAX_RELATIVE_L2_ERROR,
+    ZERO_REFERENCE_MAX_ABSOLUTE_ERROR,
     find_vitis,
     llama_preflight,
     run_llama,
@@ -42,7 +44,9 @@ class Tee:
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--family", choices=("resnet18", "resnet50", "llama3"), required=True
+        "--family",
+        choices=("resnet18", "resnet34", "resnet50", "resnet101", "resnet152", "llama3"),
+        required=True,
     )
     parser.add_argument("--project", required=True, type=Path)
     parser.add_argument("--config", type=Path)
@@ -78,7 +82,10 @@ def main(argv=None):
         mathematical_verdict="NOT_RUN",
         seed=args.seed,
         threads=args.threads,
-        thresholds=dict(max_absolute=0.1, relative_l2=0.01),
+        thresholds=dict(
+            relative_l2=MAX_RELATIVE_L2_ERROR,
+            zero_reference_max_absolute=ZERO_REFERENCE_MAX_ABSOLUTE_ERROR,
+        ),
         execution="Vitis HLS C simulation",
         accelerator_executed=False,
         claim="saved production source; synthetic parameters; no trained accuracy or RTL claim",
@@ -216,6 +223,22 @@ def main(argv=None):
             report["exit_code"] = rc
             write_json(output / "summary.json", report)
             summary = f"{report['status']}\nFixed-point comparison: {report['implementation_verdict']}\nFP64 comparison: {report['mathematical_verdict']}\n"
+            cases = report.get("cases", {})
+            if cases:
+                summary += "\nFinal layer output comparison:\n"
+                for case_name, tensors in cases.items():
+                    final = tensors.get("logits")
+                    if final:
+                        summary += (
+                            f"  {case_name}/logits: shape={final['shape']} "
+                            f"codes={final['implementation_verdict']} "
+                            f"mismatches={final['mismatching_codes']} "
+                            f"max_code_error={final['max_code_error']} "
+                            f"FP64={final['mathematical_verdict']} "
+                            f"max_abs={final['max_abs']:.12g} "
+                            f"relative_l2={final['relative_l2']!r} "
+                            f"relative_l2_limit={MAX_RELATIVE_L2_ERROR}\n"
+                        )
             if report.get("error"):
                 summary += "Error: " + report["error"] + "\n"
             summary += "\n".join(report.get("preflight_failures", [])) + "\n"

@@ -6,8 +6,8 @@
   "seed": 42,
   "threads": 4,
   "thresholds": {
-    "max_absolute": 0.1,
-    "relative_l2": 0.01
+    "relative_l2": 0.05,
+    "zero_reference_max_absolute": 0.1
   },
   "execution": "Vitis HLS C simulation",
   "accelerator_executed": true,
@@ -722,7 +722,10 @@
           "actual": "e74de919a6c095c63685819fd8def3915e6ddbfb45efba73ba87125c7261353d",
           "fixed": "911309621fc782d15a09221a1fd1f5ceb808ffbd1883fa3dead506017ba9dc61",
           "fp64": "69c5dfc4324442d9503adb9fa2a488aa52087d51af7436c33599d592c0317e9f"
-        }
+        },
+        "shape": [
+          1000
+        ]
       },
       "stem": {
         "elements": 802816,
@@ -2341,5 +2344,16 @@
     }
   },
   "elapsed_seconds": 77.10194403300557,
-  "exit_code": 0
+  "exit_code": 0,
+  "verdict_re_evaluation": {
+    "metrics_reused": [
+      "max_abs",
+      "relative_l2"
+    ],
+    "accelerator_rerun": false,
+    "previous_thresholds": {
+      "max_absolute": 0.1,
+      "relative_l2": 0.01
+    }
+  }
 }

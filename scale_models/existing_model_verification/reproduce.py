@@ -22,14 +22,33 @@ FORMATS = {
 PROJECTS = {
     "resnet18-full": ("resnet18", "RESNET18", None),
     "resnet18-tiled": ("resnet18", "RESNET18_TILED", None),
+    "resnet34-full": ("resnet34", "RESNET34", None),
+    "resnet34-tiled": ("resnet34", "RESNET34_TILED", None),
     "resnet50-full": ("resnet50", "RESNET50", None),
     "resnet50-tiled": ("resnet50", "RESNET50_TILED", None),
+    "resnet101-full": ("resnet101", "RESNET101", None),
+    "resnet101-tiled": ("resnet101", "RESNET101_TILED", None),
+    "resnet152-full": ("resnet152", "RESNET152", None),
+    "resnet152-tiled": ("resnet152", "RESNET152_TILED", None),
+    "llama3-8b-ctx2048": (
+        "llama3",
+        "LLAMA3_8B_PREFILL_ctx2048",
+        "LLAMA3_8B_DECODE_ctx2048",
+    ),
+    "llama3-8b-ctx8192": (
+        "llama3",
+        "LLAMA3_8B_PREFILL_ctx8192",
+        "LLAMA3_8B_DECODE_ctx8192",
+    ),
+    # Backward-compatible spelling used by the first verification campaign.
     "llama3-8b": (
         "llama3",
         "LLAMA3_8B_PREFILL_ctx2048",
         "LLAMA3_8B_DECODE_ctx2048",
     ),
 }
+
+DEFAULT_PROJECTS = tuple(name for name in PROJECTS if name != "llama3-8b")
 
 
 def selected_precisions(value):
@@ -137,7 +156,7 @@ def parser():
         "--models",
         nargs="+",
         choices=tuple(PROJECTS),
-        default=list(PROJECTS),
+        default=list(DEFAULT_PROJECTS),
     )
     result = argparse.ArgumentParser(description=__doc__)
     commands = result.add_subparsers(required=True)

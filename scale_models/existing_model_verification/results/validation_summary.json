@@ -1,129 +1,30 @@
 {
-  "schema_version": 1,
-  "status": "COMPLETED_WITH_RETAINED_Q16_FP64_FAILURES",
+  "schema_version": 2,
+  "status": "COMPLETED_WITH_RETAINED_Q16_LLAMA_FP64_FAILURES",
   "workflow": "auto_generate_json.py -> JSON -> gen_configs.run_hls_flow -> saved HLS -> existing_model_verification/verify.py",
   "execution": "Vitis HLS 2024.1.2 C simulation",
   "seed": 42,
   "thresholds": {
-    "max_absolute": 0.1,
-    "relative_l2": 0.01,
-    "mismatching_codes": 0
+    "relative_l2": 0.05,
+    "mismatching_codes": 0,
+    "zero_reference_max_absolute": 0.1
   },
   "coverage": {
-    "resnet": "full spatial/channel dimensions; full-buffer and tiled ResNet-18/50",
-    "llama": "32 layers, 8,030,261,248 parameters, hidden 4096, FFN 14336, vocabulary 128256, 4 prefill tokens + 2 decode calls, cache capacity 2048"
+    "resnet": "full spatial/channel dimensions; full-buffer and tiled ResNet-18/34/50/101/152",
+    "llama": "32 layers, 8,030,261,248 parameters, hidden 4096, FFN 14336, vocabulary 128256, 4 prefill + 2 decode calls, cache capacities 2048 and 8192"
   },
   "limits": [
     "Synthetic parameters; no pretrained accuracy claim",
-    "No 2048-token prefill execution claim",
+    "No 2048- or 8192-token prefill execution claim",
     "No full-model RTL/FPGA/performance claim",
-    "Fixed RoPE shares only vendor transcendental coefficients; FP64 mathematics is independent"
+    "Fixed RoPE shares vendor transcendental coefficients; FP64 mathematics is independent"
   ],
   "runs": [
     {
       "precision": "ap_fixed<16,5>",
-      "variants": [
-        "resnet18-full"
-      ],
-      "report": "q16_5/resnet18_full.json",
-      "report_sha256": "9f060a31ae16d09cb431fec8bd86a58da1a88717c5943d5be5034ef4d7d2eba5",
-      "implementation_verdict": "PASS",
-      "mathematical_verdict": "PASS",
-      "compared_codes": 1757672,
-      "mismatching_codes": 0,
-      "max_absolute_all_tensors": 0.011408643632097482,
-      "max_relative_l2_all_tensors": 0.005112715352234953,
-      "failed_fp64_tensors": [],
-      "logits": {
-        "resnet18": {
-          "max_abs": 0.006985336182073532,
-          "relative_l2": 0.005112715352234953
-        }
-      }
-    },
-    {
-      "precision": "ap_fixed<16,5>",
-      "variants": [
-        "resnet18-tiled"
-      ],
-      "report": "q16_5/resnet18_tiled.json",
-      "report_sha256": "fd788c50ee3dbba997f058c902c50892ec1beb2baa23e799e369a13d676a77de",
-      "implementation_verdict": "PASS",
-      "mathematical_verdict": "PASS",
-      "compared_codes": 1757672,
-      "mismatching_codes": 0,
-      "max_absolute_all_tensors": 0.011408643632097482,
-      "max_relative_l2_all_tensors": 0.005112715352234953,
-      "failed_fp64_tensors": [],
-      "logits": {
-        "resnet18": {
-          "max_abs": 0.006985336182073532,
-          "relative_l2": 0.005112715352234953
-        }
-      }
-    },
-    {
-      "precision": "ap_fixed<16,5>",
-      "variants": [
-        "resnet50-full"
-      ],
-      "report": "q16_5/resnet50_full.json",
-      "report_sha256": "be6f55217e857b55f75bb234976172e8b3bf7cc9042ef8ebfbd359ec040d1d9d",
-      "implementation_verdict": "PASS",
-      "mathematical_verdict": "FAIL",
-      "compared_codes": 6525928,
-      "mismatching_codes": 0,
-      "max_absolute_all_tensors": 0.026440240139939064,
-      "max_relative_l2_all_tensors": 0.012509372099287819,
-      "failed_fp64_tensors": [
-        "resnet50/logits",
-        "resnet50/gap",
-        "resnet50/s4_b0",
-        "resnet50/s4_b1",
-        "resnet50/s4_b2"
-      ],
-      "logits": {
-        "resnet50": {
-          "max_abs": 0.01602117720482754,
-          "relative_l2": 0.012412349850497467
-        }
-      }
-    },
-    {
-      "precision": "ap_fixed<16,5>",
-      "variants": [
-        "resnet50-tiled"
-      ],
-      "report": "q16_5/resnet50_tiled.json",
-      "report_sha256": "744367c8a67c92145ca1cd8681bc871d0b174529f38e120226ea5586fe3d074a",
-      "implementation_verdict": "PASS",
-      "mathematical_verdict": "FAIL",
-      "compared_codes": 6525928,
-      "mismatching_codes": 0,
-      "max_absolute_all_tensors": 0.026440240139939064,
-      "max_relative_l2_all_tensors": 0.012509372099287819,
-      "failed_fp64_tensors": [
-        "resnet50/logits",
-        "resnet50/gap",
-        "resnet50/s4_b0",
-        "resnet50/s4_b1",
-        "resnet50/s4_b2"
-      ],
-      "logits": {
-        "resnet50": {
-          "max_abs": 0.01602117720482754,
-          "relative_l2": 0.012412349850497467
-        }
-      }
-    },
-    {
-      "precision": "ap_fixed<16,5>",
-      "variants": [
-        "llama3-prefill",
-        "llama3-decode"
-      ],
+      "model": "llama3_8b",
       "report": "q16_5/llama3_8b.json",
-      "report_sha256": "c29f33031d39c5fcd1a0763e127a41f977e3663b32568efc5e26fa96173551c4",
+      "report_sha256": "1e14c2b76475ba7fcb68da498ccf194c68b814ec7c5b9b420a60918177d3e0ba",
       "implementation_verdict": "PASS",
       "mathematical_verdict": "FAIL",
       "compared_codes": 1752576,
@@ -157,97 +58,237 @@
       }
     },
     {
-      "precision": "ap_fixed<32,10>",
-      "variants": [
-        "resnet18-full"
+      "precision": "ap_fixed<16,5>",
+      "model": "llama3_8b_ctx8192",
+      "report": "q16_5/llama3_8b_ctx8192.json",
+      "report_sha256": "9eb1e47d6fd3c7dec22ec19e64504c49c4801a181d91d2d87a698121f0ba2569",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "FAIL",
+      "compared_codes": 1752576,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 7.759451040346884,
+      "max_relative_l2_all_tensors": 1.2502848587628876,
+      "failed_fp64_tensors": [
+        "call0000/logits",
+        "call0000/k_cache",
+        "call0000/v_cache",
+        "call0001/logits",
+        "call0001/k_cache",
+        "call0001/v_cache",
+        "call0002/logits",
+        "call0002/k_cache",
+        "call0002/v_cache"
       ],
-      "report": "q32_10/resnet18_full.json",
-      "report_sha256": "ff1e63d3704e5b6fb6f90ff92a366e1b95d36037b99f0f85d2b63387ebc758d2",
+      "logits": {
+        "call0000": {
+          "max_abs": 7.759451040346884,
+          "relative_l2": 1.2329306075228064
+        },
+        "call0001": {
+          "max_abs": 7.109999999656393,
+          "relative_l2": 1.2502848587628876
+        },
+        "call0002": {
+          "max_abs": 7.568728583498589,
+          "relative_l2": 1.23603168070649
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet101_full",
+      "report": "q16_5/resnet101_full.json",
+      "report_sha256": "82b68f52e66a6f48ab33ee4aa90227d87fca19fb09a1aa6149f2c8054a076536",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 9937896,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.0943723154762397,
+      "max_relative_l2_all_tensors": 0.01942697891488531,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet101": {
+          "max_abs": 0.05158623662562567,
+          "relative_l2": 0.01942697891488531
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet101_tiled",
+      "report": "q16_5/resnet101_tiled.json",
+      "report_sha256": "3a94de57c76ff024d06406d1aa829cbd658699ce7f7e680dc29f65ee0cc3d2c4",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 9937896,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.0943723154762397,
+      "max_relative_l2_all_tensors": 0.01942697891488531,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet101": {
+          "max_abs": 0.05158623662562567,
+          "relative_l2": 0.01942697891488531
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet152_full",
+      "report": "q16_5/resnet152_full.json",
+      "report_sha256": "438337ff723d028bb03170459a8766bcc8b7be9c106e361cb2b1bce11db1216d",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 14152680,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.2541919011590288,
+      "max_relative_l2_all_tensors": 0.02073648348262055,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet152": {
+          "max_abs": 0.11654172411521024,
+          "relative_l2": 0.020461992978034103
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet152_tiled",
+      "report": "q16_5/resnet152_tiled.json",
+      "report_sha256": "c24c80631344805f7489b6c6e3ef97ef74f3d16f91d90e4efc6ab6ac17764e64",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 14152680,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.2541919011590288,
+      "max_relative_l2_all_tensors": 0.02073648348262055,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet152": {
+          "max_abs": 0.11654172411521024,
+          "relative_l2": 0.020461992978034103
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet18_full",
+      "report": "q16_5/resnet18_full.json",
+      "report_sha256": "f7f98e803f4f872d89e545fc3e72ffc5bf429c9a1ccf1646d90b0081340dd552",
       "implementation_verdict": "PASS",
       "mathematical_verdict": "PASS",
       "compared_codes": 1757672,
       "mismatching_codes": 0,
-      "max_absolute_all_tensors": 1.0946948558299141e-05,
-      "max_relative_l2_all_tensors": 1.9155272056098244e-06,
+      "max_absolute_all_tensors": 0.011408643632097482,
+      "max_relative_l2_all_tensors": 0.005112715352234953,
       "failed_fp64_tensors": [],
       "logits": {
         "resnet18": {
-          "max_abs": 7.104599563767522e-06,
-          "relative_l2": 1.9155272056098244e-06
+          "max_abs": 0.006985336182073532,
+          "relative_l2": 0.005112715352234953
         }
       }
     },
     {
-      "precision": "ap_fixed<32,10>",
-      "variants": [
-        "resnet18-tiled"
-      ],
-      "report": "q32_10/resnet18_tiled.json",
-      "report_sha256": "e0c82b8022eed639d0c77ad4e0169a045ccfb799d7d76dcff595a70723592176",
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet18_tiled",
+      "report": "q16_5/resnet18_tiled.json",
+      "report_sha256": "2f5f877b45351b2c63037f600e918c50b823f8f894532e866c2dc8c88e83820e",
       "implementation_verdict": "PASS",
       "mathematical_verdict": "PASS",
       "compared_codes": 1757672,
       "mismatching_codes": 0,
-      "max_absolute_all_tensors": 1.0946948558299141e-05,
-      "max_relative_l2_all_tensors": 1.9155272056098244e-06,
+      "max_absolute_all_tensors": 0.011408643632097482,
+      "max_relative_l2_all_tensors": 0.005112715352234953,
       "failed_fp64_tensors": [],
       "logits": {
         "resnet18": {
-          "max_abs": 7.104599563767522e-06,
-          "relative_l2": 1.9155272056098244e-06
+          "max_abs": 0.006985336182073532,
+          "relative_l2": 0.005112715352234953
         }
       }
     },
     {
-      "precision": "ap_fixed<32,10>",
-      "variants": [
-        "resnet50-full"
-      ],
-      "report": "q32_10/resnet50_full.json",
-      "report_sha256": "1e598e34ce650b45de67f589d7d9a15db4fd438c4d087d283ca51f0cfef743c2",
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet34_full",
+      "report": "q16_5/resnet34_full.json",
+      "report_sha256": "ae13828233912a1cb62ab529edcc02bffefd85fa86e2cedb92f6e402ef545ca9",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 2384872,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.02587009509087812,
+      "max_relative_l2_all_tensors": 0.007648993730727061,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet34": {
+          "max_abs": 0.012352018361230899,
+          "relative_l2": 0.007648993730727061
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet34_tiled",
+      "report": "q16_5/resnet34_tiled.json",
+      "report_sha256": "b6c34854352f5f647190c60d46ca42ba6a017a35edd9e91a3a61cae4663f1b73",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 2384872,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.02587009509087812,
+      "max_relative_l2_all_tensors": 0.007648993730727061,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet34": {
+          "max_abs": 0.012352018361230899,
+          "relative_l2": 0.007648993730727061
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet50_full",
+      "report": "q16_5/resnet50_full.json",
+      "report_sha256": "fa00cda50c35611df87aa05a731caaad78734f39d73aa10f5f0dc36ae1b4b0d2",
       "implementation_verdict": "PASS",
       "mathematical_verdict": "PASS",
       "compared_codes": 6525928,
       "mismatching_codes": 0,
-      "max_absolute_all_tensors": 2.1336882998213014e-05,
-      "max_relative_l2_all_tensors": 5.095806121360033e-06,
+      "max_absolute_all_tensors": 0.026440240139939064,
+      "max_relative_l2_all_tensors": 0.012509372099287819,
       "failed_fp64_tensors": [],
       "logits": {
         "resnet50": {
-          "max_abs": 1.7806718059620863e-05,
-          "relative_l2": 5.071932220240124e-06
+          "max_abs": 0.01602117720482754,
+          "relative_l2": 0.012412349850497467
         }
       }
     },
     {
-      "precision": "ap_fixed<32,10>",
-      "variants": [
-        "resnet50-tiled"
-      ],
-      "report": "q32_10/resnet50_tiled.json",
-      "report_sha256": "896827e045b18e24448d2c6942a793bed0edb5713cd3b9916a638d33c5817015",
+      "precision": "ap_fixed<16,5>",
+      "model": "resnet50_tiled",
+      "report": "q16_5/resnet50_tiled.json",
+      "report_sha256": "43fbad59fa8b296089a3073b3e54fd1c929413c911479f45e717d82e485db7e0",
       "implementation_verdict": "PASS",
       "mathematical_verdict": "PASS",
       "compared_codes": 6525928,
       "mismatching_codes": 0,
-      "max_absolute_all_tensors": 2.1336882998213014e-05,
-      "max_relative_l2_all_tensors": 5.095806121360033e-06,
+      "max_absolute_all_tensors": 0.026440240139939064,
+      "max_relative_l2_all_tensors": 0.012509372099287819,
       "failed_fp64_tensors": [],
       "logits": {
         "resnet50": {
-          "max_abs": 1.7806718059620863e-05,
-          "relative_l2": 5.071932220240124e-06
+          "max_abs": 0.01602117720482754,
+          "relative_l2": 0.012412349850497467
         }
       }
     },
     {
       "precision": "ap_fixed<32,10>",
-      "variants": [
-        "llama3-prefill",
-        "llama3-decode"
-      ],
+      "model": "llama3_8b",
       "report": "q32_10/llama3_8b.json",
-      "report_sha256": "82ebc7e97a273db069413358dcf3fe26792db69b188885678ac8f839bd12c866",
+      "report_sha256": "c2a421b4ccfbea9cd41a4b044d4656b5a28f1dee3ae88eb03a2db3573044ba04",
       "implementation_verdict": "PASS",
       "mathematical_verdict": "PASS",
       "compared_codes": 1752576,
@@ -269,22 +310,223 @@
           "relative_l2": 3.0662561020240722e-06
         }
       }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "llama3_8b_ctx8192",
+      "report": "q32_10/llama3_8b_ctx8192.json",
+      "report_sha256": "7a976bf511b88a027d513f4291faf02f5e39cb7a961dec4d2b18cc925408da08",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 1752576,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 1.4181878300600914e-05,
+      "max_relative_l2_all_tensors": 3.0662561020240722e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "call0000": {
+          "max_abs": 1.3424987334864635e-05,
+          "relative_l2": 2.6594502058139608e-06
+        },
+        "call0001": {
+          "max_abs": 1.4181878300600914e-05,
+          "relative_l2": 2.942832944553325e-06
+        },
+        "call0002": {
+          "max_abs": 1.414960534829035e-05,
+          "relative_l2": 3.0662561020240722e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet101_full",
+      "report": "q32_10/resnet101_full.json",
+      "report_sha256": "17a2c60545bf341f270b811fc418ae1b29edd7c776dfa7006e0aad0331764439",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 9937896,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.00014368044416457337,
+      "max_relative_l2_all_tensors": 6.302181494919997e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet101": {
+          "max_abs": 7.978481698067696e-05,
+          "relative_l2": 6.295207523286037e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet101_tiled",
+      "report": "q32_10/resnet101_tiled.json",
+      "report_sha256": "2fd40a0e0f84497fa7ba20900e265776333b0f6b6854560799f0b4b8dfe7838b",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 9937896,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.00014368044416457337,
+      "max_relative_l2_all_tensors": 6.302181494919997e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet101": {
+          "max_abs": 7.978481698067696e-05,
+          "relative_l2": 6.295207523286037e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet152_full",
+      "report": "q32_10/resnet152_full.json",
+      "report_sha256": "fc1d0c770e5b13525259c251aef626e097580ec27870d1b1391be29fd8412575",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 14152680,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.0008040056740981072,
+      "max_relative_l2_all_tensors": 6.121072655191863e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet152": {
+          "max_abs": 0.0004486015270117605,
+          "relative_l2": 6.120117742210183e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet152_tiled",
+      "report": "q32_10/resnet152_tiled.json",
+      "report_sha256": "5ece0322147ae895120ed0ac7a8f55ace423e646304c275a2e2ed95c9dd3e6d9",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 14152680,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.0008040056740981072,
+      "max_relative_l2_all_tensors": 6.121072655191863e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet152": {
+          "max_abs": 0.0004486015270117605,
+          "relative_l2": 6.120117742210183e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet18_full",
+      "report": "q32_10/resnet18_full.json",
+      "report_sha256": "1fefedaded926e1e34b5a5afa7789175ba2bc03f5f592b11a26f6e0440c75a46",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 1757672,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 1.0946948558299141e-05,
+      "max_relative_l2_all_tensors": 1.9155272056098244e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet18": {
+          "max_abs": 7.104599563767522e-06,
+          "relative_l2": 1.9155272056098244e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet18_tiled",
+      "report": "q32_10/resnet18_tiled.json",
+      "report_sha256": "abbc0f3661c7c43cef000e577be02aca591a2d7d02de3491d8409b8f03ca3cc7",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 1757672,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 1.0946948558299141e-05,
+      "max_relative_l2_all_tensors": 1.9155272056098244e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet18": {
+          "max_abs": 7.104599563767522e-06,
+          "relative_l2": 1.9155272056098244e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet34_full",
+      "report": "q32_10/resnet34_full.json",
+      "report_sha256": "3c8b7be6210ec822c8ef85b03396aef70f47a3c9224b16a358df791d88aff7cb",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 2384872,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 3.92471719141696e-05,
+      "max_relative_l2_all_tensors": 2.187545985899053e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet34": {
+          "max_abs": 2.528937381640617e-05,
+          "relative_l2": 2.187545985899053e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet34_tiled",
+      "report": "q32_10/resnet34_tiled.json",
+      "report_sha256": "7305ff313ff7db93a28554b128d1e7fcf1756c636d6ebbff3dff630046175210",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 2384872,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 3.92471719141696e-05,
+      "max_relative_l2_all_tensors": 2.187545985899053e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet34": {
+          "max_abs": 2.528937381640617e-05,
+          "relative_l2": 2.187545985899053e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet50_full",
+      "report": "q32_10/resnet50_full.json",
+      "report_sha256": "baa4251969d520f35f66f3a40404293d3ee949f58291d34268e5d85b71d911e0",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 6525928,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 2.1336882998213014e-05,
+      "max_relative_l2_all_tensors": 5.095806121360033e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet50": {
+          "max_abs": 1.7806718059620863e-05,
+          "relative_l2": 5.071932220240124e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "model": "resnet50_tiled",
+      "report": "q32_10/resnet50_tiled.json",
+      "report_sha256": "a8c6faaeefda84dc08209c434e409cdf29122ab70c6f80a764cf12879386dfae",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 6525928,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 2.1336882998213014e-05,
+      "max_relative_l2_all_tensors": 5.095806121360033e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet50": {
+          "max_abs": 1.7806718059620863e-05,
+          "relative_l2": 5.071932220240124e-06
+        }
+      }
     }
-  ],
-  "regression": {
-    "command": "python -m pytest verification/tests existing_model_verification/tests -q --disable-warnings --maxfail=1",
-    "working_directory": "scale_models",
-    "passed": 87,
-    "elapsed_seconds": 147.28
-  },
-  "evidence": {
-    "regression": "../logs/pytest/full_verification_87_tests.json",
-    "regeneration": "audits/regeneration.json",
-    "same_underlying_input_values": "audits/cross_precision_inputs.json",
-    "full_tiled_actual_output_agreement": "audits/full_tiled_agreement.json",
-    "q16_numeric_helper_synthesis": "synthesis/q16_5/numeric_synthesis.json",
-    "q32_numeric_helper_synthesis": "synthesis/q32_10/numeric_synthesis.json",
-    "cache_continuity": "audits/cache_continuity.json",
-    "q16_fp64_range_audit": "audits/llama_fp64_range_audit.json"
-  }
+  ]
 }

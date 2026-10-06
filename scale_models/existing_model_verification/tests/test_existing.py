@@ -211,25 +211,40 @@ def test_product_quantization_before_reduction():
     assert product_sum(a, b).tolist() == [[0, -2]]
 
 
-@pytest.mark.parametrize("name", ["RESNET18", "RESNET18_TILED"])
-def test_saved_resnet_interface(name):
+@pytest.mark.parametrize(
+    "depth,name,outputs",
+    [
+        (18, "RESNET18", 12),
+        (18, "RESNET18_TILED", 12),
+        (34, "RESNET34", 20),
+        (34, "RESNET34_TILED", 20),
+        (50, "RESNET50", 20),
+        (50, "RESNET50_TILED", 20),
+        (101, "RESNET101", 37),
+        (101, "RESNET101_TILED", 37),
+        (152, "RESNET152", 54),
+        (152, "RESNET152_TILED", 54),
+    ],
+)
+def test_saved_resnet_interface(depth, name, outputs):
     project = Project(
-        SCALE / "hls_files" / (name + "_config_ap_fixed_16_5_"), "resnet18"
+        SCALE / "hls_files" / (name + "_config_ap_fixed_16_5_"), f"resnet{depth}"
     )
-    assert len(project.outputs) == 12
+    assert len(project.outputs) == outputs
     assert project.outputs["logits"][1] == (1000,)
     assert project.contract_version == 2
     assert not project.findings
     project.assert_unchanged()
 
 
-def test_saved_llama_interface():
-    folder = SCALE / "hls_files/LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_16_5_"
+@pytest.mark.parametrize("context", [2048, 8192])
+def test_saved_llama_interface(context):
+    folder = SCALE / f"hls_files/LLAMA3_8B_PREFILL_ctx{context}_config_ap_fixed_16_5_"
     if not folder.exists():
         pytest.skip("production Llama project absent")
     p = Project(folder, "llama3")
     assert p.variant == "llama3-prefill"
-    assert p.max_ctx == 2048
+    assert p.max_ctx == context
     assert p.contract_version == 2
     assert not p.findings
     assert p.port_types["DRAM_token_ids"] == "int32_t"
@@ -278,6 +293,15 @@ def test_separate_comparison_verdicts():
     assert result["implementation_verdict"] == "FAIL"
     assert result["mathematical_verdict"] == "PASS"
     assert result["max_code_error"] == 1
+    # The requested 5% relative-L2 rule is decisive even when max_abs > 0.1.
+    large = np.array([20480], dtype=np.int16)
+    result = compare_arrays(large, large, np.array([9.8]))
+    assert result["max_abs"] > 0.1
+    assert result["relative_l2"] < 0.05
+    assert result["mathematical_verdict"] == "PASS"
+    result = compare_arrays(large, large, np.array([9.4]))
+    assert result["relative_l2"] > 0.05
+    assert result["mathematical_verdict"] == "FAIL"
     zero = np.zeros(2, dtype=np.int16)
     assert (
         compare_arrays(zero, zero, zero.astype(float))["mathematical_verdict"] == "PASS"

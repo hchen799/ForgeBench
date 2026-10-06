@@ -1,4 +1,4 @@
-"""Independent FP64 and fixed PyTorch graphs for production ResNet-18/50.
+"""Independent FP64 and fixed PyTorch graphs for production ResNet family.
 
 Source contracts select legacy v1 arithmetic or repaired v2 wide reductions.
 The bottleneck graph preserves the production projection without extra BN.
@@ -7,6 +7,24 @@ import torch
 import torch.nn.functional as F
 
 from .arithmetic import DATA, product_sum, sqrt_codes, trunc_div, wrap
+
+
+RESNET_SPECS = {
+    18: ((2, 2, 2, 2), False),
+    34: ((3, 4, 6, 3), False),
+    50: ((3, 4, 6, 3), True),
+    101: ((3, 4, 23, 3), True),
+    152: ((3, 8, 36, 3), True),
+}
+
+
+def depth_from_variant(variant):
+    import re
+
+    match = re.fullmatch(r"resnet(18|34|50|101|152)-(?:full|tiled)", variant)
+    if match is None:
+        raise ValueError("unsupported ResNet reference variant: " + variant)
+    return int(match[1])
 
 
 class FP64Ops:
@@ -74,13 +92,12 @@ def forward(tensors, ops, checkpoint, depth=18):
     emit("stem", x)
     x = F.max_pool2d(F.pad(x[None].double(), (1, 1, 1, 1)), 3, 2)[0].to(x.dtype)
     emit("pool", x)
-    blocks = (2, 2, 2, 2) if depth == 18 else (3, 4, 6, 3)
+    blocks, bottleneck = RESNET_SPECS[depth]
     for stage in range(1, 5):
         for block in range(blocks[stage - 1]):
             name = f"s{stage}_b{block}"
             stride = 2 if stage > 1 and block == 0 else 1
             skip = x
-            bottleneck = depth == 50
             y = ops.conv(
                 x,
                 tensors[f"DRAM_w_{name}_1"],
@@ -102,18 +119,11 @@ def forward(tensors, ops, checkpoint, depth=18):
 
 class ResNetReference:
     def __init__(self, variant, fixed, version=1):
-        if variant not in (
-            "resnet18-full",
-            "resnet18-tiled",
-            "resnet50-full",
-            "resnet50-tiled",
-        ):
-            raise ValueError("unsupported ResNet reference variant")
         self.variant, self.fixed = variant, fixed
         from .repaired import ResNetOps
 
         self.ops = (ResNetOps() if version == 2 else FixedOps()) if fixed else FP64Ops()
-        self.depth = 50 if variant.startswith("resnet50") else 18
+        self.depth = depth_from_variant(variant)
 
     def run(self, tensors, checkpoint):
         values = {

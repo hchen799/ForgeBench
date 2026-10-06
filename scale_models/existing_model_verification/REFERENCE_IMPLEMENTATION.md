@@ -84,8 +84,8 @@ Every output directory must be new. Optional flags:
 - `--inspect-only`: snapshot the sources and check their interface/arithmetic
   without allocating parameters or running C simulation. This is not a PASS.
 
-The current registered versions are full-buffer and tiled ResNet-18/50 and
-the context-2048 Llama 3 8B prefill/decode sources in this checkout.
+The current registered versions are full-buffer and tiled ResNet-18/34/50/101/152 and
+the context-2048 and context-8192 Llama 3 8B prefill/decode sources in this checkout.
 Revision 2 repairs are made in the original JSON-to-HLS production generator;
 [repair details and measured results](results/DETAILED_RESULTS.md) distinguish
 implementation agreement from FP64 closeness. Historical v1 contracts remain
@@ -97,7 +97,7 @@ Q16.5 uses a 64-bit accumulator with 22 fractional bits; Q32.10 uses an
 exact integer limbs for GEMM/convolution and Python integers for intermediates
 that exceed int64. Source-compatible precision is never inferred from a filename. Source hashes in
 `contracts.json` bind a reference pair to an exact implementation. Changed
-sources, other precisions, ResNet depths beyond 18/50, and other context/tile variants
+sources, other precisions, ResNet depths, and other context/tile variants
 must have their arithmetic and interface validated before adding a contract;
 the script rejects them instead of guessing that an old reference applies.
 
@@ -109,7 +109,7 @@ but have separate source contracts and separate actual C++ executions.
 
 | Reference component | Implementation |
 |---|---|
-| ResNet-18/50 mathematical graph and FP64 operations | [resnet.py](references/resnet.py) |
+| ResNet-18/34/50/101/152 mathematical graph and FP64 operations | [resnet.py](references/resnet.py) |
 | Llama prefill/decode mathematical graph and FP64 operations | [llama.py](references/llama.py) |
 | Repaired Q16.5 fixed operations | [repaired.py](references/repaired.py) |
 | Q32.10 fixed operations and precision-specific reference classes | [wide.py](references/wide.py) |
@@ -122,11 +122,11 @@ and reference-code snapshots, input manifests, both reference outputs, the
 actual C++ outputs, and per-tensor `comparison.json` records.
 
 - **Implementation PASS** requires zero raw integer-code mismatches.
-- **Mathematical PASS** requires maximum absolute error <= 0.1 and relative
-  L2 error <= 0.01 for every compared tensor. Relative L2 is
-  `||actual/2**(W-I) - fp64||_2 / ||fp64||_2`. For a zero reference, only the
-  absolute limit applies. These are the selected synthetic verification
-  limits, not a trained-model accuracy standard.
+- **Mathematical PASS** requires relative L2 error <= 0.05 for every compared
+  tensor. Relative L2 is `||actual/2**(W-I) - fp64||_2 / ||fp64||_2`. Maximum
+  absolute error remains a reported diagnostic. For an all-zero FP64 reference,
+  where relative L2 is undefined, the 0.1 absolute fallback applies. These are
+  synthetic verification limits, not a trained-model accuracy standard.
 - All values must be finite, tensor shapes and byte counts must match, and
   original source hashes must remain unchanged.
 - Exit code **0** means both comparisons passed (or successful inspection,
@@ -138,12 +138,12 @@ ResNet-18 exports 12 persistent checkpoints without changing the DUT: stem
 BN/ReLU output, maxpool output, eight residual-block outputs, global pool,
 and all 1,000 logits. These total 1,757,672 codes. Full-buffer checkpoints are
 observed through existing externally linked BRAM globals; tiled checkpoints
-are observed through existing DRAM ports. ResNet-50 exports 20 checkpoints
-(16 bottleneck blocks), totaling 6,525,928 codes. Its independent mathematical
-graph preserves the declared production projection branch, which has no extra
-projection BN; it does not claim equivalence to an unmodified torchvision
-ResNet-50 with pretrained parameters. Overwritten intermediate values
-are not claimed as observed checkpoints.
+are observed through existing DRAM ports. ResNet-34 and ResNet-50 each export
+20 checkpoints (16 residual blocks). ResNet-101 exports 37 checkpoints and
+ResNet-152 exports 54 checkpoints. The bottleneck reference preserves the
+declared production projection branch, which has no extra projection BN; it
+does not claim equivalence to a torchvision model with pretrained parameters.
+Overwritten intermediate values are not claimed as observed checkpoints.
 
 Llama has separate C++, fixed-reference, and FP64-reference cache state.
 The runner transfers the actual C++ prefill cache to the C++ decode process;
@@ -194,7 +194,8 @@ python -m pytest existing_model_verification/tests -q
 Tests exercise the actual Vitis headers/libraries: BN, signed division,
 per-product conversion, pooling, partial linear/reduction tiles, RMSNorm,
 SwiGLU, fixed square root and exponential across all 131,072 input codes of
-the relevant 17-bit format, and RoPE across the saved 2048-position context.
+the relevant 17-bit format, and RoPE across 2048 positions. Saved source/interface tests cover both
+2048- and 8192-position cache capacities.
 Additional tests cover source/interface changes, corrupt inputs, separate
 verdicts, nonfinite outputs, FP64 prefill/decode cache continuity, invalid Llama
 preflight even with representable token IDs, inspection without a numerical

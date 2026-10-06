@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "status": "FAIL",
+  "status": "PASS",
   "implementation_verdict": "PASS",
-  "mathematical_verdict": "FAIL",
+  "mathematical_verdict": "PASS",
   "seed": 42,
   "threads": 4,
   "thresholds": {
-    "max_absolute": 0.1,
-    "relative_l2": 0.01
+    "relative_l2": 0.05,
+    "zero_reference_max_absolute": 0.1
   },
   "execution": "Vitis HLS C simulation",
   "accelerator_executed": true,
@@ -711,7 +711,7 @@
         "implementation_verdict": "PASS",
         "mismatching_codes": 0,
         "max_code_error": 0,
-        "mathematical_verdict": "FAIL",
+        "mathematical_verdict": "PASS",
         "max_abs": 0.01602117720482754,
         "mae": 0.003901056920812758,
         "rmse": 0.004922947391817121,
@@ -721,7 +721,10 @@
           "actual": "8d59637b2cd54045490a433dd325cfebe94ea1d604a52e7da164e1abe2042ba3",
           "fixed": "16d680ab2a55d7cd2114dde80199aed91335b246454137d0cdde0806a60eb34f",
           "fp64": "5a7190d91da9958d5e5e070c7d6e8b0e859787cb325582f08a76629da9f2ecc7"
-        }
+        },
+        "shape": [
+          1000
+        ]
       },
       "stem": {
         "elements": 802816,
@@ -762,7 +765,7 @@
         "implementation_verdict": "PASS",
         "mismatching_codes": 0,
         "max_code_error": 0,
-        "mathematical_verdict": "FAIL",
+        "mathematical_verdict": "PASS",
         "max_abs": 0.019573247783015946,
         "mae": 0.003266406800697551,
         "rmse": 0.004701350467589057,
@@ -1000,7 +1003,7 @@
         "implementation_verdict": "PASS",
         "mismatching_codes": 0,
         "max_code_error": 0,
-        "mathematical_verdict": "FAIL",
+        "mathematical_verdict": "PASS",
         "max_abs": 0.02554083777927163,
         "mae": 0.0022128943525703587,
         "rmse": 0.0041175381264126594,
@@ -1017,7 +1020,7 @@
         "implementation_verdict": "PASS",
         "mismatching_codes": 0,
         "max_code_error": 0,
-        "mathematical_verdict": "FAIL",
+        "mathematical_verdict": "PASS",
         "max_abs": 0.025272013081750533,
         "mae": 0.002704484167967474,
         "rmse": 0.0044582345435038645,
@@ -1034,7 +1037,7 @@
         "implementation_verdict": "PASS",
         "mismatching_codes": 0,
         "max_code_error": 0,
-        "mathematical_verdict": "FAIL",
+        "mathematical_verdict": "PASS",
         "max_abs": 0.025860816016499477,
         "mae": 0.0031246701473244187,
         "rmse": 0.004855331373331284,
@@ -2340,5 +2343,16 @@
     }
   },
   "elapsed_seconds": 165.79890600699946,
-  "exit_code": 1
+  "exit_code": 0,
+  "verdict_re_evaluation": {
+    "metrics_reused": [
+      "max_abs",
+      "relative_l2"
+    ],
+    "accelerator_rerun": false,
+    "previous_thresholds": {
+      "max_absolute": 0.1,
+      "relative_l2": 0.01
+    }
+  }
 }

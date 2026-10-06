@@ -1,0 +1,118 @@
+{
+  "workflow": "existing_model_verification/reproduce.py generate -> gen_configs.run_hls_flow",
+  "projects": {
+    "LLAMA3_8B_DECODE_ctx8192_config_ap_fixed_16_5_": {
+      "resolved_config.json": "dea0f9de18989c82d6d6862878a391f91f0204567a159559b3998d81c558995b",
+      "top.cpp": "a705979ad3216a32ee3bb869eb24ebafa564f6d4ebe0ef5129e436f8d2ea4309",
+      "top.h": "708e7cc44d27d95b93d41255fadb9a2d97d466eb3512dc9d8a518cd89d8c80fe",
+      "tb_top.cpp": "da27b2b9fc7468eeb3e76314fc42a81ad2e775dab2ff0d954bb0849cfecc1459",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "LLAMA3_8B_DECODE_ctx8192_config_ap_fixed_32_10_": {
+      "resolved_config.json": "f47293a2beb27dca628bd75e2b9dbc00af364f3215a2aad0375b1035f58998ee",
+      "top.cpp": "877d2765eb4978b6f55316e5d099d0fda7959e8d80fd2a36b660494078b5f487",
+      "top.h": "5941e4fb1527ec7fe56416b4290d74993e2bdd6e359dc6b86d5f37cf41b87a99",
+      "tb_top.cpp": "36a9e524971689708999ad76c329f2a9a3611e00e447dbec5dfe22967232a3c6",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "LLAMA3_8B_PREFILL_ctx8192_config_ap_fixed_16_5_": {
+      "resolved_config.json": "0ed6092f1782b4bdf70d8fb6eee229afa48d9fce022a349e1651177115f18d7c",
+      "top.cpp": "aec02ae742eca6140150320dc34146245968e4a002acd6c1a6f452d4528d37ff",
+      "top.h": "a74c9a4e3a430a4f9d92e9df77f986a06d9a3a2a810565cdff488edd574b15ff",
+      "tb_top.cpp": "aa0a31da6bcbee57fbbe6175f89bf6a41c16b8e5c778551cd304f0c5d25bee99",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "LLAMA3_8B_PREFILL_ctx8192_config_ap_fixed_32_10_": {
+      "resolved_config.json": "20c6935ff893235adef077105de857ae1fa9a4776a93aca1619dc6ef98fdf840",
+      "top.cpp": "d0bdc838c4eeb589347f27e62d1a24a56e6e4d2d0d77aaa1c034a18e982275a3",
+      "top.h": "eab006d50343669a3dc1de0809d087303789db55c80f4039eeb08b68128f496e",
+      "tb_top.cpp": "46e812f2ac734f36e969225225a749eaefd2cafa540de6eb2e50870d91efa43b",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET101_TILED_config_ap_fixed_16_5_": {
+      "resolved_config.json": "36081baa4bcf2103eeff4d1e3a4df952eaf4f15781f95bf36c2e3c77703f47d2",
+      "top.cpp": "17787cb664f3768fa1e7bddcd48a2210427e84ea721d814a7e92a2b674512022",
+      "top.h": "f8d727a537363fc12acd50fe4a5de0cd92e33f77deb0a034dae305f0d64ff3d1",
+      "tb_top.cpp": "013c65dc9fe4ab85111b790c9cf67ef469d7619198df598a24484019878e1b09",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET101_TILED_config_ap_fixed_32_10_": {
+      "resolved_config.json": "7b79e6a332664d37668ceb72dadd6282beb792bcd17261b6ddc2939cee3330b9",
+      "top.cpp": "b34e1e3e9cf9a9a1bb207d8501de5bdf190f302f58a0d5ec438f595c95262c4a",
+      "top.h": "4c2152b1ad3a2c3918fe2c235254ebfd7d417fd23fb6811ac00136e3f9bd67bb",
+      "tb_top.cpp": "faebf35c8f4636950f7b1d23f9c939eb6ed1c2e28c36b6d9722c691625ccfadb",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET101_config_ap_fixed_16_5_": {
+      "resolved_config.json": "cc11702abbc6a654e6dd59179ee8a8a46df868ab5abe9ea0bbdca8accded08be",
+      "top.cpp": "17cf513e3fd4d477645e37ca96886b8048e32c9921953786a7b1035d24e7c473",
+      "top.h": "5e903945f8886ebd1f30ae27e08cdd2fa90189c752c6289951542c9d5f8b8262",
+      "tb_top.cpp": "0d23aa236544fa11aaa1a536779e4058fff04a63d0fc7c6d4e74c89adb0f16b8",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET101_config_ap_fixed_32_10_": {
+      "resolved_config.json": "5ece2f22e7a87f7e13f1fced0398d00c9421bc22cf6b0a9ef9d7309e84ab8686",
+      "top.cpp": "0838c2799b842372759c6139faca50b92f315d23a4118525f6a1579cd1d6b3c9",
+      "top.h": "f86d4b7a919cedfcd8e3b9207a40ee6fdd036c6cd9ccb6bcf89012ec570054ec",
+      "tb_top.cpp": "d0e0496ec40013e66d905c930d5676131a6bb2470034bc2d4396388c816c9dca",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET152_TILED_config_ap_fixed_16_5_": {
+      "resolved_config.json": "f31d3caf104bf3eb20f1a4fe1763094477e3e2529e56e33611c9c057aa64ab43",
+      "top.cpp": "8ed7a3286c07f3eb79b8023b302103786755af9953f4284c5581add2250c0f49",
+      "top.h": "5771255f22f2a9b945194003327ea18b679b7f94c488f191c483609cf96acf11",
+      "tb_top.cpp": "db1a41baf9322672db45034f2ff882d14c1859039d3511c19f04a1a1f5a78dde",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET152_TILED_config_ap_fixed_32_10_": {
+      "resolved_config.json": "7f7b32a1ba94b096d9f043bf6e553447c3b735b8decb593fef3dcbe85ae5921b",
+      "top.cpp": "226f002908557340a704ae13944191be99b6fa782a89b6c21b3b6ded99f2872c",
+      "top.h": "abc33d7980642a2876cf3cd823a2220fd9010af1e6246fa4cce76b11e13a0875",
+      "tb_top.cpp": "0d0d2f6b99ce440f6a90c858c5e7a8bfed91ccf4f8246219581170ea23c8a479",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET152_config_ap_fixed_16_5_": {
+      "resolved_config.json": "ec453c62e2bd6b35cb2b0aa0557b82bf329f18c9024dfa19a749f5f4fde5d044",
+      "top.cpp": "d1c4d757c685c5fa3a5a400628d86cee2c94488c7bc9bb61cccfbd9bdbe5a687",
+      "top.h": "604f6529e7d43b1482acf9099210b7b21de9e3ecbf769b5cec91b1026a8820db",
+      "tb_top.cpp": "75eaad66a3ac82b49fd652e7005ec1785da08a33a825e19768c7b6d1b5a8575d",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET152_config_ap_fixed_32_10_": {
+      "resolved_config.json": "2cba51f2efd9dd09b742b0ba3a08e18842d258fc252ec9ae51438356ebca7a74",
+      "top.cpp": "2811a16ca944ab8bfc88db7221acc290a204206701390e4a525aba54a127551a",
+      "top.h": "2d1350b1de1dfb5b28f6a361bd227bc34a8d8d1056b8b0636d95278402b96620",
+      "tb_top.cpp": "bfeb23cf76b8b9c757cd87caf254899be38ce13238129edc29ab00c91e9a562b",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET34_TILED_config_ap_fixed_16_5_": {
+      "resolved_config.json": "b4f81c88637d04ed14eba3ec06441fc98726935686f5bcf899a94af54d8d6ae1",
+      "top.cpp": "96f6eaec35adc796456c83df4283f6f886fcaadf6e8d3ea7d8eb08da5fcbbf3f",
+      "top.h": "cc5a898d4fc8fe501b67aa87c6e2b6a221cdd13a92d4a5cfbeb35a533e425bf9",
+      "tb_top.cpp": "72b4c181bfef43dab5515e9acb2f104d037468947de830d9e74a098e88dc0ec1",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET34_TILED_config_ap_fixed_32_10_": {
+      "resolved_config.json": "317110e21d43b8199b919905b2030f609520a0abf163c863016b6a30dc9a1e00",
+      "top.cpp": "bd94987328c7cc1a19edb5012b758aa5152f4208b5d726ba1dff6729070f8822",
+      "top.h": "6b34de6a490afcf0d04901fe77d0658babed1c1d3aeeff0fcaf52efae42cbe95",
+      "tb_top.cpp": "2424c88879737ccd75f65fc1c16e9c8ef0a72f64d5998f584bc0404595068cdc",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET34_config_ap_fixed_16_5_": {
+      "resolved_config.json": "a31ebb7c1dfdcab303754128db1e997e4f47bb627df09980f2ccc00e514d8a4d",
+      "top.cpp": "c5e58b058d7df824754350ff4608ad6024fcb349b87d9941eb73343152210979",
+      "top.h": "583fca517dcd2026c0b79e15017093a8cf1185815c5d7003ad96e9ec1720baf8",
+      "tb_top.cpp": "c66d87c4f55626c7cb9b0e8d924479a91ec46d4c63a83b849962b0f427635f56",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    },
+    "RESNET34_config_ap_fixed_32_10_": {
+      "resolved_config.json": "444482e7043687bbfc3be4801c23da4f22a5e7b116e30c0fae73c718bbefbf5d",
+      "top.cpp": "192986388d60e4d06a8c875441bf67b8bf0184c0c7b77b94a714b1f696fd7481",
+      "top.h": "e5251dc2a65252ed49e292eea8a76722519480ebf4da49184ce0cf90d6c98531",
+      "tb_top.cpp": "d529005a53cbd76b968daaa5f28686363aeed4e80cde0b10f8dbe0030e7fe60e",
+      "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+    }
+  },
+  "all_files_byte_identical": true
+}

@@ -6,8 +6,8 @@
   "seed": 42,
   "threads": 8,
   "thresholds": {
-    "max_absolute": 0.1,
-    "relative_l2": 0.01
+    "relative_l2": 0.05,
+    "zero_reference_max_absolute": 0.1
   },
   "execution": "Vitis HLS C simulation",
   "accelerator_executed": true,
@@ -448,7 +448,11 @@
           "actual": "55c3569e28ce556377e2bf70e554d55be97d1f722a01c8cd266ab8335e549beb",
           "fixed": "e4b370ea0d2bccb111e68750b7eaf0efa4abfc7f6976024480a9b7190807c93f",
           "fp64": "33d1464bc23254e7ad559d5a2e0f2c1a86a4f4956c4a5f73ffc09bc1fb230330"
-        }
+        },
+        "shape": [
+          4,
+          128256
+        ]
       },
       "k_cache": {
         "elements": 131072,
@@ -501,7 +505,11 @@
           "actual": "9fba131c99bdf8a5479bfda5c9a91a8708a95afa64465f44c5272138864384a5",
           "fixed": "c278e55bfc3c1c0d926a782e5849639bbbeb7b1976dc58f13f854e05cab33f89",
           "fp64": "a65323a4d4795135aea13279aef718222b9b2b9136e17e4433b3d4fe308e1c5e"
-        }
+        },
+        "shape": [
+          1,
+          128256
+        ]
       },
       "k_cache": {
         "elements": 163840,
@@ -554,7 +562,11 @@
           "actual": "e5ad37ae18653038614462cd6eea995cdf6eb705028873a0c753506132d4ba76",
           "fixed": "87b3b73f69a4d0bc60f9779aa88b44da4a573933abc95d7910b93f75d3dde6b0",
           "fp64": "e70accd8b653f3adc1a745c4fa8186d80a1d77681549ed4196f854f5d0035100"
-        }
+        },
+        "shape": [
+          1,
+          128256
+        ]
       },
       "k_cache": {
         "elements": 196608,
@@ -827,5 +839,16 @@
   "original_sources_unchanged": true,
   "reference_sources_unchanged": true,
   "elapsed_seconds": 1830.1466264789997,
-  "exit_code": 0
+  "exit_code": 0,
+  "verdict_re_evaluation": {
+    "metrics_reused": [
+      "max_abs",
+      "relative_l2"
+    ],
+    "accelerator_rerun": false,
+    "previous_thresholds": {
+      "max_absolute": 0.1,
+      "relative_l2": 0.01
+    }
+  }
 }

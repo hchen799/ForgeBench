@@ -1,14 +1,20 @@
 # Preserved logs
 
-`pytest/production_tests.txt` is the fresh 42-test run for this package.
-`pytest/full_verification_87_tests.txt` is the fresh combined regression run.
-The adjacent JSON files record commands, runtimes, hashes, and exit status.
+`csim/<precision>/<model>/verification.txt` contains the complete high-level
+verifier log. Every current log ends with a **Final layer output comparison**
+section containing output shape, fixed-code mismatches, maximum code error,
+FP64 maximum absolute error, relative L2, the 5% limit, and verdicts.
 
-`csim/<precision>/<model>/verification.txt` is the verifier's complete
-high-level log. `simulation.txt` is the corresponding Vitis C-simulation log
-for ResNet. Llama has one `simulation_callNNNN.txt` for prefill and each decode
-call. These files were copied verbatim from the completed full-model runs and
-renamed from `.log` to `.txt` because the repository globally ignores `*.log`.
+`simulation.txt` is the Vitis C-simulation log for a ResNet. Llama directories
+contain `simulation_call0000.txt` for prefill and one file for each decode call.
+The ctx2048 directory is named `llama3_8b`; the ctx8192 directory is
+`llama3_8b_ctx8192`.
 
-The reports under `../results/` remain the authoritative machine-readable
-verdicts; logs provide supporting compiler and execution details.
+Files are renamed from `.log` to `.txt` because the repository globally ignores
+`*.log`. Reports under `../results/` are the authoritative machine-readable
+records; these logs preserve compiler and execution evidence.
+
+`pytest/production_tests.txt` records the current 51-test production suite;
+`pytest/full_verification_tests.txt` records the current 96-test combined
+regression. Older `87_tests` files are retained as historical evidence from the
+previous model set.

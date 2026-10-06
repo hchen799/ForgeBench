@@ -7,6 +7,7 @@ import shutil
 from pathlib import Path
 
 from .arithmetic import DATA, Format
+from .resnet import RESNET_SPECS
 
 
 def sha(path):
@@ -185,9 +186,12 @@ class Project:
             self._dependencies(str(Path(relative).parent / include))
 
     def _resnet(self):
-        depth = 50 if self.family == "resnet50" else 18
-        self.block_counts = (3, 4, 6, 3) if depth == 50 else (2, 2, 2, 2)
-        expansion = 4 if depth == 50 else 1
+        match = re.fullmatch(r"resnet(18|34|50|101|152)", self.family)
+        if match is None:
+            raise ValueError("unsupported ResNet family: " + self.family)
+        depth = int(match[1])
+        self.block_counts, bottleneck = RESNET_SPECS[depth]
+        expansion = 4 if bottleneck else 1
         expected = {
             "DRAM_input": (3, 224, 224),
             "DRAM_w_stem": (64, 3, 7, 7),
@@ -201,12 +205,12 @@ class Project:
             for block in range(self.block_counts[stage - 1]):
                 name = f"s{stage}_b{block}"
                 expected[f"DRAM_w_{name}_1"] = (
-                    (width, channels, 1, 1) if depth == 50 else (out, channels, 3, 3)
+                    (width, channels, 1, 1) if bottleneck else (out, channels, 3, 3)
                 )
                 expected[f"DRAM_w_{name}_2"] = (width, width, 3, 3)
                 expected[f"DRAM_bn_{name}_1"] = (4, width)
                 expected[f"DRAM_bn_{name}_2"] = (4, width)
-                if depth == 50:
+                if bottleneck:
                     expected[f"DRAM_w_{name}_3"] = (out, width, 1, 1)
                     expected[f"DRAM_bn_{name}_3"] = (4, out)
                 if block == 0 and (stage > 1 or channels != out):

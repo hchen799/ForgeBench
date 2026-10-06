@@ -13,7 +13,11 @@ import torch.nn.functional as F
 
 from .arithmetic import Format, wrap
 from .llama import FP64Ops, LlamaReference
-from .resnet import forward as resnet_forward, FP64Ops as ResNetFP64
+from .resnet import (
+    forward as resnet_forward,
+    depth_from_variant,
+    FP64Ops as ResNetFP64,
+)
 from .vendor_math import VendorRope
 
 DATA = Format(32, 10)
@@ -200,7 +204,7 @@ class ResNetReference32:
         if version != 2:
             raise ValueError("Q32.10 requires the production v2 contract")
         self.fixed = fixed
-        self.depth = 50 if variant.startswith("resnet50") else 18
+        self.depth = depth_from_variant(variant)
         self.ops = ResNetOps() if fixed else ResNetFP64()
 
     def run(self, tensors, checkpoint):

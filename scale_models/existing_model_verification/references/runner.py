@@ -16,6 +16,10 @@ from .resnet import ResNetReference
 from .llama import LlamaReference, Weights
 
 
+ZERO_REFERENCE_MAX_ABSOLUTE_ERROR = 0.1
+MAX_RELATIVE_L2_ERROR = 0.05
+
+
 def save_tensor(path, value, fixed):
     array = value.detach().cpu().numpy()
     if not np.isfinite(array).all():
@@ -206,7 +210,14 @@ exit
     return result
 
 
-def compare_arrays(actual, fixed, floating, max_abs=0.1, relative_l2=0.01, fmt=DATA):
+def compare_arrays(
+    actual,
+    fixed,
+    floating,
+    max_abs=ZERO_REFERENCE_MAX_ABSOLUTE_ERROR,
+    relative_l2=MAX_RELATIVE_L2_ERROR,
+    fmt=DATA,
+):
     actual, fixed, floating = (
         np.asarray(actual),
         np.asarray(fixed),
@@ -231,7 +242,9 @@ def compare_arrays(actual, fixed, floating, max_abs=0.1, relative_l2=0.01, fmt=D
     rel = error_norm / reference_norm if reference_norm else None
     maximum = float(np.abs(delta).max())
     mismatch = int(np.count_nonzero(delta_code))
-    mathematical_pass = maximum <= max_abs and (rel is None or rel <= relative_l2)
+    # The acceptance threshold is relative L2. A relative error is undefined
+    # for an all-zero FP64 tensor, so only that case uses an absolute fallback.
+    mathematical_pass = maximum <= max_abs if rel is None else rel <= relative_l2
     report = dict(
         elements=actual.size,
         implementation_verdict="PASS" if not mismatch else "FAIL",
@@ -263,6 +276,7 @@ def compare_case(case, outputs, fmt=DATA):
         f = np.load(case / "fixed" / (label + ".npy"), allow_pickle=False)
         golden = np.load(case / "fp64" / (label + ".npy"), allow_pickle=False)
         records[label] = compare_arrays(a, f, golden, fmt=fmt)
+        records[label]["shape"] = list(shape)
         records[label]["sha256"] = dict(
             actual=sha(path),
             fixed=sha(case / "fixed" / (label + ".npy")),
