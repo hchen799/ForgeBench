@@ -37,6 +37,24 @@ prefix, but they are not 2048-token or 8192-token prompt runs. Since the same
 seed, tokens, weights, and first six cache positions are used, their numerical
 results are identical.
 
+The `123%–125%` and `0.000266%–0.000307%` entries above summarize three
+separate final-logit comparisons; they are ranges, not measurement
+uncertainty. The exact results are:
+
+| Context | Accelerator call | `ap_fixed<16,5>` logits relative L2 | `ap_fixed<32,10>` logits relative L2 |
+|---|---|---:|---:|
+| ctx2048 | 4-token prefill | 123.293061% (FAIL) | 0.000265945% (PASS) |
+| ctx2048 | decode 1 | 125.028486% (FAIL) | 0.000294283% (PASS) |
+| ctx2048 | decode 2 | 123.603168% (FAIL) | 0.000306626% (PASS) |
+| ctx8192 | 4-token prefill | 123.293061% (FAIL) | 0.000265945% (PASS) |
+| ctx8192 | decode 1 | 125.028486% (FAIL) | 0.000294283% (PASS) |
+| ctx8192 | decode 2 | 123.603168% (FAIL) | 0.000306626% (PASS) |
+
+Each row compares the final vocabulary logits emitted by that accelerator
+call. The verifier also checks every populated K/V-cache entry. A run passes
+only when every observed tensor satisfies the 5% FP64 threshold and every C++
+code matches fixed-point PyTorch exactly.
+
 See [detailed results](results/DETAILED_RESULTS.md), the
 [machine-readable index](results/validation_summary.json), and the
 [preserved logs](logs/README.md). Every verification log ends with final-logit
