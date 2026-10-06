@@ -155,10 +155,6 @@ Use `--inspect-only` for fast source-hash and interface validation. Inspection
 is reported as `INSPECTED_NOT_EXECUTED` and never as a numerical pass. Output
 directories must be new.
 
-`reevaluate.py RUN_DIR...` applies the current acceptance rule to stored metrics
-without rerunning C++; it annotates the report with `accelerator_rerun: false`.
-This was used to update the earlier 1% reports after the requested threshold
-change. The raw accelerator outputs and measured errors are unchanged.
 
 ## Tests and scope
 
