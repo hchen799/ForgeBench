@@ -413,7 +413,8 @@ def _acc_rewrite(code, pairs):
         return code
     A = _ACC["ACC"]
     for old, new in pairs:
-        old, new = old.replace("<A>", A), new.replace("<A>", A)
+        M = _ACC["ACCM"]
+        old, new = old.replace("<A>", A).replace("<M>", M), new.replace("<A>", A).replace("<M>", M)
         if old not in code:
             raise ValueError(f"accumulator rewrite: pattern not found: {old!r}")
         code = code.replace(old, new)
@@ -429,6 +430,7 @@ _MHA_ACC = [
     ("                        scores[i][j] += Q[i][idx] * K[j][idx];\n                    }\n                    scores[i][j] *= scale;\n",
      "                        s_acc += Q[i][idx] * K[j][idx];\n                    }\n                    scores[i][j] = (data_t)(s_acc * scale);\n"),
     ("                data_t sum_exp = 0;\n", "                <A> sum_exp = 0;\n"),
+    ("hls::exp(scores[i][j] - max_score)", "hls::exp((<M>)((<A>)scores[i][j] - (<A>)max_score))"),
     ("                    data_t context = 0;\n", "                    <A> context = 0;\n"),
     ("                    output[i][head_index * head_dim + d] = context;\n", "                    output[i][head_index * head_dim + d] = (data_t)context;\n"),
 ]
@@ -440,6 +442,7 @@ _SWA_ACC = [
     ("                data_t sum = 0;\n", "                <A> sum = 0;\n"),
     ("                scores[j] = sum * scale;\n", "                scores[j] = (data_t)(sum * scale);\n"),
     ("            data_t sum_exp = 0;\n", "            <A> sum_exp = 0;\n"),
+    ("hls::exp(scores[j] - max_val)", "hls::exp((<M>)((<A>)scores[j] - (<A>)max_val))"),
     ("                data_t context = 0;\n", "                <A> context = 0;\n"),
     ("                output[i][h * head_dim + d] = context;\n", "                output[i][h * head_dim + d] = (data_t)context;\n"),
 ]

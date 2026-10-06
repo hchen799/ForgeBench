@@ -162,3 +162,13 @@ Stale: all LLM sweep results (unchanged from the earlier note).
 * softmax sums use `{ACC}` in all three domains. llm/conv softmax have no max-subtraction (gemm has), so at `<16,5>` the sum of 128 exps
   overflows for every symmetric input range ("no faithful range") until an accumulator type is set (then the window is ln 16 ~ 2.8, exp storage).
 * Window ends that are overflow, not bugs: gelu `<32,10>` ~7.9 (x^3 reaches 512); mha/swa limited by Q/K scores overflow.
+
+## Softmax max-subtraction in the accumulator type; `fixed_ranges` in the verification engine
+
+* With an accumulator spec, `scores - max` (mha, swa, gemm softmax) is computed in the accumulator type and `exp` is called on its
+  default-mode counterpart (`ACCM`); the difference spans up to twice the score range and wrapped in `data_t` (first failure of mha at
+  `<16,5>`, weights +-0.1, was this subtraction at |x|~3). Default designs byte-identical.
+* After the fix mha (weights +-0.1, `fixed<32,10>` RND accumulator) fails at |x|~3.4-3.6; a float64 stage model puts the stored
+  `scores` (a `data_t` array) past 16 at |x|~3.4 (max |scores| 14.6 at 3.2, 18.4 at 3.4), so the remaining limit is the storage format,
+  addressed by a per-operator `data_type`, not by the accumulator. swa reaches ~11.
+* Engine option `fixed_ranges` ({"weights": 0.1}): DRAMs whose name contains the key keep +-value while the range search scales the others.

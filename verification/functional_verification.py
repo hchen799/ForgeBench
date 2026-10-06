@@ -31,6 +31,7 @@ Config (all keys optional; later files/overrides win; `extends` takes a path rel
   "range_search": {"enabled": true, "samples": 20, "factor": 1.4142, "float_span": [1e-3, 1e3], "fixed_start": 1e-3, "fixed_stop_hi_multiple": 2,
                    "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8},
   "stress": {"enabled": true, "factor": 4, "trials": 20},
+  "fixed_ranges": {"weights": 0.1},   # optional: DRAMs whose name contains the key keep +-value (not scaled by the range search)
   "op_params": {"acc_type": "fixed<32,10>", "acc_rounding": "rnd", "acc_overflow": "wrap"}   # optional: set on the operator under test
 }
 """
@@ -71,6 +72,7 @@ BUILTIN_DEFAULTS = {
                      "fixed_stop_hi_multiple": 2, "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8},
     "stress": {"enabled": True, "factor": 4, "trials": 20},
     "op_params": {},
+    "fixed_ranges": {},
 }
 
 SUMMARY_COLS = [
@@ -155,7 +157,7 @@ def ranged_config(config, mag):
     c["input_range"] = [0.0, mag] if base[0] >= 0 else [-mag, mag]
     for d in c["drams"]:
         r = d.get("input_range")
-        if r is not None:
+        if r is not None and not d.get("fixed_range"):
             d["input_range"] = [0.0, mag] if r[0] >= 0 else [-mag, mag]
     return c
 
@@ -190,7 +192,7 @@ def analytic_range(op_func, dims, dt):
 class Harness:
     """A built CSIM design that can be re-run on new input sets."""
 
-    def __init__(self, domain, cfg_path, dt, work, seed_base, op_params=None):
+    def __init__(self, domain, cfg_path, dt, work, seed_base, op_params=None, fixed_ranges=None):
         self.domain, self.dt, self.seed_base = domain, dt, seed_base
         if op_params:                                   # e.g. acc_type / acc_rounding on the operator under test (patched copy of the config)
             cfg = json.load(open(cfg_path))
@@ -199,6 +201,10 @@ class Harness:
             cfg_path = os.path.join(work, f"_patched_{os.path.basename(cfg_path)}")
             json.dump(cfg, open(cfg_path, "w"))
         self.run_dir, self.config = generate_design(domain, cfg_path, work, ["csim"], data_type=dt.text)
+        for d in self.config["drams"]:                  # DRAMs whose name contains a key keep +-value while the search scales the others (e.g. weights)
+            for key, mag in (fixed_ranges or {}).items():
+                if key in d["name"]:
+                    d["input_range"], d["fixed_range"] = [-mag, mag], True
         rc, _ = run_vitis(self.run_dir, log_name="vitis_trial0.log")
         self.build = csim_build_dir(self.run_dir)
         if self.build is None:
@@ -267,7 +273,7 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
     try:
         base = os.path.join(work, domain, dt.tag())      # domain matters: activation/matrix_add exist in several domains with identical stems
         os.makedirs(base, exist_ok=True)
-        h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None)
+        h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None, cfg.get("fixed_ranges"))
         op = op_under_test(h.config)
         L = accum_length(op["func_name"], op.get("dims", []))
         kind, boundfn, _ = bound_for(cfg, dt, L)
