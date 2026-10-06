@@ -3,6 +3,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import backends
+from backends import op_types
 import math
 import re
 import random
@@ -882,6 +883,7 @@ def generate_operator_call(op_info, data_type):
     Returns a string like:
        load_32_64_64_data_t(DRAM_1, BRAM_1);
     """
+    _set_acc(op_info, data_type)
 
     if op_info['func_name'] == 'load':
         code_line, full_func_name = generate_load_function(op_info["dims"], data_type, func_prefix="load")
@@ -961,8 +963,9 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     func_name_set = set()
     func_def_name_list = []
    
+    emitted = {}
     for key, op_info in ops.items():
-       func_def_code, func_name  = generate_func_def(op_info, data_type)
+       func_def_code, func_name, emitted[key] = op_types.emit_op(op_info, data_type, backends.current(), generate_func_def, generate_operator_call)
        if func_name not in func_name_set:
            func_name_set.add(func_name)
            code_lines.append(func_def_code)
@@ -988,7 +991,7 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     # If ops is a dictionary, we iterate in insertion order.
     for key, op_info in ops.items():
         #print("the value of key is:", key)
-        call_str = generate_operator_call(op_info, data_type)
+        call_str = emitted[key]
         code_lines.append(f"    {call_str}")
     
     code_lines.append("}")

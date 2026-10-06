@@ -117,7 +117,7 @@ void tanh_act(
 {{
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
-            output[i][j] = hls::tanh(input[i][j]);
+            output[i][j] = (input[i][j] < 0) ? (data_t)(-hls::tanh((data_t)(-input[i][j]))) : (data_t)hls::tanh(input[i][j]);
         }}
     }}
 }}
@@ -175,7 +175,7 @@ void gelu(
             data_t x = input[i][j];
             data_t x_cube = x * x * x;
             data_t tanh_arg = sqrt_2_over_pi * (x + (data_t)0.044715 * x_cube);
-            output[i][j] = (data_t)0.5 * x * (1 + hls::tanh(tanh_arg));
+            output[i][j] = (data_t)0.5 * x * (1 + ((tanh_arg < 0) ? (data_t)(-hls::tanh((data_t)(-tanh_arg))) : (data_t)hls::tanh(tanh_arg)));
         }}
     }}
 }}
@@ -206,7 +206,7 @@ void softmax(
 {{
     // Compute softmax along the hidden dimension for each row.
     for (int i = 0; i < {SEQ_LENGTH}; i++) {{
-        data_t sum = 0;
+        {ACC} sum = 0;
         for (int j = 0; j < {HIDDEN_DIM}; j++) {{
             output[i][j] = hls::exp(input[i][j]);
             sum += output[i][j];

@@ -154,7 +154,7 @@ void tanh_act(
     for (int c = 0; c < {C}; c++) {{
         for (int i = 0; i < {H}; i++) {{
             for (int j = 0; j < {W}; j++) {{
-                output[c][i][j] = hls::tanh(input[c][i][j]);
+                output[c][i][j] = (input[c][i][j] < 0) ? (data_t)(-hls::tanh((data_t)(-input[c][i][j]))) : (data_t)hls::tanh(input[c][i][j]);
             }}
         }}
     }}
@@ -218,7 +218,7 @@ void gelu(
                 data_t x = input[c][i][j];
                 data_t x_cube = x * x * x;
                 data_t tanh_arg = sqrt_2_over_pi * (x + (data_t)0.044715 * x_cube);
-                output[c][i][j] = (data_t)0.5 * x * (1 + hls::tanh(tanh_arg));
+                output[c][i][j] = (data_t)0.5 * x * (1 + ((tanh_arg < 0) ? (data_t)(-hls::tanh((data_t)(-tanh_arg))) : (data_t)hls::tanh(tanh_arg)));
             }}
         }}
     }}
@@ -252,7 +252,7 @@ void softmax(
     // Compute softmax along the channel dimension for each spatial location.
     for (int i = 0; i < {H}; i++) {{
         for (int j = 0; j < {W}; j++) {{
-            data_t sum = 0;
+            {ACC} sum = 0;
             // First pass: compute exponentials and sum
             for (int c = 0; c < {C}; c++) {{
                 output[c][i][j] = hls::exp(input[c][i][j]);

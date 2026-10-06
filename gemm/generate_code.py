@@ -8,6 +8,7 @@ import sys
 # repo root has to go on sys.path before `backends` resolves.
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import backends
+from backends import op_types
 
 
 def _backend():
@@ -1387,6 +1388,7 @@ def generate_operator_call(op_info, data_type):
     Returns a string like:
        load_8_16_16_data_t(DRAM_1, BRAM_1);
     """
+    _set_acc(op_info, data_type)
 
     # Append _data_t to follow the convention.
     if op_info['func_name'] == 'load':
@@ -1474,8 +1476,9 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     func_name_set = set()
     func_def_name_list = []
 
+    emitted = {}
     for key, op_info in ops.items():
-       func_def_code, func_name  = generate_func_def(op_info, ctype)
+       func_def_code, func_name, emitted[key] = op_types.emit_op(op_info, ctype, backend, generate_func_def, generate_operator_call)
        if func_name not in func_name_set:
            func_name_set.add(func_name)
            func_def_lines.append(func_def_code)
@@ -1485,7 +1488,7 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     call_lines = []
     # If ops is a dictionary, we iterate in insertion order.
     for key, op_info in ops.items():
-        call_str = generate_operator_call(op_info, ctype)
+        call_str = emitted[key]
         call_lines.append(f"    {call_str}")
 
     code_lines = []

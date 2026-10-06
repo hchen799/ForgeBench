@@ -141,3 +141,24 @@ Effect check (`fixed<16,5>` storage, `fixed<32,10>` RND accumulator, N=10): laye
 error about 5e-4 (1 LSB); mha/swa 0.008-0.022 (range_hi 0.56-0.94).
 Open: mmv/vmm max abs error (0.018 / 0.005) is identical with and without the accumulator, so it does not come from accumulation; not yet explained.
 Stale: all LLM sweep results (unchanged from the earlier note).
+
+## Per-operator `data_type`; tanh sign fix; accumulator fixes (verification phase, continued)
+
+* **Per-operator `data_type`** (`backends/op_types.py`): an op JSON may carry `data_type` (same spellings as the design-wide one; unset =
+  design `data_t`). The operator is generated with that storage type (accumulator defaults to it unless `acc_*` fields are set) and the call
+  site converts operands at the boundary (copy-in of inputs, copy-out of the `output`/`out` operand). Typed gemm-family operators are emitted as functions
+  (the inline form works on the design-typed BRAMs). Default designs are byte-identical. Checked: mha in `double` inside a float design passes
+  to range 741 at ~1e-6 (kernel is exact; the float32 window end is float32 conditioning of the scores); a `fixed<32,10>` operator inside a
+  `fixed<16,5>` design verifies for every operator family.
+* **Bug found by verification: Vitis HLS 2024.1 `hls::tanh(ap_fixed)` returns tanh(|x|) for negative inputs** (reproduced with a bare call,
+  `ap_fixed<32,10>`/`<16,5>`/`<32,8>`). The generated tanh and gelu (tanh inside) now use odd symmetry
+  `x<0 ? -tanh(-x) : tanh(x)`. Positive-side library accuracy is 1-4 LSB; for `<32,10>` it breaks beyond |x|~24 (error up to 2.0 at 27.6).
+  **27 conv sweep designs (tanh/gelu, all `ap_fixed_16_5`) change; their synthesis results are stale.** The committed modular/full-model
+  designs that contain gelu (`llm/hls_files/*`, conv `hls_files`, `scale_models/`) carry the same defect for negative gelu arguments; not
+  touched (scale_models waits on Hanqiu).
+* Inline operators were missing the accumulator spec (`_set_acc` is now also called when generating calls). The earlier mmv/vmm error
+  (0.018/0.005 at `<16,5>`) was truncation bias of a `data_t` accumulator over 64 terms (~0.5 LSB per add), not a kernel bug; with a wide
+  accumulator it is 1 LSB.
+* softmax sums use `{ACC}` in all three domains. llm/conv softmax have no max-subtraction (gemm has), so at `<16,5>` the sum of 128 exps
+  overflows for every symmetric input range ("no faithful range") until an accumulator type is set (then the window is ln 16 ~ 2.8, exp storage).
+* Window ends that are overflow, not bugs: gelu `<32,10>` ~7.9 (x^3 reaches 512); mha/swa limited by Q/K scores overflow.
