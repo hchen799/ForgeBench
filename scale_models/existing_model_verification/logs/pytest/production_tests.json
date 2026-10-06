@@ -1,0 +1,9 @@
+{
+  "command": "python -m pytest existing_model_verification/tests -q --disable-warnings --maxfail=1",
+  "working_directory": "scale_models",
+  "passed": 42,
+  "elapsed_seconds": 104.01,
+  "exit_code": 0,
+  "log": "production_tests.txt",
+  "log_sha256": "4f9d6866dc429f6fa258df3116f27980e7924ad66e01b5276d4465885d985856"
+}

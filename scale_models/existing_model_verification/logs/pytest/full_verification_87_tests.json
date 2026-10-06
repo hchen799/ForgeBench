@@ -1,0 +1,17 @@
+{
+  "command": "python -m pytest verification/tests existing_model_verification/tests -q --disable-warnings --maxfail=1",
+  "working_directory": "scale_models",
+  "passed": 87,
+  "elapsed_seconds": 147.28,
+  "exit_code": 0,
+  "log": "full_verification_87_tests.txt",
+  "log_sha256": "50272b48402500f234e56a0d4532293ccf1c9ee0703ba963024f5ec881f5c16d",
+  "test_sources": {
+    "verification/tests/test_configurable.py": "651ecb469d9d8fc16ee6a869d7fd7e495f3f6c4ecab1cabc98c388122aa88c01",
+    "verification/tests/test_resnet_formats.py": "9f0f3e5846938d725e4afbaebfbb3bc14debd7369497868ad4080c3f499513fc",
+    "existing_model_verification/tests/test_existing.py": "5fbf65b36e6246fac0f4999f55412b8c389bbd8ea4d0f8f544d13fc9e85a500f",
+    "existing_model_verification/tests/test_production.py": "1e6af3cebfe4e352c42720c4d29adabb6a0613a115ec21b8d11d8b22a6c81505",
+    "existing_model_verification/tests/test_production_graph.py": "fdd0808b75e7f4c057d52e7a63d5492992227435fb72bd260b93c5f20c61cb81",
+    "existing_model_verification/tests/test_production_wide.py": "39ba7f4cee0b9696e4cfd9902ee1543975e8c39acd4414e9f0eaedbb085adb9a"
+  }
+}

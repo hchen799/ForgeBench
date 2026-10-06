@@ -1,11 +1,12 @@
 # `scale_models`
 
 For verification of the **already generated production HLS projects** under
-`hls_files/`, use [the direct verifier](verification/existing/README.md). It
+`hls_files/`, use the self-contained
+[existing-model verification workflow](existing_model_verification/README.md). It
 compares each supported saved accelerator with both FP64 and fixed-point
 PyTorch references, without replacing the C++ design. Existing dedicated-model
 verification results must not be attributed to these production projects.
-The [production revision 2 report](verification/results/production_v2/README.md)
+The [production revision 2 report](existing_model_verification/results/DETAILED_RESULTS.md)
 describes repairs within this same JSON-to-HLS workflow and separates fixed-point
 agreement from FP64 numerical acceptance.
 

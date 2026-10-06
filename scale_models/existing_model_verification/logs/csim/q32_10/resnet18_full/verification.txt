@@ -1,0 +1,81 @@
+Prepared DRAM_input (3, 224, 224)
+Prepared DRAM_w_stem (64, 3, 7, 7)
+Prepared DRAM_bn_stem (4, 64)
+Prepared DRAM_w_s1_b0_1 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b0_1 (4, 64)
+Prepared DRAM_w_s1_b0_2 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b0_2 (4, 64)
+Prepared DRAM_w_s1_b1_1 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b1_1 (4, 64)
+Prepared DRAM_w_s1_b1_2 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b1_2 (4, 64)
+Prepared DRAM_w_s2_b0_1 (128, 64, 3, 3)
+Prepared DRAM_bn_s2_b0_1 (4, 128)
+Prepared DRAM_w_s2_b0_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b0_2 (4, 128)
+Prepared DRAM_w_s2_b0_down (128, 64, 1, 1)
+Prepared DRAM_w_s2_b1_1 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b1_1 (4, 128)
+Prepared DRAM_w_s2_b1_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b1_2 (4, 128)
+Prepared DRAM_w_s3_b0_1 (256, 128, 3, 3)
+Prepared DRAM_bn_s3_b0_1 (4, 256)
+Prepared DRAM_w_s3_b0_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b0_2 (4, 256)
+Prepared DRAM_w_s3_b0_down (256, 128, 1, 1)
+Prepared DRAM_w_s3_b1_1 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b1_1 (4, 256)
+Prepared DRAM_w_s3_b1_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b1_2 (4, 256)
+Prepared DRAM_w_s4_b0_1 (512, 256, 3, 3)
+Prepared DRAM_bn_s4_b0_1 (4, 512)
+Prepared DRAM_w_s4_b0_2 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b0_2 (4, 512)
+Prepared DRAM_w_s4_b0_down (512, 256, 1, 1)
+Prepared DRAM_w_s4_b1_1 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b1_1 (4, 512)
+Prepared DRAM_w_s4_b1_2 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b1_2 (4, 512)
+Prepared DRAM_fc (1000, 512, 1, 1)
+fp64 stem
+fp64 pool
+fp64 s1_b0
+fp64 s1_b1
+fp64 s2_b0
+fp64 s2_b1
+fp64 s3_b0
+fp64 s3_b1
+fp64 s4_b0
+fp64 s4_b1
+fp64 gap
+fp64 logits
+fixed stem
+fixed pool
+fixed s1_b0
+fixed s1_b1
+fixed s2_b0
+fixed s2_b1
+fixed s3_b0
+fixed s3_b1
+fixed s4_b0
+fixed s4_b1
+fixed gap
+fixed logits
+Compiling/running saved resnet18-full log: /export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/verification/runs/production_v2_q32_10_resnet18_full/case/simulation.log
+logits PASS PASS max_abs= 7.104599563767522e-06
+stem PASS PASS max_abs= 5.027268981661059e-07
+pool PASS PASS max_abs= 4.968604930821741e-07
+gap PASS PASS max_abs= 7.751899978813981e-06
+s1_b0 PASS PASS max_abs= 2.0824328594848396e-06
+s1_b1 PASS PASS max_abs= 3.56054003081141e-06
+s2_b0 PASS PASS max_abs= 4.33528766841107e-06
+s2_b1 PASS PASS max_abs= 5.639282675495849e-06
+s3_b0 PASS PASS max_abs= 7.067576967223488e-06
+s3_b1 PASS PASS max_abs= 7.770557587605254e-06
+s4_b0 PASS PASS max_abs= 9.398443623354069e-06
+s4_b1 PASS PASS max_abs= 1.0946948558299141e-05
+PASS
+Fixed-point comparison: PASS
+FP64 comparison: PASS
+
+

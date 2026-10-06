@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "status": "COMPLETED_WITH_RETAINED_Q16_FP64_FAILURES",
+  "workflow": "auto_generate_json.py -> JSON -> gen_configs.run_hls_flow -> saved HLS -> existing_model_verification/verify.py",
+  "execution": "Vitis HLS 2024.1.2 C simulation",
+  "seed": 42,
+  "thresholds": {
+    "max_absolute": 0.1,
+    "relative_l2": 0.01,
+    "mismatching_codes": 0
+  },
+  "coverage": {
+    "resnet": "full spatial/channel dimensions; full-buffer and tiled ResNet-18/50",
+    "llama": "32 layers, 8,030,261,248 parameters, hidden 4096, FFN 14336, vocabulary 128256, 4 prefill tokens + 2 decode calls, cache capacity 2048"
+  },
+  "limits": [
+    "Synthetic parameters; no pretrained accuracy claim",
+    "No 2048-token prefill execution claim",
+    "No full-model RTL/FPGA/performance claim",
+    "Fixed RoPE shares only vendor transcendental coefficients; FP64 mathematics is independent"
+  ],
+  "runs": [
+    {
+      "precision": "ap_fixed<16,5>",
+      "variants": [
+        "resnet18-full"
+      ],
+      "report": "q16_5/resnet18_full.json",
+      "report_sha256": "9f060a31ae16d09cb431fec8bd86a58da1a88717c5943d5be5034ef4d7d2eba5",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 1757672,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.011408643632097482,
+      "max_relative_l2_all_tensors": 0.005112715352234953,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet18": {
+          "max_abs": 0.006985336182073532,
+          "relative_l2": 0.005112715352234953
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "variants": [
+        "resnet18-tiled"
+      ],
+      "report": "q16_5/resnet18_tiled.json",
+      "report_sha256": "fd788c50ee3dbba997f058c902c50892ec1beb2baa23e799e369a13d676a77de",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 1757672,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.011408643632097482,
+      "max_relative_l2_all_tensors": 0.005112715352234953,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet18": {
+          "max_abs": 0.006985336182073532,
+          "relative_l2": 0.005112715352234953
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "variants": [
+        "resnet50-full"
+      ],
+      "report": "q16_5/resnet50_full.json",
+      "report_sha256": "be6f55217e857b55f75bb234976172e8b3bf7cc9042ef8ebfbd359ec040d1d9d",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "FAIL",
+      "compared_codes": 6525928,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.026440240139939064,
+      "max_relative_l2_all_tensors": 0.012509372099287819,
+      "failed_fp64_tensors": [
+        "resnet50/logits",
+        "resnet50/gap",
+        "resnet50/s4_b0",
+        "resnet50/s4_b1",
+        "resnet50/s4_b2"
+      ],
+      "logits": {
+        "resnet50": {
+          "max_abs": 0.01602117720482754,
+          "relative_l2": 0.012412349850497467
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "variants": [
+        "resnet50-tiled"
+      ],
+      "report": "q16_5/resnet50_tiled.json",
+      "report_sha256": "744367c8a67c92145ca1cd8681bc871d0b174529f38e120226ea5586fe3d074a",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "FAIL",
+      "compared_codes": 6525928,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 0.026440240139939064,
+      "max_relative_l2_all_tensors": 0.012509372099287819,
+      "failed_fp64_tensors": [
+        "resnet50/logits",
+        "resnet50/gap",
+        "resnet50/s4_b0",
+        "resnet50/s4_b1",
+        "resnet50/s4_b2"
+      ],
+      "logits": {
+        "resnet50": {
+          "max_abs": 0.01602117720482754,
+          "relative_l2": 0.012412349850497467
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<16,5>",
+      "variants": [
+        "llama3-prefill",
+        "llama3-decode"
+      ],
+      "report": "q16_5/llama3_8b.json",
+      "report_sha256": "c29f33031d39c5fcd1a0763e127a41f977e3663b32568efc5e26fa96173551c4",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "FAIL",
+      "compared_codes": 1752576,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 7.759451040346884,
+      "max_relative_l2_all_tensors": 1.2502848587628876,
+      "failed_fp64_tensors": [
+        "call0000/logits",
+        "call0000/k_cache",
+        "call0000/v_cache",
+        "call0001/logits",
+        "call0001/k_cache",
+        "call0001/v_cache",
+        "call0002/logits",
+        "call0002/k_cache",
+        "call0002/v_cache"
+      ],
+      "logits": {
+        "call0000": {
+          "max_abs": 7.759451040346884,
+          "relative_l2": 1.2329306075228064
+        },
+        "call0001": {
+          "max_abs": 7.109999999656393,
+          "relative_l2": 1.2502848587628876
+        },
+        "call0002": {
+          "max_abs": 7.568728583498589,
+          "relative_l2": 1.23603168070649
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "variants": [
+        "resnet18-full"
+      ],
+      "report": "q32_10/resnet18_full.json",
+      "report_sha256": "ff1e63d3704e5b6fb6f90ff92a366e1b95d36037b99f0f85d2b63387ebc758d2",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 1757672,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 1.0946948558299141e-05,
+      "max_relative_l2_all_tensors": 1.9155272056098244e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet18": {
+          "max_abs": 7.104599563767522e-06,
+          "relative_l2": 1.9155272056098244e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "variants": [
+        "resnet18-tiled"
+      ],
+      "report": "q32_10/resnet18_tiled.json",
+      "report_sha256": "e0c82b8022eed639d0c77ad4e0169a045ccfb799d7d76dcff595a70723592176",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 1757672,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 1.0946948558299141e-05,
+      "max_relative_l2_all_tensors": 1.9155272056098244e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet18": {
+          "max_abs": 7.104599563767522e-06,
+          "relative_l2": 1.9155272056098244e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "variants": [
+        "resnet50-full"
+      ],
+      "report": "q32_10/resnet50_full.json",
+      "report_sha256": "1e598e34ce650b45de67f589d7d9a15db4fd438c4d087d283ca51f0cfef743c2",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 6525928,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 2.1336882998213014e-05,
+      "max_relative_l2_all_tensors": 5.095806121360033e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet50": {
+          "max_abs": 1.7806718059620863e-05,
+          "relative_l2": 5.071932220240124e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "variants": [
+        "resnet50-tiled"
+      ],
+      "report": "q32_10/resnet50_tiled.json",
+      "report_sha256": "896827e045b18e24448d2c6942a793bed0edb5713cd3b9916a638d33c5817015",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 6525928,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 2.1336882998213014e-05,
+      "max_relative_l2_all_tensors": 5.095806121360033e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "resnet50": {
+          "max_abs": 1.7806718059620863e-05,
+          "relative_l2": 5.071932220240124e-06
+        }
+      }
+    },
+    {
+      "precision": "ap_fixed<32,10>",
+      "variants": [
+        "llama3-prefill",
+        "llama3-decode"
+      ],
+      "report": "q32_10/llama3_8b.json",
+      "report_sha256": "82ebc7e97a273db069413358dcf3fe26792db69b188885678ac8f839bd12c866",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "PASS",
+      "compared_codes": 1752576,
+      "mismatching_codes": 0,
+      "max_absolute_all_tensors": 1.4181878300600914e-05,
+      "max_relative_l2_all_tensors": 3.0662561020240722e-06,
+      "failed_fp64_tensors": [],
+      "logits": {
+        "call0000": {
+          "max_abs": 1.3424987334864635e-05,
+          "relative_l2": 2.6594502058139608e-06
+        },
+        "call0001": {
+          "max_abs": 1.4181878300600914e-05,
+          "relative_l2": 2.942832944553325e-06
+        },
+        "call0002": {
+          "max_abs": 1.414960534829035e-05,
+          "relative_l2": 3.0662561020240722e-06
+        }
+      }
+    }
+  ],
+  "regression": {
+    "command": "python -m pytest verification/tests existing_model_verification/tests -q --disable-warnings --maxfail=1",
+    "working_directory": "scale_models",
+    "passed": 87,
+    "elapsed_seconds": 147.28
+  },
+  "evidence": {
+    "regression": "../logs/pytest/full_verification_87_tests.json",
+    "regeneration": "audits/regeneration.json",
+    "same_underlying_input_values": "audits/cross_precision_inputs.json",
+    "full_tiled_actual_output_agreement": "audits/full_tiled_agreement.json",
+    "q16_numeric_helper_synthesis": "synthesis/q16_5/numeric_synthesis.json",
+    "q32_numeric_helper_synthesis": "synthesis/q32_10/numeric_synthesis.json",
+    "cache_continuity": "audits/cache_continuity.json",
+    "q16_fp64_range_audit": "audits/llama_fp64_range_audit.json"
+  }
+}
