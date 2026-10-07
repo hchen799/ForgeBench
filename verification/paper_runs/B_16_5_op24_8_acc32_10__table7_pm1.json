@@ -1,0 +1,5 @@
+{
+  "extends": "B_16_5_op24_8_acc32_10__pm1.json",
+  "_comment": "Table 7 (modularization) generated programs, whole designs end to end; same column settings as B_16_5_op24_8_acc32_10__pm1. op_params apply to every compute operator; tolerance stages += (#compute ops - 1).",
+  "operators": "table7"
+}

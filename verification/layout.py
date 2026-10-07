@@ -46,3 +46,21 @@ def variants(domain=None, operator=None):
 
 def base_path(operator, domain):
     return os.path.join(OPERATORS_DIR, operator, "base", domain, f"{operator}.json")
+
+
+def design_variants():
+    """Whole multi-operator designs verified end to end: the generated programs of the paper's modularization study (Table 7)
+    that have a JSON config in the repo (manifest/designs/modular.csv: role=program, construction=generated). id: designs/<domain>/<stem>."""
+    import csv
+    path = os.path.join(os.path.dirname(HERE), "manifest", "designs", "modular.csv")
+    out = []
+    if not os.path.isfile(path):
+        return out
+    with open(path, newline="") as f:
+        for r in csv.DictReader(f):
+            if r["role"] != "program" or r["construction"] != "generated" or not r["config_path"]:
+                continue
+            stem = os.path.splitext(os.path.basename(r["config_path"]))[0]
+            out.append({"domain": r["domain"], "operator": "design", "variant": stem, "stem": stem, "id": f"designs/{r['domain']}/{stem}",
+                        "path": os.path.join(os.path.dirname(HERE), r["config_path"])})
+    return sorted(out, key=lambda x: (x["domain"], x["stem"]))

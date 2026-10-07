@@ -21,7 +21,7 @@ accumulation length, plus `stages` dependent roundings and `peak_fraction` of th
 Config (all keys optional; later files/overrides win; `extends` takes a path relative to the config file):
 {
   "extends": "paper_verif.json",
-  "operators": "table2" | ["gemm", "vmm"] | ["ops/gemm/gemm__bias1"],
+  "operators": "table2" | "table7" | ["gemm", "vmm"] | ["ops/gemm/gemm__bias1", "designs/gemm/mlp"],   # table7: whole multi-operator designs
   "datatypes": ["float", "fixed<16,5>", "fixed<32,10>"],          # 'fixed<W,I[,trn|rnd,wrap|sat]>' or 'ap_fixed<...>' (see docs/DATA_TYPES.md)
   "sim": ["csim", "cosim"],
   "n_trials": 100, "seed_base": 42, "cosim_trials": 20,
@@ -115,10 +115,15 @@ def resolve_config(path, overrides):
 
 
 def select_variants(spec):
-    """'table2' | list of operator names | list of ids -> layout variants."""
-    allv = layout.variants()
+    """'table2' | 'table7' | list of operator names | list of ids -> layout variants."""
+    from verification import manual_designs
+    allv = layout.variants() + layout.design_variants() + manual_designs.variants()
+    if isinstance(spec, list) and len(spec) == 1 and spec[0] in ("all", "table2", "table7"):
+        spec = spec[0]
     if spec == "all":
         return allv
+    if spec == "table7":
+        return layout.design_variants() + manual_designs.variants()
     if spec == "table2":
         import csv as _csv
         with open(os.path.join(REPO_ROOT, "manifest", "designs", "ops.csv"), newline="") as f:
@@ -152,6 +157,10 @@ def float_bound_no_atol(cfg):
 def under_test(cfg):
     """The (single) non-load/store op of a design config."""
     return next(o for o in cfg["ops"].values() if o["func_name"] not in ("load", "store"))
+
+
+def compute_ops(cfg):
+    return [o for o in cfg["ops"].values() if o["func_name"] not in ("load", "store")]
 
 
 def ranged_config(config, mag):
@@ -196,14 +205,16 @@ def analytic_range(op_func, dims, dt):
 class Harness:
     """A built CSIM design that can be re-run on new input sets."""
 
-    def __init__(self, domain, cfg_path, dt, work, seed_base, op_params=None, fixed_ranges=None):
+    def __init__(self, domain, cfg_path, dt, work, seed_base, op_params=None, fixed_ranges=None, whole_design=False):
         self.domain, self.dt, self.seed_base = domain, dt, seed_base
         if op_params:                                   # e.g. acc_type / acc_rounding on the operator under test (patched copy of the config)
             cfg = json.load(open(cfg_path))
-            under_test(cfg).update(op_params)
+            for o in (compute_ops(cfg) if whole_design else [under_test(cfg)]):     # a whole design: every compute operator
+                o.update(op_params)
             os.makedirs(work, exist_ok=True)
             cfg_path = os.path.join(work, f"_patched_{os.path.basename(cfg_path)}")
             json.dump(cfg, open(cfg_path, "w"))
+        self.cfg_path = cfg_path                        # the (possibly patched) config the design was generated from; CO-SIM reuses it
         self.run_dir, self.config = generate_design(domain, cfg_path, work, ["csim"], data_type=dt.text)
         for d in self.config["drams"]:                  # DRAMs whose name contains a key keep +-value while the search scales the others (e.g. weights)
             for key, mag in (fixed_ranges or {}).items():
@@ -277,11 +288,32 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
     try:
         base = os.path.join(work, domain, dt.tag())      # domain matters: activation/matrix_add exist in several domains with identical stems
         os.makedirs(base, exist_ok=True)
-        h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None,
-                    {**(cfg.get("fixed_ranges") or {}), **((cfg.get("fixed_ranges_by_operator") or {}).get(v["operator"], {}))})
-        op = op_under_test(h.config)
-        L = accum_length(op["func_name"], op.get("dims", []))
-        kind, boundfn, _ = bound_for(cfg, dt, L)
+        whole = v["operator"] == "design"
+        manual = v["operator"] == "manual_design"
+        if manual:
+            # hand-written design: own testbench + golden (verification/manual_designs.py); its ports carry their own input ranges
+            from verification.manual_designs import ManualHarness, SPECS
+            h = ManualHarness(v["id"].split("/", 1)[1], dt, base)
+        else:
+            h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None,
+                        {**(cfg.get("fixed_ranges") or {}), **((cfg.get("fixed_ranges_by_operator") or {}).get(v["operator"], {}))},
+                        whole_design=whole)
+        bcfg = cfg
+        if manual:
+            sp = SPECS[v["id"].split("/", 1)[1]]
+            op = {"func_name": "manual", "dims": []}
+            bcfg = {**cfg, "tolerance": {**cfg["tolerance"], "stages": cfg["tolerance"]["stages"] + sp["ops"] - 1}}
+            row["notes"] = f"hand-written; {sp['ops']} compute stages; " + ("op_params not applicable; " if cfg.get("op_params") else "")
+        elif whole:
+            # a chain of operators: the longest accumulation of any operator, plus one dependent rounding stage per further operator
+            ops = compute_ops(h.config)
+            op = max(ops, key=lambda o: accum_length(o["func_name"], o.get("dims", [])))
+            bcfg = {**cfg, "tolerance": {**cfg["tolerance"], "stages": cfg["tolerance"]["stages"] + len(ops) - 1}}
+            row["notes"] = f"{len(ops)} compute ops; "
+        else:
+            op = op_under_test(h.config)
+        L = SPECS[v["id"].split("/", 1)[1]]["accum"] if manual else accum_length(op["func_name"], op.get("dims", []))
+        kind, boundfn, _ = bound_for(bcfg, dt, L)
         row.update({"accum_len": L, "tolerance_kind": kind, "analytic_range": analytic_range(op["func_name"], op.get("dims", []), dt)})
         row["tol_abs"] = "" if dt.kind == "float" or cfg["tolerance"]["mode"] == "explicit" else f"{float(np.asarray(boundfn(np.zeros(1))).ravel()[0]):.6g}"
         rs, N = cfg["range_search"], cfg["n_trials"]
@@ -413,10 +445,13 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
                         "stress_max_abs_err": smax, "stress_crashes": crashes})
 
         # ---- 5. CO-SIM ----------------------------------------------------------------------------------------------------
-        if "cosim" in cfg["sim"]:
+        if "cosim" in cfg["sim"] and manual:
+            row["notes"] += "cosim not wired for hand-written designs; "
+        elif "cosim" in cfg["sim"]:
             from verification.cosim import run_cosim
-            ir = run_cfg.get("input_range")
-            cs = run_cosim(domain, path, dt.text, cfg["cosim_trials"], os.path.join(work, domain, f"{dt.tag()}_cosim"), input_range=ir, keep=keep)
+            # same design (op_params patch included) and the same per-DRAM input ranges as the CSIM trials above
+            cs = run_cosim(domain, h.cfg_path, dt.text, cfg["cosim_trials"], os.path.join(work, domain, f"{dt.tag()}_cosim"),
+                           inputs_config=run_cfg, keep=keep)
             tr = cs["trials"]
             row.update({"cosim_status": cs["status"], "cosim_trials": len(tr),
                         "cosim_c_vs_rtl_mismatches": sum(t["c_vs_rtl_mismatch"] for t in tr)})
