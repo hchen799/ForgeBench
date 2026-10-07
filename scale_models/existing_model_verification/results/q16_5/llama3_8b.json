@@ -1,0 +1,846 @@
+{
+  "schema_version": 1,
+  "status": "FAIL",
+  "implementation_verdict": "PASS",
+  "mathematical_verdict": "FAIL",
+  "seed": 42,
+  "threads": 8,
+  "thresholds": {
+    "relative_l2": 0.05,
+    "zero_reference_max_absolute": 0.1
+  },
+  "execution": "Vitis HLS C simulation",
+  "accelerator_executed": true,
+  "claim": "saved production source; synthetic parameters; no trained accuracy or RTL claim",
+  "versions": {
+    "python": "3.9.13 (main, Aug 25 2022, 23:26:10) \n[GCC 11.2.0]",
+    "torch": "2.2.0",
+    "numpy": "1.24.4"
+  },
+  "reference_sources": {
+    "existing/__init__.py": "50a7a0dc1cacd9b21aa1ef03d4714756ad6b20d278884f2e1914eda39501744a",
+    "existing/arithmetic.py": "6fb0022c455bd2776e91e298f49a11454b64d3b727c12bd414c4c18af6375d42",
+    "existing/contracts.json": "365d476eabef073e0e4374f232fb19511ad34b47e9a8345cd3347364e77a71f1",
+    "existing/llama.py": "66b9722659fcfa3b25ab5c0161625b4e48a9067cff7bfeada7afe8fd98f2f885",
+    "existing/project.py": "bb745fe0ff3c0a4dfe50a3df134b352e4615b3e7f75f542e0432757e3f1f2aa2",
+    "existing/repaired.py": "07e1ef9e20574b1fe1f3a9a0320deeb4e9c3866153cac763fe160ac4daf7a907",
+    "existing/resnet.py": "b1eba5d7d70fb2a4f0f1042f8121d271111eca967d589bf1ca71ed2d44f1b5cc",
+    "existing/runner.py": "f521a84df73df02eeede44bb985f6369a57a2be20de77a2fbc17304e7d8fa5c4",
+    "existing/vendor_math.py": "7cf76171699faeb1084101936c494ca6c669b5f7620c5e4029d9cad841735813",
+    "verify_existing.py": "f0ad143c4e0d30fc0f3e193449f4b87c725a5aff5738ae017909d0ab6fd69b77"
+  },
+  "projects": [
+    {
+      "project": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/hls_files/LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_16_5_",
+      "family": "llama3",
+      "variant": "llama3-prefill",
+      "sources": {
+        "top.cpp": "81404fe88430d161c52a86088c231718e7f219e9e28d629135d83dfac8b0ea04",
+        "top.h": "668b2853b5b7dc0a4039bdb806cf1947c5b1dbbae4a66b1afca2d6feaa144775"
+      },
+      "ports": {
+        "DRAM_token_ids": [
+          2048
+        ],
+        "DRAM_prefill_len": [
+          1
+        ],
+        "DRAM_embedding": [
+          128256,
+          4096
+        ],
+        "DRAM_final_norm": [
+          4096
+        ],
+        "DRAM_lm_head": [
+          128256,
+          4096
+        ],
+        "DRAM_attn_norm": [
+          32,
+          4096
+        ],
+        "DRAM_q_proj": [
+          32,
+          4096,
+          4096
+        ],
+        "DRAM_k_proj": [
+          32,
+          1024,
+          4096
+        ],
+        "DRAM_v_proj": [
+          32,
+          1024,
+          4096
+        ],
+        "DRAM_o_proj": [
+          32,
+          4096,
+          4096
+        ],
+        "DRAM_ffn_norm": [
+          32,
+          4096
+        ],
+        "DRAM_gate_proj": [
+          32,
+          14336,
+          4096
+        ],
+        "DRAM_up_proj": [
+          32,
+          14336,
+          4096
+        ],
+        "DRAM_down_proj": [
+          32,
+          4096,
+          14336
+        ],
+        "DRAM_hidden_ping": [
+          2048,
+          4096
+        ],
+        "DRAM_hidden_pong": [
+          2048,
+          4096
+        ],
+        "DRAM_norm1": [
+          2048,
+          4096
+        ],
+        "DRAM_q": [
+          2048,
+          4096
+        ],
+        "DRAM_k": [
+          2048,
+          1024
+        ],
+        "DRAM_v": [
+          2048,
+          1024
+        ],
+        "DRAM_attn": [
+          2048,
+          4096
+        ],
+        "DRAM_mid": [
+          2048,
+          4096
+        ],
+        "DRAM_norm2": [
+          2048,
+          4096
+        ],
+        "DRAM_gate": [
+          2048,
+          14336
+        ],
+        "DRAM_up": [
+          2048,
+          14336
+        ],
+        "DRAM_ffn": [
+          2048,
+          14336
+        ],
+        "DRAM_ffn_out": [
+          2048,
+          4096
+        ],
+        "DRAM_k_cache": [
+          32,
+          2048,
+          8,
+          128
+        ],
+        "DRAM_v_cache": [
+          32,
+          2048,
+          8,
+          128
+        ],
+        "DRAM_logits": [
+          2048,
+          128256
+        ]
+      },
+      "port_types": {
+        "DRAM_token_ids": "int32_t",
+        "DRAM_prefill_len": "int32_t",
+        "DRAM_embedding": "data_t",
+        "DRAM_final_norm": "data_t",
+        "DRAM_lm_head": "data_t",
+        "DRAM_attn_norm": "data_t",
+        "DRAM_q_proj": "data_t",
+        "DRAM_k_proj": "data_t",
+        "DRAM_v_proj": "data_t",
+        "DRAM_o_proj": "data_t",
+        "DRAM_ffn_norm": "data_t",
+        "DRAM_gate_proj": "data_t",
+        "DRAM_up_proj": "data_t",
+        "DRAM_down_proj": "data_t",
+        "DRAM_hidden_ping": "data_t",
+        "DRAM_hidden_pong": "data_t",
+        "DRAM_norm1": "data_t",
+        "DRAM_q": "data_t",
+        "DRAM_k": "data_t",
+        "DRAM_v": "data_t",
+        "DRAM_attn": "data_t",
+        "DRAM_mid": "data_t",
+        "DRAM_norm2": "data_t",
+        "DRAM_gate": "data_t",
+        "DRAM_up": "data_t",
+        "DRAM_ffn": "data_t",
+        "DRAM_ffn_out": "data_t",
+        "DRAM_k_cache": "data_t",
+        "DRAM_v_cache": "data_t",
+        "DRAM_logits": "data_t"
+      },
+      "arithmetic": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "rounding": "AP_TRN",
+        "overflow": "AP_WRAP",
+        "fractional_bits": 11
+      },
+      "reference_contract_version": 2,
+      "findings": [],
+      "config": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/auto_generated_configs/LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_16_5_.json",
+      "config_sha256": "bc99c5b167d5741d97e7f0f7a25e3ea9b510bcb0add1ecab47f7f3a491f97228"
+    },
+    {
+      "project": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/hls_files/LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_16_5_",
+      "family": "llama3",
+      "variant": "llama3-decode",
+      "sources": {
+        "top.cpp": "f639ca736aa15dbea8b89471477117680817b930c85820eedd4a78b4a2a74fe9",
+        "top.h": "c2de7bc0167680d413892e24e2eb44a73ba4af7b62f71dc92d71a624b92ce424"
+      },
+      "ports": {
+        "DRAM_token_id": [
+          1
+        ],
+        "DRAM_decode_pos": [
+          1
+        ],
+        "DRAM_embedding": [
+          128256,
+          4096
+        ],
+        "DRAM_final_norm": [
+          4096
+        ],
+        "DRAM_lm_head": [
+          128256,
+          4096
+        ],
+        "DRAM_attn_norm": [
+          32,
+          4096
+        ],
+        "DRAM_q_proj": [
+          32,
+          4096,
+          4096
+        ],
+        "DRAM_k_proj": [
+          32,
+          1024,
+          4096
+        ],
+        "DRAM_v_proj": [
+          32,
+          1024,
+          4096
+        ],
+        "DRAM_o_proj": [
+          32,
+          4096,
+          4096
+        ],
+        "DRAM_ffn_norm": [
+          32,
+          4096
+        ],
+        "DRAM_gate_proj": [
+          32,
+          14336,
+          4096
+        ],
+        "DRAM_up_proj": [
+          32,
+          14336,
+          4096
+        ],
+        "DRAM_down_proj": [
+          32,
+          4096,
+          14336
+        ],
+        "DRAM_hidden_ping": [
+          1,
+          4096
+        ],
+        "DRAM_hidden_pong": [
+          1,
+          4096
+        ],
+        "DRAM_norm1": [
+          1,
+          4096
+        ],
+        "DRAM_q": [
+          1,
+          4096
+        ],
+        "DRAM_k": [
+          1,
+          1024
+        ],
+        "DRAM_v": [
+          1,
+          1024
+        ],
+        "DRAM_attn": [
+          1,
+          4096
+        ],
+        "DRAM_mid": [
+          1,
+          4096
+        ],
+        "DRAM_norm2": [
+          1,
+          4096
+        ],
+        "DRAM_gate": [
+          1,
+          14336
+        ],
+        "DRAM_up": [
+          1,
+          14336
+        ],
+        "DRAM_ffn": [
+          1,
+          14336
+        ],
+        "DRAM_ffn_out": [
+          1,
+          4096
+        ],
+        "DRAM_k_cache": [
+          32,
+          2048,
+          8,
+          128
+        ],
+        "DRAM_v_cache": [
+          32,
+          2048,
+          8,
+          128
+        ],
+        "DRAM_logits_decode": [
+          1,
+          128256
+        ]
+      },
+      "port_types": {
+        "DRAM_token_id": "int32_t",
+        "DRAM_decode_pos": "int32_t",
+        "DRAM_embedding": "data_t",
+        "DRAM_final_norm": "data_t",
+        "DRAM_lm_head": "data_t",
+        "DRAM_attn_norm": "data_t",
+        "DRAM_q_proj": "data_t",
+        "DRAM_k_proj": "data_t",
+        "DRAM_v_proj": "data_t",
+        "DRAM_o_proj": "data_t",
+        "DRAM_ffn_norm": "data_t",
+        "DRAM_gate_proj": "data_t",
+        "DRAM_up_proj": "data_t",
+        "DRAM_down_proj": "data_t",
+        "DRAM_hidden_ping": "data_t",
+        "DRAM_hidden_pong": "data_t",
+        "DRAM_norm1": "data_t",
+        "DRAM_q": "data_t",
+        "DRAM_k": "data_t",
+        "DRAM_v": "data_t",
+        "DRAM_attn": "data_t",
+        "DRAM_mid": "data_t",
+        "DRAM_norm2": "data_t",
+        "DRAM_gate": "data_t",
+        "DRAM_up": "data_t",
+        "DRAM_ffn": "data_t",
+        "DRAM_ffn_out": "data_t",
+        "DRAM_k_cache": "data_t",
+        "DRAM_v_cache": "data_t",
+        "DRAM_logits_decode": "data_t"
+      },
+      "arithmetic": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "rounding": "AP_TRN",
+        "overflow": "AP_WRAP",
+        "fractional_bits": 11
+      },
+      "reference_contract_version": 2,
+      "findings": [],
+      "config": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/auto_generated_configs/LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_16_5_.json",
+      "config_sha256": "429a7001b8f689040037198e694febdfc7147f08c80f43da7d416b75c1a422fe"
+    }
+  ],
+  "schedule": {
+    "prefill": 4,
+    "decode": 2,
+    "tokens": [
+      64810,
+      83661,
+      51469,
+      5614,
+      74023,
+      2568
+    ]
+  },
+  "reference_independence": {
+    "fp64": "independent PyTorch graph and real-valued primitives",
+    "fixed": "independent integer-code graph; RoPE shares Vitis pow/sin/cos primitive constants",
+    "limitation": "fixed RoPE checks do not independently validate vendor transcendental functions"
+  },
+  "reference_pairs": {
+    "llama3-prefill": {
+      "fp64": "llama3-prefill-fp64-v2",
+      "fixed": "llama3-prefill-ap-trn-wrap-v2"
+    },
+    "llama3-decode": {
+      "fp64": "llama3-decode-fp64-v2",
+      "fixed": "llama3-decode-ap-trn-wrap-v2"
+    }
+  },
+  "preflight_failures": [],
+  "vendor_headers": {
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/ap_fixed.h": "8c0990470e583216b8bb34d9b132691a13943dcea5935cbabcfa62a2047f9c69",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/ap_fixed_base.h": "22765417d6583f16733dc1632c04f87405ea9ed5094b471dd8b8bc846664467c",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/hls_math.h": "0788275c5f00049a11c6d3be30d8b04e83008f4ddbd20fc497b169347e06f35f",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_sqrt_apfixed.h": "d5cd7eab608829b11ed62d2081392d40010a9da804d0dd989899af679227edd8",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_exp_apfixed.h": "65bcc9ef7b7ba5141de7ac817f4aa03e3ad28417dec0988ea1b1f8add9c85794"
+  },
+  "cases": {
+    "call0000": {
+      "logits": {
+        "elements": 513024,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.759451040346884,
+        "mae": 1.4017338517156386,
+        "rmse": 1.737166765960902,
+        "relative_l2": 1.2329306075228064,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "dc7b167acef98bf4078877af806e4cb9fb882d7ccdd0aec9f2fb1d1055588e8c",
+          "fixed": "f72db1344585af60a02fc347035c3d33c162a4d2d7b6af578ec766947a69ce90",
+          "fp64": "5eac26ccfa783acfae716c2ba2064f76850335917ed0773944add4ba90ec0bab"
+        },
+        "shape": [
+          4,
+          128256
+        ]
+      },
+      "k_cache": {
+        "elements": 131072,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.027885147902696,
+        "mae": 1.017569816801054,
+        "rmse": 1.439249885494839,
+        "relative_l2": 1.0777878124126563,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "a022900a1192a07bed987958a4dcf2dec48144aa52ecca777092d6c930b22442",
+          "fixed": "3bfdcaa3118fdd8657147d12a62f249fd43f62a8476ba2c51658e94b3e615532",
+          "fp64": "fdf8b4aef2fe5d14a979e953677bca072f86556a048ef63f6c976fd35574b326"
+        }
+      },
+      "v_cache": {
+        "elements": 131072,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.435142244110806,
+        "mae": 1.0254881901889845,
+        "rmse": 1.4514277316090984,
+        "relative_l2": 1.0782706778179052,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "4316cc3d11d5afd40be059e3b9745d1f846ac1c962ab50b3eef608677512fa46",
+          "fixed": "3da678bd9e1866d00a5d6e1d3dd9a1de61a746a548a76c6396247066b2128136",
+          "fp64": "cefeac2c2e3fdce080e80562fe99f02d352ed171b6e468091dd26814c2d17e35"
+        }
+      }
+    },
+    "call0001": {
+      "logits": {
+        "elements": 128256,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.109999999656393,
+        "mae": 1.4220002337458724,
+        "rmse": 1.761835271368922,
+        "relative_l2": 1.2502848587628876,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "36bb2c5e688b2f57ffe7789fbd08467b377745a9157e42edb8f93e9aa8f2bfc8",
+          "fixed": "5740865e37d697532570830fef06dc67f61c9d30fbbe9f2315385398dc95f4fb",
+          "fp64": "177d9e9409b2533db44b4358e2dbc2e1969cafc9a4a05561cc0c563593e2deed"
+        },
+        "shape": [
+          1,
+          128256
+        ]
+      },
+      "k_cache": {
+        "elements": 163840,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.027885147902696,
+        "mae": 1.023277792934243,
+        "rmse": 1.445059838200588,
+        "relative_l2": 1.080644211197766,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "e519ab57241e94121f09fc5cdd2b58646d5613f2fde66b9a5b951f7d58564212",
+          "fixed": "e37a8126a2e483959795c48ffeec13ac9b14f60fa1e83aad50825dfddf1baee9",
+          "fp64": "f3615a7b12923e8944464189292846fcbb339d5cdcf8b95c9599198cbc4534f0"
+        }
+      },
+      "v_cache": {
+        "elements": 163840,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.435142244110806,
+        "mae": 1.0336520573455323,
+        "rmse": 1.4598171474447414,
+        "relative_l2": 1.0828737375985462,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "47bd8fd469cbcb0683e6aac95f2e13a145937e2aee4f6076ab0fb127996b50f7",
+          "fixed": "d141c7865d83a8216c8865812ca4e08c18fc64f1e9bb7c20f700be27b1658e78",
+          "fp64": "c7b4f5e9dba72a969f6a89bd8b5a05f6d8d1c0c8ea49d8ca326821ca548fbab3"
+        }
+      }
+    },
+    "call0002": {
+      "logits": {
+        "elements": 128256,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.568728583498589,
+        "mae": 1.4055307662990855,
+        "rmse": 1.7419494848498984,
+        "relative_l2": 1.23603168070649,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "67991cf6a61e99e42147ed8bd9faf3045526c479f1e67c93024caca89bae4ed5",
+          "fixed": "cf5a57d74abe3cae13daf2a3286ca35958038d82b4ebc661854cba386a969564",
+          "fp64": "bf1d3b649190986c13b346ea20ccc0aa386c5fa495bb0606ce12eef91984253e"
+        },
+        "shape": [
+          1,
+          128256
+        ]
+      },
+      "k_cache": {
+        "elements": 196608,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.027885147902696,
+        "mae": 1.0305692664471608,
+        "rmse": 1.4520396640748183,
+        "relative_l2": 1.084150794080337,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "7a9db5c9c36c179324c6af8abeb5533b1c8a9b4029cf1771a72a9664e4ec5d51",
+          "fixed": "e157c64874e6782bbae258e75b0ef0bcb66d7d08ffbbe89cf4b368a5b51a43ba",
+          "fp64": "9a0781c06a505e8e3c642d449859ebc6b3e7bb5cd39619a14e7a6f0c30b85e6b"
+        }
+      },
+      "v_cache": {
+        "elements": 196608,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "FAIL",
+        "max_abs": 7.435142244110806,
+        "mae": 1.0406719068555215,
+        "rmse": 1.4665735565268627,
+        "relative_l2": 1.08665711720631,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "4efdc813ea7b619b7a1c218acda446137f34577da47aabc3a4c810ab6b62158d",
+          "fixed": "3a43cf66879ef086a60a95a090a5ab300d6c70fa6b00a71a0c44fecb5e110148",
+          "fp64": "7f1888bb6c9cebab78f25b3e23c04e51fc5d97ff248e004b88e53c7540056c85"
+        }
+      }
+    }
+  },
+  "input_manifest": {
+    "DRAM_embedding": {
+      "shape": [
+        128256,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "619ba59a66731e7a112a6b46cd942bee830db99802b9dae1ca0148854636cd8e",
+      "seed": 10485999224050804329,
+      "distribution": "uniform",
+      "bound": 0.5
+    },
+    "DRAM_final_norm": {
+      "shape": [
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "9d252fcc3b9654dafc3c1c5e62c0ee347dd93e9b39b0af4a63e04fed6bef96c4",
+      "seed": 10652704275973186025,
+      "distribution": "norm_uniform",
+      "bound": null
+    },
+    "DRAM_lm_head": {
+      "shape": [
+        128256,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "7a02a2afbe6fa3f40f12d18ac8f28bc6de278dfc77b02215cfe4623d40c4d0ac",
+      "seed": 2158445076351476533,
+      "distribution": "uniform",
+      "bound": 0.027063293868263706
+    },
+    "DRAM_attn_norm": {
+      "shape": [
+        32,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "1893e6c26355667b7df019e7d6e6ce9fab73be8d43efefdc0178134d4b378d92",
+      "seed": 6964353986725130847,
+      "distribution": "norm_uniform",
+      "bound": null
+    },
+    "DRAM_q_proj": {
+      "shape": [
+        32,
+        4096,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "86346d6d751f9b0ecddbed37348232635012cdd03db368bd34026fe6be09a77c",
+      "seed": 15000591229787539627,
+      "distribution": "uniform",
+      "bound": 0.027063293868263706
+    },
+    "DRAM_k_proj": {
+      "shape": [
+        32,
+        1024,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "1dea16d29b96519b95494ab04ce54009302a0a453e0ce77ae1babbfde1fa43cd",
+      "seed": 13980942627139711134,
+      "distribution": "uniform",
+      "bound": 0.027063293868263706
+    },
+    "DRAM_v_proj": {
+      "shape": [
+        32,
+        1024,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "ea2aec787d3741b674344340674d587bb758c36e6d1163b3433fb39f92f5bda3",
+      "seed": 805768161071412708,
+      "distribution": "uniform",
+      "bound": 0.027063293868263706
+    },
+    "DRAM_o_proj": {
+      "shape": [
+        32,
+        4096,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "efafcee5ac039465f1f94d9940023e012c8a24eab918e0e89473cdfe03c9ad4f",
+      "seed": 11193591462804072123,
+      "distribution": "uniform",
+      "bound": 0.027063293868263706
+    },
+    "DRAM_ffn_norm": {
+      "shape": [
+        32,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "37c8cce38682051c9573ac7e73b71ff20d95f0026fa706517641a3966c7ae6b8",
+      "seed": 9884237462530383321,
+      "distribution": "norm_uniform",
+      "bound": null
+    },
+    "DRAM_gate_proj": {
+      "shape": [
+        32,
+        14336,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "a52543bf5cca9e4b78c7efe6c4da54d6dc7de6664eb35c150fab8cf2ab5f1f6a",
+      "seed": 1299279503127956272,
+      "distribution": "uniform",
+      "bound": 0.027063293868263706
+    },
+    "DRAM_up_proj": {
+      "shape": [
+        32,
+        14336,
+        4096
+      ],
+      "dtype": "<i2",
+      "sha256": "e1b3e721ceb09418ddafccb25bdd19c3b4c229d25193ef0877dcb6b0ed4ad853",
+      "seed": 1274338213752068076,
+      "distribution": "uniform",
+      "bound": 0.027063293868263706
+    },
+    "DRAM_down_proj": {
+      "shape": [
+        32,
+        4096,
+        14336
+      ],
+      "dtype": "<i2",
+      "sha256": "d72575e7c189fbf035d44ecdcebc3fee0e3f20aad5ae7d94a974b578267fbdff",
+      "seed": 7859198340917850475,
+      "distribution": "uniform",
+      "bound": 0.014465939058946116
+    }
+  },
+  "simulations": {
+    "call0000": {
+      "returncode": 0,
+      "executed": true,
+      "elapsed_seconds": 1431.0485586950017,
+      "command": [
+        "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+        "-f",
+        "run_existing_csim.tcl"
+      ],
+      "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+      "log_sha256": "5a28aef8e2a7299cdba3ccaba81c72a812f79f934e0b0a4efab541bfd446ea4e",
+      "testbench_sha256": "452842fef69bb9245cad8db4601712e18e8997548091539dad45a699e62fe876",
+      "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+      "executable_sha256": "72f53e24320afebb20015d40ad865661f85ce227e8e4e6fbacb7a18f9ccc36eb"
+    },
+    "call0001": {
+      "returncode": 0,
+      "executed": true,
+      "elapsed_seconds": 695.3335429290019,
+      "command": [
+        "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+        "-f",
+        "run_existing_csim.tcl"
+      ],
+      "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+      "log_sha256": "161011eca274bcb76618821ccbb8e4aec02d30a52f8105f904be6b122effe3e5",
+      "testbench_sha256": "0e2933097ce11e53844a19a0376d6424cb33ea151c1c4bc33fe9648724427f1f",
+      "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+      "executable_sha256": "92450654a7acdd6ef2a321aaf696db7640ad4c726a2222bf95aad7a95b5dd15d"
+    },
+    "call0002": {
+      "returncode": 0,
+      "executed": true,
+      "elapsed_seconds": 404.77567452199946,
+      "command": [
+        "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+        "-f",
+        "run_existing_csim.tcl"
+      ],
+      "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+      "log_sha256": "a0e528218f75bf02fcf712ec9011c38a29ec194b450aadf2a8640db1fc20cfea",
+      "testbench_sha256": "0e2933097ce11e53844a19a0376d6424cb33ea151c1c4bc33fe9648724427f1f",
+      "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+      "executable_sha256": "92450654a7acdd6ef2a321aaf696db7640ad4c726a2222bf95aad7a95b5dd15d"
+    }
+  },
+  "fixed_reference_dependencies": {
+    "kind": "shared_vendor_primitive_constants",
+    "scope": "fixed-reference RoPE coefficients only; FP64 is independent",
+    "libraries": {
+      "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/lnx64/tools/fpo_v7_1/libgmp.so.11": "4127e20e0403b888d5262dd78d57a4142584f2a87e11c57346e8d0bef6243f34",
+      "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/lnx64/tools/fpo_v7_1/libmpfr.so.4": "40c08390e859020c38fdb99d2bd2d269356f6ffbad73e05b3799e8460cdec4f1",
+      "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/lnx64/tools/fpo_v7_1/libIp_floating_point_v7_1_bitacc_cmodel.so": "28a306a295decbf9ed3278ae83c5e8d9d5a92440b93fe7d7b609ed4a395af53f",
+      "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/lnx64/lib/csim/libhlsmc++-GCC46.so": "97a84d24398331ff7e74e3dbdf8c94737343d2dd850594cfbb36c43221c1cff9",
+      "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/lnx64/lib/csim/libhlsm-GCC46.so": "c10644a1d57462f7f86239024ff8c3c4e4b68f443df076ccaeb50a6fc7d4dacf"
+    },
+    "bridge_source": "\n#include <hls_math.h>\nextern \"C\" {\nfloat rope_pow(float x, float y) { return powf(x, y); }\nfloat rope_cos(float x) { return hls::cos(x); }\nfloat rope_sin(float x) { return hls::sin(x); }\n}\n",
+    "bridge_library_sha256": "f5a549d14e22deaadfa0305f98104938680f3c41b8caf32ae080f3e4e88e1aed",
+    "bridge_command": [
+      "g++",
+      "-shared",
+      "-fPIC",
+      "-std=c++14",
+      "-O2",
+      "-I/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include",
+      "/tmp/forgebench_rope_40n4dnth/rope.cpp",
+      "-o",
+      "/tmp/forgebench_rope_40n4dnth/rope.so",
+      "-L/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/lnx64/lib/csim",
+      "-Wl,--disable-new-dtags",
+      "-Wl,-rpath,/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/lnx64/lib/csim",
+      "-Wl,-rpath,/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/lnx64/tools/fpo_v7_1",
+      "-lhlsmc++-GCC46",
+      "-lhlsm-GCC46"
+    ]
+  },
+  "fixed_rope_coefficient_sha256": {
+    "call0000": "a871ed4dcc2f9c324fc7454a597c267747c442b36228bcf4d9dcd5ab1f3f9516",
+    "call0001": "a2e01b8a75be36f58de012a27ee0a33a514d3450f7876fae614aa40ebee61ea5",
+    "call0002": "f4e3184b5f56dccec29c1e32b7f619b5572a5454d18ee42a922aafa10f7fc0dd"
+  },
+  "original_sources_unchanged": true,
+  "reference_sources_unchanged": true,
+  "elapsed_seconds": 3010.064599404999,
+  "exit_code": 1,
+  "verdict_re_evaluation": {
+    "metrics_reused": [
+      "max_abs",
+      "relative_l2"
+    ],
+    "accelerator_rerun": false,
+    "previous_thresholds": {
+      "max_absolute": 0.1,
+      "relative_l2": 0.01
+    }
+  }
+}

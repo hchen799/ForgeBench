@@ -1,0 +1,6 @@
+INVALID_DESIGN
+Fixed-point comparison: NOT_RUN
+FP64 comparison: NOT_RUN
+token IDs cannot be represented by the existing data_t interface
+RMSNorm: (ap_fixed<32,10>)4096 is zero; cannot divide
+attention: hls::sqrt((ap_fixed<16,5>)128) is zero

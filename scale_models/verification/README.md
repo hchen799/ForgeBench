@@ -1,5 +1,12 @@
 # Accelerator verification: ResNet-18, Llama 3, and exported tensors
 
+**To verify the existing production JSON-generated projects in `hls_files/`,
+use the separate
+[existing-model verification package](../existing_model_verification/README.md).**
+That workflow compiles the saved source unchanged. The configurable and legacy
+results below concern dedicated accelerator generators; their PASS results
+do not establish correctness of the production JSON-to-HLS designs.
+
 This is the central verification directory. It contains the configurable HLS
 C/C++ generators, PyTorch golden references, tensor comparison tools, tests,
 and preserved earlier verification implementations and results.

@@ -1,0 +1,2747 @@
+{
+  "brams": [
+    {
+      "name": "BRAM_feat_input",
+      "dims": [
+        3,
+        224,
+        224
+      ]
+    },
+    {
+      "name": "BRAM_feat_stem",
+      "dims": [
+        64,
+        112,
+        112
+      ]
+    },
+    {
+      "name": "BRAM_feat_pool",
+      "dims": [
+        64,
+        56,
+        56
+      ]
+    },
+    {
+      "name": "BRAM_w_stem",
+      "dims": [
+        64,
+        3,
+        7,
+        7
+      ]
+    },
+    {
+      "name": "BRAM_bn_stem",
+      "dims": [
+        4,
+        64
+      ]
+    },
+    {
+      "name": "BRAM_feat_s1_tmp1",
+      "dims": [
+        64,
+        56,
+        56
+      ]
+    },
+    {
+      "name": "BRAM_feat_s1_tmp2",
+      "dims": [
+        64,
+        56,
+        56
+      ]
+    },
+    {
+      "name": "BRAM_feat_s1_b0",
+      "dims": [
+        64,
+        56,
+        56
+      ]
+    },
+    {
+      "name": "BRAM_w_s1_b0_1",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s1_b0_1",
+      "dims": [
+        4,
+        64
+      ]
+    },
+    {
+      "name": "BRAM_w_s1_b0_2",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s1_b0_2",
+      "dims": [
+        4,
+        64
+      ]
+    },
+    {
+      "name": "BRAM_feat_s1_b1",
+      "dims": [
+        64,
+        56,
+        56
+      ]
+    },
+    {
+      "name": "BRAM_w_s1_b1_1",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s1_b1_1",
+      "dims": [
+        4,
+        64
+      ]
+    },
+    {
+      "name": "BRAM_w_s1_b1_2",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s1_b1_2",
+      "dims": [
+        4,
+        64
+      ]
+    },
+    {
+      "name": "BRAM_feat_s2_tmp1",
+      "dims": [
+        128,
+        28,
+        28
+      ]
+    },
+    {
+      "name": "BRAM_feat_s2_tmp2",
+      "dims": [
+        128,
+        28,
+        28
+      ]
+    },
+    {
+      "name": "BRAM_feat_s2_skip",
+      "dims": [
+        128,
+        28,
+        28
+      ]
+    },
+    {
+      "name": "BRAM_feat_s2_b0",
+      "dims": [
+        128,
+        28,
+        28
+      ]
+    },
+    {
+      "name": "BRAM_w_s2_b0_1",
+      "dims": [
+        128,
+        64,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s2_b0_1",
+      "dims": [
+        4,
+        128
+      ]
+    },
+    {
+      "name": "BRAM_w_s2_b0_2",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s2_b0_2",
+      "dims": [
+        4,
+        128
+      ]
+    },
+    {
+      "name": "BRAM_w_s2_b0_down",
+      "dims": [
+        128,
+        64,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "BRAM_feat_s2_b1",
+      "dims": [
+        128,
+        28,
+        28
+      ]
+    },
+    {
+      "name": "BRAM_w_s2_b1_1",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s2_b1_1",
+      "dims": [
+        4,
+        128
+      ]
+    },
+    {
+      "name": "BRAM_w_s2_b1_2",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s2_b1_2",
+      "dims": [
+        4,
+        128
+      ]
+    },
+    {
+      "name": "BRAM_feat_s3_tmp1",
+      "dims": [
+        256,
+        14,
+        14
+      ]
+    },
+    {
+      "name": "BRAM_feat_s3_tmp2",
+      "dims": [
+        256,
+        14,
+        14
+      ]
+    },
+    {
+      "name": "BRAM_feat_s3_skip",
+      "dims": [
+        256,
+        14,
+        14
+      ]
+    },
+    {
+      "name": "BRAM_feat_s3_b0",
+      "dims": [
+        256,
+        14,
+        14
+      ]
+    },
+    {
+      "name": "BRAM_w_s3_b0_1",
+      "dims": [
+        256,
+        128,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s3_b0_1",
+      "dims": [
+        4,
+        256
+      ]
+    },
+    {
+      "name": "BRAM_w_s3_b0_2",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s3_b0_2",
+      "dims": [
+        4,
+        256
+      ]
+    },
+    {
+      "name": "BRAM_w_s3_b0_down",
+      "dims": [
+        256,
+        128,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "BRAM_feat_s3_b1",
+      "dims": [
+        256,
+        14,
+        14
+      ]
+    },
+    {
+      "name": "BRAM_w_s3_b1_1",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s3_b1_1",
+      "dims": [
+        4,
+        256
+      ]
+    },
+    {
+      "name": "BRAM_w_s3_b1_2",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s3_b1_2",
+      "dims": [
+        4,
+        256
+      ]
+    },
+    {
+      "name": "BRAM_feat_s4_tmp1",
+      "dims": [
+        512,
+        7,
+        7
+      ]
+    },
+    {
+      "name": "BRAM_feat_s4_tmp2",
+      "dims": [
+        512,
+        7,
+        7
+      ]
+    },
+    {
+      "name": "BRAM_feat_s4_skip",
+      "dims": [
+        512,
+        7,
+        7
+      ]
+    },
+    {
+      "name": "BRAM_feat_s4_b0",
+      "dims": [
+        512,
+        7,
+        7
+      ]
+    },
+    {
+      "name": "BRAM_w_s4_b0_1",
+      "dims": [
+        512,
+        256,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s4_b0_1",
+      "dims": [
+        4,
+        512
+      ]
+    },
+    {
+      "name": "BRAM_w_s4_b0_2",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s4_b0_2",
+      "dims": [
+        4,
+        512
+      ]
+    },
+    {
+      "name": "BRAM_w_s4_b0_down",
+      "dims": [
+        512,
+        256,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "BRAM_feat_s4_b1",
+      "dims": [
+        512,
+        7,
+        7
+      ]
+    },
+    {
+      "name": "BRAM_w_s4_b1_1",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s4_b1_1",
+      "dims": [
+        4,
+        512
+      ]
+    },
+    {
+      "name": "BRAM_w_s4_b1_2",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ]
+    },
+    {
+      "name": "BRAM_bn_s4_b1_2",
+      "dims": [
+        4,
+        512
+      ]
+    },
+    {
+      "name": "BRAM_pool",
+      "dims": [
+        512,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "BRAM_out",
+      "dims": [
+        1000,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "BRAM_fc",
+      "dims": [
+        1000,
+        512,
+        1,
+        1
+      ]
+    }
+  ],
+  "drams": [
+    {
+      "name": "DRAM_input",
+      "dims": [
+        3,
+        224,
+        224
+      ],
+      "bundle": "mem_input"
+    },
+    {
+      "name": "DRAM_w_stem",
+      "dims": [
+        64,
+        3,
+        7,
+        7
+      ],
+      "bundle": "mem_w_stem"
+    },
+    {
+      "name": "DRAM_bn_stem",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_stem"
+    },
+    {
+      "name": "DRAM_w_s1_b0_1",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s1_b0_1"
+    },
+    {
+      "name": "DRAM_bn_s1_b0_1",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_s1_b0_1"
+    },
+    {
+      "name": "DRAM_w_s1_b0_2",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s1_b0_2"
+    },
+    {
+      "name": "DRAM_bn_s1_b0_2",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_s1_b0_2"
+    },
+    {
+      "name": "DRAM_w_s1_b1_1",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s1_b1_1"
+    },
+    {
+      "name": "DRAM_bn_s1_b1_1",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_s1_b1_1"
+    },
+    {
+      "name": "DRAM_w_s1_b1_2",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s1_b1_2"
+    },
+    {
+      "name": "DRAM_bn_s1_b1_2",
+      "dims": [
+        4,
+        64
+      ],
+      "bundle": "mem_bn_s1_b1_2"
+    },
+    {
+      "name": "DRAM_w_s2_b0_1",
+      "dims": [
+        128,
+        64,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s2_b0_1"
+    },
+    {
+      "name": "DRAM_bn_s2_b0_1",
+      "dims": [
+        4,
+        128
+      ],
+      "bundle": "mem_bn_s2_b0_1"
+    },
+    {
+      "name": "DRAM_w_s2_b0_2",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s2_b0_2"
+    },
+    {
+      "name": "DRAM_bn_s2_b0_2",
+      "dims": [
+        4,
+        128
+      ],
+      "bundle": "mem_bn_s2_b0_2"
+    },
+    {
+      "name": "DRAM_w_s2_b0_down",
+      "dims": [
+        128,
+        64,
+        1,
+        1
+      ],
+      "bundle": "mem_w_s2_b0_down"
+    },
+    {
+      "name": "DRAM_w_s2_b1_1",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s2_b1_1"
+    },
+    {
+      "name": "DRAM_bn_s2_b1_1",
+      "dims": [
+        4,
+        128
+      ],
+      "bundle": "mem_bn_s2_b1_1"
+    },
+    {
+      "name": "DRAM_w_s2_b1_2",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s2_b1_2"
+    },
+    {
+      "name": "DRAM_bn_s2_b1_2",
+      "dims": [
+        4,
+        128
+      ],
+      "bundle": "mem_bn_s2_b1_2"
+    },
+    {
+      "name": "DRAM_w_s3_b0_1",
+      "dims": [
+        256,
+        128,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s3_b0_1"
+    },
+    {
+      "name": "DRAM_bn_s3_b0_1",
+      "dims": [
+        4,
+        256
+      ],
+      "bundle": "mem_bn_s3_b0_1"
+    },
+    {
+      "name": "DRAM_w_s3_b0_2",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s3_b0_2"
+    },
+    {
+      "name": "DRAM_bn_s3_b0_2",
+      "dims": [
+        4,
+        256
+      ],
+      "bundle": "mem_bn_s3_b0_2"
+    },
+    {
+      "name": "DRAM_w_s3_b0_down",
+      "dims": [
+        256,
+        128,
+        1,
+        1
+      ],
+      "bundle": "mem_w_s3_b0_down"
+    },
+    {
+      "name": "DRAM_w_s3_b1_1",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s3_b1_1"
+    },
+    {
+      "name": "DRAM_bn_s3_b1_1",
+      "dims": [
+        4,
+        256
+      ],
+      "bundle": "mem_bn_s3_b1_1"
+    },
+    {
+      "name": "DRAM_w_s3_b1_2",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s3_b1_2"
+    },
+    {
+      "name": "DRAM_bn_s3_b1_2",
+      "dims": [
+        4,
+        256
+      ],
+      "bundle": "mem_bn_s3_b1_2"
+    },
+    {
+      "name": "DRAM_w_s4_b0_1",
+      "dims": [
+        512,
+        256,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s4_b0_1"
+    },
+    {
+      "name": "DRAM_bn_s4_b0_1",
+      "dims": [
+        4,
+        512
+      ],
+      "bundle": "mem_bn_s4_b0_1"
+    },
+    {
+      "name": "DRAM_w_s4_b0_2",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s4_b0_2"
+    },
+    {
+      "name": "DRAM_bn_s4_b0_2",
+      "dims": [
+        4,
+        512
+      ],
+      "bundle": "mem_bn_s4_b0_2"
+    },
+    {
+      "name": "DRAM_w_s4_b0_down",
+      "dims": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "bundle": "mem_w_s4_b0_down"
+    },
+    {
+      "name": "DRAM_w_s4_b1_1",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s4_b1_1"
+    },
+    {
+      "name": "DRAM_bn_s4_b1_1",
+      "dims": [
+        4,
+        512
+      ],
+      "bundle": "mem_bn_s4_b1_1"
+    },
+    {
+      "name": "DRAM_w_s4_b1_2",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "bundle": "mem_w_s4_b1_2"
+    },
+    {
+      "name": "DRAM_bn_s4_b1_2",
+      "dims": [
+        4,
+        512
+      ],
+      "bundle": "mem_bn_s4_b1_2"
+    },
+    {
+      "name": "DRAM_out",
+      "dims": [
+        1000,
+        1,
+        1
+      ],
+      "bundle": "mem_out"
+    },
+    {
+      "name": "DRAM_fc",
+      "dims": [
+        1000,
+        512,
+        1,
+        1
+      ],
+      "bundle": "mem_fc"
+    }
+  ],
+  "ops": {
+    "load_param_DRAM_w_stem": {
+      "func_name": "load",
+      "dims": [
+        64,
+        3,
+        7,
+        7
+      ],
+      "args": [
+        "DRAM_w_stem",
+        "BRAM_w_stem"
+      ]
+    },
+    "load_param_DRAM_bn_stem": {
+      "func_name": "load",
+      "dims": [
+        4,
+        64
+      ],
+      "args": [
+        "DRAM_bn_stem",
+        "BRAM_bn_stem"
+      ]
+    },
+    "load_param_DRAM_w_s1_b0_1": {
+      "func_name": "load",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s1_b0_1",
+        "BRAM_w_s1_b0_1"
+      ]
+    },
+    "load_param_DRAM_bn_s1_b0_1": {
+      "func_name": "load",
+      "dims": [
+        4,
+        64
+      ],
+      "args": [
+        "DRAM_bn_s1_b0_1",
+        "BRAM_bn_s1_b0_1"
+      ]
+    },
+    "load_param_DRAM_w_s1_b0_2": {
+      "func_name": "load",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s1_b0_2",
+        "BRAM_w_s1_b0_2"
+      ]
+    },
+    "load_param_DRAM_bn_s1_b0_2": {
+      "func_name": "load",
+      "dims": [
+        4,
+        64
+      ],
+      "args": [
+        "DRAM_bn_s1_b0_2",
+        "BRAM_bn_s1_b0_2"
+      ]
+    },
+    "load_param_DRAM_w_s1_b1_1": {
+      "func_name": "load",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s1_b1_1",
+        "BRAM_w_s1_b1_1"
+      ]
+    },
+    "load_param_DRAM_bn_s1_b1_1": {
+      "func_name": "load",
+      "dims": [
+        4,
+        64
+      ],
+      "args": [
+        "DRAM_bn_s1_b1_1",
+        "BRAM_bn_s1_b1_1"
+      ]
+    },
+    "load_param_DRAM_w_s1_b1_2": {
+      "func_name": "load",
+      "dims": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s1_b1_2",
+        "BRAM_w_s1_b1_2"
+      ]
+    },
+    "load_param_DRAM_bn_s1_b1_2": {
+      "func_name": "load",
+      "dims": [
+        4,
+        64
+      ],
+      "args": [
+        "DRAM_bn_s1_b1_2",
+        "BRAM_bn_s1_b1_2"
+      ]
+    },
+    "load_param_DRAM_w_s2_b0_1": {
+      "func_name": "load",
+      "dims": [
+        128,
+        64,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s2_b0_1",
+        "BRAM_w_s2_b0_1"
+      ]
+    },
+    "load_param_DRAM_bn_s2_b0_1": {
+      "func_name": "load",
+      "dims": [
+        4,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s2_b0_1",
+        "BRAM_bn_s2_b0_1"
+      ]
+    },
+    "load_param_DRAM_w_s2_b0_2": {
+      "func_name": "load",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s2_b0_2",
+        "BRAM_w_s2_b0_2"
+      ]
+    },
+    "load_param_DRAM_bn_s2_b0_2": {
+      "func_name": "load",
+      "dims": [
+        4,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s2_b0_2",
+        "BRAM_bn_s2_b0_2"
+      ]
+    },
+    "load_param_DRAM_w_s2_b0_down": {
+      "func_name": "load",
+      "dims": [
+        128,
+        64,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_w_s2_b0_down",
+        "BRAM_w_s2_b0_down"
+      ]
+    },
+    "load_param_DRAM_w_s2_b1_1": {
+      "func_name": "load",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s2_b1_1",
+        "BRAM_w_s2_b1_1"
+      ]
+    },
+    "load_param_DRAM_bn_s2_b1_1": {
+      "func_name": "load",
+      "dims": [
+        4,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s2_b1_1",
+        "BRAM_bn_s2_b1_1"
+      ]
+    },
+    "load_param_DRAM_w_s2_b1_2": {
+      "func_name": "load",
+      "dims": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s2_b1_2",
+        "BRAM_w_s2_b1_2"
+      ]
+    },
+    "load_param_DRAM_bn_s2_b1_2": {
+      "func_name": "load",
+      "dims": [
+        4,
+        128
+      ],
+      "args": [
+        "DRAM_bn_s2_b1_2",
+        "BRAM_bn_s2_b1_2"
+      ]
+    },
+    "load_param_DRAM_w_s3_b0_1": {
+      "func_name": "load",
+      "dims": [
+        256,
+        128,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s3_b0_1",
+        "BRAM_w_s3_b0_1"
+      ]
+    },
+    "load_param_DRAM_bn_s3_b0_1": {
+      "func_name": "load",
+      "dims": [
+        4,
+        256
+      ],
+      "args": [
+        "DRAM_bn_s3_b0_1",
+        "BRAM_bn_s3_b0_1"
+      ]
+    },
+    "load_param_DRAM_w_s3_b0_2": {
+      "func_name": "load",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s3_b0_2",
+        "BRAM_w_s3_b0_2"
+      ]
+    },
+    "load_param_DRAM_bn_s3_b0_2": {
+      "func_name": "load",
+      "dims": [
+        4,
+        256
+      ],
+      "args": [
+        "DRAM_bn_s3_b0_2",
+        "BRAM_bn_s3_b0_2"
+      ]
+    },
+    "load_param_DRAM_w_s3_b0_down": {
+      "func_name": "load",
+      "dims": [
+        256,
+        128,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_w_s3_b0_down",
+        "BRAM_w_s3_b0_down"
+      ]
+    },
+    "load_param_DRAM_w_s3_b1_1": {
+      "func_name": "load",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s3_b1_1",
+        "BRAM_w_s3_b1_1"
+      ]
+    },
+    "load_param_DRAM_bn_s3_b1_1": {
+      "func_name": "load",
+      "dims": [
+        4,
+        256
+      ],
+      "args": [
+        "DRAM_bn_s3_b1_1",
+        "BRAM_bn_s3_b1_1"
+      ]
+    },
+    "load_param_DRAM_w_s3_b1_2": {
+      "func_name": "load",
+      "dims": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s3_b1_2",
+        "BRAM_w_s3_b1_2"
+      ]
+    },
+    "load_param_DRAM_bn_s3_b1_2": {
+      "func_name": "load",
+      "dims": [
+        4,
+        256
+      ],
+      "args": [
+        "DRAM_bn_s3_b1_2",
+        "BRAM_bn_s3_b1_2"
+      ]
+    },
+    "load_param_DRAM_w_s4_b0_1": {
+      "func_name": "load",
+      "dims": [
+        512,
+        256,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s4_b0_1",
+        "BRAM_w_s4_b0_1"
+      ]
+    },
+    "load_param_DRAM_bn_s4_b0_1": {
+      "func_name": "load",
+      "dims": [
+        4,
+        512
+      ],
+      "args": [
+        "DRAM_bn_s4_b0_1",
+        "BRAM_bn_s4_b0_1"
+      ]
+    },
+    "load_param_DRAM_w_s4_b0_2": {
+      "func_name": "load",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s4_b0_2",
+        "BRAM_w_s4_b0_2"
+      ]
+    },
+    "load_param_DRAM_bn_s4_b0_2": {
+      "func_name": "load",
+      "dims": [
+        4,
+        512
+      ],
+      "args": [
+        "DRAM_bn_s4_b0_2",
+        "BRAM_bn_s4_b0_2"
+      ]
+    },
+    "load_param_DRAM_w_s4_b0_down": {
+      "func_name": "load",
+      "dims": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_w_s4_b0_down",
+        "BRAM_w_s4_b0_down"
+      ]
+    },
+    "load_param_DRAM_w_s4_b1_1": {
+      "func_name": "load",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s4_b1_1",
+        "BRAM_w_s4_b1_1"
+      ]
+    },
+    "load_param_DRAM_bn_s4_b1_1": {
+      "func_name": "load",
+      "dims": [
+        4,
+        512
+      ],
+      "args": [
+        "DRAM_bn_s4_b1_1",
+        "BRAM_bn_s4_b1_1"
+      ]
+    },
+    "load_param_DRAM_w_s4_b1_2": {
+      "func_name": "load",
+      "dims": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "args": [
+        "DRAM_w_s4_b1_2",
+        "BRAM_w_s4_b1_2"
+      ]
+    },
+    "load_param_DRAM_bn_s4_b1_2": {
+      "func_name": "load",
+      "dims": [
+        4,
+        512
+      ],
+      "args": [
+        "DRAM_bn_s4_b1_2",
+        "BRAM_bn_s4_b1_2"
+      ]
+    },
+    "load_param_DRAM_fc": {
+      "func_name": "load",
+      "dims": [
+        1000,
+        512,
+        1,
+        1
+      ],
+      "args": [
+        "DRAM_fc",
+        "BRAM_fc"
+      ]
+    },
+    "load_input": {
+      "func_name": "load",
+      "dims": [
+        3,
+        224,
+        224
+      ],
+      "args": [
+        "DRAM_input",
+        "BRAM_feat_input"
+      ]
+    },
+    "stem_conv": {
+      "func_name": "conv",
+      "dims": [
+        3,
+        64,
+        224,
+        224,
+        112,
+        112,
+        7,
+        3,
+        2,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_input",
+        "BRAM_w_stem",
+        "BRAM_feat_stem"
+      ]
+    },
+    "stem_bn": {
+      "func_name": "batchnorm",
+      "dims": [
+        64,
+        112,
+        112
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_stem",
+        "BRAM_bn_stem",
+        "BRAM_feat_stem"
+      ]
+    },
+    "stem_relu": {
+      "func_name": "activation_conv",
+      "dims": [
+        64,
+        112,
+        112
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_stem",
+        "BRAM_feat_stem"
+      ]
+    },
+    "stem_pool": {
+      "func_name": "maxpool_pad",
+      "dims": [
+        64,
+        112,
+        112,
+        56,
+        56,
+        3,
+        3,
+        2,
+        2,
+        1,
+        1
+      ],
+      "func_info": [
+        "maxpool_pad_template.cpp"
+      ],
+      "args": [
+        "BRAM_feat_stem",
+        "BRAM_feat_pool"
+      ]
+    },
+    "s1_b0_conv1": {
+      "func_name": "conv",
+      "dims": [
+        64,
+        64,
+        56,
+        56,
+        56,
+        56,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_pool",
+        "BRAM_w_s1_b0_1",
+        "BRAM_feat_s1_tmp1"
+      ]
+    },
+    "s1_b0_bn1": {
+      "func_name": "batchnorm",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp1",
+        "BRAM_bn_s1_b0_1",
+        "BRAM_feat_s1_tmp1"
+      ]
+    },
+    "s1_b0_relu1": {
+      "func_name": "activation_conv",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp1",
+        "BRAM_feat_s1_tmp1"
+      ]
+    },
+    "s1_b0_conv2": {
+      "func_name": "conv",
+      "dims": [
+        64,
+        64,
+        56,
+        56,
+        56,
+        56,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp1",
+        "BRAM_w_s1_b0_2",
+        "BRAM_feat_s1_tmp2"
+      ]
+    },
+    "s1_b0_bn2": {
+      "func_name": "batchnorm",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp2",
+        "BRAM_bn_s1_b0_2",
+        "BRAM_feat_s1_tmp2"
+      ]
+    },
+    "s1_b0_residual_add": {
+      "func_name": "matrix_add_conv",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "matrix_add_template_conv.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp2",
+        "BRAM_feat_pool",
+        "BRAM_feat_s1_b0"
+      ]
+    },
+    "s1_b0_relu2": {
+      "func_name": "activation_conv",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s1_b0",
+        "BRAM_feat_s1_b0"
+      ]
+    },
+    "s1_b1_conv1": {
+      "func_name": "conv",
+      "dims": [
+        64,
+        64,
+        56,
+        56,
+        56,
+        56,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_b0",
+        "BRAM_w_s1_b1_1",
+        "BRAM_feat_s1_tmp1"
+      ]
+    },
+    "s1_b1_bn1": {
+      "func_name": "batchnorm",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp1",
+        "BRAM_bn_s1_b1_1",
+        "BRAM_feat_s1_tmp1"
+      ]
+    },
+    "s1_b1_relu1": {
+      "func_name": "activation_conv",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp1",
+        "BRAM_feat_s1_tmp1"
+      ]
+    },
+    "s1_b1_conv2": {
+      "func_name": "conv",
+      "dims": [
+        64,
+        64,
+        56,
+        56,
+        56,
+        56,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp1",
+        "BRAM_w_s1_b1_2",
+        "BRAM_feat_s1_tmp2"
+      ]
+    },
+    "s1_b1_bn2": {
+      "func_name": "batchnorm",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp2",
+        "BRAM_bn_s1_b1_2",
+        "BRAM_feat_s1_tmp2"
+      ]
+    },
+    "s1_b1_residual_add": {
+      "func_name": "matrix_add_conv",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "matrix_add_template_conv.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s1_tmp2",
+        "BRAM_feat_s1_b0",
+        "BRAM_feat_s1_b1"
+      ]
+    },
+    "s1_b1_relu2": {
+      "func_name": "activation_conv",
+      "dims": [
+        64,
+        56,
+        56
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s1_b1",
+        "BRAM_feat_s1_b1"
+      ]
+    },
+    "s2_b0_conv1": {
+      "func_name": "conv",
+      "dims": [
+        64,
+        128,
+        56,
+        56,
+        28,
+        28,
+        3,
+        1,
+        2,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_b1",
+        "BRAM_w_s2_b0_1",
+        "BRAM_feat_s2_tmp1"
+      ]
+    },
+    "s2_b0_bn1": {
+      "func_name": "batchnorm",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp1",
+        "BRAM_bn_s2_b0_1",
+        "BRAM_feat_s2_tmp1"
+      ]
+    },
+    "s2_b0_relu1": {
+      "func_name": "activation_conv",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp1",
+        "BRAM_feat_s2_tmp1"
+      ]
+    },
+    "s2_b0_conv2": {
+      "func_name": "conv",
+      "dims": [
+        128,
+        128,
+        28,
+        28,
+        28,
+        28,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp1",
+        "BRAM_w_s2_b0_2",
+        "BRAM_feat_s2_tmp2"
+      ]
+    },
+    "s2_b0_bn2": {
+      "func_name": "batchnorm",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp2",
+        "BRAM_bn_s2_b0_2",
+        "BRAM_feat_s2_tmp2"
+      ]
+    },
+    "s2_b0_downsample": {
+      "func_name": "conv",
+      "dims": [
+        64,
+        128,
+        56,
+        56,
+        28,
+        28,
+        1,
+        0,
+        2,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s1_b1",
+        "BRAM_w_s2_b0_down",
+        "BRAM_feat_s2_skip"
+      ]
+    },
+    "s2_b0_residual_add": {
+      "func_name": "matrix_add_conv",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "matrix_add_template_conv.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp2",
+        "BRAM_feat_s2_skip",
+        "BRAM_feat_s2_b0"
+      ]
+    },
+    "s2_b0_relu2": {
+      "func_name": "activation_conv",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s2_b0",
+        "BRAM_feat_s2_b0"
+      ]
+    },
+    "s2_b1_conv1": {
+      "func_name": "conv",
+      "dims": [
+        128,
+        128,
+        28,
+        28,
+        28,
+        28,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_b0",
+        "BRAM_w_s2_b1_1",
+        "BRAM_feat_s2_tmp1"
+      ]
+    },
+    "s2_b1_bn1": {
+      "func_name": "batchnorm",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp1",
+        "BRAM_bn_s2_b1_1",
+        "BRAM_feat_s2_tmp1"
+      ]
+    },
+    "s2_b1_relu1": {
+      "func_name": "activation_conv",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp1",
+        "BRAM_feat_s2_tmp1"
+      ]
+    },
+    "s2_b1_conv2": {
+      "func_name": "conv",
+      "dims": [
+        128,
+        128,
+        28,
+        28,
+        28,
+        28,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp1",
+        "BRAM_w_s2_b1_2",
+        "BRAM_feat_s2_tmp2"
+      ]
+    },
+    "s2_b1_bn2": {
+      "func_name": "batchnorm",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp2",
+        "BRAM_bn_s2_b1_2",
+        "BRAM_feat_s2_tmp2"
+      ]
+    },
+    "s2_b1_residual_add": {
+      "func_name": "matrix_add_conv",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "matrix_add_template_conv.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s2_tmp2",
+        "BRAM_feat_s2_b0",
+        "BRAM_feat_s2_b1"
+      ]
+    },
+    "s2_b1_relu2": {
+      "func_name": "activation_conv",
+      "dims": [
+        128,
+        28,
+        28
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s2_b1",
+        "BRAM_feat_s2_b1"
+      ]
+    },
+    "s3_b0_conv1": {
+      "func_name": "conv",
+      "dims": [
+        128,
+        256,
+        28,
+        28,
+        14,
+        14,
+        3,
+        1,
+        2,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_b1",
+        "BRAM_w_s3_b0_1",
+        "BRAM_feat_s3_tmp1"
+      ]
+    },
+    "s3_b0_bn1": {
+      "func_name": "batchnorm",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp1",
+        "BRAM_bn_s3_b0_1",
+        "BRAM_feat_s3_tmp1"
+      ]
+    },
+    "s3_b0_relu1": {
+      "func_name": "activation_conv",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp1",
+        "BRAM_feat_s3_tmp1"
+      ]
+    },
+    "s3_b0_conv2": {
+      "func_name": "conv",
+      "dims": [
+        256,
+        256,
+        14,
+        14,
+        14,
+        14,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp1",
+        "BRAM_w_s3_b0_2",
+        "BRAM_feat_s3_tmp2"
+      ]
+    },
+    "s3_b0_bn2": {
+      "func_name": "batchnorm",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp2",
+        "BRAM_bn_s3_b0_2",
+        "BRAM_feat_s3_tmp2"
+      ]
+    },
+    "s3_b0_downsample": {
+      "func_name": "conv",
+      "dims": [
+        128,
+        256,
+        28,
+        28,
+        14,
+        14,
+        1,
+        0,
+        2,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s2_b1",
+        "BRAM_w_s3_b0_down",
+        "BRAM_feat_s3_skip"
+      ]
+    },
+    "s3_b0_residual_add": {
+      "func_name": "matrix_add_conv",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "matrix_add_template_conv.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp2",
+        "BRAM_feat_s3_skip",
+        "BRAM_feat_s3_b0"
+      ]
+    },
+    "s3_b0_relu2": {
+      "func_name": "activation_conv",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s3_b0",
+        "BRAM_feat_s3_b0"
+      ]
+    },
+    "s3_b1_conv1": {
+      "func_name": "conv",
+      "dims": [
+        256,
+        256,
+        14,
+        14,
+        14,
+        14,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_b0",
+        "BRAM_w_s3_b1_1",
+        "BRAM_feat_s3_tmp1"
+      ]
+    },
+    "s3_b1_bn1": {
+      "func_name": "batchnorm",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp1",
+        "BRAM_bn_s3_b1_1",
+        "BRAM_feat_s3_tmp1"
+      ]
+    },
+    "s3_b1_relu1": {
+      "func_name": "activation_conv",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp1",
+        "BRAM_feat_s3_tmp1"
+      ]
+    },
+    "s3_b1_conv2": {
+      "func_name": "conv",
+      "dims": [
+        256,
+        256,
+        14,
+        14,
+        14,
+        14,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp1",
+        "BRAM_w_s3_b1_2",
+        "BRAM_feat_s3_tmp2"
+      ]
+    },
+    "s3_b1_bn2": {
+      "func_name": "batchnorm",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp2",
+        "BRAM_bn_s3_b1_2",
+        "BRAM_feat_s3_tmp2"
+      ]
+    },
+    "s3_b1_residual_add": {
+      "func_name": "matrix_add_conv",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "matrix_add_template_conv.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s3_tmp2",
+        "BRAM_feat_s3_b0",
+        "BRAM_feat_s3_b1"
+      ]
+    },
+    "s3_b1_relu2": {
+      "func_name": "activation_conv",
+      "dims": [
+        256,
+        14,
+        14
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s3_b1",
+        "BRAM_feat_s3_b1"
+      ]
+    },
+    "s4_b0_conv1": {
+      "func_name": "conv",
+      "dims": [
+        256,
+        512,
+        14,
+        14,
+        7,
+        7,
+        3,
+        1,
+        2,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_b1",
+        "BRAM_w_s4_b0_1",
+        "BRAM_feat_s4_tmp1"
+      ]
+    },
+    "s4_b0_bn1": {
+      "func_name": "batchnorm",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp1",
+        "BRAM_bn_s4_b0_1",
+        "BRAM_feat_s4_tmp1"
+      ]
+    },
+    "s4_b0_relu1": {
+      "func_name": "activation_conv",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp1",
+        "BRAM_feat_s4_tmp1"
+      ]
+    },
+    "s4_b0_conv2": {
+      "func_name": "conv",
+      "dims": [
+        512,
+        512,
+        7,
+        7,
+        7,
+        7,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp1",
+        "BRAM_w_s4_b0_2",
+        "BRAM_feat_s4_tmp2"
+      ]
+    },
+    "s4_b0_bn2": {
+      "func_name": "batchnorm",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp2",
+        "BRAM_bn_s4_b0_2",
+        "BRAM_feat_s4_tmp2"
+      ]
+    },
+    "s4_b0_downsample": {
+      "func_name": "conv",
+      "dims": [
+        256,
+        512,
+        14,
+        14,
+        7,
+        7,
+        1,
+        0,
+        2,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s3_b1",
+        "BRAM_w_s4_b0_down",
+        "BRAM_feat_s4_skip"
+      ]
+    },
+    "s4_b0_residual_add": {
+      "func_name": "matrix_add_conv",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "matrix_add_template_conv.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp2",
+        "BRAM_feat_s4_skip",
+        "BRAM_feat_s4_b0"
+      ]
+    },
+    "s4_b0_relu2": {
+      "func_name": "activation_conv",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s4_b0",
+        "BRAM_feat_s4_b0"
+      ]
+    },
+    "s4_b1_conv1": {
+      "func_name": "conv",
+      "dims": [
+        512,
+        512,
+        7,
+        7,
+        7,
+        7,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s4_b0",
+        "BRAM_w_s4_b1_1",
+        "BRAM_feat_s4_tmp1"
+      ]
+    },
+    "s4_b1_bn1": {
+      "func_name": "batchnorm",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp1",
+        "BRAM_bn_s4_b1_1",
+        "BRAM_feat_s4_tmp1"
+      ]
+    },
+    "s4_b1_relu1": {
+      "func_name": "activation_conv",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp1",
+        "BRAM_feat_s4_tmp1"
+      ]
+    },
+    "s4_b1_conv2": {
+      "func_name": "conv",
+      "dims": [
+        512,
+        512,
+        7,
+        7,
+        7,
+        7,
+        3,
+        1,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp1",
+        "BRAM_w_s4_b1_2",
+        "BRAM_feat_s4_tmp2"
+      ]
+    },
+    "s4_b1_bn2": {
+      "func_name": "batchnorm",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "batch_norm_template.cpp",
+        0
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp2",
+        "BRAM_bn_s4_b1_2",
+        "BRAM_feat_s4_tmp2"
+      ]
+    },
+    "s4_b1_residual_add": {
+      "func_name": "matrix_add_conv",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "matrix_add_template_conv.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s4_tmp2",
+        "BRAM_feat_s4_b0",
+        "BRAM_feat_s4_b1"
+      ]
+    },
+    "s4_b1_relu2": {
+      "func_name": "activation_conv",
+      "dims": [
+        512,
+        7,
+        7
+      ],
+      "func_info": [
+        "activation_template_conv.cpp",
+        "relu"
+      ],
+      "args": [
+        "BRAM_feat_s4_b1",
+        "BRAM_feat_s4_b1"
+      ]
+    },
+    "global_pool": {
+      "func_name": "adaptive_avgpool",
+      "dims": [
+        512,
+        7,
+        7,
+        1,
+        1
+      ],
+      "func_info": [
+        "adaptive_avgpool_template.cpp"
+      ],
+      "args": [
+        "BRAM_feat_s4_b1",
+        "BRAM_pool"
+      ]
+    },
+    "fc": {
+      "func_name": "conv",
+      "dims": [
+        512,
+        1000,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        8,
+        64,
+        8,
+        64,
+        64,
+        8,
+        64
+      ],
+      "func_info": [
+        "conv_template.cpp",
+        "conv2d",
+        0
+      ],
+      "args": [
+        "BRAM_pool",
+        "BRAM_fc",
+        "BRAM_out"
+      ]
+    },
+    "store_output": {
+      "func_name": "store",
+      "dims": [
+        1000,
+        1,
+        1
+      ],
+      "args": [
+        "BRAM_out",
+        "DRAM_out"
+      ]
+    }
+  },
+  "output_dram_names": [
+    "DRAM_out"
+  ],
+  "FPGA_name": "xczu9eg-ffvb1156-2-e",
+  "clock_period": 10,
+  "task": [
+    "csynth"
+  ],
+  "data_type": "ap_fixed<32,10>",
+  "production_revision": 2,
+  "top_func_name": "top"
+}

@@ -1,0 +1,4968 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "implementation_verdict": "PASS",
+  "mathematical_verdict": "PASS",
+  "seed": 42,
+  "threads": 8,
+  "thresholds": {
+    "relative_l2": 0.05,
+    "zero_reference_max_absolute": 0.1
+  },
+  "execution": "Vitis HLS C simulation",
+  "accelerator_executed": true,
+  "claim": "saved production source; synthetic parameters; no trained accuracy or RTL claim",
+  "versions": {
+    "python": "3.9.13 (main, Aug 25 2022, 23:26:10) \n[GCC 11.2.0]",
+    "torch": "2.2.0",
+    "numpy": "1.24.4"
+  },
+  "reference_sources": {
+    "references/__init__.py": "50a7a0dc1cacd9b21aa1ef03d4714756ad6b20d278884f2e1914eda39501744a",
+    "references/arithmetic.py": "6fb0022c455bd2776e91e298f49a11454b64d3b727c12bd414c4c18af6375d42",
+    "references/contracts.json": "d59e243e78ca15112228014d05ba4892dfaf5e4942a8d08f6e116848c2be9f56",
+    "references/llama.py": "189203a5c9571d6f70d22ecfceceb78dea1b1deac9fe4eae0ef662ead8331dad",
+    "references/project.py": "6ea9c8ccaed49e2dcaef55d25872ab494f91eaa501ead716e882e0cf6721b0da",
+    "references/repaired.py": "07e1ef9e20574b1fe1f3a9a0320deeb4e9c3866153cac763fe160ac4daf7a907",
+    "references/resnet.py": "35cb0dd1e7870a3e3e56947c813453f01a85d546f5948659c1ed04af7cbe6c39",
+    "references/runner.py": "363e55e6db246c31dfaa387e7966acd0e892090056ce3bc8f3aa14662fe272d5",
+    "references/vendor_math.py": "7cf76171699faeb1084101936c494ca6c669b5f7620c5e4029d9cad841735813",
+    "references/wide.py": "5ea6aa9b927ee73215b0ac86849581ba8478748893f2f7470e85dda460020e44",
+    "verify.py": "672814a1c907787e0bd646d4b324a334e5936a5475a056f8337508df8fea440d"
+  },
+  "projects": [
+    {
+      "project": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/hls_files/RESNET101_TILED_config_ap_fixed_32_10_",
+      "family": "resnet101",
+      "variant": "resnet101-tiled",
+      "sources": {
+        "top.cpp": "b34e1e3e9cf9a9a1bb207d8501de5bdf190f302f58a0d5ec438f595c95262c4a",
+        "top.h": "4c2152b1ad3a2c3918fe2c235254ebfd7d417fd23fb6811ac00136e3f9bd67bb"
+      },
+      "ports": {
+        "DRAM_input": [
+          3,
+          224,
+          224
+        ],
+        "DRAM_w_stem": [
+          64,
+          3,
+          7,
+          7
+        ],
+        "DRAM_bn_stem": [
+          4,
+          64
+        ],
+        "DRAM_stem_feat": [
+          64,
+          112,
+          112
+        ],
+        "DRAM_stem_pool": [
+          64,
+          56,
+          56
+        ],
+        "DRAM_s1_mid1": [
+          64,
+          56,
+          56
+        ],
+        "DRAM_s1_mid2": [
+          64,
+          56,
+          56
+        ],
+        "DRAM_s1_skip": [
+          256,
+          56,
+          56
+        ],
+        "DRAM_s1_b0": [
+          256,
+          56,
+          56
+        ],
+        "DRAM_w_s1_b0_1": [
+          64,
+          64,
+          1,
+          1
+        ],
+        "DRAM_bn_s1_b0_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b0_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b0_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b0_3": [
+          256,
+          64,
+          1,
+          1
+        ],
+        "DRAM_bn_s1_b0_3": [
+          4,
+          256
+        ],
+        "DRAM_w_s1_b0_down": [
+          256,
+          64,
+          1,
+          1
+        ],
+        "DRAM_s1_b1": [
+          256,
+          56,
+          56
+        ],
+        "DRAM_w_s1_b1_1": [
+          64,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s1_b1_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b1_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b1_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b1_3": [
+          256,
+          64,
+          1,
+          1
+        ],
+        "DRAM_bn_s1_b1_3": [
+          4,
+          256
+        ],
+        "DRAM_s1_b2": [
+          256,
+          56,
+          56
+        ],
+        "DRAM_w_s1_b2_1": [
+          64,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s1_b2_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b2_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b2_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b2_3": [
+          256,
+          64,
+          1,
+          1
+        ],
+        "DRAM_bn_s1_b2_3": [
+          4,
+          256
+        ],
+        "DRAM_s2_mid1": [
+          128,
+          28,
+          28
+        ],
+        "DRAM_s2_mid2": [
+          128,
+          28,
+          28
+        ],
+        "DRAM_s2_pre_downsample": [
+          128,
+          56,
+          56
+        ],
+        "DRAM_s2_skip": [
+          512,
+          28,
+          28
+        ],
+        "DRAM_s2_b0": [
+          512,
+          28,
+          28
+        ],
+        "DRAM_w_s2_b0_1": [
+          128,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s2_b0_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b0_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b0_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b0_3": [
+          512,
+          128,
+          1,
+          1
+        ],
+        "DRAM_bn_s2_b0_3": [
+          4,
+          512
+        ],
+        "DRAM_w_s2_b0_down": [
+          512,
+          256,
+          1,
+          1
+        ],
+        "DRAM_s2_b1": [
+          512,
+          28,
+          28
+        ],
+        "DRAM_w_s2_b1_1": [
+          128,
+          512,
+          1,
+          1
+        ],
+        "DRAM_bn_s2_b1_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b1_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b1_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b1_3": [
+          512,
+          128,
+          1,
+          1
+        ],
+        "DRAM_bn_s2_b1_3": [
+          4,
+          512
+        ],
+        "DRAM_s2_b2": [
+          512,
+          28,
+          28
+        ],
+        "DRAM_w_s2_b2_1": [
+          128,
+          512,
+          1,
+          1
+        ],
+        "DRAM_bn_s2_b2_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b2_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b2_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b2_3": [
+          512,
+          128,
+          1,
+          1
+        ],
+        "DRAM_bn_s2_b2_3": [
+          4,
+          512
+        ],
+        "DRAM_s2_b3": [
+          512,
+          28,
+          28
+        ],
+        "DRAM_w_s2_b3_1": [
+          128,
+          512,
+          1,
+          1
+        ],
+        "DRAM_bn_s2_b3_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b3_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b3_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b3_3": [
+          512,
+          128,
+          1,
+          1
+        ],
+        "DRAM_bn_s2_b3_3": [
+          4,
+          512
+        ],
+        "DRAM_s3_mid1": [
+          256,
+          14,
+          14
+        ],
+        "DRAM_s3_mid2": [
+          256,
+          14,
+          14
+        ],
+        "DRAM_s3_pre_downsample": [
+          256,
+          28,
+          28
+        ],
+        "DRAM_s3_skip": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_s3_b0": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b0_1": [
+          256,
+          512,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b0_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b0_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b0_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b0_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b0_3": [
+          4,
+          1024
+        ],
+        "DRAM_w_s3_b0_down": [
+          1024,
+          512,
+          1,
+          1
+        ],
+        "DRAM_s3_b1": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b1_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b1_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b1_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b1_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b1_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b1_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b2": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b2_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b2_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b2_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b2_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b2_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b2_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b3": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b3_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b3_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b3_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b3_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b3_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b3_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b4": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b4_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b4_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b4_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b4_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b4_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b4_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b5": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b5_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b5_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b5_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b5_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b5_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b5_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b6": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b6_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b6_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b6_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b6_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b6_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b6_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b7": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b7_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b7_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b7_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b7_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b7_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b7_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b8": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b8_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b8_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b8_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b8_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b8_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b8_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b9": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b9_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b9_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b9_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b9_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b9_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b9_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b10": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b10_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b10_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b10_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b10_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b10_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b10_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b11": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b11_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b11_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b11_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b11_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b11_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b11_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b12": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b12_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b12_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b12_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b12_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b12_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b12_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b13": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b13_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b13_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b13_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b13_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b13_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b13_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b14": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b14_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b14_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b14_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b14_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b14_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b14_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b15": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b15_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b15_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b15_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b15_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b15_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b15_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b16": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b16_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b16_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b16_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b16_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b16_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b16_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b17": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b17_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b17_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b17_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b17_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b17_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b17_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b18": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b18_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b18_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b18_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b18_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b18_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b18_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b19": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b19_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b19_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b19_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b19_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b19_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b19_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b20": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b20_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b20_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b20_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b20_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b20_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b20_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b21": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b21_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b21_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b21_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b21_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b21_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b21_3": [
+          4,
+          1024
+        ],
+        "DRAM_s3_b22": [
+          1024,
+          14,
+          14
+        ],
+        "DRAM_w_s3_b22_1": [
+          256,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b22_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b22_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b22_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b22_3": [
+          1024,
+          256,
+          1,
+          1
+        ],
+        "DRAM_bn_s3_b22_3": [
+          4,
+          1024
+        ],
+        "DRAM_s4_mid1": [
+          512,
+          7,
+          7
+        ],
+        "DRAM_s4_mid2": [
+          512,
+          7,
+          7
+        ],
+        "DRAM_s4_pre_downsample": [
+          512,
+          14,
+          14
+        ],
+        "DRAM_s4_skip": [
+          2048,
+          7,
+          7
+        ],
+        "DRAM_s4_b0": [
+          2048,
+          7,
+          7
+        ],
+        "DRAM_w_s4_b0_1": [
+          512,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_bn_s4_b0_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b0_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b0_2": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b0_3": [
+          2048,
+          512,
+          1,
+          1
+        ],
+        "DRAM_bn_s4_b0_3": [
+          4,
+          2048
+        ],
+        "DRAM_w_s4_b0_down": [
+          2048,
+          1024,
+          1,
+          1
+        ],
+        "DRAM_s4_b1": [
+          2048,
+          7,
+          7
+        ],
+        "DRAM_w_s4_b1_1": [
+          512,
+          2048,
+          1,
+          1
+        ],
+        "DRAM_bn_s4_b1_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b1_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b1_2": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b1_3": [
+          2048,
+          512,
+          1,
+          1
+        ],
+        "DRAM_bn_s4_b1_3": [
+          4,
+          2048
+        ],
+        "DRAM_s4_b2": [
+          2048,
+          7,
+          7
+        ],
+        "DRAM_w_s4_b2_1": [
+          512,
+          2048,
+          1,
+          1
+        ],
+        "DRAM_bn_s4_b2_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b2_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b2_2": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b2_3": [
+          2048,
+          512,
+          1,
+          1
+        ],
+        "DRAM_bn_s4_b2_3": [
+          4,
+          2048
+        ],
+        "DRAM_gap": [
+          2048,
+          1,
+          1
+        ],
+        "DRAM_fc": [
+          1000,
+          2048,
+          1,
+          1
+        ],
+        "DRAM_out": [
+          1000,
+          1,
+          1
+        ]
+      },
+      "port_types": {
+        "DRAM_input": "data_t",
+        "DRAM_w_stem": "data_t",
+        "DRAM_bn_stem": "data_t",
+        "DRAM_stem_feat": "data_t",
+        "DRAM_stem_pool": "data_t",
+        "DRAM_s1_mid1": "data_t",
+        "DRAM_s1_mid2": "data_t",
+        "DRAM_s1_skip": "data_t",
+        "DRAM_s1_b0": "data_t",
+        "DRAM_w_s1_b0_1": "data_t",
+        "DRAM_bn_s1_b0_1": "data_t",
+        "DRAM_w_s1_b0_2": "data_t",
+        "DRAM_bn_s1_b0_2": "data_t",
+        "DRAM_w_s1_b0_3": "data_t",
+        "DRAM_bn_s1_b0_3": "data_t",
+        "DRAM_w_s1_b0_down": "data_t",
+        "DRAM_s1_b1": "data_t",
+        "DRAM_w_s1_b1_1": "data_t",
+        "DRAM_bn_s1_b1_1": "data_t",
+        "DRAM_w_s1_b1_2": "data_t",
+        "DRAM_bn_s1_b1_2": "data_t",
+        "DRAM_w_s1_b1_3": "data_t",
+        "DRAM_bn_s1_b1_3": "data_t",
+        "DRAM_s1_b2": "data_t",
+        "DRAM_w_s1_b2_1": "data_t",
+        "DRAM_bn_s1_b2_1": "data_t",
+        "DRAM_w_s1_b2_2": "data_t",
+        "DRAM_bn_s1_b2_2": "data_t",
+        "DRAM_w_s1_b2_3": "data_t",
+        "DRAM_bn_s1_b2_3": "data_t",
+        "DRAM_s2_mid1": "data_t",
+        "DRAM_s2_mid2": "data_t",
+        "DRAM_s2_pre_downsample": "data_t",
+        "DRAM_s2_skip": "data_t",
+        "DRAM_s2_b0": "data_t",
+        "DRAM_w_s2_b0_1": "data_t",
+        "DRAM_bn_s2_b0_1": "data_t",
+        "DRAM_w_s2_b0_2": "data_t",
+        "DRAM_bn_s2_b0_2": "data_t",
+        "DRAM_w_s2_b0_3": "data_t",
+        "DRAM_bn_s2_b0_3": "data_t",
+        "DRAM_w_s2_b0_down": "data_t",
+        "DRAM_s2_b1": "data_t",
+        "DRAM_w_s2_b1_1": "data_t",
+        "DRAM_bn_s2_b1_1": "data_t",
+        "DRAM_w_s2_b1_2": "data_t",
+        "DRAM_bn_s2_b1_2": "data_t",
+        "DRAM_w_s2_b1_3": "data_t",
+        "DRAM_bn_s2_b1_3": "data_t",
+        "DRAM_s2_b2": "data_t",
+        "DRAM_w_s2_b2_1": "data_t",
+        "DRAM_bn_s2_b2_1": "data_t",
+        "DRAM_w_s2_b2_2": "data_t",
+        "DRAM_bn_s2_b2_2": "data_t",
+        "DRAM_w_s2_b2_3": "data_t",
+        "DRAM_bn_s2_b2_3": "data_t",
+        "DRAM_s2_b3": "data_t",
+        "DRAM_w_s2_b3_1": "data_t",
+        "DRAM_bn_s2_b3_1": "data_t",
+        "DRAM_w_s2_b3_2": "data_t",
+        "DRAM_bn_s2_b3_2": "data_t",
+        "DRAM_w_s2_b3_3": "data_t",
+        "DRAM_bn_s2_b3_3": "data_t",
+        "DRAM_s3_mid1": "data_t",
+        "DRAM_s3_mid2": "data_t",
+        "DRAM_s3_pre_downsample": "data_t",
+        "DRAM_s3_skip": "data_t",
+        "DRAM_s3_b0": "data_t",
+        "DRAM_w_s3_b0_1": "data_t",
+        "DRAM_bn_s3_b0_1": "data_t",
+        "DRAM_w_s3_b0_2": "data_t",
+        "DRAM_bn_s3_b0_2": "data_t",
+        "DRAM_w_s3_b0_3": "data_t",
+        "DRAM_bn_s3_b0_3": "data_t",
+        "DRAM_w_s3_b0_down": "data_t",
+        "DRAM_s3_b1": "data_t",
+        "DRAM_w_s3_b1_1": "data_t",
+        "DRAM_bn_s3_b1_1": "data_t",
+        "DRAM_w_s3_b1_2": "data_t",
+        "DRAM_bn_s3_b1_2": "data_t",
+        "DRAM_w_s3_b1_3": "data_t",
+        "DRAM_bn_s3_b1_3": "data_t",
+        "DRAM_s3_b2": "data_t",
+        "DRAM_w_s3_b2_1": "data_t",
+        "DRAM_bn_s3_b2_1": "data_t",
+        "DRAM_w_s3_b2_2": "data_t",
+        "DRAM_bn_s3_b2_2": "data_t",
+        "DRAM_w_s3_b2_3": "data_t",
+        "DRAM_bn_s3_b2_3": "data_t",
+        "DRAM_s3_b3": "data_t",
+        "DRAM_w_s3_b3_1": "data_t",
+        "DRAM_bn_s3_b3_1": "data_t",
+        "DRAM_w_s3_b3_2": "data_t",
+        "DRAM_bn_s3_b3_2": "data_t",
+        "DRAM_w_s3_b3_3": "data_t",
+        "DRAM_bn_s3_b3_3": "data_t",
+        "DRAM_s3_b4": "data_t",
+        "DRAM_w_s3_b4_1": "data_t",
+        "DRAM_bn_s3_b4_1": "data_t",
+        "DRAM_w_s3_b4_2": "data_t",
+        "DRAM_bn_s3_b4_2": "data_t",
+        "DRAM_w_s3_b4_3": "data_t",
+        "DRAM_bn_s3_b4_3": "data_t",
+        "DRAM_s3_b5": "data_t",
+        "DRAM_w_s3_b5_1": "data_t",
+        "DRAM_bn_s3_b5_1": "data_t",
+        "DRAM_w_s3_b5_2": "data_t",
+        "DRAM_bn_s3_b5_2": "data_t",
+        "DRAM_w_s3_b5_3": "data_t",
+        "DRAM_bn_s3_b5_3": "data_t",
+        "DRAM_s3_b6": "data_t",
+        "DRAM_w_s3_b6_1": "data_t",
+        "DRAM_bn_s3_b6_1": "data_t",
+        "DRAM_w_s3_b6_2": "data_t",
+        "DRAM_bn_s3_b6_2": "data_t",
+        "DRAM_w_s3_b6_3": "data_t",
+        "DRAM_bn_s3_b6_3": "data_t",
+        "DRAM_s3_b7": "data_t",
+        "DRAM_w_s3_b7_1": "data_t",
+        "DRAM_bn_s3_b7_1": "data_t",
+        "DRAM_w_s3_b7_2": "data_t",
+        "DRAM_bn_s3_b7_2": "data_t",
+        "DRAM_w_s3_b7_3": "data_t",
+        "DRAM_bn_s3_b7_3": "data_t",
+        "DRAM_s3_b8": "data_t",
+        "DRAM_w_s3_b8_1": "data_t",
+        "DRAM_bn_s3_b8_1": "data_t",
+        "DRAM_w_s3_b8_2": "data_t",
+        "DRAM_bn_s3_b8_2": "data_t",
+        "DRAM_w_s3_b8_3": "data_t",
+        "DRAM_bn_s3_b8_3": "data_t",
+        "DRAM_s3_b9": "data_t",
+        "DRAM_w_s3_b9_1": "data_t",
+        "DRAM_bn_s3_b9_1": "data_t",
+        "DRAM_w_s3_b9_2": "data_t",
+        "DRAM_bn_s3_b9_2": "data_t",
+        "DRAM_w_s3_b9_3": "data_t",
+        "DRAM_bn_s3_b9_3": "data_t",
+        "DRAM_s3_b10": "data_t",
+        "DRAM_w_s3_b10_1": "data_t",
+        "DRAM_bn_s3_b10_1": "data_t",
+        "DRAM_w_s3_b10_2": "data_t",
+        "DRAM_bn_s3_b10_2": "data_t",
+        "DRAM_w_s3_b10_3": "data_t",
+        "DRAM_bn_s3_b10_3": "data_t",
+        "DRAM_s3_b11": "data_t",
+        "DRAM_w_s3_b11_1": "data_t",
+        "DRAM_bn_s3_b11_1": "data_t",
+        "DRAM_w_s3_b11_2": "data_t",
+        "DRAM_bn_s3_b11_2": "data_t",
+        "DRAM_w_s3_b11_3": "data_t",
+        "DRAM_bn_s3_b11_3": "data_t",
+        "DRAM_s3_b12": "data_t",
+        "DRAM_w_s3_b12_1": "data_t",
+        "DRAM_bn_s3_b12_1": "data_t",
+        "DRAM_w_s3_b12_2": "data_t",
+        "DRAM_bn_s3_b12_2": "data_t",
+        "DRAM_w_s3_b12_3": "data_t",
+        "DRAM_bn_s3_b12_3": "data_t",
+        "DRAM_s3_b13": "data_t",
+        "DRAM_w_s3_b13_1": "data_t",
+        "DRAM_bn_s3_b13_1": "data_t",
+        "DRAM_w_s3_b13_2": "data_t",
+        "DRAM_bn_s3_b13_2": "data_t",
+        "DRAM_w_s3_b13_3": "data_t",
+        "DRAM_bn_s3_b13_3": "data_t",
+        "DRAM_s3_b14": "data_t",
+        "DRAM_w_s3_b14_1": "data_t",
+        "DRAM_bn_s3_b14_1": "data_t",
+        "DRAM_w_s3_b14_2": "data_t",
+        "DRAM_bn_s3_b14_2": "data_t",
+        "DRAM_w_s3_b14_3": "data_t",
+        "DRAM_bn_s3_b14_3": "data_t",
+        "DRAM_s3_b15": "data_t",
+        "DRAM_w_s3_b15_1": "data_t",
+        "DRAM_bn_s3_b15_1": "data_t",
+        "DRAM_w_s3_b15_2": "data_t",
+        "DRAM_bn_s3_b15_2": "data_t",
+        "DRAM_w_s3_b15_3": "data_t",
+        "DRAM_bn_s3_b15_3": "data_t",
+        "DRAM_s3_b16": "data_t",
+        "DRAM_w_s3_b16_1": "data_t",
+        "DRAM_bn_s3_b16_1": "data_t",
+        "DRAM_w_s3_b16_2": "data_t",
+        "DRAM_bn_s3_b16_2": "data_t",
+        "DRAM_w_s3_b16_3": "data_t",
+        "DRAM_bn_s3_b16_3": "data_t",
+        "DRAM_s3_b17": "data_t",
+        "DRAM_w_s3_b17_1": "data_t",
+        "DRAM_bn_s3_b17_1": "data_t",
+        "DRAM_w_s3_b17_2": "data_t",
+        "DRAM_bn_s3_b17_2": "data_t",
+        "DRAM_w_s3_b17_3": "data_t",
+        "DRAM_bn_s3_b17_3": "data_t",
+        "DRAM_s3_b18": "data_t",
+        "DRAM_w_s3_b18_1": "data_t",
+        "DRAM_bn_s3_b18_1": "data_t",
+        "DRAM_w_s3_b18_2": "data_t",
+        "DRAM_bn_s3_b18_2": "data_t",
+        "DRAM_w_s3_b18_3": "data_t",
+        "DRAM_bn_s3_b18_3": "data_t",
+        "DRAM_s3_b19": "data_t",
+        "DRAM_w_s3_b19_1": "data_t",
+        "DRAM_bn_s3_b19_1": "data_t",
+        "DRAM_w_s3_b19_2": "data_t",
+        "DRAM_bn_s3_b19_2": "data_t",
+        "DRAM_w_s3_b19_3": "data_t",
+        "DRAM_bn_s3_b19_3": "data_t",
+        "DRAM_s3_b20": "data_t",
+        "DRAM_w_s3_b20_1": "data_t",
+        "DRAM_bn_s3_b20_1": "data_t",
+        "DRAM_w_s3_b20_2": "data_t",
+        "DRAM_bn_s3_b20_2": "data_t",
+        "DRAM_w_s3_b20_3": "data_t",
+        "DRAM_bn_s3_b20_3": "data_t",
+        "DRAM_s3_b21": "data_t",
+        "DRAM_w_s3_b21_1": "data_t",
+        "DRAM_bn_s3_b21_1": "data_t",
+        "DRAM_w_s3_b21_2": "data_t",
+        "DRAM_bn_s3_b21_2": "data_t",
+        "DRAM_w_s3_b21_3": "data_t",
+        "DRAM_bn_s3_b21_3": "data_t",
+        "DRAM_s3_b22": "data_t",
+        "DRAM_w_s3_b22_1": "data_t",
+        "DRAM_bn_s3_b22_1": "data_t",
+        "DRAM_w_s3_b22_2": "data_t",
+        "DRAM_bn_s3_b22_2": "data_t",
+        "DRAM_w_s3_b22_3": "data_t",
+        "DRAM_bn_s3_b22_3": "data_t",
+        "DRAM_s4_mid1": "data_t",
+        "DRAM_s4_mid2": "data_t",
+        "DRAM_s4_pre_downsample": "data_t",
+        "DRAM_s4_skip": "data_t",
+        "DRAM_s4_b0": "data_t",
+        "DRAM_w_s4_b0_1": "data_t",
+        "DRAM_bn_s4_b0_1": "data_t",
+        "DRAM_w_s4_b0_2": "data_t",
+        "DRAM_bn_s4_b0_2": "data_t",
+        "DRAM_w_s4_b0_3": "data_t",
+        "DRAM_bn_s4_b0_3": "data_t",
+        "DRAM_w_s4_b0_down": "data_t",
+        "DRAM_s4_b1": "data_t",
+        "DRAM_w_s4_b1_1": "data_t",
+        "DRAM_bn_s4_b1_1": "data_t",
+        "DRAM_w_s4_b1_2": "data_t",
+        "DRAM_bn_s4_b1_2": "data_t",
+        "DRAM_w_s4_b1_3": "data_t",
+        "DRAM_bn_s4_b1_3": "data_t",
+        "DRAM_s4_b2": "data_t",
+        "DRAM_w_s4_b2_1": "data_t",
+        "DRAM_bn_s4_b2_1": "data_t",
+        "DRAM_w_s4_b2_2": "data_t",
+        "DRAM_bn_s4_b2_2": "data_t",
+        "DRAM_w_s4_b2_3": "data_t",
+        "DRAM_bn_s4_b2_3": "data_t",
+        "DRAM_gap": "data_t",
+        "DRAM_fc": "data_t",
+        "DRAM_out": "data_t"
+      },
+      "arithmetic": {
+        "word_bits": 32,
+        "integer_bits": 10,
+        "rounding": "AP_TRN",
+        "overflow": "AP_WRAP",
+        "fractional_bits": 22
+      },
+      "reference_contract_version": 2,
+      "findings": [],
+      "config": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/auto_generated_configs/RESNET101_TILED_config_ap_fixed_32_10_.json",
+      "config_sha256": "e6d08e6910bb7e71c192309c31dd48ff2982f69345c203777ec7130d53358e73"
+    }
+  ],
+  "reference_pairs": {
+    "resnet101-tiled": {
+      "fp64": "resnet101-tiled-fp64-q32_10-v2",
+      "fixed": "resnet101-tiled-ap-trn-wrap-q32_10-v2"
+    }
+  },
+  "preflight_failures": [],
+  "vendor_headers": {
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/ap_fixed.h": "8c0990470e583216b8bb34d9b132691a13943dcea5935cbabcfa62a2047f9c69",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/ap_fixed_base.h": "22765417d6583f16733dc1632c04f87405ea9ed5094b471dd8b8bc846664467c",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/hls_math.h": "0788275c5f00049a11c6d3be30d8b04e83008f4ddbd20fc497b169347e06f35f",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_sqrt_apfixed.h": "d5cd7eab608829b11ed62d2081392d40010a9da804d0dd989899af679227edd8",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_exp_apfixed.h": "65bcc9ef7b7ba5141de7ac817f4aa03e3ad28417dec0988ea1b1f8add9c85794"
+  },
+  "cases": {
+    "resnet101": {
+      "logits": {
+        "elements": 1000,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 7.978481698067696e-05,
+        "mae": 2.1633653533100843e-05,
+        "rmse": 2.739486785319599e-05,
+        "relative_l2": 6.295207523286037e-06,
+        "zero_reference": false,
+        "shape": [
+          1000
+        ],
+        "sha256": {
+          "actual": "83bf0aada6986bc434df86bac3c3e4bcdd320d776b0ebe1a2b37e456568447b6",
+          "fixed": "33bf6f57d551e8750d6d811f8bb8634cedb8d83350387d1fba7bd36b9f513306",
+          "fp64": "7bb808c97b7418fea55e098e1bda6d6495a4e4b2cb7e94f6352d84345f326a93"
+        }
+      },
+      "stem": {
+        "elements": 802816,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 5.027268981661059e-07,
+        "mae": 1.190371742638278e-07,
+        "rmse": 1.8191724597225043e-07,
+        "relative_l2": 4.490738612415257e-07,
+        "zero_reference": false,
+        "shape": [
+          64,
+          112,
+          112
+        ],
+        "sha256": {
+          "actual": "80a965d4408f54d27ebd9096ffa70883b55876d26a1afca6b025115ce55594f0",
+          "fixed": "ae44282de7614c5461b0aa269ca991b60f5c7926173fcfc2b5500eef1c6ffe40",
+          "fp64": "47743608da27d14dbfbce13e664f3a85d3d945aaa991ec1f610920882900b1a8"
+        }
+      },
+      "pool": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 4.968604930821741e-07,
+        "mae": 2.3735367507614655e-07,
+        "rmse": 2.5685065430571904e-07,
+        "relative_l2": 2.813398619204487e-07,
+        "zero_reference": false,
+        "shape": [
+          64,
+          56,
+          56
+        ],
+        "sha256": {
+          "actual": "ce4243e7fae3b6d2cc1ad289e8fe3198244257a89bfb9fddbdd03c7c2cac1a9b",
+          "fixed": "6ab9e8aadd1274123bd9066c6a31e700a27b21940d3e780a1a4848e82a0066db",
+          "fp64": "61d3560429c60456123c8a761256f177ac1eb286cdb07514687321126200804f"
+        }
+      },
+      "gap": {
+        "elements": 2048,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.00010676686505561861,
+        "mae": 1.904194147391569e-05,
+        "rmse": 2.7434160102517176e-05,
+        "relative_l2": 6.302181494919997e-06,
+        "zero_reference": false,
+        "shape": [
+          2048
+        ],
+        "sha256": {
+          "actual": "840bcc34e88a95d67c8311e952a9e3a36be1f480db40cdabd3504a5f4fd3840f",
+          "fixed": "ad9680df3229bc9353d849edcd61f91adc971ef1c4bffe6bdbc27273ebed4bcd",
+          "fp64": "5e42977a3076579496145f9e6d0fa249c443ae192c3c44540fe22434e74dd0fd"
+        }
+      },
+      "s1_b0": {
+        "elements": 802816,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 2.090309036528737e-06,
+        "mae": 3.1132368105815725e-07,
+        "rmse": 5.05733595135678e-07,
+        "relative_l2": 7.015174397611433e-07,
+        "zero_reference": false,
+        "shape": [
+          256,
+          56,
+          56
+        ],
+        "sha256": {
+          "actual": "5bf0fdf931e859e0e326d5744d862b561dbd37ed6a2f6c1ff333b8b6634f0ff3",
+          "fixed": "ffab8067dd75f1262944c8b6cc97e9f5ffa1b03544090b608e67c1dfadb58174",
+          "fp64": "c3567b37e28fd3a42c2c0ac5d2c183a9d018acdb3b3c3f00acfa1e306cc4711d"
+        }
+      },
+      "s1_b1": {
+        "elements": 802816,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 3.0541398734484915e-06,
+        "mae": 5.827250808001081e-07,
+        "rmse": 8.143877549914517e-07,
+        "relative_l2": 1.0424264845056275e-06,
+        "zero_reference": false,
+        "shape": [
+          256,
+          56,
+          56
+        ],
+        "sha256": {
+          "actual": "47a49306476c6856bd640870f89c1e47b0ed2c91ed79094f673a91b9188c4f7c",
+          "fixed": "5adc168dd05e20008b2647d2e5b08c1e182a7b9db3190ec80524fd3fa7abe46c",
+          "fp64": "f94e8ce8ec9be0f5742d4018bcac0c6fbc1e9e94050501f023c7ad2b5f587e92"
+        }
+      },
+      "s1_b2": {
+        "elements": 802816,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 4.5929914485043355e-06,
+        "mae": 8.31286473379663e-07,
+        "rmse": 1.1293809422858688e-06,
+        "relative_l2": 1.3655214570394445e-06,
+        "zero_reference": false,
+        "shape": [
+          256,
+          56,
+          56
+        ],
+        "sha256": {
+          "actual": "2725d1a16dd406d1993b50cc5a24b10d25cb10af3bb6e7ad8afbe073a626f59c",
+          "fixed": "6409f6a673dec781b1329e72d7de857a25d5ce0a437b590931844a0c97ade8c0",
+          "fp64": "53fee8040cd591956338b83ddc3e7dd19be15230132e818651fac8f4a9299984"
+        }
+      },
+      "s2_b0": {
+        "elements": 401408,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 6.277713329172485e-06,
+        "mae": 6.467959649463635e-07,
+        "rmse": 1.1411034604499808e-06,
+        "relative_l2": 1.699245884967488e-06,
+        "zero_reference": false,
+        "shape": [
+          512,
+          28,
+          28
+        ],
+        "sha256": {
+          "actual": "4d55e6ea4af842320081d0a32c1734c109f15cd805db4f2a7610aec37847437a",
+          "fixed": "7d9938857cde83f18174a87d927073ca7b3c2dfd389c48557c6e38863e99ff90",
+          "fp64": "a7f0a19f3fc3ff149bd8935642b48169a23bf6676bf02a0ce586767ac39a0f33"
+        }
+      },
+      "s2_b1": {
+        "elements": 401408,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 6.611313733362323e-06,
+        "mae": 9.181380860415373e-07,
+        "rmse": 1.3865978280051361e-06,
+        "relative_l2": 1.979214583243814e-06,
+        "zero_reference": false,
+        "shape": [
+          512,
+          28,
+          28
+        ],
+        "sha256": {
+          "actual": "d4e016851044e45c63e78d2ade979ba5ff6d74e2667990b82248fae7e9a2e165",
+          "fixed": "758fb93561a624cd16662e0ecb5e8373aba4912a2d1a038ba9e34b24650dffed",
+          "fp64": "12d74d4a1a3cb0089dec537aba6acfa3a5e22e1d5020c69b9decfedfa6b8bad4"
+        }
+      },
+      "s2_b2": {
+        "elements": 401408,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 7.716422255832356e-06,
+        "mae": 1.1964863461939122e-06,
+        "rmse": 1.7088955420815549e-06,
+        "relative_l2": 2.3048696273608278e-06,
+        "zero_reference": false,
+        "shape": [
+          512,
+          28,
+          28
+        ],
+        "sha256": {
+          "actual": "efaceb0341503bf2b228d39366d1990c81713f4a6a1e2e541c11643fd913da00",
+          "fixed": "54bd31d78f089c5fa38fe91a362b1098da4f5c764145a0b8afb9d355c8f32647",
+          "fp64": "949956895acbc43b4c37b120b7fae8ea724739b1624a8154abd832619f82f6e0"
+        }
+      },
+      "s2_b3": {
+        "elements": 401408,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 1.0120719017514546e-05,
+        "mae": 1.6554936043437715e-06,
+        "rmse": 2.2709840037591906e-06,
+        "relative_l2": 2.6190792751933297e-06,
+        "zero_reference": false,
+        "shape": [
+          512,
+          28,
+          28
+        ],
+        "sha256": {
+          "actual": "fcd2145d86faf05692cf1a4e633f3cb912cad4729750e4b89dbd7e2718d737e0",
+          "fixed": "d8967c4aef9a2c7abeded0d233ea1a0b5a9060db3bde4f646ac722cc0016113b",
+          "fp64": "ba25a398a012df80d268115cab0c91907446b21eadb4846eb18d42c7deea0968"
+        }
+      },
+      "s3_b0": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 1.2617395431568923e-05,
+        "mae": 1.1543589447060507e-06,
+        "rmse": 2.048390821238708e-06,
+        "relative_l2": 2.97710121947388e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "e7f974398daf405d4b9865051629de1b965cbf654ddb4f85c59931a03c667810",
+          "fixed": "461bd12e461b7994d1220cb18221b93fd9863e6c8d97b1ecec97dfe2960866a3",
+          "fp64": "bc2f9f9e7474c47d5dcb7f93c6c2f0ce5d3d94df93f6bb19837dc255d7d9b61d"
+        }
+      },
+      "s3_b1": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 1.3953021967161305e-05,
+        "mae": 1.5789859618379143e-06,
+        "rmse": 2.4557478112571164e-06,
+        "relative_l2": 3.236400460169966e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "3a2c6761ee29140d31ce1f9807911e1fa9b2e33aef9ff4d32e1b51494822eee2",
+          "fixed": "d0a822590585389e73b6ea71021112f46d02b645a7ef42a958d047696a2cf4df",
+          "fp64": "b573406ab51340acb91066645da8446f82d0dbfffe19fcc6f5d70fa70aa6cccf"
+        }
+      },
+      "s3_b2": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 1.5025948719937787e-05,
+        "mae": 1.936651952940658e-06,
+        "rmse": 2.8334329638351847e-06,
+        "relative_l2": 3.5248725315588833e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "e6ab6559543124575009594a91ea9ad7b602a6044b8f86c014786fed3ebe6646",
+          "fixed": "4086e51ec9c35dc621b386d6afc56d2d4abc7c392f3306d59702f736d248c1a6",
+          "fp64": "757f39dc5f7014206e5839070eefb96ed9ebc2079e886af1de0655394f1808ab"
+        }
+      },
+      "s3_b3": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 1.6107839474699404e-05,
+        "mae": 2.2895283932682975e-06,
+        "rmse": 3.2369057096029567e-06,
+        "relative_l2": 3.7614589070080896e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "b4d19edd96da63c9f6cf6240cb129481ac881dbff6f3e4228b0f3ef26021ecd4",
+          "fixed": "1755f17f3e5481c23d973d3e1203a2782da2d8402a294eb1112a9b8971386b9e",
+          "fp64": "d114553c7bfcc2c19b5ca24f144caf0b797b6aecf4f42e35116a834b99834e6b"
+        }
+      },
+      "s3_b4": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 1.6892765154707945e-05,
+        "mae": 2.652435537417133e-06,
+        "rmse": 3.6688814926290235e-06,
+        "relative_l2": 3.985598083540814e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "005df271eb83849818ee74e2550b0a83f3d9ec2a70068a0c165908d4972a8772",
+          "fixed": "92a854576cab9f7d48f5ed008d9244d8d76c55bd1a019c71b803b7fa1e674847",
+          "fp64": "303c2921819e323ab65ef7759de936748a52290de5ab0d9d126aca8621a70b81"
+        }
+      },
+      "s3_b5": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 1.9263020423210264e-05,
+        "mae": 3.1015501105494438e-06,
+        "rmse": 4.308029830633427e-06,
+        "relative_l2": 4.202908629659191e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "5625941f288df590bc8d29fe73ff1b4f6ef33160e67b7ca4c3b7419efdec2a01",
+          "fixed": "161a63943809e76edeae93e1123156c8e0308db86605619904748bf2034fd273",
+          "fp64": "23eb95c8d0b7118f8f6e1d04a34ae253b0c5b48dfc31686e8732e99dd5ba852b"
+        }
+      },
+      "s3_b6": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 2.284604275359925e-05,
+        "mae": 3.573304715018011e-06,
+        "rmse": 4.894014573975659e-06,
+        "relative_l2": 4.399991552121593e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "f36eedf947468fe4e8415416c909912d57637a488f8ea5e11a81e2151abf2ead",
+          "fixed": "3d5b8bcfe181c13dd1d781ecd5187670f317d60ee68f7b8bb14fbd9b493566ba",
+          "fp64": "654fbc49cc98e95bc4b062b3675f91299a9ddb8316a7dc7b2df6e89ae0527eaf"
+        }
+      },
+      "s3_b7": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 2.5370582404704578e-05,
+        "mae": 4.081817348458512e-06,
+        "rmse": 5.515713059512328e-06,
+        "relative_l2": 4.592669494379285e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "ee0bc2c0a3d7cae7f871ad15fbb3981b54bd9a85b92cb8dd4a012bfc5e7b2f70",
+          "fixed": "1ac95d6bab32463369a1e885d7bcdc9799890e91c04eb78729bd3d43ea11b096",
+          "fp64": "7fef6395572a9795970e60ffbbf3b2925dfe3748006f3cfb134b1fdbbfabd453"
+        }
+      },
+      "s3_b8": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 2.7728219622602523e-05,
+        "mae": 4.57614845527161e-06,
+        "rmse": 6.274104289882067e-06,
+        "relative_l2": 4.752096690618016e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "6acbfb23eef08e14dfa9881403c508dfe6f08381bee83327a9d03ea6dd7786dc",
+          "fixed": "ca740625817f01727489f6b55354216fab87bf604f6be7734346c77468760efa",
+          "fp64": "cd0a5598a56a7614c4068d1f5437af3a35bf2d941b1fd591357928f5f3bf55b9"
+        }
+      },
+      "s3_b9": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 3.126173583023473e-05,
+        "mae": 5.299501167613679e-06,
+        "rmse": 7.169411183676271e-06,
+        "relative_l2": 4.960986395069325e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "2d5f3c3ae5096dc8afd0ab10fdfb07e7e4b9e373377016af7bce6301a381cfb6",
+          "fixed": "f09e4f1bbb689ef8eb8197fc75b53231b1c1eb6459a220c6d81517d15091ac11",
+          "fp64": "f083a4349f8b66ec85706812495c5eb69b29457af384ed5ba359567966575e6c"
+        }
+      },
+      "s3_b10": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 3.560335603047804e-05,
+        "mae": 5.9816536362450235e-06,
+        "rmse": 8.152528240923196e-06,
+        "relative_l2": 5.148173381310917e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "1a8ab89a1d3c7e11189a0ab509790356505441a64bb641330f88945e51882866",
+          "fixed": "e74409da61d58ee121713fb84498148f51395cfa3f788e157a55594806fcff10",
+          "fp64": "276fc4e0c3e4ee364384b5bed0088cfb09080d834ac0d167c74e54f8bb5dc1ed"
+        }
+      },
+      "s3_b11": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 3.503499842771873e-05,
+        "mae": 6.655917978194277e-06,
+        "rmse": 9.059303027521354e-06,
+        "relative_l2": 5.264416690334423e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "77f10f83349609831d22fbc30afbc94c8503aeb27f162de87804901f0e4f8834",
+          "fixed": "624c0d1513617eba64e75072a581d739843b37f597f905640e76cccad0b15afb",
+          "fp64": "f288de192d8d2a10e8d5ba7b3013f87c257843189c87e29bfad407df85eb7bda"
+        }
+      },
+      "s3_b12": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 3.964309948845113e-05,
+        "mae": 7.556242092638241e-06,
+        "rmse": 1.0334363580219874e-05,
+        "relative_l2": 5.384505111937299e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "c403c0379fc8a17fca6b5e473ad54fb7f736c27141141d3b0d77ad381ed596b8",
+          "fixed": "0f242f2d3903d824e2e155a819215517dfee96c6229d5968fa668365123f907a",
+          "fp64": "fa2c07d2528411b93f7eab7854037321ed0cef410414e5c06325e7f1a9a0b2bc"
+        }
+      },
+      "s3_b13": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 5.0409508238757894e-05,
+        "mae": 8.565061473433023e-06,
+        "rmse": 1.1831339283295133e-05,
+        "relative_l2": 5.483184654625067e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "a9d2f1214bf83ff32ec391da563659f1ac5fb99ff0da95dc35728bd5d765a767",
+          "fixed": "5fd924deb58ae92b22d8becc83f0128b3f88f2ed977fa81af93daadbfce7ef4b",
+          "fp64": "5e44cc0144705c675c241ba82dcff414a0c1e1456adb046772326009d39c9e04"
+        }
+      },
+      "s3_b14": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 5.479361393057047e-05,
+        "mae": 9.787222643677698e-06,
+        "rmse": 1.3435705580434905e-05,
+        "relative_l2": 5.556109560721484e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "f18124612e270b7ebfa4a1a78a475baa807f578aa41a1a1650cb553d76876efb",
+          "fixed": "58b6c6e34ee044a2328ca8f2aaee46600a2100d78d649529f914496b021fe676",
+          "fp64": "b4bade7397318d354f0ab6308188f33a5b5955c75f8ddd6798147f5173e6ee0b"
+        }
+      },
+      "s3_b15": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 6.040903483217619e-05,
+        "mae": 1.0791949579531933e-05,
+        "rmse": 1.4732504473531903e-05,
+        "relative_l2": 5.644380462785095e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "e738fd3693ab2cbd1170bbf9de8505c04d9d9d0701067bbf00da472f8bce0778",
+          "fixed": "a5da23c2f55f43cc2975287aac63b4120398853b3a9257147627d42fb2dbde95",
+          "fp64": "51502c9a43c78a1ca1a1e27300a031bacbd8cd8fb65cd4402b21de15f6e2f56d"
+        }
+      },
+      "s3_b16": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 6.60235078697724e-05,
+        "mae": 1.239778434207581e-05,
+        "rmse": 1.682225804097569e-05,
+        "relative_l2": 5.717287389701086e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "0b5a418fe52fd6c526c8c00b222d07590cee19475102432dbd9fd563b074a7f4",
+          "fixed": "e6c2f8107f962b51bf9b98dafacd3ce078cf4c28e03d912c7aa75d793da24b76",
+          "fp64": "25512f0952ab7c9428991e1c12f11437cb713d53a0365d99b7a91888105a3926"
+        }
+      },
+      "s3_b17": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 7.299961855622428e-05,
+        "mae": 1.3882842466557762e-05,
+        "rmse": 1.864570008402417e-05,
+        "relative_l2": 5.798591192629211e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "3a72ce29596c51d418f3269443833b4f01a0f2f65b1409a71e8e82057e294da2",
+          "fixed": "8843c9131a12230a36b7ce12dedbb04d6b6ba9c7aa5f885b80dc9e91492f3731",
+          "fp64": "d2019a57491c50b39bf55fa5bc7f8da92a9c239df829b1ba592b5b739df32c63"
+        }
+      },
+      "s3_b18": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 8.060393174602609e-05,
+        "mae": 1.5236394357690412e-05,
+        "rmse": 2.0741059375972723e-05,
+        "relative_l2": 5.897419060343222e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "7fcdb18ecffc873519513103fa683fcbeb617ad158e4a1b6b5f1d713d03d96c9",
+          "fixed": "6ec4cf14c72f154d2c492eae138a48385ce14ffc25073b6c775a8afde7a8eaf5",
+          "fp64": "10498e57550c7ac82f184f7d4cea5ceb61d6128e2bfb2043383a191caee4f49b"
+        }
+      },
+      "s3_b19": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 8.829689488898396e-05,
+        "mae": 1.7117540985834643e-05,
+        "rmse": 2.348971208739827e-05,
+        "relative_l2": 5.955799065796003e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "036cb01b40666559c84d7f2f24689178cf8401c253d00b05f58b476b29414f39",
+          "fixed": "57b37e6974b5c4f544b483b3f31e0e0f28d93e0edd8e20fc2f8d152df0854a6a",
+          "fp64": "9e8ee603a4d7411f6735fea9aa41e9cd372ae71c85c06aa685e1256e98dec9a9"
+        }
+      },
+      "s3_b20": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 9.881310124981724e-05,
+        "mae": 1.8601864709730794e-05,
+        "rmse": 2.55429210049009e-05,
+        "relative_l2": 5.981043657040072e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "2512f6325885b69b1e998d0504629b26c9f2ef0b84b0922a7b6f80884c148e69",
+          "fixed": "77bc8c11e078f4bf7aa4afee4a27de020720f56f9699201b4d37a26812cf1213",
+          "fp64": "661fc926c1be1823f2f96d5776d4d30588e2dac17ccf0dbfac7886e300628218"
+        }
+      },
+      "s3_b21": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.00011431928351868237,
+        "mae": 2.0080079932183076e-05,
+        "rmse": 2.7890152025643704e-05,
+        "relative_l2": 6.035688813122778e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "f8a4d147de19dcb5b79edc7008e5a61ec6b0a68c9bf8843367cb31e7bb6d6104",
+          "fixed": "6b58a41356591bd834511f1ff60cdbc395d1b1c35f317e6c151ad428c4b4b574",
+          "fp64": "f249dd22fa875361897bd896051f4b9f03023a48acf87554ffc0df2f35a973f5"
+        }
+      },
+      "s3_b22": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.00012933096348533013,
+        "mae": 2.2101206119624265e-05,
+        "rmse": 3.083561866533341e-05,
+        "relative_l2": 6.077673011735372e-06,
+        "zero_reference": false,
+        "shape": [
+          1024,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "d3dc29fce2aed5e6fef95c7effe643f0d179dfaefb63af995d33f8a1cae8de97",
+          "fixed": "2f969400717ff69df439fb2d61fbdc4965bafa53350377026abe9901d626f395",
+          "fp64": "c17b37f7d7f06549dfa1e42e547e44d71767113af71e42171ab43fda5daa0868"
+        }
+      },
+      "s4_b0": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.00012485318437427395,
+        "mae": 1.4025588948369976e-05,
+        "rmse": 2.443290011708558e-05,
+        "relative_l2": 6.177775581404263e-06,
+        "zero_reference": false,
+        "shape": [
+          2048,
+          7,
+          7
+        ],
+        "sha256": {
+          "actual": "376ee1420767f2870918505cfc165187758b9852af6ed5597e479558a7959ec4",
+          "fixed": "11e8214cb4bba9915cba4806fecd3fe9227c859bd62655557a7c82e995e033e0",
+          "fp64": "a7d09947c1671cfb6f4030445fb303e56b5a800114a6882fbee12bb893288c3f"
+        }
+      },
+      "s4_b1": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.00013239908384576893,
+        "mae": 1.6929944120830486e-05,
+        "rmse": 2.6574453498392213e-05,
+        "relative_l2": 6.2263435597008225e-06,
+        "zero_reference": false,
+        "shape": [
+          2048,
+          7,
+          7
+        ],
+        "sha256": {
+          "actual": "3a0dd23c0e2d3e5b5cb799d8ab0db461d442debd5061a6fa410556ad53a6e5ed",
+          "fixed": "845d0b3ac7f3b40cec8d7cf12dbe3767af28e626e832acdaef4f8ca7c5af3ce8",
+          "fp64": "335d1643b72144cf27d672322ec5b46fb2b1e3ebdca790de7ea53041a0c9a25a"
+        }
+      },
+      "s4_b2": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.00014368044416457337,
+        "mae": 1.9003939316351664e-05,
+        "rmse": 2.88432667810865e-05,
+        "relative_l2": 6.262213707089627e-06,
+        "zero_reference": false,
+        "shape": [
+          2048,
+          7,
+          7
+        ],
+        "sha256": {
+          "actual": "5fbff103c9ded33bd7d56d78e91a8ff8b372a609f58986e72497cf3c6e9e6d5a",
+          "fixed": "c871a4453d4b580be453455d02216eb622ab11879fa71cc58e1b3c90f0bde022",
+          "fp64": "c3ada47829df7ddbe795cab767cd7a69184ac36e61919a90a0c513be0680449b"
+        }
+      }
+    }
+  },
+  "simulation": {
+    "returncode": 0,
+    "executed": true,
+    "elapsed_seconds": 195.32841696700052,
+    "command": [
+      "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "-f",
+      "run_existing_csim.tcl"
+    ],
+    "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+    "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+    "log_sha256": "fba12ba70d963c9e8816f738d9f4c4f8023f019e06d05bf99f03250d70cdab7e",
+    "testbench_sha256": "55edbb992da696cfe9ca704a087ff939b486e94f7c9549ebbf476f6a00f3263b",
+    "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+    "executable_sha256": "552d72d09194123076f83d1dc7329625d8d6ec2afb5b3ab16634a718ea6924bc"
+  },
+  "input_manifest": {
+    "DRAM_input": {
+      "shape": [
+        3,
+        224,
+        224
+      ],
+      "dtype": "<i4",
+      "sha256": "83cbf8b220e4ef487628644ed7e58d0aa1721157c356cb9b6f6469d67a8aadd8",
+      "seed": 15347494563410731845,
+      "distribution": "uniform",
+      "bound": 1.0
+    },
+    "DRAM_w_stem": {
+      "shape": [
+        64,
+        3,
+        7,
+        7
+      ],
+      "dtype": "<i4",
+      "sha256": "46a66945914f81b854ee4dc99a9e86134c34da72ed1802162fc9883e32ea508d",
+      "seed": 13569812220484217337,
+      "distribution": "uniform",
+      "bound": 0.14285714285714285
+    },
+    "DRAM_bn_stem": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i4",
+      "sha256": "a13a6fddd3bcbb98db8d6d0c3e5b26a12763119231c549607a3b20a226564746",
+      "seed": 4865607282156307385,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b0_1": {
+      "shape": [
+        64,
+        64,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "471c475d2a564f2d08a260f9eb28cd8646acbabc5fe736abfabc70e8c47cec86",
+      "seed": 11266071970971629448,
+      "distribution": "uniform",
+      "bound": 0.21650635094610965
+    },
+    "DRAM_bn_s1_b0_1": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i4",
+      "sha256": "aa6c374caf88af2bc8a38789722f87e6a91eca436d731e888dc9ef913902af99",
+      "seed": 8675639599319751741,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b0_2": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "808ddee5191c659bad7d9ae5389a6cb11fcb3e4163c96e6e0c1a1b48301df1c6",
+      "seed": 6533438168354281330,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b0_2": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i4",
+      "sha256": "14f0c9faf43534dcc67500b7a3886ec2cfb2c05bcf6b7c6b01fcd467fb35562e",
+      "seed": 5059996083820397501,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b0_3": {
+      "shape": [
+        256,
+        64,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "28f36d8384c1389b8084f044d5b73c82ca1cf1b4a0768df2915adbd08df0c3e6",
+      "seed": 11069713367835357928,
+      "distribution": "uniform",
+      "bound": 0.21650635094610965
+    },
+    "DRAM_bn_s1_b0_3": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "74d7e8df98aaeae3aa31e95c91c8ed3117f304e927f04346035cd3969559909b",
+      "seed": 4954307046252806360,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b0_down": {
+      "shape": [
+        256,
+        64,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "cf123e72fb1848aa4c17ca027d04f9d24c8af8038dab5240bb24bcb09d84075a",
+      "seed": 2887013857386170426,
+      "distribution": "uniform",
+      "bound": 0.21650635094610965
+    },
+    "DRAM_w_s1_b1_1": {
+      "shape": [
+        64,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "21cd826e224bb15d257eda3d51a57360c98c7c2318f9f9cc56542874b0343180",
+      "seed": 9097719659989986977,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s1_b1_1": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i4",
+      "sha256": "befb632be39c0985268a594556b1dd6e22b50a853784b9e0e5594c47a1a2c9d7",
+      "seed": 13875478473864044352,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b1_2": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "6d2c0e47944ffc9035a9df45f2e5d73a63d28a179199e3046424d42a126957d0",
+      "seed": 8171887877567747929,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b1_2": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i4",
+      "sha256": "e4030216af813372940f6c10513614242c0853d62304c555f87cb8ab94c35bd8",
+      "seed": 5069630814736497283,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b1_3": {
+      "shape": [
+        256,
+        64,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "045176fbc3551bfc3885f4f2f66d26a4e08fdac3fa6c8a3a5ac68817a2e59f82",
+      "seed": 1530292363736327711,
+      "distribution": "uniform",
+      "bound": 0.21650635094610965
+    },
+    "DRAM_bn_s1_b1_3": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "dbcb354ca962ef8dedc4d357f9761888eb59e59f6518068934a331a355946be4",
+      "seed": 1397110147980807404,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b2_1": {
+      "shape": [
+        64,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "aacfe637c81d902fe161e491c4c79086b1bd8b48e73c2116eee09e700c0e96e7",
+      "seed": 18296338995420095986,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s1_b2_1": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i4",
+      "sha256": "06f72e5dd46252be0bcb6470e83188eb9c3db13b53d0554daf2649d7b34dfc3c",
+      "seed": 51345079365106426,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b2_2": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "c3569d43d740e806ff8251dda0d2a02bf7847c3ba42dce05c42b76e9121cd767",
+      "seed": 14794198847303982794,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b2_2": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i4",
+      "sha256": "94291eb450d06042fec0bd253cb112587c21718bb13756cc60dbf212d416e53c",
+      "seed": 13065931665003317058,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b2_3": {
+      "shape": [
+        256,
+        64,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "1c5987231fb19b121935431a36c6d6940b19992f201c7f3b0010264f7db7abb0",
+      "seed": 1181343556866291423,
+      "distribution": "uniform",
+      "bound": 0.21650635094610965
+    },
+    "DRAM_bn_s1_b2_3": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "156f0cb1de9376031ae643b1ab966536692799da24b4766603fd12bad7d18d3c",
+      "seed": 2469596727508342039,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_1": {
+      "shape": [
+        128,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "b12a707383b2c7d5dc7163d0a0945bdd5a07ccfcbd38415031817c6781710c18",
+      "seed": 8509880825940880424,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s2_b0_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i4",
+      "sha256": "a7c5afd9e60af99dc8df7a537d9d068d5447ab74472aae4d5f543e3b2b5eb0f0",
+      "seed": 14633970099819290461,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "f4324f5ae4840ea4c46c1ac8331c841ffae2b39344c4fa3de7e728e1cc1b555d",
+      "seed": 3016235248685400482,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b0_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i4",
+      "sha256": "cf57986946f3f1fe240f698d6df16c643f2596d943caea7e1bc6cd897f921b5e",
+      "seed": 9602492907508946404,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_3": {
+      "shape": [
+        512,
+        128,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "e614a333c4732b2f6f809b6a1aaccf4ca0baa3bb3f38c600a633e3b65c2fa40f",
+      "seed": 234184761715760831,
+      "distribution": "uniform",
+      "bound": 0.15309310892394862
+    },
+    "DRAM_bn_s2_b0_3": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "062499747c2aa576fb86f083a6cdd8ef604885079ffc255e6f138008fd5c2b9a",
+      "seed": 2908547708896618662,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_down": {
+      "shape": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "1fff5fa91e05ef6249e4eaacd2033a83ccae03390c7153441bbc0296c6e558d4",
+      "seed": 8921849094486768363,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_w_s2_b1_1": {
+      "shape": [
+        128,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "c460cdb376688245b47d3a3b40d64077e572997e6393ddd7dd7e338514bd5d81",
+      "seed": 6385263582519116567,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    },
+    "DRAM_bn_s2_b1_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i4",
+      "sha256": "c5eaff75b800ca81f95f4c086f808355a2d579fecc0b90b27d52f6f4bfaab33e",
+      "seed": 18400887538126621155,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b1_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "b594941ce5e9dfa53d5fe6fb548c0eede5178ecd20b15995112497770e703dad",
+      "seed": 16917486724429730369,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b1_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i4",
+      "sha256": "02b81c639434a68a503656fcf66e5e5110fa03d2aa61c394b5c518bf159bfc73",
+      "seed": 16149120822692661077,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b1_3": {
+      "shape": [
+        512,
+        128,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "0faa13a084346c60d0a309c22b3149db8976485f813e95ff7636a0013c6c8a64",
+      "seed": 12655438767653524457,
+      "distribution": "uniform",
+      "bound": 0.15309310892394862
+    },
+    "DRAM_bn_s2_b1_3": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "47147cf7295b7c47c6f08955364263061c6138a3e589d8ae8e0fdc5635e399fa",
+      "seed": 2159534680420692886,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b2_1": {
+      "shape": [
+        128,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "5e6c002678c4e08f554676073a06e437e4e7b4cc8ca371f538467d5bcc6681a9",
+      "seed": 6610356635783300283,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    },
+    "DRAM_bn_s2_b2_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i4",
+      "sha256": "0f993e2f7b0b8fca75c610df7774b651f1a4a2a33223a27675067bfac8dd0600",
+      "seed": 16080469756629870272,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b2_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "fa1ae5a41b7f75b8199d89e42852dae4df2f885e2b53f9a1948170b11de0f67b",
+      "seed": 10518712719714353985,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b2_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i4",
+      "sha256": "55ed84b2690287601da2a46d5fba5a044f7c2342121bf09588b3f8a395535c44",
+      "seed": 9846401122534286381,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b2_3": {
+      "shape": [
+        512,
+        128,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "8655486510b26426aabc6fa4ca71e87d7f58907b90aa2900201411c2b64a8cc6",
+      "seed": 1662501913058046417,
+      "distribution": "uniform",
+      "bound": 0.15309310892394862
+    },
+    "DRAM_bn_s2_b2_3": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "6ce5b95fc1d8cedae2f98158e45158c31f08dc1e6b49e10aea2511cbd4c7ecee",
+      "seed": 16734057930551988088,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b3_1": {
+      "shape": [
+        128,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "eec3d72e2bf165e11e42e5b632c7fdef89fa5d12db8f59fa47cff10115e79fb5",
+      "seed": 18403081780483945827,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    },
+    "DRAM_bn_s2_b3_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i4",
+      "sha256": "d0e8d17ef5ace4aa87f9790b4599eb880e2280660e23d3b6c5a639302bc801fe",
+      "seed": 9029430856951810396,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b3_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "cbe5d48d1f43b92e7916e6e7e22a36b747016bf0e670c62a94513d447c114b40",
+      "seed": 13692353556208424882,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b3_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i4",
+      "sha256": "bbb26f34e19d9ca0397cdd5c2c265ba73fe748756bbcc9905de606fbba72f253",
+      "seed": 6693029191799228354,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b3_3": {
+      "shape": [
+        512,
+        128,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "714fb2a7c9aa653af3e75321fbabd448212b3a0de4135f4cd6edf301cf389d93",
+      "seed": 17379653590233704015,
+      "distribution": "uniform",
+      "bound": 0.15309310892394862
+    },
+    "DRAM_bn_s2_b3_3": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "319493a208f85833f74af3a2f22b63e5865539be221886863a3298ff9ce86067",
+      "seed": 15093016255303131238,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_1": {
+      "shape": [
+        256,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "1e51279fbd0348d5924aeaf469ef1d77cfd12f7c3dcdcdfdf6a9a6b670fdaed9",
+      "seed": 9315864944675994010,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    },
+    "DRAM_bn_s3_b0_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "87f9dcbe0adb5089c0a3666be475eb854a6437ecf8bbc8bc59aea3b318591493",
+      "seed": 6089929426239414765,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "ac6a9441b6efd9c1ef6a53c69a1c2dd51b12fd25771f8cacf740ba5301ae247f",
+      "seed": 3976508106970574202,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b0_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "0c179553898ef4b87d93ab2d7cf3b70bc307e617f81ad26303736e40921736ad",
+      "seed": 1236876505187843137,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "8f782afa38d13db7d8583ab67e02c76731aaa1a5dd1fa4a10ffebe2e919be654",
+      "seed": 11562945055868161263,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b0_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "77d75c3d1650d2a1b47a7d5d58c1ceb6e54182f59958967701881897b2ae9040",
+      "seed": 8141231403055238496,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_down": {
+      "shape": [
+        1024,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "a528af021d2e38b176002bd53514d16a85ecc8b73fc8f8f26edd801a4a7b1549",
+      "seed": 6271329771114412184,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    },
+    "DRAM_w_s3_b1_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "bfc1468c20bc98c12cdcff09acf6bb9ace767e60633785c6d86201994ec64144",
+      "seed": 8127183675232140894,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b1_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "5593c0be775f881644eb7b55a29c8ec3566a7ac6d5f36604e4dca82a258a0e40",
+      "seed": 18096029583507742261,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b1_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "77b9c6e813c9826b48be25096be891b2b50121d1dcf02a2bce55f411f1c56f98",
+      "seed": 5262504063494694424,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b1_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "dd087b79df0fec99bd5d6080cbf1b3f00ba7e82d73274c9ec35170d92051fc49",
+      "seed": 10509738307655378993,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b1_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "370adabc2f78765a41d821dad7ce9b55988dd19aff085217c0afd1852bdd3eb1",
+      "seed": 4177807749896679574,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b1_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "79dc995192b5b5bffd59ade48c4b2a9f78c62c7f65b8d3475559be62fbb85b4d",
+      "seed": 15910883823445721277,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b2_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "8d4819f3731c853d57d8cdc83b0bf8d750ea8b244f15951edd1be1a18cd62a52",
+      "seed": 11257752545867656730,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b2_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "38935cdaae8911935c870b202c7ed277366b2be5cbb78ee3c4f861f211ae46b4",
+      "seed": 14273388836847801466,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b2_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "e81b066c69b5a86c52347499a330d3302bcdd7b43cb763d8eae65aa44945a916",
+      "seed": 2423786034940920814,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b2_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "a4d26cef8cd60b1585c8e6f191c65425243f8c24999ae23faba24de0c345dc10",
+      "seed": 5572118061403549053,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b2_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "94ce83b3dc9055900c024999af115fd62e7ed0bfc4a8f2bcfb86cd5988b90ab6",
+      "seed": 15973825184343692413,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b2_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "65ad01af8def1bdec0eb16b74c90b9a78377c445cec019574275388a9d770319",
+      "seed": 9554445901373094344,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b3_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "b468b59cf0373b1435138877a707f2654dde0d1f5c4865aef50bd88b858e0567",
+      "seed": 9960118383940047285,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b3_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "9a4866301ef16653ed57b1fd4f50cf847594a436772e683ce9f12a614bbb4100",
+      "seed": 14913874952686088721,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b3_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "838e3ca64987ee722258730e2f0bbc90cf3d1dabb5b5341e1c1b7e777855a352",
+      "seed": 10084612153503995881,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b3_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "638ff27180b9d37e1868a14b9f25ba7b7a22f55c64465886656988e655224b64",
+      "seed": 14657066681961688827,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b3_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "e5c89ff26f22ec7a807276f4c99f90952fa0c2846cc54e4d37935fbcf1833242",
+      "seed": 15720075003584013309,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b3_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "c8d80a1a7013fdc6aaccefcbcb2aababe01aac928b35886f7f54712099d379dc",
+      "seed": 4363171265751832663,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b4_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "b4b2460d1495aadd0b9d1e11311d4fa36068258af24b9e6f95aed88d9a546973",
+      "seed": 2872228221282366855,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b4_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "cd528c1ff9fe56a845aff8175ceaa682e9aebfa4c14adf1d3b86acf85c61b968",
+      "seed": 16066598335172445090,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b4_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "2400c9d5304ac1d1aafb23d034bc7a126bac660511c29c2edd2611797faca662",
+      "seed": 9422387199384670396,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b4_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "d5fa816fe4219ab24eeb05ce95da914cfee5448067591ca22a2fcd01b9019bc8",
+      "seed": 10926138878202245601,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b4_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "3ac5cd8bffd81d458870c32d3efe6b2252004dba51be9b0c27aaf929142b96ec",
+      "seed": 2847709504838581177,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b4_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "be42d2e542423954df649492e0517b0ceb513077f334586bb37188a18b3764c2",
+      "seed": 13400225376003248426,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b5_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "5a5337931e8f4e05c2d61b8d5df1365abfb9758dae2ceb2c2cdc5d4a30028cee",
+      "seed": 7131656122689007602,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b5_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "2a99292a6654fe6b2fb8f79a131ef268fce8d6c48784c878a6d60d55ccd2bbf1",
+      "seed": 10705330414532955064,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b5_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "a336bd3cd4edec93eb1480529e8dfbc3316b4fc6d4167bb9abe57f0e1b8b85c0",
+      "seed": 5224116768507356967,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b5_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "3e54c5234a4dccc871ea279335cd940f860ffbefef63085ef0f3373598ccfd41",
+      "seed": 7026725142684569886,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b5_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "6e2b71c376764b0d90981e3bf80d08c359a87ef3edfff3129ec7d6dd5edf0e91",
+      "seed": 16552499642413729408,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b5_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "f581881608e28e928f143b32e3decb074b82f75342901305cd0960bdc8762a79",
+      "seed": 17663051544891866122,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b6_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "261427043018b5cfb55514bab1f0f74caf55d163d8368467c369118ebe4bb95f",
+      "seed": 13385854750679755037,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b6_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "b34d09335070cab11f8f79123538b23e77b5da30f0ba1a6554e579f79f1da3cf",
+      "seed": 2335547315784808371,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b6_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "051c20d13fef27b602c7beb811d3117a30c2f4ad5b4221c90f06ea7bd0e050d1",
+      "seed": 7818440629755631345,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b6_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "0f0db71a4ce0b1ba0080a6a8f8994f8681d8e10a9155182b2292fe957e0dbb22",
+      "seed": 2048019377434238322,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b6_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "7b9d270ccf2c1f79c55cb1432c85217afa951db52ef26fe61015d0c975ffc3c4",
+      "seed": 16994326744255357007,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b6_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "3c9cc16be8b41e4ef2efb5985451dbca9fa0ba77a004b60f301bbe7e7170cea2",
+      "seed": 17726114935756987905,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b7_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "4eeb4148607cd68b960a1665f983fea3af9d0c68aa58013a27ba99aa3c3680e3",
+      "seed": 8594221589349593171,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b7_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "6499dc934d11f98ba6b54397ed5d995604a5f14c354ce3d9ce13428ae5bdaa91",
+      "seed": 17286325027183711090,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b7_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "1e5255f477616fbf475a949c0cfc42d8988b105a56dbd12b418515e6e34068bb",
+      "seed": 1002322700057856368,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b7_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "d75538a6b34b0765b4e5a4b771edc7f20c2376898eeea19c842f3c4e05160d83",
+      "seed": 189400788356044342,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b7_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "028babb5ed6e8cad2c6092fa200eb5521ae2eab59dc8157ef3ee401fa4c46de5",
+      "seed": 14688269550056314658,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b7_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "673ad7d30b18ada0fbf217af63d482c98dd810f659038e6d66fc7de71b621f22",
+      "seed": 2427940016508238027,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b8_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "43ea70c20de9d2a48aaf3b42e677f91b8569821f7bad44e35abb9adad8b96440",
+      "seed": 4439410358241084690,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b8_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "fb8563a03355a4a6df1954dd7e96f963661fd4938dc24d4deeda7d39568a2986",
+      "seed": 16406358401192461344,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b8_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "01e569330a8c5191095a0d3eeffd3da9effa73eb5d409a86ba82fa4b7a0667a2",
+      "seed": 1021277024034717807,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b8_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "fbe5c6dbc55daf8f90361b51c15f88e9cce7b3b2a3dfb0741306e4897d7d8bbf",
+      "seed": 6745610309197587735,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b8_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "7c5ee4538a7a28036fa0bb3ae702f3307862e4b3661605b9111ab70de8cf6646",
+      "seed": 8132286687334833991,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b8_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "c0c1cb7a7c4e73d52df4bc81fc311ec1d7b2978cc9e4f0331fdbf8022b41eaee",
+      "seed": 2156616115660159208,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b9_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "1e4ca34099b18974ebab6d3c3ddb5190f0b2cc4449a5b84298d3fed8e137ac3c",
+      "seed": 65840234328221976,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b9_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "9047e6a85ddb2338a23d47f5a4fa648ba1c12817794ad437ea9c6cf4643c4351",
+      "seed": 8361484588989112982,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b9_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "5ee27f98aaafbc2ca5d6131f587f0bcc1e2afde6e615aa63f1caf53926186753",
+      "seed": 8658869015585931511,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b9_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "164123864b5debb4e4b78a71f19d67e0c8d88a6fdefdf564209037f6befef997",
+      "seed": 12561691278409394227,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b9_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "d0a1e86d4f5e6a7ff335c57ee1baa0088d07c1668f521013e7fd51b36af13e95",
+      "seed": 2933467448184774868,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b9_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "1f1fa02d5898769de16135db645ae6fce40d4f15b52b070297912da32e0020ee",
+      "seed": 7320816049036006422,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b10_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "16360f24876f2752777cf34afe0b141dc31a094953de16af19df447eb47e9bc1",
+      "seed": 4194513135228920241,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b10_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "69b8a84bfd008d2cf9a92b7e4a969c5ff9f39e0143825c0e8e2970a130ccd1ac",
+      "seed": 4443340913104845878,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b10_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "5fe594391d1db691cb31b8a93eda3f047af5ec890e71cb75685305d6df1684da",
+      "seed": 15833390878931430187,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b10_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "421ef62b52df41c46f2642aa747881688159922581a94073f0fc8f01d894ebc0",
+      "seed": 11163175264479024315,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b10_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "4f068ffa5ed9b7b9fc55fc8c635fec260ba92d8b515209a7113777e75f58d7b6",
+      "seed": 3281859735183884814,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b10_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "146ac6917e9835c19df2968a24e25fb330ef5aebc428b1871cb0accfec7c4a21",
+      "seed": 9602276323799801170,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b11_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "613e190224b6b999abb87c7c10c95ba0a142168726b799ea7dc04ffc1c2e66b8",
+      "seed": 6071270081476136512,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b11_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "0bb2e1f958efc6e6ba64d861c19f3806693c48e00579fc241a3653a4e7f7e780",
+      "seed": 16639434204803945590,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b11_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "48ec4b76169b5740d6513eaa311f7eebc3d45ce3d805acf18f02182b98c4b027",
+      "seed": 4235524627404832574,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b11_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "db31edfca9b40dd1de5782e1309b0966bfb2f810b747b7684ca4b6d8c4c5fd18",
+      "seed": 17576894180974828654,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b11_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "c76be94a77b5b51d8d7ebf270dab1546d72edb985fd8b35c1bb3abcd58171eca",
+      "seed": 9202623885220115046,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b11_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "b2d1de81347c6557b5fc2b1cf1fc37ca37319d5746fe94362e514b4f2ad2978c",
+      "seed": 9678980880645578464,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b12_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "ca6b92589e15673b66f45f596fa3374e2f91aa8086bbcb2300d031994a9f0859",
+      "seed": 4856517664537131814,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b12_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "a3547c9780d397986ca82fa7f2cdb986a9128075565488bacb00fb7af571b809",
+      "seed": 16260032206155310152,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b12_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "af539defbee8c8ebcc41a4ac016976c599feb793d4f3a6351b4be5c9da248844",
+      "seed": 2028538565386213217,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b12_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "f3914b47b703af633f5f81ed52c04d6b7a621ae76ec2bc622e71f1d516f0adce",
+      "seed": 16078804802595748441,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b12_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "edbf3e84c8540694869acf6848eadc889884ad9a1ebc200f2b9da4e9ae078665",
+      "seed": 4242548004034966263,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b12_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "21ee5fd95206b01e7d28829d391ea859d1b0450b85cdf9ee8dcc3f255a0a56c3",
+      "seed": 8521031785281205760,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b13_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "5fa1019ea06060926bc8b3aa0f3164c182aefa7ccf497d6d7b4b1b15f07169d8",
+      "seed": 6783996633029433381,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b13_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "fe4633082aa9fe26a6dead17e37ce52e5350c5427d6c7681d137568d801adb8c",
+      "seed": 14143263597262442831,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b13_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "b1c2a37fed38f584e4273b593129d315ea116cad82c7561dcdf0944b3eff2085",
+      "seed": 926866073714336153,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b13_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "75b223674927ef548ddb8f7866404e6aa579a76eae09646b3974d38f6c4f9031",
+      "seed": 6907522103752152476,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b13_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "cb2c90946ebdae7736b2aa12ebe843245a8890422b0bd6cd4a2d9a2b7d6dc061",
+      "seed": 10691575145997317814,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b13_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "e7c992e485c7f4b3bb28d377073ab55b0911db91e03c4c7bc8a6a7cb91885871",
+      "seed": 2608445256091512403,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b14_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "76dd501244200e5ba808cbc74758cb51c6ac1a25659469ccbc96fa398780a8f2",
+      "seed": 14231226645163614536,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b14_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "a23b657c00eac42f7c6306965b7ac996688f861a0f61b0d34a4629cdc0c932d5",
+      "seed": 18325400479375077185,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b14_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "62dcb8ae83467eead63871ad2b7a11c88dc8ed39088c5b60d1420f74299c0269",
+      "seed": 6624178067476326633,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b14_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "f72567a131681e3a48962356448f350a9e7cd8a31a9789e6aacff9e206709f26",
+      "seed": 9311485963073128120,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b14_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "12e1c87db148329ff118f2d882f8132e8572445cecdf111b9fad9027c1f0a01b",
+      "seed": 1040616949967977674,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b14_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "f842f2d89d55f34b341e2a8efb492ecef678ebe307381fc0753d0dd187b5d315",
+      "seed": 12331491693312869801,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b15_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "592eb6a4820a11d8370153c9bca61229a9d088309328e5f6705008fa9ad84c60",
+      "seed": 10161934355136909373,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b15_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "d55f8b399c2266e9b81dcba2d345d26423ab6b7cffe9315dcae7ad95a216f293",
+      "seed": 8524449182050602698,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b15_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "4d1bb5ff9762475ebd724b30cc130b9d6f229ab5ccfdb59cb27c307f6c6004b9",
+      "seed": 2000827845867194347,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b15_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "6e774455c8659535f4469abd5ebbdb1e808caa32dbc5cc35de3bacc17b3458b3",
+      "seed": 7654023877288832093,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b15_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "27df6569596c6871873471ae766ea34d7a61a8b106fc881224c895f51638def8",
+      "seed": 17821633056382106014,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b15_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "08e375796837e384cece6ce70343fc14bd7ed6fc4f5903864d1c8170fe341dcc",
+      "seed": 13410016910467810942,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b16_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "cb3548607920d96792ae523a07bb3163486e904353c7ef2e1db971dd2189c3fb",
+      "seed": 10467614003728857051,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b16_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "cc7767a2c189ed52ef3a9bc37bc2c9a1491b241a733b041c680a45baf3e71a2e",
+      "seed": 3219873961780015014,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b16_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "830f72e868a48088ce08e4dfa32043ab7858db64adf473c4e6822fb734eb275d",
+      "seed": 17444711112952957869,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b16_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "70b060d70b09e8cb97fa61499d96d699d27f192fb57e1582b27333376db8ee14",
+      "seed": 7896708793427617020,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b16_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "43cbff7723a9740056f9a6652c359667e985d17e7b74972a9330f868cb14ee09",
+      "seed": 6877329041940111135,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b16_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "c59bb4a9541625a0c2787d6eb456e730b44b710f722ac0eab19f66e6f3a33b57",
+      "seed": 8299430250136861951,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b17_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "80541d4e9eb4fe9c5b0497e004db3659d197af67bea31c440b2b55aca6856e5e",
+      "seed": 17930717995099390640,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b17_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "05b0e6aa7836b0eb3cb1571f30692639e2493c777b459ac0464ed656ec278c0e",
+      "seed": 8330232714291214421,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b17_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "7e2fb2e80ca57d9c70cdf67297a18398ce87f9324cf56d8402b4bf617444f814",
+      "seed": 15577697764362968811,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b17_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "bf9a9f40c32832739abb1f9c5d0d059813130d0a41d6e8a7adbbe1fd2c7a1bd2",
+      "seed": 16095806549247750269,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b17_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "e99bee1f293021c80b165994cf057e0162e0d681c394aa25830e1629e61db800",
+      "seed": 13669294319623160298,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b17_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "62931dc56d35ff8a5596e5650dd6303fac0118310b4f4100ed76e3388de09f8d",
+      "seed": 4674496312958885471,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b18_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "a82a3a0109053d2e49922bae2919a097764464e390b15395157b91b97cee0d09",
+      "seed": 5795759340902498969,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b18_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "922099a8a7cfae2a210a918ab06ea9679807099c4ad9073106f7a0d5f7682ca4",
+      "seed": 13668074237384386795,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b18_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "6ea256ce03a6c0104d18b4b1490020d89f527eb7cba870e54e603b7c5b76ab93",
+      "seed": 11994010043225896188,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b18_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "58f9d3f3ff9d441990ee56900af923b7faf543a7425416838e64dbda7d220de8",
+      "seed": 11328125569147962050,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b18_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "d5b7a5e8cf487105c38da9d96cd550c8dcf1e28c06a5ed3041659a9da71e6d54",
+      "seed": 5882611683628914795,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b18_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "6be4573910bebfdabf32c05e09211dde5a079c4324105a2e8868f1e2cccb4e4d",
+      "seed": 13533747933994965719,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b19_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "059ff6666c2f85bad56542054813b72bbf1a7592f0cebc91c8fc31291949ac36",
+      "seed": 8492503338011740984,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b19_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "7c28120cb45eed080666847f9ea04f0f07aeed85a4444fc9d79f28180cc9fa9c",
+      "seed": 3347694760077068789,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b19_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "76140c1415d0f31761fab1d9601496c48a843aecbde4a88a45f1756939f5f014",
+      "seed": 3758513280008906571,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b19_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "fe1639018f580d80dfaba89cb1374bca971006f7d750319d29bcd79007ee5ef7",
+      "seed": 11147911491993856696,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b19_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "e6e02ded2939205fe3fb12af75ea51a06935a537adde4eabf8af8318ec2426ac",
+      "seed": 11979192171870218875,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b19_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "b3117886ad0647fba1ecd08675267b8ed7aa0cdc3f34f57714f4e5f90cbbc2f6",
+      "seed": 12546594039717762106,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b20_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "e99dbb04fe2a80ab9dc08f7ec81794d7cf60e60ee926ad0cf54f26675cb35fe9",
+      "seed": 1850184060295168280,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b20_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "fae6ec683f2e264749284ec3e923f15804eea6e3fb6f3987be45087f0b9eff48",
+      "seed": 14271844047053647398,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b20_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "7354683442303bcfd6946c72981ce845eb0372502c0544a514b3b3d089c198db",
+      "seed": 9827482324995308905,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b20_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "834a7c531b13f0ccc75759c764c95ac6567514343663037667b86d1c446ded57",
+      "seed": 9100344764372823816,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b20_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "0f426d48a1a2e590babf62c0d6061f9066b7648ffec947942c9654dc08182f39",
+      "seed": 18333221288479541741,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b20_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "287e5bb0768d860e475b83276823162b9976575639122a0993907b7650fae9cd",
+      "seed": 4858477044723122888,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b21_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "5e47650641797affe3e4092e144c53174fb028ff59a7224a7bf561a8c9f7f13c",
+      "seed": 8895363808775180156,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b21_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "a0feb4a3449fd3baa7449336ab8b881d9d54a0949b16eedf33520996255c00ac",
+      "seed": 9314967809928739472,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b21_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "f064256b91eab7252778901b8a12714a8d63cb0f0b5ffe6fd16a1701a6ada92a",
+      "seed": 1834951570898948332,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b21_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "d9af943318c246ca22a2fea6615d17155b7daee0cd52bd9f4427d4ecdd7cd079",
+      "seed": 6628587178920184197,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b21_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "0c3060f198f98140d33958638e433d063404d48c9441bc9d42bcf3d48dab0ebf",
+      "seed": 15277492731704577649,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b21_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "1adc5019196e90fa5557a38500847193605c48e8a7f5aa5b3a04313f4eb9c0c4",
+      "seed": 12278788887704016510,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b22_1": {
+      "shape": [
+        256,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "14dbc7cce5a10c48848b59e9d1eb57305d4e644edd8a8abee9966c26dce9ccc2",
+      "seed": 13168615599152505382,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s3_b22_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "ae1f5738485e0cefa16a1ea5f9b80e90cc4cdb7f8ac84da0bc6347e7e743e944",
+      "seed": 4316668930451452354,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b22_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "860bb9e3ad3aee61a8772ab79d114155e0cb195bbd55bc3d23c77fc0e1493d09",
+      "seed": 17287268399114499463,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b22_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i4",
+      "sha256": "a92a411a91f70964ef718fa08cefd31b3941bab9b8e5b4dbd95089480cf59cbc",
+      "seed": 16824298265756250018,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b22_3": {
+      "shape": [
+        1024,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "34484c2a6109006d599677125c543eb41f22362d379a58d607d20a194cb14e40",
+      "seed": 3830046350314992584,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_bn_s3_b22_3": {
+      "shape": [
+        4,
+        1024
+      ],
+      "dtype": "<i4",
+      "sha256": "8db429a7d99b56a02f6e000d60408dede2a18ae2fc678db03035c27787a97c74",
+      "seed": 13380302356754699397,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_1": {
+      "shape": [
+        512,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "cd9084ab963e6f9ee240866da883e9712e12aee579a3ff60cd4842d9da9d4237",
+      "seed": 13683201705902468508,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_bn_s4_b0_1": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "d02112715c25cd0e27383542475c34c1e5ee7e3687fb24a842c7562fe841c9c3",
+      "seed": 18276441843290746859,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_2": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "36c378efd1172079131f14cac9aef764341cf0763a71933a4b7418c943159453",
+      "seed": 9880512077919396805,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b0_2": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "9866f84ba0913ab7adaa677e797a196375e59ce6aa6c1837f14935294317ea03",
+      "seed": 11983562945054970995,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_3": {
+      "shape": [
+        2048,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "84ed73d6f86c98de85447766759008aeead98b701cd563a3668e3a6aa801e1cd",
+      "seed": 14954882812459153523,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    },
+    "DRAM_bn_s4_b0_3": {
+      "shape": [
+        4,
+        2048
+      ],
+      "dtype": "<i4",
+      "sha256": "68b320371f32e08734d0c6baaa0d0be61bd6518488817ba72195c4a399103371",
+      "seed": 3366519367744460213,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_down": {
+      "shape": [
+        2048,
+        1024,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "2732cc027ea274580d8a16c93c8e0a75f48b7abc6f8c2e08e7b5e6429c7c29b3",
+      "seed": 10383627806928977312,
+      "distribution": "uniform",
+      "bound": 0.05412658773652741
+    },
+    "DRAM_w_s4_b1_1": {
+      "shape": [
+        512,
+        2048,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "7f999165b92e349c8c01e3ec8bf1ecb6247bda17a8c83d37201abd30531002d1",
+      "seed": 11681388287182853077,
+      "distribution": "uniform",
+      "bound": 0.038273277230987154
+    },
+    "DRAM_bn_s4_b1_1": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "753faa0a31e9a4f41b2136c15615ab929289a550e228bf215a7ea1e83b2d0170",
+      "seed": 2639078618020728400,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b1_2": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "a1fe2f6c2effa5d7bd84d488cde3f025f8ace235c947e9ff3f0d5cc1e4023f57",
+      "seed": 6202476536058152924,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b1_2": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "e60379e7f555c84a67787ce314cc532e01dff3edb2a7f7272c03a9f09c295190",
+      "seed": 6673181373542222793,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b1_3": {
+      "shape": [
+        2048,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "5e8725a912d6b2d1ba62142821dc84d0664f3e61d7fa16e2540b510ac177a903",
+      "seed": 4679031912378354021,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    },
+    "DRAM_bn_s4_b1_3": {
+      "shape": [
+        4,
+        2048
+      ],
+      "dtype": "<i4",
+      "sha256": "8f37d363d6f71175ace2840112c22f9023e012cb33f7f697a48a663a80e76e8c",
+      "seed": 4860098583398645622,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b2_1": {
+      "shape": [
+        512,
+        2048,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "d55b47b3bb0306b29b43af6ca108fafd68e166456391d8cb549be89f6850732d",
+      "seed": 385605422808914916,
+      "distribution": "uniform",
+      "bound": 0.038273277230987154
+    },
+    "DRAM_bn_s4_b2_1": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "1f791fcaa4b39838f89af6021d4270cd4c004875c08d263b83f157751fdbc015",
+      "seed": 11242552425533311080,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b2_2": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i4",
+      "sha256": "74b0b58ea8085f26d76373501aba4b79d2e21ab506e77284608505a99040a4bc",
+      "seed": 6048520390714436247,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b2_2": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i4",
+      "sha256": "8faf3f7dde9a192a7dad84bedc39a75aba7fcdb7ab0cb53d012afe3462cf49cf",
+      "seed": 12940092271349615762,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b2_3": {
+      "shape": [
+        2048,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "771ef4436236db34b572f382af7a300b997d0de898be50fe3fba2eb15acce2e8",
+      "seed": 11019166545697349732,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    },
+    "DRAM_bn_s4_b2_3": {
+      "shape": [
+        4,
+        2048
+      ],
+      "dtype": "<i4",
+      "sha256": "6f45f09d29954445a1d22f25955fa7f463b1d01f46be3fb729b324a7fc6ae232",
+      "seed": 5325989822700299605,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_fc": {
+      "shape": [
+        1000,
+        2048,
+        1,
+        1
+      ],
+      "dtype": "<i4",
+      "sha256": "107bdd88dd4244c7d22eaeac353cb3c94b0d2334e436d6ec3cff4e2fec6a7120",
+      "seed": 4670880183962652993,
+      "distribution": "uniform",
+      "bound": 0.038273277230987154
+    }
+  },
+  "original_sources_unchanged": true,
+  "reference_sources_unchanged": true,
+  "simulations": {
+    "case": {
+      "returncode": 0,
+      "executed": true,
+      "elapsed_seconds": 195.32841696700052,
+      "command": [
+        "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+        "-f",
+        "run_existing_csim.tcl"
+      ],
+      "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+      "log_sha256": "fba12ba70d963c9e8816f738d9f4c4f8023f019e06d05bf99f03250d70cdab7e",
+      "testbench_sha256": "55edbb992da696cfe9ca704a087ff939b486e94f7c9549ebbf476f6a00f3263b",
+      "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+      "executable_sha256": "552d72d09194123076f83d1dc7329625d8d6ec2afb5b3ab16634a718ea6924bc"
+    }
+  },
+  "elapsed_seconds": 218.2461956610059,
+  "exit_code": 0,
+  "verdict_re_evaluation": {
+    "metrics_reused": [
+      "max_abs",
+      "relative_l2"
+    ],
+    "accelerator_rerun": false,
+    "previous_thresholds": {
+      "max_absolute": 0.1,
+      "relative_l2": 0.05
+    }
+  }
+}

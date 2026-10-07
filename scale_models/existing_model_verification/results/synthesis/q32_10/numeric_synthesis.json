@@ -1,0 +1,6 @@
+{
+  "scope": "80-bit accumulator division, square root, exp helpers only",
+  "status": "PASS",
+  "source_sha256": "6d99b3a8979c449c72c59c499ac2c6f222ccf12274f0f88d51b3af26d6202c03",
+  "log_sha256": "a413a9be539fe37d6b670bb1e21fbd7ddb731f9637eec5be47c295a0fca257d7"
+}

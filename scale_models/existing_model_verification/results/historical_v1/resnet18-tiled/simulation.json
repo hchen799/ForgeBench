@@ -1,0 +1,16 @@
+{
+  "returncode": 0,
+  "executed": true,
+  "elapsed_seconds": 41.38476998799888,
+  "command": [
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+    "-f",
+    "run_existing_csim.tcl"
+  ],
+  "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+  "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+  "log_sha256": "03d17292bca1223cc8f310006e6e855917bae3e58fa74508c8cbf879c81ca7a5",
+  "testbench_sha256": "ad9d361b479ce1a8087661e775a83b29c504f0ea3a67220011a967abc8945ef9",
+  "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+  "executable_sha256": "e0ec8949daccce9b0123d63864c249c98c1a41858619425fae424aa2bf3df780"
+}

@@ -1,5 +1,7 @@
 import re
 import random
+import math
+from production_types import annotate_storage, numeric_support, specialize
 
 DEFAULT_LEGACY_CONV_CI_FACTOR = 8
 DEFAULT_LEGACY_CONV_CO_FACTOR = 64
@@ -456,6 +458,11 @@ def generate_conv_function(
         STRIDE=STRIDE,
         CONV_BIAS_ARG=bias_arg,
         BIAS_INIT_EXPR=bias_init_expr,
+        PRODUCT_EXPR=(
+            "input[ci][in_row][in_col] * kernel[co][ci][kh][kw]"
+            if DATA_TYPE.replace(" ", "").startswith("ap_fixed<32,") else
+            "acc_t(input[ci][in_row][in_col]) * acc_t(kernel[co][ci][kh][kw])"
+        ),
         GROUP_BIAS_ARG=group_bias_arg,
         GROUP_BIAS_INIT_EXPR=group_bias_init_expr,
         ARRAY_FACTOR_INPUT=input_partition_factor,
@@ -758,6 +765,15 @@ def generate_store_function(
     return "\n".join(code_lines), func_name
 
 
+def generate_quantize_tile_function(dims, data_type="float"):
+    c, h, w = dims
+    name = "quantize_tile_" + "_".join(map(str, dims)) + "_" + replace_data_type(data_type)
+    return f"""void {name}(data_t tile[{c}][{h}][{w}], int vc, int vh, int vw) {{
+    for (int c=0; c<vc; ++c) for (int h=0; h<vh; ++h) for (int w=0; w<vw; ++w)
+        tile[c][h][w] = (data_t)tile[c][h][w];
+}}""", name
+
+
 def generate_clear_tile_function(dims, data_type="float", func_prefix="clear_tile"):
     c_dim, h_dim, w_dim = dims
     data_type_tag = replace_data_type(data_type)
@@ -813,7 +829,7 @@ def generate_init_rowmax_tile_function(rows, cols, data_type="float", col_factor
     ])
     emit_unroll(code_lines, col_factor, cols, "            ")
     code_lines.extend([
-        "            tile[r][c] = (data_t)(-8);",
+        "            tile[r][c] = FB_MIN_SCORE;",
         "        }",
         "    }",
         "}",
@@ -1072,9 +1088,11 @@ def generate_linear_tile_function(data_type="float", tile_rows=16, in_tile=128, 
     ])
     emit_unroll(code_lines, in_factor, in_tile, "                ")
     code_lines.extend([
-        "                sum += (acc_t)input[r][i] * (acc_t)weight[o][i];",
+        ("                sum += input[r][i] * weight[o][i];"
+         if data_type.replace(" ", "").startswith("ap_fixed<32,") else
+         "                sum += (acc_t)input[r][i] * (acc_t)weight[o][i];"),
         "            }",
-        "            output[r][o] = (data_t)sum;",
+        "            output[r][o] = sum;",
         "        }",
         "    }",
         "}",
@@ -1093,13 +1111,13 @@ def generate_rmsnorm_tile_full_function(data_type="float", tile_rows=16, dim=409
         "    int valid_rows",
         ")",
         "{",
-        "    const acc_t eps = (acc_t)1e-5;",
+        "    const acc_t eps = FB_EPS;",
         "    for (int r = 0; r < valid_rows; ++r) {",
         "        acc_t sum_sq = (acc_t)0;",
         f"        for (int c = 0; c < {dim}; ++c) {{",
         "            sum_sq += (acc_t)input[r][c] * (acc_t)input[r][c];",
         "        }",
-        f"        acc_t inv_rms = (acc_t)1 / hls::sqrt(sum_sq / (acc_t){dim} + eps);",
+        f"        acc_t inv_rms = (acc_t)1 / fb_sqrt(sum_sq / (acc_t){dim} + eps);",
         f"        for (int c = 0; c < {dim}; ++c) {{",
         "            output[r][c] = (data_t)((acc_t)input[r][c] * (acc_t)gamma[c] * inv_rms);",
         "        }",
@@ -1159,7 +1177,11 @@ def generate_activation_tile_2d_function(data_type="float", rows=16, cols=128, a
     ])
     emit_unroll(code_lines, col_factor, cols, "            ")
     if act_type == "silu":
-        code_lines.append("            output[r][c] = input[r][c] / ((data_t)1 + hls::exp(-input[r][c]));")
+        code_lines.extend([
+            "            acc_t x = input[r][c];",
+            "            acc_t e = fb_exp_negative(x < 0 ? x : acc_t(-x));",
+            "            output[r][c] = fb_div(x < 0 ? acc_t(x * e) : x, acc_t(1) + e);",
+        ])
     elif act_type == "relu":
         code_lines.append("            output[r][c] = input[r][c] > (data_t)0 ? input[r][c] : (data_t)0;")
     else:
@@ -1254,9 +1276,11 @@ def generate_rmsnorm_accumulate_tile_function(data_type="float", tile_rows=16, t
     ])
     emit_unroll(code_lines, col_factor, tile_cols, "            ")
     code_lines.extend([
-        "            sum += (acc_t)input[r][c] * (acc_t)input[r][c];",
+        ("            sum += input[r][c] * input[r][c];"
+         if data_type.replace(" ", "").startswith("ap_fixed<32,") else
+         "            sum += (acc_t)input[r][c] * (acc_t)input[r][c];"),
         "        }",
-        "        sumsq[r] = (data_t)sum;",
+        "        sumsq[r] = sum;",
         "    }",
         "}",
     ])
@@ -1273,9 +1297,9 @@ def generate_rmsnorm_finalize_rows_function(data_type="float", tile_rows=16, ful
         "    int valid_rows",
         ")",
         "{",
-        "    const acc_t eps = (acc_t)1e-5;",
+        "    const acc_t eps = FB_EPS;",
         "    for (int r = 0; r < valid_rows; ++r) {",
-        f"        inv_rms[r] = (data_t)((acc_t)1 / hls::sqrt((acc_t)sumsq[r] / (acc_t){full_dim} + eps));",
+        f"        inv_rms[r] = fb_div(acc_t(1), fb_sqrt(fb_div(sumsq[r], acc_t({full_dim})) + eps));",
         "    }",
         "}",
     ]
@@ -1481,22 +1505,24 @@ def generate_attention_score_tile_function(data_type="float", q_rows=16, q_heads
     emit_array_partition(code_lines, "k_tile", dim_factor, local_kv_cols, 2)
     emit_array_partition(code_lines, "score", head_factor, q_heads, 2)
     code_lines.extend([
-        "    const data_t scale = (data_t)1.0 / hls::sqrt((data_t)128);",
+        f"    const acc_t scale = acc_t({1 / math.sqrt(head_dim):.17g});",
         "    for (int qt = 0; qt < valid_q; ++qt) {",
         f"        for (int qh = 0; qh < {q_heads}; ++qh) {{",
         "            int local_kv_head = qh / 4;",
         "            for (int kt = 0; kt < valid_k; ++kt) {",
         "                if ((k_index_base + kt) > (q_index_base + qt)) {",
-        "                    score[qt][qh][kt] = (data_t)(-8);",
+        "                    score[qt][qh][kt] = FB_MIN_SCORE;",
         "                } else {",
         "                    acc_t sum = (acc_t)0;",
         f"                    for (int d = 0; d < {head_dim}; ++d) {{",
     ])
     emit_unroll(code_lines, dim_factor, head_dim, "                        ")
     code_lines.extend([
-        "                        sum += (acc_t)q_tile[qt][qh * 128 + d] * (acc_t)k_tile[kt][local_kv_head * 128 + d];",
+        ("                        sum += q_tile[qt][qh * 128 + d] * k_tile[kt][local_kv_head * 128 + d];"
+         if data_type.replace(" ", "").startswith("ap_fixed<32,") else
+         "                        sum += (acc_t)q_tile[qt][qh * 128 + d] * (acc_t)k_tile[kt][local_kv_head * 128 + d];"),
         "                    }",
-        "                    score[qt][qh][kt] = (data_t)(sum * scale);",
+        "                    score[qt][qh][kt] = sum * scale;",
         "                }",
         "            }",
         "        }",
@@ -1551,7 +1577,9 @@ def generate_attention_softmax_context_tile_function(data_type="float", q_rows=1
         f"    data_t rowsum[{q_rows}][{q_heads}],",
         f"    data_t ctx[{q_rows}][{ctx_cols}],",
         "    int valid_q,",
-        "    int valid_k",
+        "    int valid_k,",
+        "    int q_index_base,",
+        "    int k_index_base",
         ")",
         "{",
     ]
@@ -1565,7 +1593,8 @@ def generate_attention_softmax_context_tile_function(data_type="float", q_rows=1
         f"        for (int qh = 0; qh < {q_heads}; ++qh) {{",
         "            int local_kv_head = qh / 4;",
         "            for (int kt = 0; kt < valid_k; ++kt) {",
-        "                data_t weight = hls::exp(score[qt][qh][kt] - rowmax[qt][qh]);",
+        "                if (k_index_base + kt > q_index_base + qt) continue;",
+        "                acc_t weight = fb_exp_negative(score[qt][qh][kt] - rowmax[qt][qh]);",
         "                rowsum[qt][qh] += weight;",
         f"                for (int d = 0; d < {head_dim}; ++d) {{",
     ])
@@ -1598,13 +1627,13 @@ def generate_attention_finalize_tile_function(data_type="float", q_rows=16, q_he
     code_lines.extend([
         "    for (int qt = 0; qt < valid_q; ++qt) {",
         f"        for (int qh = 0; qh < {q_heads}; ++qh) {{",
-        "            data_t denom = rowsum[qt][qh];",
-        "            if (denom == (data_t)0) denom = (data_t)1;",
+        "            acc_t denom = rowsum[qt][qh];",
+        "            assert(denom > 0);",
         f"            for (int d = 0; d < {head_dim}; ++d) {{",
     ])
     emit_unroll(code_lines, dim_factor, head_dim, "                ")
     code_lines.extend([
-        "                ctx[qt][qh * 128 + d] = ctx[qt][qh * 128 + d] / denom;",
+        "                ctx[qt][qh * 128 + d] = fb_div(ctx[qt][qh * 128 + d], denom);",
         "            }",
         "        }",
         "    }",
@@ -1871,8 +1900,8 @@ def generate_batchnorm_tile_function(data_type="float", tile_c=128, tile_h=14, t
         "    for (int c = 0; c < valid_c; ++c) {",
         "        for (int h = 0; h < valid_h; ++h) {",
         "            for (int w = 0; w < valid_w; ++w) {",
-        "                data_t norm = (input[c][h][w] - weights[2][c]) / hls::sqrt(weights[3][c] + (data_t)0.00001);",
-        "                output[c][h][w] = weights[0][c] * norm + weights[1][c];",
+        "                acc_t norm = fb_div(acc_t(input[c][h][w]) - acc_t(weights[2][c]), fb_sqrt(acc_t(weights[3][c]) + FB_EPS));",
+        "                output[c][h][w] = (data_t)(acc_t(weights[0][c]) * norm + acc_t(weights[1][c]));",
         "            }",
         "        }",
         "    }",
@@ -1898,7 +1927,7 @@ def generate_activation_tile_function(data_type="float", tile_c=128, tile_h=14, 
         "            for (int w = 0; w < valid_w; ++w) {",
     ]
     if act_type == "relu":
-        code_lines.append("                output[c][h][w] = input[c][h][w] > (data_t)0 ? input[c][h][w] : (data_t)0;")
+        code_lines.append("                output[c][h][w] = input[c][h][w] > 0 ? acc_t(input[c][h][w]) : acc_t(0);")
     else:
         code_lines.append("                output[c][h][w] = input[c][h][w];")
     code_lines.extend([
@@ -1926,7 +1955,7 @@ def generate_matrix_add_tile_function(data_type="float", tile_c=128, tile_h=14, 
         "    for (int c = 0; c < valid_c; ++c) {",
         "        for (int h = 0; h < valid_h; ++h) {",
         "            for (int w = 0; w < valid_w; ++w) {",
-        "                output[c][h][w] = lhs[c][h][w] + rhs[c][h][w];",
+        "                output[c][h][w] = (data_t)(lhs[c][h][w] + rhs[c][h][w]);",
         "            }",
         "        }",
         "    }",
@@ -1994,13 +2023,13 @@ def generate_adaptive_avgpool_tile_function(data_type="float", c_tile=128, h_in=
         ")",
         "{",
         "    for (int c = 0; c < valid_c; ++c) {",
-        "        data_t sum = (data_t)0;",
+        "        acc_t sum = 0;",
         f"        for (int h = 0; h < {h_in}; ++h) {{",
         f"            for (int w = 0; w < {w_in}; ++w) {{",
         "                sum += input[c][h][w];",
         "            }",
         "        }",
-        f"        output[c][0][0] = sum / (data_t)({h_in} * {w_in});",
+        f"        output[c][0][0] = fb_div(sum, acc_t({h_in} * {w_in}));",
         "    }",
         "}",
     ]
@@ -2042,7 +2071,7 @@ def generate_avgpool_finalize_tile_function(data_type="float", c_tile=128, total
         ")",
         "{",
         "    for (int c = 0; c < valid_c; ++c) {",
-        f"        output[c][0][0] = input[c][0][0] / (data_t){total_area};",
+        f"        output[c][0][0] = fb_div(input[c][0][0], acc_t({total_area}));",
         "    }",
         "}",
     ]
@@ -2687,6 +2716,8 @@ def generate_func_def(op_info, data_type):
         code_line, full_func_name = generate_load_function(op_info["dims"], data_type, func_prefix="load")
     elif op_info['func_name'] == 'store':
         code_line, full_func_name = generate_store_function(op_info["dims"], data_type, func_prefix="store")
+    elif op_info['func_name'] == 'quantize_tile':
+        code_line, full_func_name = generate_quantize_tile_function(op_info['dims'], data_type)
     elif op_info['func_name'] == 'clear_tile':
         code_line, full_func_name = generate_clear_tile_function(op_info["dims"], data_type)
     elif op_info['func_name'] == 'clear_matrix_tile':
@@ -2916,6 +2947,8 @@ def generate_operator_call(op_info, data_type):
         code_line, full_func_name = generate_load_function(op_info["dims"], data_type, func_prefix="load")
     elif op_info['func_name'] == 'store':
         code_line, full_func_name = generate_store_function(op_info["dims"], data_type, func_prefix="store")
+    elif op_info['func_name'] == 'quantize_tile':
+        code_line, full_func_name = generate_quantize_tile_function(op_info['dims'], data_type)
     elif op_info['func_name'] == 'clear_tile':
         code_line, full_func_name = generate_clear_tile_function(op_info["dims"], data_type)
     elif op_info['func_name'] == 'clear_matrix_tile':
@@ -3145,6 +3178,9 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
       
     Returns a string containing the generated HLS C code.
     """
+    brams, drams = annotate_storage(brams, drams, ops)
+    storage = {b['name']: b.get('dtype', 'data_t') for b in brams + drams}
+    shapes = {b['name']: b['dims'] for b in brams + drams}
     code_lines = []
     
     code_lines.append("")
@@ -3156,17 +3192,18 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     code_lines.append(f"#include <hls_math.h>")
     code_lines.append(f"#include <stdlib.h>")
     code_lines.append(f"#include <cstdint>")
+    code_lines.append("#include <cassert>")
     code_lines.append(f"#include <hls_math.h>")
     code_lines.append(f"using namespace std;\n")
     
     # 1. Write typedef.
     code_lines.append(f"typedef {data_type} data_t;")
-    code_lines.append("typedef ap_fixed<32,10> acc_t;\n")
+    code_lines.append(numeric_support(data_type))
     
     # 2. Declare BRAM arrays.
     for bram in brams:
         dims_str = "".join(f"[{d}]" for d in bram["dims"])
-        code_lines.append(f"data_t {bram['name']}{dims_str};")
+        code_lines.append(f"{storage[bram['name']]} {bram['name']}{dims_str};")
     
     code_lines.append("")  # blank line
     
@@ -3174,11 +3211,14 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     func_def_name_list = []
    
     control_ops = {"loop_begin", "loop_end"}
+    calls = {}
 
     for key, op_info in ops.items():
        if op_info["func_name"] in control_ops:
            continue
        func_def_code, func_name  = generate_func_def(op_info, data_type)
+       func_def_code, func_name = specialize(func_def_code, func_name, op_info, storage, shapes)
+       calls[key] = func_name
        if func_name and func_name not in func_name_set:
            func_name_set.add(func_name)
            code_lines.append(func_def_code)
@@ -3189,7 +3229,7 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     dram_params = []
     for dram in drams:
         dims_str = "".join(f"[{d}]" for d in dram["dims"])
-        dram_params.append(f"data_t {dram['name']}{dims_str}")
+        dram_params.append(f"{storage[dram['name']]} {dram['name']}{dims_str}")
     params_str = ", ".join(dram_params)
     code_lines.append(f"void {top_func_name}({params_str})")
     code_lines.append("{")
@@ -3220,7 +3260,7 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
             code_lines.append(f'{"    " * indent_level}}}')
             continue
 
-        call_str = generate_operator_call(op_info, data_type)
+        call_str = calls[key] + '(' + ', '.join(op_info['args']) + ');'
         code_lines.append(f'{"    " * indent_level}{call_str}')
     
     code_lines.append("}")
@@ -3250,6 +3290,7 @@ def generate_top_h(drams, data_type="float", top_func_name="top"):
     """
     lines = []
     lines.append("#include <ap_fixed.h>")
+    lines.append("#include <cstdint>")
     lines.append("#ifndef TOP_H")
     lines.append("#define TOP_H")
     lines.append("")
@@ -3260,7 +3301,7 @@ def generate_top_h(drams, data_type="float", top_func_name="top"):
     params = []
     for dram in drams:
         dims_str = "".join(f"[{d}]" for d in dram["dims"])
-        params.append(f"data_t {dram['name']}{dims_str}")
+        params.append(f"{dram.get('dtype', 'data_t')} {dram['name']}{dims_str}")
     param_str = ", ".join(params)
     lines.append(f"void {top_func_name}({param_str});")
     lines.append("")
@@ -3303,20 +3344,20 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     # Declare DRAM arrays.
     for dram in drams:
         dims_str = "".join(f"[{d}]" for d in dram["dims"])
-        code_lines.append(f"data_t {dram['name']}{dims_str};")
+        code_lines.append(f"{dram.get('dtype', 'data_t')} {dram['name']}{dims_str};")
     code_lines.append("")
     
     # Helper function to load a text file into an array.
-    code_lines.append("void load_txt_to_array(const char *filename, data_t *array, int total_size) {")
+    code_lines.append("template<class T> void load_txt_to_array(const char *filename, T *array, size_t total_size) {")
     code_lines.append("    FILE *fp = fopen(filename, \"r\");")
     code_lines.append("    if (fp == NULL) {")
     code_lines.append("        printf(\"Failed to open %s\\n\", filename);")
     code_lines.append("        exit(1);")
     code_lines.append("    }")
-    code_lines.append("    for (int i = 0; i < total_size; i++) {")
-    code_lines.append("        float temp;")
-    code_lines.append("        fscanf(fp, \"%f\", &temp);")
-    code_lines.append("        array[i] = (data_t)temp;")
+    code_lines.append("    for (size_t i = 0; i < total_size; i++) {")
+    code_lines.append("        double temp;")
+    code_lines.append("        if (fscanf(fp, \"%lf\", &temp) != 1) { fprintf(stderr, \"Short/invalid input: %s\\n\", filename); exit(1); }")
+    code_lines.append("        array[i] = (T)temp;")
     code_lines.append("    }")
     code_lines.append("    fclose(fp);")
     code_lines.append("}")
@@ -3328,7 +3369,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     # For each DRAM, generate a load call.
     for dram in drams:
         total_elements = prod(dram["dims"])
-        code_lines.append(f"    load_txt_to_array(\"{dram['name']}.txt\", (data_t*){dram['name']}, {total_elements});")
+        code_lines.append(f"    load_txt_to_array(\"{dram['name']}.txt\", ({dram.get('dtype', 'data_t')}*){dram['name']}, {total_elements});")
     code_lines.append("")
     
     # Insert top function call. DRAM arguments in the order of the drams list.

@@ -1,0 +1,485 @@
+Prepared DRAM_input (3, 224, 224)
+Prepared DRAM_w_stem (64, 3, 7, 7)
+Prepared DRAM_bn_stem (4, 64)
+Prepared DRAM_w_s1_b0_1 (64, 64, 1, 1)
+Prepared DRAM_bn_s1_b0_1 (4, 64)
+Prepared DRAM_w_s1_b0_2 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b0_2 (4, 64)
+Prepared DRAM_w_s1_b0_3 (256, 64, 1, 1)
+Prepared DRAM_bn_s1_b0_3 (4, 256)
+Prepared DRAM_w_s1_b0_down (256, 64, 1, 1)
+Prepared DRAM_w_s1_b1_1 (64, 256, 1, 1)
+Prepared DRAM_bn_s1_b1_1 (4, 64)
+Prepared DRAM_w_s1_b1_2 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b1_2 (4, 64)
+Prepared DRAM_w_s1_b1_3 (256, 64, 1, 1)
+Prepared DRAM_bn_s1_b1_3 (4, 256)
+Prepared DRAM_w_s1_b2_1 (64, 256, 1, 1)
+Prepared DRAM_bn_s1_b2_1 (4, 64)
+Prepared DRAM_w_s1_b2_2 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b2_2 (4, 64)
+Prepared DRAM_w_s1_b2_3 (256, 64, 1, 1)
+Prepared DRAM_bn_s1_b2_3 (4, 256)
+Prepared DRAM_w_s2_b0_1 (128, 256, 1, 1)
+Prepared DRAM_bn_s2_b0_1 (4, 128)
+Prepared DRAM_w_s2_b0_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b0_2 (4, 128)
+Prepared DRAM_w_s2_b0_3 (512, 128, 1, 1)
+Prepared DRAM_bn_s2_b0_3 (4, 512)
+Prepared DRAM_w_s2_b0_down (512, 256, 1, 1)
+Prepared DRAM_w_s2_b1_1 (128, 512, 1, 1)
+Prepared DRAM_bn_s2_b1_1 (4, 128)
+Prepared DRAM_w_s2_b1_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b1_2 (4, 128)
+Prepared DRAM_w_s2_b1_3 (512, 128, 1, 1)
+Prepared DRAM_bn_s2_b1_3 (4, 512)
+Prepared DRAM_w_s2_b2_1 (128, 512, 1, 1)
+Prepared DRAM_bn_s2_b2_1 (4, 128)
+Prepared DRAM_w_s2_b2_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b2_2 (4, 128)
+Prepared DRAM_w_s2_b2_3 (512, 128, 1, 1)
+Prepared DRAM_bn_s2_b2_3 (4, 512)
+Prepared DRAM_w_s2_b3_1 (128, 512, 1, 1)
+Prepared DRAM_bn_s2_b3_1 (4, 128)
+Prepared DRAM_w_s2_b3_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b3_2 (4, 128)
+Prepared DRAM_w_s2_b3_3 (512, 128, 1, 1)
+Prepared DRAM_bn_s2_b3_3 (4, 512)
+Prepared DRAM_w_s2_b4_1 (128, 512, 1, 1)
+Prepared DRAM_bn_s2_b4_1 (4, 128)
+Prepared DRAM_w_s2_b4_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b4_2 (4, 128)
+Prepared DRAM_w_s2_b4_3 (512, 128, 1, 1)
+Prepared DRAM_bn_s2_b4_3 (4, 512)
+Prepared DRAM_w_s2_b5_1 (128, 512, 1, 1)
+Prepared DRAM_bn_s2_b5_1 (4, 128)
+Prepared DRAM_w_s2_b5_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b5_2 (4, 128)
+Prepared DRAM_w_s2_b5_3 (512, 128, 1, 1)
+Prepared DRAM_bn_s2_b5_3 (4, 512)
+Prepared DRAM_w_s2_b6_1 (128, 512, 1, 1)
+Prepared DRAM_bn_s2_b6_1 (4, 128)
+Prepared DRAM_w_s2_b6_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b6_2 (4, 128)
+Prepared DRAM_w_s2_b6_3 (512, 128, 1, 1)
+Prepared DRAM_bn_s2_b6_3 (4, 512)
+Prepared DRAM_w_s2_b7_1 (128, 512, 1, 1)
+Prepared DRAM_bn_s2_b7_1 (4, 128)
+Prepared DRAM_w_s2_b7_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b7_2 (4, 128)
+Prepared DRAM_w_s2_b7_3 (512, 128, 1, 1)
+Prepared DRAM_bn_s2_b7_3 (4, 512)
+Prepared DRAM_w_s3_b0_1 (256, 512, 1, 1)
+Prepared DRAM_bn_s3_b0_1 (4, 256)
+Prepared DRAM_w_s3_b0_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b0_2 (4, 256)
+Prepared DRAM_w_s3_b0_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b0_3 (4, 1024)
+Prepared DRAM_w_s3_b0_down (1024, 512, 1, 1)
+Prepared DRAM_w_s3_b1_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b1_1 (4, 256)
+Prepared DRAM_w_s3_b1_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b1_2 (4, 256)
+Prepared DRAM_w_s3_b1_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b1_3 (4, 1024)
+Prepared DRAM_w_s3_b2_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b2_1 (4, 256)
+Prepared DRAM_w_s3_b2_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b2_2 (4, 256)
+Prepared DRAM_w_s3_b2_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b2_3 (4, 1024)
+Prepared DRAM_w_s3_b3_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b3_1 (4, 256)
+Prepared DRAM_w_s3_b3_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b3_2 (4, 256)
+Prepared DRAM_w_s3_b3_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b3_3 (4, 1024)
+Prepared DRAM_w_s3_b4_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b4_1 (4, 256)
+Prepared DRAM_w_s3_b4_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b4_2 (4, 256)
+Prepared DRAM_w_s3_b4_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b4_3 (4, 1024)
+Prepared DRAM_w_s3_b5_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b5_1 (4, 256)
+Prepared DRAM_w_s3_b5_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b5_2 (4, 256)
+Prepared DRAM_w_s3_b5_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b5_3 (4, 1024)
+Prepared DRAM_w_s3_b6_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b6_1 (4, 256)
+Prepared DRAM_w_s3_b6_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b6_2 (4, 256)
+Prepared DRAM_w_s3_b6_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b6_3 (4, 1024)
+Prepared DRAM_w_s3_b7_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b7_1 (4, 256)
+Prepared DRAM_w_s3_b7_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b7_2 (4, 256)
+Prepared DRAM_w_s3_b7_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b7_3 (4, 1024)
+Prepared DRAM_w_s3_b8_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b8_1 (4, 256)
+Prepared DRAM_w_s3_b8_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b8_2 (4, 256)
+Prepared DRAM_w_s3_b8_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b8_3 (4, 1024)
+Prepared DRAM_w_s3_b9_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b9_1 (4, 256)
+Prepared DRAM_w_s3_b9_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b9_2 (4, 256)
+Prepared DRAM_w_s3_b9_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b9_3 (4, 1024)
+Prepared DRAM_w_s3_b10_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b10_1 (4, 256)
+Prepared DRAM_w_s3_b10_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b10_2 (4, 256)
+Prepared DRAM_w_s3_b10_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b10_3 (4, 1024)
+Prepared DRAM_w_s3_b11_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b11_1 (4, 256)
+Prepared DRAM_w_s3_b11_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b11_2 (4, 256)
+Prepared DRAM_w_s3_b11_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b11_3 (4, 1024)
+Prepared DRAM_w_s3_b12_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b12_1 (4, 256)
+Prepared DRAM_w_s3_b12_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b12_2 (4, 256)
+Prepared DRAM_w_s3_b12_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b12_3 (4, 1024)
+Prepared DRAM_w_s3_b13_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b13_1 (4, 256)
+Prepared DRAM_w_s3_b13_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b13_2 (4, 256)
+Prepared DRAM_w_s3_b13_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b13_3 (4, 1024)
+Prepared DRAM_w_s3_b14_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b14_1 (4, 256)
+Prepared DRAM_w_s3_b14_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b14_2 (4, 256)
+Prepared DRAM_w_s3_b14_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b14_3 (4, 1024)
+Prepared DRAM_w_s3_b15_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b15_1 (4, 256)
+Prepared DRAM_w_s3_b15_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b15_2 (4, 256)
+Prepared DRAM_w_s3_b15_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b15_3 (4, 1024)
+Prepared DRAM_w_s3_b16_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b16_1 (4, 256)
+Prepared DRAM_w_s3_b16_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b16_2 (4, 256)
+Prepared DRAM_w_s3_b16_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b16_3 (4, 1024)
+Prepared DRAM_w_s3_b17_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b17_1 (4, 256)
+Prepared DRAM_w_s3_b17_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b17_2 (4, 256)
+Prepared DRAM_w_s3_b17_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b17_3 (4, 1024)
+Prepared DRAM_w_s3_b18_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b18_1 (4, 256)
+Prepared DRAM_w_s3_b18_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b18_2 (4, 256)
+Prepared DRAM_w_s3_b18_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b18_3 (4, 1024)
+Prepared DRAM_w_s3_b19_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b19_1 (4, 256)
+Prepared DRAM_w_s3_b19_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b19_2 (4, 256)
+Prepared DRAM_w_s3_b19_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b19_3 (4, 1024)
+Prepared DRAM_w_s3_b20_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b20_1 (4, 256)
+Prepared DRAM_w_s3_b20_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b20_2 (4, 256)
+Prepared DRAM_w_s3_b20_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b20_3 (4, 1024)
+Prepared DRAM_w_s3_b21_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b21_1 (4, 256)
+Prepared DRAM_w_s3_b21_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b21_2 (4, 256)
+Prepared DRAM_w_s3_b21_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b21_3 (4, 1024)
+Prepared DRAM_w_s3_b22_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b22_1 (4, 256)
+Prepared DRAM_w_s3_b22_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b22_2 (4, 256)
+Prepared DRAM_w_s3_b22_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b22_3 (4, 1024)
+Prepared DRAM_w_s3_b23_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b23_1 (4, 256)
+Prepared DRAM_w_s3_b23_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b23_2 (4, 256)
+Prepared DRAM_w_s3_b23_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b23_3 (4, 1024)
+Prepared DRAM_w_s3_b24_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b24_1 (4, 256)
+Prepared DRAM_w_s3_b24_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b24_2 (4, 256)
+Prepared DRAM_w_s3_b24_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b24_3 (4, 1024)
+Prepared DRAM_w_s3_b25_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b25_1 (4, 256)
+Prepared DRAM_w_s3_b25_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b25_2 (4, 256)
+Prepared DRAM_w_s3_b25_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b25_3 (4, 1024)
+Prepared DRAM_w_s3_b26_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b26_1 (4, 256)
+Prepared DRAM_w_s3_b26_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b26_2 (4, 256)
+Prepared DRAM_w_s3_b26_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b26_3 (4, 1024)
+Prepared DRAM_w_s3_b27_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b27_1 (4, 256)
+Prepared DRAM_w_s3_b27_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b27_2 (4, 256)
+Prepared DRAM_w_s3_b27_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b27_3 (4, 1024)
+Prepared DRAM_w_s3_b28_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b28_1 (4, 256)
+Prepared DRAM_w_s3_b28_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b28_2 (4, 256)
+Prepared DRAM_w_s3_b28_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b28_3 (4, 1024)
+Prepared DRAM_w_s3_b29_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b29_1 (4, 256)
+Prepared DRAM_w_s3_b29_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b29_2 (4, 256)
+Prepared DRAM_w_s3_b29_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b29_3 (4, 1024)
+Prepared DRAM_w_s3_b30_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b30_1 (4, 256)
+Prepared DRAM_w_s3_b30_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b30_2 (4, 256)
+Prepared DRAM_w_s3_b30_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b30_3 (4, 1024)
+Prepared DRAM_w_s3_b31_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b31_1 (4, 256)
+Prepared DRAM_w_s3_b31_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b31_2 (4, 256)
+Prepared DRAM_w_s3_b31_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b31_3 (4, 1024)
+Prepared DRAM_w_s3_b32_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b32_1 (4, 256)
+Prepared DRAM_w_s3_b32_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b32_2 (4, 256)
+Prepared DRAM_w_s3_b32_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b32_3 (4, 1024)
+Prepared DRAM_w_s3_b33_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b33_1 (4, 256)
+Prepared DRAM_w_s3_b33_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b33_2 (4, 256)
+Prepared DRAM_w_s3_b33_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b33_3 (4, 1024)
+Prepared DRAM_w_s3_b34_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b34_1 (4, 256)
+Prepared DRAM_w_s3_b34_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b34_2 (4, 256)
+Prepared DRAM_w_s3_b34_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b34_3 (4, 1024)
+Prepared DRAM_w_s3_b35_1 (256, 1024, 1, 1)
+Prepared DRAM_bn_s3_b35_1 (4, 256)
+Prepared DRAM_w_s3_b35_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b35_2 (4, 256)
+Prepared DRAM_w_s3_b35_3 (1024, 256, 1, 1)
+Prepared DRAM_bn_s3_b35_3 (4, 1024)
+Prepared DRAM_w_s4_b0_1 (512, 1024, 1, 1)
+Prepared DRAM_bn_s4_b0_1 (4, 512)
+Prepared DRAM_w_s4_b0_2 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b0_2 (4, 512)
+Prepared DRAM_w_s4_b0_3 (2048, 512, 1, 1)
+Prepared DRAM_bn_s4_b0_3 (4, 2048)
+Prepared DRAM_w_s4_b0_down (2048, 1024, 1, 1)
+Prepared DRAM_w_s4_b1_1 (512, 2048, 1, 1)
+Prepared DRAM_bn_s4_b1_1 (4, 512)
+Prepared DRAM_w_s4_b1_2 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b1_2 (4, 512)
+Prepared DRAM_w_s4_b1_3 (2048, 512, 1, 1)
+Prepared DRAM_bn_s4_b1_3 (4, 2048)
+Prepared DRAM_w_s4_b2_1 (512, 2048, 1, 1)
+Prepared DRAM_bn_s4_b2_1 (4, 512)
+Prepared DRAM_w_s4_b2_2 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b2_2 (4, 512)
+Prepared DRAM_w_s4_b2_3 (2048, 512, 1, 1)
+Prepared DRAM_bn_s4_b2_3 (4, 2048)
+Prepared DRAM_fc (1000, 2048, 1, 1)
+fp64 stem
+fp64 pool
+fp64 s1_b0
+fp64 s1_b1
+fp64 s1_b2
+fp64 s2_b0
+fp64 s2_b1
+fp64 s2_b2
+fp64 s2_b3
+fp64 s2_b4
+fp64 s2_b5
+fp64 s2_b6
+fp64 s2_b7
+fp64 s3_b0
+fp64 s3_b1
+fp64 s3_b2
+fp64 s3_b3
+fp64 s3_b4
+fp64 s3_b5
+fp64 s3_b6
+fp64 s3_b7
+fp64 s3_b8
+fp64 s3_b9
+fp64 s3_b10
+fp64 s3_b11
+fp64 s3_b12
+fp64 s3_b13
+fp64 s3_b14
+fp64 s3_b15
+fp64 s3_b16
+fp64 s3_b17
+fp64 s3_b18
+fp64 s3_b19
+fp64 s3_b20
+fp64 s3_b21
+fp64 s3_b22
+fp64 s3_b23
+fp64 s3_b24
+fp64 s3_b25
+fp64 s3_b26
+fp64 s3_b27
+fp64 s3_b28
+fp64 s3_b29
+fp64 s3_b30
+fp64 s3_b31
+fp64 s3_b32
+fp64 s3_b33
+fp64 s3_b34
+fp64 s3_b35
+fp64 s4_b0
+fp64 s4_b1
+fp64 s4_b2
+fp64 gap
+fp64 logits
+fixed stem
+fixed pool
+fixed s1_b0
+fixed s1_b1
+fixed s1_b2
+fixed s2_b0
+fixed s2_b1
+fixed s2_b2
+fixed s2_b3
+fixed s2_b4
+fixed s2_b5
+fixed s2_b6
+fixed s2_b7
+fixed s3_b0
+fixed s3_b1
+fixed s3_b2
+fixed s3_b3
+fixed s3_b4
+fixed s3_b5
+fixed s3_b6
+fixed s3_b7
+fixed s3_b8
+fixed s3_b9
+fixed s3_b10
+fixed s3_b11
+fixed s3_b12
+fixed s3_b13
+fixed s3_b14
+fixed s3_b15
+fixed s3_b16
+fixed s3_b17
+fixed s3_b18
+fixed s3_b19
+fixed s3_b20
+fixed s3_b21
+fixed s3_b22
+fixed s3_b23
+fixed s3_b24
+fixed s3_b25
+fixed s3_b26
+fixed s3_b27
+fixed s3_b28
+fixed s3_b29
+fixed s3_b30
+fixed s3_b31
+fixed s3_b32
+fixed s3_b33
+fixed s3_b34
+fixed s3_b35
+fixed s4_b0
+fixed s4_b1
+fixed s4_b2
+fixed gap
+fixed logits
+Compiling/running saved resnet152-full log: /export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/verification/runs/expanded_numeric/32_10/resnet152-full/case/simulation.log
+logits PASS PASS max_abs= 0.0004486015270117605
+stem PASS PASS max_abs= 5.027268981661059e-07
+pool PASS PASS max_abs= 4.968604930821741e-07
+gap PASS PASS max_abs= 0.0005561255171215862
+s1_b0 PASS PASS max_abs= 2.090309036528737e-06
+s1_b1 PASS PASS max_abs= 3.0541398734484915e-06
+s1_b2 PASS PASS max_abs= 4.5929914485043355e-06
+s2_b0 PASS PASS max_abs= 6.277713329172485e-06
+s2_b1 PASS PASS max_abs= 6.611313733362323e-06
+s2_b2 PASS PASS max_abs= 7.716422255832356e-06
+s2_b3 PASS PASS max_abs= 1.0120719017514546e-05
+s2_b4 PASS PASS max_abs= 1.1893736840740132e-05
+s2_b5 PASS PASS max_abs= 1.2522595564945505e-05
+s2_b6 PASS PASS max_abs= 1.6141255112067654e-05
+s2_b7 PASS PASS max_abs= 1.9339457496769796e-05
+s3_b0 PASS PASS max_abs= 2.123812064969144e-05
+s3_b1 PASS PASS max_abs= 2.688584550547546e-05
+s3_b2 PASS PASS max_abs= 2.628130112469762e-05
+s3_b3 PASS PASS max_abs= 2.8584402048004165e-05
+s3_b4 PASS PASS max_abs= 2.9436294606277613e-05
+s3_b5 PASS PASS max_abs= 3.099966335096127e-05
+s3_b6 PASS PASS max_abs= 3.5267576245168186e-05
+s3_b7 PASS PASS max_abs= 3.884180812807614e-05
+s3_b8 PASS PASS max_abs= 4.228297317077079e-05
+s3_b9 PASS PASS max_abs= 5.0453514809589706e-05
+s3_b10 PASS PASS max_abs= 5.888802216880151e-05
+s3_b11 PASS PASS max_abs= 5.312222746489681e-05
+s3_b12 PASS PASS max_abs= 6.352710625812108e-05
+s3_b13 PASS PASS max_abs= 8.249201087373592e-05
+s3_b14 PASS PASS max_abs= 8.12975239181668e-05
+s3_b15 PASS PASS max_abs= 0.00010257827103998807
+s3_b16 PASS PASS max_abs= 0.00010120214024311736
+s3_b17 PASS PASS max_abs= 0.0001057467791518718
+s3_b18 PASS PASS max_abs= 0.00011618271016899939
+s3_b19 PASS PASS max_abs= 0.00013120427858126504
+s3_b20 PASS PASS max_abs= 0.0001463461487176687
+s3_b21 PASS PASS max_abs= 0.00016170098679069156
+s3_b22 PASS PASS max_abs= 0.0001936237139901209
+s3_b23 PASS PASS max_abs= 0.00022015272648445716
+s3_b24 PASS PASS max_abs= 0.00022837007116294217
+s3_b25 PASS PASS max_abs= 0.00024210166055382842
+s3_b26 PASS PASS max_abs= 0.0002533587017410355
+s3_b27 PASS PASS max_abs= 0.0003039158783195717
+s3_b28 PASS PASS max_abs= 0.00034499768182172375
+s3_b29 PASS PASS max_abs= 0.000375551331586621
+s3_b30 PASS PASS max_abs= 0.0003955830599764454
+s3_b31 PASS PASS max_abs= 0.000442887144330939
+s3_b32 PASS PASS max_abs= 0.0004663602645393894
+s3_b33 PASS PASS max_abs= 0.0005741958341900499
+s3_b34 PASS PASS max_abs= 0.0006388813576592156
+s3_b35 PASS PASS max_abs= 0.0006608206855389653
+s4_b0 PASS PASS max_abs= 0.0006162655808026329
+s4_b1 PASS PASS max_abs= 0.0008040056740981072
+s4_b2 PASS PASS max_abs= 0.0007424896511309953
+PASS
+
+Final layer output comparison:
+  resnet152/logits: shape=[1000] codes=PASS mismatches=0 max_code_error=0 FP64=PASS max_abs=0.000448601527012 relative_l2=6.120117742210183e-06 limits(max_abs=0.1, relative_l2=0.05)
+
+
+
+VERDICT RE-EVALUATION FROM RECORDED METRICS
+PASS
+Fixed-point comparison: PASS
+FP64 comparison: PASS
+
+Final layer output comparison:
+  resnet152/logits: shape=[1000] codes=PASS mismatches=0 max_code_error=0 FP64=PASS max_abs=0.000448601527012 relative_l2=6.120117742210183e-06 relative_l2_limit=0.05

@@ -1,0 +1,146 @@
+Prepared DRAM_input (3, 224, 224)
+Prepared DRAM_w_stem (64, 3, 7, 7)
+Prepared DRAM_bn_stem (4, 64)
+Prepared DRAM_w_s1_b0_1 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b0_1 (4, 64)
+Prepared DRAM_w_s1_b0_2 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b0_2 (4, 64)
+Prepared DRAM_w_s1_b1_1 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b1_1 (4, 64)
+Prepared DRAM_w_s1_b1_2 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b1_2 (4, 64)
+Prepared DRAM_w_s1_b2_1 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b2_1 (4, 64)
+Prepared DRAM_w_s1_b2_2 (64, 64, 3, 3)
+Prepared DRAM_bn_s1_b2_2 (4, 64)
+Prepared DRAM_w_s2_b0_1 (128, 64, 3, 3)
+Prepared DRAM_bn_s2_b0_1 (4, 128)
+Prepared DRAM_w_s2_b0_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b0_2 (4, 128)
+Prepared DRAM_w_s2_b0_down (128, 64, 1, 1)
+Prepared DRAM_w_s2_b1_1 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b1_1 (4, 128)
+Prepared DRAM_w_s2_b1_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b1_2 (4, 128)
+Prepared DRAM_w_s2_b2_1 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b2_1 (4, 128)
+Prepared DRAM_w_s2_b2_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b2_2 (4, 128)
+Prepared DRAM_w_s2_b3_1 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b3_1 (4, 128)
+Prepared DRAM_w_s2_b3_2 (128, 128, 3, 3)
+Prepared DRAM_bn_s2_b3_2 (4, 128)
+Prepared DRAM_w_s3_b0_1 (256, 128, 3, 3)
+Prepared DRAM_bn_s3_b0_1 (4, 256)
+Prepared DRAM_w_s3_b0_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b0_2 (4, 256)
+Prepared DRAM_w_s3_b0_down (256, 128, 1, 1)
+Prepared DRAM_w_s3_b1_1 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b1_1 (4, 256)
+Prepared DRAM_w_s3_b1_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b1_2 (4, 256)
+Prepared DRAM_w_s3_b2_1 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b2_1 (4, 256)
+Prepared DRAM_w_s3_b2_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b2_2 (4, 256)
+Prepared DRAM_w_s3_b3_1 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b3_1 (4, 256)
+Prepared DRAM_w_s3_b3_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b3_2 (4, 256)
+Prepared DRAM_w_s3_b4_1 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b4_1 (4, 256)
+Prepared DRAM_w_s3_b4_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b4_2 (4, 256)
+Prepared DRAM_w_s3_b5_1 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b5_1 (4, 256)
+Prepared DRAM_w_s3_b5_2 (256, 256, 3, 3)
+Prepared DRAM_bn_s3_b5_2 (4, 256)
+Prepared DRAM_w_s4_b0_1 (512, 256, 3, 3)
+Prepared DRAM_bn_s4_b0_1 (4, 512)
+Prepared DRAM_w_s4_b0_2 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b0_2 (4, 512)
+Prepared DRAM_w_s4_b0_down (512, 256, 1, 1)
+Prepared DRAM_w_s4_b1_1 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b1_1 (4, 512)
+Prepared DRAM_w_s4_b1_2 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b1_2 (4, 512)
+Prepared DRAM_w_s4_b2_1 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b2_1 (4, 512)
+Prepared DRAM_w_s4_b2_2 (512, 512, 3, 3)
+Prepared DRAM_bn_s4_b2_2 (4, 512)
+Prepared DRAM_fc (1000, 512, 1, 1)
+fp64 stem
+fp64 pool
+fp64 s1_b0
+fp64 s1_b1
+fp64 s1_b2
+fp64 s2_b0
+fp64 s2_b1
+fp64 s2_b2
+fp64 s2_b3
+fp64 s3_b0
+fp64 s3_b1
+fp64 s3_b2
+fp64 s3_b3
+fp64 s3_b4
+fp64 s3_b5
+fp64 s4_b0
+fp64 s4_b1
+fp64 s4_b2
+fp64 gap
+fp64 logits
+fixed stem
+fixed pool
+fixed s1_b0
+fixed s1_b1
+fixed s1_b2
+fixed s2_b0
+fixed s2_b1
+fixed s2_b2
+fixed s2_b3
+fixed s3_b0
+fixed s3_b1
+fixed s3_b2
+fixed s3_b3
+fixed s3_b4
+fixed s3_b5
+fixed s4_b0
+fixed s4_b1
+fixed s4_b2
+fixed gap
+fixed logits
+Compiling/running saved resnet34-tiled log: /export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/verification/runs/expanded_numeric/16_5/resnet34-tiled/case/simulation.log
+logits PASS PASS max_abs= 0.012352018361230899
+stem PASS PASS max_abs= 0.0010252272577856991
+pool PASS PASS max_abs= 0.0010223432673475141
+gap PASS PASS max_abs= 0.014859350511915448
+s1_b0 PASS PASS max_abs= 0.00381024439433153
+s1_b1 PASS PASS max_abs= 0.006056849429056044
+s1_b2 PASS PASS max_abs= 0.008018879869000628
+s2_b0 PASS PASS max_abs= 0.010379180858476111
+s2_b1 PASS PASS max_abs= 0.013632091438907423
+s2_b2 PASS PASS max_abs= 0.01391278792441053
+s2_b3 PASS PASS max_abs= 0.01699060471585412
+s3_b0 PASS PASS max_abs= 0.01636223754973276
+s3_b1 PASS PASS max_abs= 0.021247346769145636
+s3_b2 PASS PASS max_abs= 0.023324965507641515
+s3_b3 PASS PASS max_abs= 0.025131575345335833
+s3_b4 PASS PASS max_abs= 0.024170971610114833
+s3_b5 PASS PASS max_abs= 0.02587009509087812
+s4_b0 PASS PASS max_abs= 0.020567195949472428
+s4_b1 PASS PASS max_abs= 0.02187348566549918
+s4_b2 PASS PASS max_abs= 0.02198998433612509
+PASS
+
+Final layer output comparison:
+  resnet34/logits: shape=[1000] codes=PASS mismatches=0 max_code_error=0 FP64=PASS max_abs=0.0123520183612 relative_l2=0.007648993730727061 limits(max_abs=0.1, relative_l2=0.05)
+
+
+
+VERDICT RE-EVALUATION FROM RECORDED METRICS
+PASS
+Fixed-point comparison: PASS
+FP64 comparison: PASS
+
+Final layer output comparison:
+  resnet34/logits: shape=[1000] codes=PASS mismatches=0 max_code_error=0 FP64=PASS max_abs=0.0123520183612 relative_l2=0.007648993730727061 relative_l2_limit=0.05

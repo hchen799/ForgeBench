@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "status": "ERROR",
+  "implementation_verdict": "NOT_RUN",
+  "mathematical_verdict": "NOT_RUN",
+  "seed": 42,
+  "threads": 8,
+  "thresholds": {
+    "max_absolute": 0.1,
+    "relative_l2": 0.01
+  },
+  "execution": "Vitis HLS C simulation",
+  "accelerator_executed": false,
+  "claim": "saved production source; synthetic parameters; no trained accuracy or RTL claim",
+  "versions": {
+    "python": "3.9.13 (main, Aug 25 2022, 23:26:10) \n[GCC 11.2.0]",
+    "torch": "2.2.0",
+    "numpy": "1.24.4"
+  },
+  "reference_sources": {
+    "existing/__init__.py": "50a7a0dc1cacd9b21aa1ef03d4714756ad6b20d278884f2e1914eda39501744a",
+    "existing/arithmetic.py": "6fb0022c455bd2776e91e298f49a11454b64d3b727c12bd414c4c18af6375d42",
+    "existing/contracts.json": "ea7e7adecb2b26e7ef71edcf9fa1e5ab8ac47d5c6e13cb3329aa6ae727a79225",
+    "existing/llama.py": "deb851e6095a1e54f4bdc408201f6b0b7569bce7c37dbaeabee77c9bde2398e9",
+    "existing/project.py": "9c2765578d9de30f1bed2c10cc5e1bb1924ac4d4b7a8e73a4cc8b29166a26dc4",
+    "existing/resnet.py": "7819d3039bffa6d70ca153332db9141e6fd181a505e36d15d97aab5fedde3cc2",
+    "existing/runner.py": "a274892729f3ebf4dd8d12ad5f6b6805cacb5e04741d227d33a50c328c025d23",
+    "existing/vendor_math.py": "7cf76171699faeb1084101936c494ca6c669b5f7620c5e4029d9cad841735813",
+    "verify_existing.py": "16438b9c25bc919f3180fe52228d71aca36c3779c058e601bc72633c4fa7367c"
+  },
+  "projects": [
+    {
+      "project": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/hls_files/RESNET18_config_ap_fixed_16_5_",
+      "family": "resnet18",
+      "variant": "resnet18-full",
+      "sources": {
+        "top.cpp": "5b810b2a367b42f4072c9809284564c27db01cc5e8254f802a61999a2d51a8ce",
+        "top.h": "a2b43f62ddb90f2147440406e65313823a24d5c5f5e82aef255d2b015a7571da"
+      },
+      "ports": {
+        "DRAM_input": [
+          3,
+          224,
+          224
+        ],
+        "DRAM_w_stem": [
+          64,
+          3,
+          7,
+          7
+        ],
+        "DRAM_bn_stem": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b0_1": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b0_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b0_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b0_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b1_1": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b1_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b1_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b1_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s2_b0_1": [
+          128,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b0_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b0_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b0_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b0_down": [
+          128,
+          64,
+          1,
+          1
+        ],
+        "DRAM_w_s2_b1_1": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b1_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b1_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b1_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s3_b0_1": [
+          256,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b0_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b0_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b0_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b0_down": [
+          256,
+          128,
+          1,
+          1
+        ],
+        "DRAM_w_s3_b1_1": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b1_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b1_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b1_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s4_b0_1": [
+          512,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b0_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b0_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b0_2": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b0_down": [
+          512,
+          256,
+          1,
+          1
+        ],
+        "DRAM_w_s4_b1_1": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b1_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b1_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b1_2": [
+          4,
+          512
+        ],
+        "DRAM_out": [
+          1000,
+          1,
+          1
+        ],
+        "DRAM_fc": [
+          1000,
+          512,
+          1,
+          1
+        ]
+      },
+      "arithmetic": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "rounding": "AP_TRN",
+        "overflow": "AP_WRAP",
+        "fractional_bits": 11
+      },
+      "reference_contract_version": 1,
+      "findings": [
+        {
+          "kind": "unread_parameter_ports",
+          "ports": [
+            "DRAM_w_stem",
+            "DRAM_bn_stem",
+            "DRAM_w_s1_b0_1",
+            "DRAM_bn_s1_b0_1",
+            "DRAM_w_s1_b0_2",
+            "DRAM_bn_s1_b0_2",
+            "DRAM_w_s1_b1_1",
+            "DRAM_bn_s1_b1_1",
+            "DRAM_w_s1_b1_2",
+            "DRAM_bn_s1_b1_2",
+            "DRAM_w_s2_b0_1",
+            "DRAM_bn_s2_b0_1",
+            "DRAM_w_s2_b0_2",
+            "DRAM_bn_s2_b0_2",
+            "DRAM_w_s2_b0_down",
+            "DRAM_w_s2_b1_1",
+            "DRAM_bn_s2_b1_1",
+            "DRAM_w_s2_b1_2",
+            "DRAM_bn_s2_b1_2",
+            "DRAM_w_s3_b0_1",
+            "DRAM_bn_s3_b0_1",
+            "DRAM_w_s3_b0_2",
+            "DRAM_bn_s3_b0_2",
+            "DRAM_w_s3_b0_down",
+            "DRAM_w_s3_b1_1",
+            "DRAM_bn_s3_b1_1",
+            "DRAM_w_s3_b1_2",
+            "DRAM_bn_s3_b1_2",
+            "DRAM_w_s4_b0_1",
+            "DRAM_bn_s4_b0_1",
+            "DRAM_w_s4_b0_2",
+            "DRAM_bn_s4_b0_2",
+            "DRAM_w_s4_b0_down",
+            "DRAM_w_s4_b1_1",
+            "DRAM_bn_s4_b1_1",
+            "DRAM_w_s4_b1_2",
+            "DRAM_bn_s4_b1_2",
+            "DRAM_fc"
+          ]
+        }
+      ],
+      "config": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/auto_generated_configs/RESNET18_config_ap_fixed_16_5_.json",
+      "config_sha256": "1036de0cfd886a85953ff8b3deea666fe8155db44b3269842723459a8a6d7d35"
+    }
+  ],
+  "reference_pairs": {
+    "resnet18-full": {
+      "fp64": "resnet18-full-fp64-v1",
+      "fixed": "resnet18-full-ap-trn-wrap-v1"
+    }
+  },
+  "preflight_failures": [],
+  "vendor_headers": {
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/ap_fixed.h": "8c0990470e583216b8bb34d9b132691a13943dcea5935cbabcfa62a2047f9c69",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/ap_fixed_base.h": "22765417d6583f16733dc1632c04f87405ea9ed5094b471dd8b8bc846664467c",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/hls_math.h": "0788275c5f00049a11c6d3be30d8b04e83008f4ddbd20fc497b169347e06f35f",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_sqrt_apfixed.h": "d5cd7eab608829b11ed62d2081392d40010a9da804d0dd989899af679227edd8",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_exp_apfixed.h": "65bcc9ef7b7ba5141de7ac817f4aa03e3ad28417dec0988ea1b1f8add9c85794"
+  },
+  "error": "C simulation failed (SIGFPE); see /export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/verification/runs/existing_resnet18_full_seed42_v1/case/simulation.log",
+  "original_sources_unchanged": true,
+  "reference_sources_unchanged": true,
+  "simulations": {
+    "case": {
+      "returncode": 1,
+      "executed": false,
+      "elapsed_seconds": 21.953310548000445,
+      "command": [
+        "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+        "-f",
+        "run_existing_csim.tcl"
+      ],
+      "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+      "log_sha256": "b7a475436c8a485a7f36afa54ba49eee65ac9631287a5aff2b4bda8808dbdcc3",
+      "testbench_sha256": "9e9f1eaf8b2792c382fc1016296c275cf2565178c2e558f5def7c2975bc4f2e8",
+      "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+      "executable_sha256": "e2f6159f1acefd680361a4f0f89049a08df7695be9da8a23fa62bdbf85bdf83f",
+      "diagnostic_replay_returncode": -8,
+      "signal": "SIGFPE"
+    }
+  },
+  "elapsed_seconds": 24.777650674997858,
+  "exit_code": 2
+}

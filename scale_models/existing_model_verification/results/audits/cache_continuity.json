@@ -1,0 +1,66 @@
+{
+  "status": "PASS",
+  "scope": "Actual C++ KV cache transferred into the next actual C++ call, across prefill -> decode 1 -> decode 2",
+  "formats": {
+    "q16_5": [
+      {
+        "previous_output": "runs/production_v2_llama3_8b/call0000/actual/k_cache_full.bin",
+        "next_input": "runs/production_v2_llama3_8b/call0001/DRAM_k_cache.bin",
+        "bytes": 134217728,
+        "sha256": "13fdb4764c105f05e7ba0c0d4c30f698502783b8c8c82a9113c06d399da8fc15",
+        "byte_identical": true
+      },
+      {
+        "previous_output": "runs/production_v2_llama3_8b/call0000/actual/v_cache_full.bin",
+        "next_input": "runs/production_v2_llama3_8b/call0001/DRAM_v_cache.bin",
+        "bytes": 134217728,
+        "sha256": "5668744b13e79421b20adde4fe425dfef970a41a2e7e33ebd343f4b738a1c63f",
+        "byte_identical": true
+      },
+      {
+        "previous_output": "runs/production_v2_llama3_8b/call0001/actual/k_cache_full.bin",
+        "next_input": "runs/production_v2_llama3_8b/call0002/DRAM_k_cache.bin",
+        "bytes": 134217728,
+        "sha256": "d7ea56e9b33e1bca08ad80a5ac2b591e30bb6358f72e795077d1bc7fe14a87bc",
+        "byte_identical": true
+      },
+      {
+        "previous_output": "runs/production_v2_llama3_8b/call0001/actual/v_cache_full.bin",
+        "next_input": "runs/production_v2_llama3_8b/call0002/DRAM_v_cache.bin",
+        "bytes": 134217728,
+        "sha256": "9b140e4a164afc291c2e2341331edf11bed78f90c86565d43e1b0deaef563703",
+        "byte_identical": true
+      }
+    ],
+    "q32_10": [
+      {
+        "previous_output": "runs/production_v2_q32_10_llama3_8b/call0000/actual/k_cache_full.bin",
+        "next_input": "runs/production_v2_q32_10_llama3_8b/call0001/DRAM_k_cache.bin",
+        "bytes": 268435456,
+        "sha256": "ba4196fc794c0ebb66207d13bd88bc3ff9349bca36d28b55b46918a8dd994aa7",
+        "byte_identical": true
+      },
+      {
+        "previous_output": "runs/production_v2_q32_10_llama3_8b/call0000/actual/v_cache_full.bin",
+        "next_input": "runs/production_v2_q32_10_llama3_8b/call0001/DRAM_v_cache.bin",
+        "bytes": 268435456,
+        "sha256": "ff2239807ada339207d9736b97b89bd751ae7178ee96a332fdfbdb5e18578812",
+        "byte_identical": true
+      },
+      {
+        "previous_output": "runs/production_v2_q32_10_llama3_8b/call0001/actual/k_cache_full.bin",
+        "next_input": "runs/production_v2_q32_10_llama3_8b/call0002/DRAM_k_cache.bin",
+        "bytes": 268435456,
+        "sha256": "8c46e8bdc0a71208be152747bcb8612713e3e5a5f8d07b15823fca652176b81b",
+        "byte_identical": true
+      },
+      {
+        "previous_output": "runs/production_v2_q32_10_llama3_8b/call0001/actual/v_cache_full.bin",
+        "next_input": "runs/production_v2_q32_10_llama3_8b/call0002/DRAM_v_cache.bin",
+        "bytes": 268435456,
+        "sha256": "e41e1e6d2a0697339ae8f288e4e99bab9e7631c3ed77d25b8c0a7b96cd6391a8",
+        "byte_identical": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+Prepared DRAM_embedding (128256, 4096)
+Prepared DRAM_final_norm (4096,)
+Prepared DRAM_lm_head (128256, 4096)
+Prepared DRAM_attn_norm (32, 4096)
+Prepared DRAM_q_proj (32, 4096, 4096)
+Prepared DRAM_k_proj (32, 1024, 4096)
+Prepared DRAM_v_proj (32, 1024, 4096)
+Prepared DRAM_o_proj (32, 4096, 4096)
+Prepared DRAM_ffn_norm (32, 4096)
+Prepared DRAM_gate_proj (32, 14336, 4096)
+Prepared DRAM_up_proj (32, 14336, 4096)
+Prepared DRAM_down_proj (32, 4096, 14336)
+Compiling/running saved llama3-prefill log: /export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/verification/runs/production_v2_llama3_8b/call0000/simulation.log
+logits PASS FAIL max_abs= 7.759451040346884
+k_cache PASS FAIL max_abs= 7.027885147902696
+v_cache PASS FAIL max_abs= 7.435142244110806
+Compiling/running saved llama3-decode log: /export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/verification/runs/production_v2_llama3_8b/call0001/simulation.log
+logits PASS FAIL max_abs= 7.109999999656393
+k_cache PASS FAIL max_abs= 7.027885147902696
+v_cache PASS FAIL max_abs= 7.435142244110806
+Compiling/running saved llama3-decode log: /export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/verification/runs/production_v2_llama3_8b/call0002/simulation.log
+logits PASS FAIL max_abs= 7.568728583498589
+k_cache PASS FAIL max_abs= 7.027885147902696
+v_cache PASS FAIL max_abs= 7.435142244110806
+FAIL
+
+
+
+VERDICT RE-EVALUATION FROM RECORDED METRICS
+FAIL
+Fixed-point comparison: PASS
+FP64 comparison: FAIL
+
+Final layer output comparison:
+  call0000/logits: shape=[4, 128256] codes=PASS mismatches=0 max_code_error=0 FP64=FAIL max_abs=7.75945104035 relative_l2=1.2329306075228064 relative_l2_limit=0.05
+  call0001/logits: shape=[1, 128256] codes=PASS mismatches=0 max_code_error=0 FP64=FAIL max_abs=7.10999999966 relative_l2=1.2502848587628876 relative_l2_limit=0.05
+  call0002/logits: shape=[1, 128256] codes=PASS mismatches=0 max_code_error=0 FP64=FAIL max_abs=7.5687285835 relative_l2=1.23603168070649 relative_l2_limit=0.05

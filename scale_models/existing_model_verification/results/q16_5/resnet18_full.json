@@ -1,0 +1,1050 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "implementation_verdict": "PASS",
+  "mathematical_verdict": "PASS",
+  "seed": 42,
+  "threads": 4,
+  "thresholds": {
+    "relative_l2": 0.05,
+    "zero_reference_max_absolute": 0.1
+  },
+  "execution": "Vitis HLS C simulation",
+  "accelerator_executed": true,
+  "claim": "saved production source; synthetic parameters; no trained accuracy or RTL claim",
+  "versions": {
+    "python": "3.9.13 (main, Aug 25 2022, 23:26:10) \n[GCC 11.2.0]",
+    "torch": "2.2.0",
+    "numpy": "1.24.4"
+  },
+  "reference_sources": {
+    "existing/__init__.py": "50a7a0dc1cacd9b21aa1ef03d4714756ad6b20d278884f2e1914eda39501744a",
+    "existing/arithmetic.py": "6fb0022c455bd2776e91e298f49a11454b64d3b727c12bd414c4c18af6375d42",
+    "existing/contracts.json": "365d476eabef073e0e4374f232fb19511ad34b47e9a8345cd3347364e77a71f1",
+    "existing/llama.py": "66b9722659fcfa3b25ab5c0161625b4e48a9067cff7bfeada7afe8fd98f2f885",
+    "existing/project.py": "bb745fe0ff3c0a4dfe50a3df134b352e4615b3e7f75f542e0432757e3f1f2aa2",
+    "existing/repaired.py": "07e1ef9e20574b1fe1f3a9a0320deeb4e9c3866153cac763fe160ac4daf7a907",
+    "existing/resnet.py": "b1eba5d7d70fb2a4f0f1042f8121d271111eca967d589bf1ca71ed2d44f1b5cc",
+    "existing/runner.py": "f521a84df73df02eeede44bb985f6369a57a2be20de77a2fbc17304e7d8fa5c4",
+    "existing/vendor_math.py": "7cf76171699faeb1084101936c494ca6c669b5f7620c5e4029d9cad841735813",
+    "verify_existing.py": "f0ad143c4e0d30fc0f3e193449f4b87c725a5aff5738ae017909d0ab6fd69b77"
+  },
+  "projects": [
+    {
+      "project": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/hls_files/RESNET18_config_ap_fixed_16_5_",
+      "family": "resnet18",
+      "variant": "resnet18-full",
+      "sources": {
+        "top.cpp": "e74db7e1f2b5e50e12040e6d5aeff6f9fbd47c4b441374902f1a1286887a2d6c",
+        "top.h": "84b2368dabd6dd18916568476ceb87b94d289ee1b8d0efd674e80275a4f64632"
+      },
+      "ports": {
+        "DRAM_input": [
+          3,
+          224,
+          224
+        ],
+        "DRAM_w_stem": [
+          64,
+          3,
+          7,
+          7
+        ],
+        "DRAM_bn_stem": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b0_1": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b0_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b0_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b0_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b1_1": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b1_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b1_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b1_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s2_b0_1": [
+          128,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b0_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b0_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b0_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b0_down": [
+          128,
+          64,
+          1,
+          1
+        ],
+        "DRAM_w_s2_b1_1": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b1_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b1_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b1_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s3_b0_1": [
+          256,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b0_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b0_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b0_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b0_down": [
+          256,
+          128,
+          1,
+          1
+        ],
+        "DRAM_w_s3_b1_1": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b1_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b1_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b1_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s4_b0_1": [
+          512,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b0_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b0_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b0_2": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b0_down": [
+          512,
+          256,
+          1,
+          1
+        ],
+        "DRAM_w_s4_b1_1": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b1_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b1_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b1_2": [
+          4,
+          512
+        ],
+        "DRAM_out": [
+          1000,
+          1,
+          1
+        ],
+        "DRAM_fc": [
+          1000,
+          512,
+          1,
+          1
+        ]
+      },
+      "port_types": {
+        "DRAM_input": "data_t",
+        "DRAM_w_stem": "data_t",
+        "DRAM_bn_stem": "data_t",
+        "DRAM_w_s1_b0_1": "data_t",
+        "DRAM_bn_s1_b0_1": "data_t",
+        "DRAM_w_s1_b0_2": "data_t",
+        "DRAM_bn_s1_b0_2": "data_t",
+        "DRAM_w_s1_b1_1": "data_t",
+        "DRAM_bn_s1_b1_1": "data_t",
+        "DRAM_w_s1_b1_2": "data_t",
+        "DRAM_bn_s1_b1_2": "data_t",
+        "DRAM_w_s2_b0_1": "data_t",
+        "DRAM_bn_s2_b0_1": "data_t",
+        "DRAM_w_s2_b0_2": "data_t",
+        "DRAM_bn_s2_b0_2": "data_t",
+        "DRAM_w_s2_b0_down": "data_t",
+        "DRAM_w_s2_b1_1": "data_t",
+        "DRAM_bn_s2_b1_1": "data_t",
+        "DRAM_w_s2_b1_2": "data_t",
+        "DRAM_bn_s2_b1_2": "data_t",
+        "DRAM_w_s3_b0_1": "data_t",
+        "DRAM_bn_s3_b0_1": "data_t",
+        "DRAM_w_s3_b0_2": "data_t",
+        "DRAM_bn_s3_b0_2": "data_t",
+        "DRAM_w_s3_b0_down": "data_t",
+        "DRAM_w_s3_b1_1": "data_t",
+        "DRAM_bn_s3_b1_1": "data_t",
+        "DRAM_w_s3_b1_2": "data_t",
+        "DRAM_bn_s3_b1_2": "data_t",
+        "DRAM_w_s4_b0_1": "data_t",
+        "DRAM_bn_s4_b0_1": "data_t",
+        "DRAM_w_s4_b0_2": "data_t",
+        "DRAM_bn_s4_b0_2": "data_t",
+        "DRAM_w_s4_b0_down": "data_t",
+        "DRAM_w_s4_b1_1": "data_t",
+        "DRAM_bn_s4_b1_1": "data_t",
+        "DRAM_w_s4_b1_2": "data_t",
+        "DRAM_bn_s4_b1_2": "data_t",
+        "DRAM_out": "data_t",
+        "DRAM_fc": "data_t"
+      },
+      "arithmetic": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "rounding": "AP_TRN",
+        "overflow": "AP_WRAP",
+        "fractional_bits": 11
+      },
+      "reference_contract_version": 2,
+      "findings": [],
+      "config": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/auto_generated_configs/RESNET18_config_ap_fixed_16_5_.json",
+      "config_sha256": "b0d98b4668fa465c38cb0012dda7a2e58cf6b5734bae41fdbb2c5ebb021c9c96"
+    }
+  ],
+  "reference_pairs": {
+    "resnet18-full": {
+      "fp64": "resnet18-full-fp64-v2",
+      "fixed": "resnet18-full-ap-trn-wrap-v2"
+    }
+  },
+  "preflight_failures": [],
+  "vendor_headers": {
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/ap_fixed.h": "8c0990470e583216b8bb34d9b132691a13943dcea5935cbabcfa62a2047f9c69",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/ap_fixed_base.h": "22765417d6583f16733dc1632c04f87405ea9ed5094b471dd8b8bc846664467c",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/hls_math.h": "0788275c5f00049a11c6d3be30d8b04e83008f4ddbd20fc497b169347e06f35f",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_sqrt_apfixed.h": "d5cd7eab608829b11ed62d2081392d40010a9da804d0dd989899af679227edd8",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_exp_apfixed.h": "65bcc9ef7b7ba5141de7ac817f4aa03e3ad28417dec0988ea1b1f8add9c85794"
+  },
+  "cases": {
+    "resnet18": {
+      "logits": {
+        "elements": 1000,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.006985336182073532,
+        "mae": 0.0016816277091845403,
+        "rmse": 0.002092250562482712,
+        "relative_l2": 0.005112715352234953,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "c9a0217e9dc46fee97881b4b43546843bbf4939c4f41d80d50ea1438e7a0f5ef",
+          "fixed": "627240e5491cf1a51d7c7699e2ab2fbe7f53de4f27b7142512e169a097d0a872",
+          "fp64": "78574aa78b303e6c10562088a5a0b9410652198bdfa13e09a097d769fc21f11c"
+        },
+        "shape": [
+          1000
+        ]
+      },
+      "stem": {
+        "elements": 802816,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.0010252272577856991,
+        "mae": 0.00024271412846711335,
+        "rmse": 0.0003712244241335786,
+        "relative_l2": 0.0009165761914004574,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "42941eb096de1030fdec1e1e4aaf83036613a4f453b286fd39e7aadfdca5d5ef",
+          "fixed": "0f8cecb116ee66f6a5b56afb9c72d012581c6d92afe4747924568f6d3ff290c4",
+          "fp64": "b072de0529971955c0ebf8966ab27b834fecae3aac5049d79bb7e77291115c85"
+        }
+      },
+      "pool": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.0010223432673475141,
+        "mae": 0.0004857239390332609,
+        "rmse": 0.0005255676401477437,
+        "relative_l2": 0.0005757778450255968,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "1eefe0f8bf92c4aef49c69517cd18c878f6edb81e227d2044998c5d9bf1a54fc",
+          "fixed": "19d449abc1431476651fec62bbf130d7f7f5d675a11d6e64265e27127a3bfc67",
+          "fp64": "4318f2b7caf8baf4c7fc8f5c40a6608e31e35ab1faf4c69f4ccd26c466012166"
+        }
+      },
+      "gap": {
+        "elements": 512,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.008914739329225263,
+        "mae": 0.0014503373712156523,
+        "rmse": 0.0020499170896612737,
+        "relative_l2": 0.005101300113912899,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "988bbdbe22c3fdc1ef87a4a5eb493fa3e36f29697c3ce15adff2dacfbd093e12",
+          "fixed": "2c8b3d80c95f93335b766e74a39695cb155141c368ffda2853461f26b72ea9ef",
+          "fp64": "f66a0659260c09d3c8a347fffdde4398f6072d5fdcfe0513e7a836bca0a3506d"
+        }
+      },
+      "s1_b0": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.00381024439433153,
+        "mae": 0.0008850161335162181,
+        "rmse": 0.0011345602775682318,
+        "relative_l2": 0.001059891719788222,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "8f3fbcef5eea00f4c6df54bc40a62824a73d00e7b533f1b24fe8d73f09bfa507",
+          "fixed": "e648f9e356db638a3cf52cbbd86f3fddb518b77cbd3ff8719c3eb3dfaeb0e6a0",
+          "fp64": "cc9cebd71d2974ceae80fc4f7c40637284ed89687e0f0a6ab9a779e5534dc0e8"
+        }
+      },
+      "s1_b1": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.006056849429056044,
+        "mae": 0.0013463348518125387,
+        "rmse": 0.0017685430251054564,
+        "relative_l2": 0.0014577200965780503,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "f313c2707d035f2e5296953c1c7e155ae30c3414718a46eba113335be8801dd0",
+          "fixed": "db34fe8f21548c49304e5b6bbfef46892bff6c9a1f9a2c9f69bf4af0cf610242",
+          "fp64": "45cd80a240e55524e28bedba9c59d2a02e6a700a8b9c3b260d8a86179a9e6199"
+        }
+      },
+      "s2_b0": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.007501850838516511,
+        "mae": 0.0010150163772904956,
+        "rmse": 0.00180559817690147,
+        "relative_l2": 0.001968154739764829,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "280d188d9d0cce1692ea43155cdac510913fd70a14b7492e6d94bb11005c5200",
+          "fixed": "81d4f3ac72c6aee0e8e461fa4d066f33a86287f1836cd5b192784954f0287485",
+          "fp64": "5d5df432ef0243904056992f5b9f045fde19f9c251f1503596d08f5a0af9a981"
+        }
+      },
+      "s2_b1": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.009403029601703139,
+        "mae": 0.0013745001353882254,
+        "rmse": 0.002226998911455116,
+        "relative_l2": 0.002331384978509699,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "d9a5de0016b1528ed1911935c1fd8a93b0a3eb247026738148ab56f0c51077a2",
+          "fixed": "cf574a5776b1679eb97f825ea6352c64eb844bad793d270161b27298c73bafa4",
+          "fp64": "b3e5a58330ad41870bde8dbc99d7d1a465dc07c0eafda3ddf6dbfa47c57060c8"
+        }
+      },
+      "s3_b0": {
+        "elements": 50176,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.010827536683573946,
+        "mae": 0.0014091072017150845,
+        "rmse": 0.0023430741121170384,
+        "relative_l2": 0.002879254502455165,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "0b434c8e38af6ccf95de91a43f1286cc42d569a06fd1ef64b75622595687ac3f",
+          "fixed": "f77867a79accc97925b62de5d943cee9bcad0a1d2d2587681a104713d9c2737e",
+          "fp64": "e85f61f14fc7c9c5d7cc176a0d1c6142444960fee0d7fd80f97a62d7b29cb100"
+        }
+      },
+      "s3_b1": {
+        "elements": 50176,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.011129191038952602,
+        "mae": 0.0016470066568917195,
+        "rmse": 0.0026202215212233087,
+        "relative_l2": 0.003293867522156778,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "06b00ae010812aba2221ce6a53088c20534a12c9f38c09b62ed0635647122d4d",
+          "fixed": "08083c86e4c136c2f9fc89ecf31225dd248608ff87aa48135b2289178c05334a",
+          "fp64": "63ec79c14110dd48b04950a6272217ba11c3e4170975306689b83da6064f9e26"
+        }
+      },
+      "s4_b0": {
+        "elements": 25088,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.010702430028567633,
+        "mae": 0.001055445673476447,
+        "rmse": 0.0019703404591209853,
+        "relative_l2": 0.004140888286795244,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "04aa57fbad32e7398b5984204b52b06d9c4b8c831a02abd553c5e3423a82122c",
+          "fixed": "ab9ffa20e51bf73796cac8fb426bf38455ac92d1b1f910c8dc2781585be185c9",
+          "fp64": "b4f00186a8d579926339e6539f4ae010c4e294a93132797603d52b81aa3a0b11"
+        }
+      },
+      "s4_b1": {
+        "elements": 25088,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.011408643632097482,
+        "mae": 0.001246210788016806,
+        "rmse": 0.0021437890636762822,
+        "relative_l2": 0.004715000796053328,
+        "zero_reference": false,
+        "sha256": {
+          "actual": "e638e440d3d4b80a908ada94e62af255796a61e3aafa9939fed662ca0a86677e",
+          "fixed": "4d5606c3970fd723c82889263a48173285b124ba80bf5fc9bd739f32aed17628",
+          "fp64": "96a7aca2523cd657308ffd1f9d28d412ae8ced64ce932ba1b3d3461c4e19bb50"
+        }
+      }
+    }
+  },
+  "simulation": {
+    "returncode": 0,
+    "executed": true,
+    "elapsed_seconds": 85.82679775299766,
+    "command": [
+      "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "-f",
+      "run_existing_csim.tcl"
+    ],
+    "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+    "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+    "log_sha256": "e5c3fe232ceecb094ee919b5702f4c9dd32ade7e4f3f736495c66afe8657714b",
+    "testbench_sha256": "649b1ce14c6c05bbb80d0ee291d938389d9d92363fbe8d3538586cd24688a8f3",
+    "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+    "executable_sha256": "fad75b5807809a3c5314c2fdc923a83bfdd48fbbb0727ae1be7f551b5aeb50e9"
+  },
+  "input_manifest": {
+    "DRAM_input": {
+      "shape": [
+        3,
+        224,
+        224
+      ],
+      "dtype": "<i2",
+      "sha256": "6fc8fab8da0076b7e8adff110c71d3c0ad15383b05734502d4a1c9ac6aa81d6b",
+      "seed": 15347494563410731845,
+      "distribution": "uniform",
+      "bound": 1.0
+    },
+    "DRAM_w_stem": {
+      "shape": [
+        64,
+        3,
+        7,
+        7
+      ],
+      "dtype": "<i2",
+      "sha256": "4c4146a2fee5b94ee85e1fc9cceed1a0d1c4949090fc978bc321e9608e84f5b6",
+      "seed": 13569812220484217337,
+      "distribution": "uniform",
+      "bound": 0.14285714285714285
+    },
+    "DRAM_bn_stem": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "2c7020bf73f70b9ddca70d3a581987fa96a701e5a9137fb003c91b3e3dca4c1d",
+      "seed": 4865607282156307385,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b0_1": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "3f007b6e68d9507c2ef2472f07c371371becb2e0ccc5af4caa441bb17b237393",
+      "seed": 11266071970971629448,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b0_1": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "7956170da6da74e663b457b870da40c25595165a6fed5f5c68b144e8f9a4d6a9",
+      "seed": 8675639599319751741,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b0_2": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "ba6667099b0346f1fe7757e136ac9f4bbd829572c051f86ee94c92abae707c97",
+      "seed": 6533438168354281330,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b0_2": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "77a26282aad9b27f468cab4ad6f5254758b4fd305a5c3b3a89f9a26f69a16f77",
+      "seed": 5059996083820397501,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b1_1": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "bd5fde2b64839dfe40a8d5a2595244327561961c4e71d0b12b202a9601631b82",
+      "seed": 9097719659989986977,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b1_1": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "2bf867c4b96408893bb4c68e0b804a1c451e1ea9521af792e57f24c6e9751140",
+      "seed": 13875478473864044352,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b1_2": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "9e22809d614684310855f6e1aaf7b362bd9b4291ebbd818ba3b3898218a4cf95",
+      "seed": 8171887877567747929,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b1_2": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "347defe1e196de3b619e614d6a0f6390dd589ab335c8c1f159d921610c985d49",
+      "seed": 5069630814736497283,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_1": {
+      "shape": [
+        128,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "17f33678b4d972fb18d9f7542f0533aee4432016887d390fc34ef0112b7abe8a",
+      "seed": 8509880825940880424,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s2_b0_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "49730fb429efb44d8ba84d59d4925efe27b2ca44ea017720cb75645d0db0ecd7",
+      "seed": 14633970099819290461,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "89c63985435335f398db09edf5882e2116d994ede6fe623eeccff8654b740758",
+      "seed": 3016235248685400482,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b0_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "3a3d168f38308ecf1af29302f11c01cbb91041a2a9707054375ab9e40d6171ce",
+      "seed": 9602492907508946404,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_down": {
+      "shape": [
+        128,
+        64,
+        1,
+        1
+      ],
+      "dtype": "<i2",
+      "sha256": "c9f15832cbd0b26265978742666db7eacdd2063e70445f7fd15102f76b372a60",
+      "seed": 8921849094486768363,
+      "distribution": "uniform",
+      "bound": 0.21650635094610965
+    },
+    "DRAM_w_s2_b1_1": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "6560cb4e1f5576065675a18b4a2242820db9e93f0d1571476cab6a46d6680922",
+      "seed": 6385263582519116567,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b1_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "8f0d1e5a4714abad70ed907b5fcf44ebc5983db165723414a77ee039de6e2601",
+      "seed": 18400887538126621155,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b1_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "72d860b81832549ebcee40c28e9b13fab0317b05f42eebb61b2cda29d6b6cdb6",
+      "seed": 16917486724429730369,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b1_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "a2e46c9bf299a32048d188774075360c7b8e2871e12e94ae1a74c30c9fe8bb2f",
+      "seed": 16149120822692661077,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_1": {
+      "shape": [
+        256,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "71ff1941d91b3aba0bed2f3a4683535af05ae423a5cdc7c5e21f29af2fda07ff",
+      "seed": 9315864944675994010,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s3_b0_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "a26c01ef6aa2aca6c210dd5413074ac62f61048c5e358b908d31c2065fe346f9",
+      "seed": 6089929426239414765,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "cb4d3d5640f2be7437933ed0a06de2ec3a75ffd6f81569f6762a287f6f4f484b",
+      "seed": 3976508106970574202,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b0_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "8b7f98ebd605dab14a192570d39d8c99fee33604106636e4f1c9fb37f2b15f73",
+      "seed": 1236876505187843137,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_down": {
+      "shape": [
+        256,
+        128,
+        1,
+        1
+      ],
+      "dtype": "<i2",
+      "sha256": "dc1979347f9c912f362817cb4b57bcc725f0e6668797e13b8084fe69c4389dea",
+      "seed": 6271329771114412184,
+      "distribution": "uniform",
+      "bound": 0.15309310892394862
+    },
+    "DRAM_w_s3_b1_1": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "4fa8d73af1f777b5b20a223228d2e83d69a541268e6c808d3302a459572e5a95",
+      "seed": 8127183675232140894,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b1_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "e6d7a6244857288787f3202a980709ead3c9ad51898384dd8a3432bf07384996",
+      "seed": 18096029583507742261,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b1_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "dbde485116618126db6a7580227fd0d10781d95a53826f7ef697a26fbe76963a",
+      "seed": 5262504063494694424,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b1_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "0683c1e447200f90b8805e08a15dad8a085df905c7e3b9c261a25d41ac909655",
+      "seed": 10509738307655378993,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_1": {
+      "shape": [
+        512,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "d9818f618b803596f5af94e09a72a0e83e22baffc36a917c653e6de4c25c4cb5",
+      "seed": 13683201705902468508,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s4_b0_1": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "1de5ffa249bf56fa1dad69b1b3b7134df96a7c6b18d0b197950dbdcdb5ba6860",
+      "seed": 18276441843290746859,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_2": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "0e080d119272048d33cf71df6b202209cab853ee40258fed1476811f2d191fa1",
+      "seed": 9880512077919396805,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b0_2": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "3a505169d7c4716ae890ca5847d24d3a28d8cd9887ae1967fbd96a499d0b62e3",
+      "seed": 11983562945054970995,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_down": {
+      "shape": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i2",
+      "sha256": "405df2a2e5d7c45aa96c6e0371676e3370abf408a34171700826c554d887c891",
+      "seed": 10383627806928977312,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_w_s4_b1_1": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "26db852bad08b065101c50f61ecc98a78ad7baadf63f9d9740c53f8db83f8903",
+      "seed": 11681388287182853077,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b1_1": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "d08b477cf35ae4cac0e5ec76e602c63133b39b6bca375e6f7d20eb65e60cc7f4",
+      "seed": 2639078618020728400,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b1_2": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "6d00ef26a7fc61fd3e30edaf63ba21e7799d16110bf9939f6c184aa53d96a7b8",
+      "seed": 6202476536058152924,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b1_2": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "4f7a0db4f50960e4d82d4a00fae71af441b0e7fa486f403f94ba4a2046ff06de",
+      "seed": 6673181373542222793,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_fc": {
+      "shape": [
+        1000,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i2",
+      "sha256": "fb81cb0ed1af3b10d0af4774f58346a5d6a8c8901eb8c67c9673f602fe440c37",
+      "seed": 4670880183962652993,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    }
+  },
+  "original_sources_unchanged": true,
+  "reference_sources_unchanged": true,
+  "simulations": {
+    "case": {
+      "returncode": 0,
+      "executed": true,
+      "elapsed_seconds": 85.82679775299766,
+      "command": [
+        "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+        "-f",
+        "run_existing_csim.tcl"
+      ],
+      "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+      "log_sha256": "e5c3fe232ceecb094ee919b5702f4c9dd32ade7e4f3f736495c66afe8657714b",
+      "testbench_sha256": "649b1ce14c6c05bbb80d0ee291d938389d9d92363fbe8d3538586cd24688a8f3",
+      "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+      "executable_sha256": "fad75b5807809a3c5314c2fdc923a83bfdd48fbbb0727ae1be7f551b5aeb50e9"
+    }
+  },
+  "elapsed_seconds": 86.9002418759992,
+  "exit_code": 0,
+  "verdict_re_evaluation": {
+    "metrics_reused": [
+      "max_abs",
+      "relative_l2"
+    ],
+    "accelerator_rerun": false,
+    "previous_thresholds": {
+      "max_absolute": 0.1,
+      "relative_l2": 0.01
+    }
+  }
+}

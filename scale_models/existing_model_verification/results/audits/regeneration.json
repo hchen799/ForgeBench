@@ -1,0 +1,193 @@
+{
+  "cli": {
+    "exit_code": 0,
+    "generated_jsons": 32
+  },
+  "generator_sources": {
+    "auto_generate_json.py": "29bf1c4ffcaec019b75e39116c264c70f3fcf6e65d0027f234256b706576bd1e",
+    "gen_configs.py": "01325cd53e3fb4cbc330c20a5f05be0e0062d7e8f50bddb2ecdff599ab6a3c5c",
+    "generate_code.py": "01eb8f755c380855be3f97eaa17013cbb1e23df2e4b8da60cab412d6b3ba9069",
+    "production_types.py": "09d62d00017ba355c1a7142554882ee5f0c7e1d02d561c76f56330cb2e741f0c",
+    "conv_template.cpp": "d76ff4c44a6dbd7dc6466d82b0360dce80ac5dfac6a640613de02a61681ddee2",
+    "batch_norm_template.cpp": "fc1e9d5b84c56d532b9ef6e26144380309c9a670f9f601c36f64526fee3bd74c",
+    "adaptive_avgpool_template.cpp": "87cd94441e2f3e81140522e49ba7cc83ffc1a56627080da15c20fcb76fe4e95b"
+  },
+  "projects": {
+    "LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_16_5_": {
+      "config_sha256": "429a7001b8f689040037198e694febdfc7147f08c80f43da7d416b75c1a422fe",
+      "files": {
+        "top.cpp": "f639ca736aa15dbea8b89471477117680817b930c85820eedd4a78b4a2a74fe9",
+        "top.h": "c2de7bc0167680d413892e24e2eb44a73ba4af7b62f71dc92d71a624b92ce424",
+        "tb_top.cpp": "799636c98e7583bb475cab8c0ff17f5073404c58d3c9470cfc82e04f116b9f3c",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "da9ad83006b270849a09fc1a0ece4dbfc529d5b152d7a204d1cd3dcd0eac522f"
+      },
+      "byte_identical": true
+    },
+    "LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_32_10_": {
+      "config_sha256": "0b8f95c7e6a915163a20d0e4c5abb155b325d3339d46016b9c7e7dcea7348489",
+      "files": {
+        "top.cpp": "67e8622703f906417e0a5ce91a29c10b2afd5ba9c1ac10f4707b81e4008167a4",
+        "top.h": "114545721fe6798a55bcb7c0dda0d46a304603496205ccfea188d27da8fb7373",
+        "tb_top.cpp": "bdb19bfc9f2bf52d7fb6c0d828f3c3efc4ef580b6e841f99f76e466cf97ba04d",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "dda4aae76bb2a87a88e2730a284ccbd744fe9b022f4df843adbdaa0c9464b6ac"
+      },
+      "byte_identical": true
+    },
+    "LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_16_5_": {
+      "config_sha256": "bc99c5b167d5741d97e7f0f7a25e3ea9b510bcb0add1ecab47f7f3a491f97228",
+      "files": {
+        "top.cpp": "81404fe88430d161c52a86088c231718e7f219e9e28d629135d83dfac8b0ea04",
+        "top.h": "668b2853b5b7dc0a4039bdb806cf1947c5b1dbbae4a66b1afca2d6feaa144775",
+        "tb_top.cpp": "4c8475441e11a7740de56b1059ee190b040883e725a677839ddbde692a151179",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "858ad381c3e45b2746832450471a483c480741e522f88849b1f2c8082fcd60f5"
+      },
+      "byte_identical": true
+    },
+    "LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_32_10_": {
+      "config_sha256": "0f4b9c58908d740319af12d38d37c37e77b2fe80d5f69e0f62d5d1c1d6f5618e",
+      "files": {
+        "top.cpp": "57b3dcc11eb7b626a5262b8d990c946f7468e9c724400c709cb903ce518d841b",
+        "top.h": "f6c777b1a4c7facad699ac875af37a690d3f3d5203e7e777c5433c3bc96cbf08",
+        "tb_top.cpp": "dba39b669028db9d75da90d13650ca5260fc88df53262d2063612f5d4ea7a8b0",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "bba76445dcd30c44a0dab0aa2b66cb3528ce3f7f1bbb9aab6def08e391303c8d"
+      },
+      "byte_identical": true
+    },
+    "RESNET101_TILED_config_ap_fixed_16_5_": {
+      "config_sha256": "7b05853389d89a9ca338c0604b4300ca3bbc97cabb24552380327a5d2ab781ae",
+      "files": {
+        "top.cpp": "17787cb664f3768fa1e7bddcd48a2210427e84ea721d814a7e92a2b674512022",
+        "top.h": "f8d727a537363fc12acd50fe4a5de0cd92e33f77deb0a034dae305f0d64ff3d1",
+        "tb_top.cpp": "013c65dc9fe4ab85111b790c9cf67ef469d7619198df598a24484019878e1b09",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "36081baa4bcf2103eeff4d1e3a4df952eaf4f15781f95bf36c2e3c77703f47d2"
+      },
+      "byte_identical": true
+    },
+    "RESNET152_TILED_config_ap_fixed_16_5_": {
+      "config_sha256": "4a5ed741e634cf8b5f70edc8806412e8c4e1bceb98d953d82236661900b9e5e7",
+      "files": {
+        "top.cpp": "8ed7a3286c07f3eb79b8023b302103786755af9953f4284c5581add2250c0f49",
+        "top.h": "5771255f22f2a9b945194003327ea18b679b7f94c488f191c483609cf96acf11",
+        "tb_top.cpp": "db1a41baf9322672db45034f2ff882d14c1859039d3511c19f04a1a1f5a78dde",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "f31d3caf104bf3eb20f1a4fe1763094477e3e2529e56e33611c9c057aa64ab43"
+      },
+      "byte_identical": true
+    },
+    "RESNET18_TILED_config_ap_fixed_16_5_": {
+      "config_sha256": "7767186a90a8e4c017d204b8d99b490a32cc474403a28f58ce41af60deb5f3f8",
+      "files": {
+        "top.cpp": "24224e33f4c35f7c5467a964c06e7784e8b95c03d92949268d10402141123537",
+        "top.h": "bb63989f7e232882ed51eb343963fbbc638214b639a7be6cb76aaa0cbb0f780b",
+        "tb_top.cpp": "3f4bdded42fc244e339cedcf691bedba0a920c563bdd4c98a3e467ad420c58bc",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "58299af04abf17acac6b704be9f3245f263b00c65faf8885847e3a33556f418d"
+      },
+      "byte_identical": true
+    },
+    "RESNET18_TILED_config_ap_fixed_32_10_": {
+      "config_sha256": "cd95061c4079151ba6e3d52507f721603e5b74e69cb3985ed94d650d732232dc",
+      "files": {
+        "top.cpp": "b089f30ecab8c49f6790392b55e1873f56a232c8b70f23607c519ec5d036a826",
+        "top.h": "7ac91b785162214140d18e4fe01e1aa60e43e86c9aecebd8963de647a29fdade",
+        "tb_top.cpp": "5eff23454730135358a1e0ce0f8851a3dd32c5c25f007fda8a35c9a0867d092c",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "4346b071156ff1d84d2a1b5b0b7b25b12e88cbccaff31a74fa84b234884fe97b"
+      },
+      "byte_identical": true
+    },
+    "RESNET18_config_ap_fixed_16_5_": {
+      "config_sha256": "b0d98b4668fa465c38cb0012dda7a2e58cf6b5734bae41fdbb2c5ebb021c9c96",
+      "files": {
+        "top.cpp": "e74db7e1f2b5e50e12040e6d5aeff6f9fbd47c4b441374902f1a1286887a2d6c",
+        "top.h": "84b2368dabd6dd18916568476ceb87b94d289ee1b8d0efd674e80275a4f64632",
+        "tb_top.cpp": "4a74c4928547ff703221a04e7316c0bd7f0c4cc2c8f9c8488def5a96ccf48969",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "4888963a8c29f59331c312e7e26753ba639408b2c417c584a7d7d9304e9549b9"
+      },
+      "byte_identical": true
+    },
+    "RESNET18_config_ap_fixed_32_10_": {
+      "config_sha256": "7a7269909653a5183c5898a2db5f637b2febcda5ffcf3b7278bfa66bc46f8474",
+      "files": {
+        "top.cpp": "8d52d0da86887f6db71ae3bc267e7dffeec96e07b1856de3590e718a3ec0a92f",
+        "top.h": "1ad2ebb7584e2e98e1cac95067ef3d3da05351f4a829860cf3e46561ed4cac4f",
+        "tb_top.cpp": "0761ac91030fd92c2ad796d46cc605a212e68a69fb271f5d3249e695f01f11b1",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "d5107a9a8948b03105d4cc3a248e8c5712b5abc764702e58070bc313a92a7dbe"
+      },
+      "byte_identical": true
+    },
+    "RESNET34_TILED_config_ap_fixed_16_5_": {
+      "config_sha256": "3bddbb36e478df57461176738c4004185e8db28dc7c4469ace51ce16c25e3ab4",
+      "files": {
+        "top.cpp": "96f6eaec35adc796456c83df4283f6f886fcaadf6e8d3ea7d8eb08da5fcbbf3f",
+        "top.h": "cc5a898d4fc8fe501b67aa87c6e2b6a221cdd13a92d4a5cfbeb35a533e425bf9",
+        "tb_top.cpp": "72b4c181bfef43dab5515e9acb2f104d037468947de830d9e74a098e88dc0ec1",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "b4f81c88637d04ed14eba3ec06441fc98726935686f5bcf899a94af54d8d6ae1"
+      },
+      "byte_identical": true
+    },
+    "RESNET34_config_ap_fixed_16_5_": {
+      "config_sha256": "fd22537a3c51e3052994e47a36629dc2ee041e63bd40467aab890c715adde1e7",
+      "files": {
+        "top.cpp": "c5e58b058d7df824754350ff4608ad6024fcb349b87d9941eb73343152210979",
+        "top.h": "583fca517dcd2026c0b79e15017093a8cf1185815c5d7003ad96e9ec1720baf8",
+        "tb_top.cpp": "c66d87c4f55626c7cb9b0e8d924479a91ec46d4c63a83b849962b0f427635f56",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "a31ebb7c1dfdcab303754128db1e997e4f47bb627df09980f2ccc00e514d8a4d"
+      },
+      "byte_identical": true
+    },
+    "RESNET50_TILED_config_ap_fixed_16_5_": {
+      "config_sha256": "0f51a5d66d2b402f9c9d39c9d62b8e0fc32c6c97c15fea3194be718ccce78921",
+      "files": {
+        "top.cpp": "d45a078050d536af431d4785b8f2d4bceac7708a9042fdf0af437b92c6b89201",
+        "top.h": "f7c6ff5517d775e9f1a9b81ad48999d797cb8e1fc9265aee9e24dd761385726d",
+        "tb_top.cpp": "f6d89a8d7d6f315f2785cc99a6486415302adcab5e867c42982fc674c9068140",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "c2136d9d4fe7cd9a0833ccb6d57724267cf7f1b827f91b930b00aa1ed09dbfb3"
+      },
+      "byte_identical": true
+    },
+    "RESNET50_TILED_config_ap_fixed_32_10_": {
+      "config_sha256": "6566ee3064c528f4da54de87d9c16597f94e754dd3ff5f2a6c9ee04e9c68d5cb",
+      "files": {
+        "top.cpp": "403b08cddde9b7cd552712183830231ed3ea43402f6f90e2bf17df24f7ef2767",
+        "top.h": "25ef4d87bd5179a215a2cea36091ae6aa0e6602a71133ff08434c86debf1601b",
+        "tb_top.cpp": "e1d86dca1d1f3e44d60a780206444209c0b26502d2ffa8df8a8dbd2f04818258",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "c5d48edff9cf52ce8ce67248335e38e5b0b27a106dad3139e75e427c3432b9e7"
+      },
+      "byte_identical": true
+    },
+    "RESNET50_config_ap_fixed_16_5_": {
+      "config_sha256": "537a3bf12f6cbd6d07539ba7e3a30eed3d9d71c5448879da3ba4a8d3afadd707",
+      "files": {
+        "top.cpp": "44887b7a6cc0b16de3bd6b311332a249646dc91e5a751686b215c7518c10019d",
+        "top.h": "75d6f26665e0105b2ece45351f1f5d61517bbb2fe111fa4be1ae13197d34c2aa",
+        "tb_top.cpp": "65a8c08667cd64b5a89d3a63248b3e9a1d72f651b1fb2ea12e6ca5712e0aa176",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "c1304ba841a000d3164bcca66c18e4fa9ac9774cd049688b741be91cc7e8c347"
+      },
+      "byte_identical": true
+    },
+    "RESNET50_config_ap_fixed_32_10_": {
+      "config_sha256": "79aa316a17164a386957080a186afebb4966d21c589b071fbf9d23d62322ff45",
+      "files": {
+        "top.cpp": "a539e2d3d37b59085a51811e4d6b7873902738e57528757e28e4e42e392eac30",
+        "top.h": "f29d24ded6444095f114994f98e5d4d2bd4916c5629489e318232f68e8a36e69",
+        "tb_top.cpp": "082694e74a7e514556868ab14b898c6f2f23ad8acfb2148cb05cdcb7109b612a",
+        "run_hls.tcl": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9",
+        "resolved_config.json": "6e1cb498373d384e9111bc2c75845ca133316a82f235657897a59f60f82905fe"
+      },
+      "byte_identical": true
+    }
+  }
+}

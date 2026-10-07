@@ -1,4 +1,5 @@
 #include <ap_fixed.h>
+#include <cstdint>
 #ifndef TOP_H
 #define TOP_H
 

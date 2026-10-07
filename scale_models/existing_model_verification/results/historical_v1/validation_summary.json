@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "scope": "Unchanged saved production HLS, synthetic seed-42 parameters; C simulation only. No RTL or pretrained accuracy claim.",
+  "path_base": "scale_models/verification",
+  "thresholds": {
+    "max_absolute": 0.1,
+    "relative_l2": 0.01
+  },
+  "regression": {
+    "command": "python -m pytest tests/test_existing.py -q --disable-warnings --maxfail=1",
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "test_source_sha256": "bb5bc59861c9c525e62d4a7b72e942099d67ec3f3af26981036bb2e11abd0f48",
+    "log": "results/existing/regression_tests.log",
+    "log_sha256": "9e1b3842facd107bb38d02ecf49a3e6685d2f8d86ff37407e89fb4c36d6566b6"
+  },
+  "runs": {
+    "resnet18-tiled": {
+      "status": "FAIL",
+      "implementation_verdict": "PASS",
+      "mathematical_verdict": "FAIL",
+      "accelerator_executed": true,
+      "exit_code": 1,
+      "elapsed_seconds": 44.24969730900193,
+      "reference_pairs": {
+        "resnet18-tiled": {
+          "fp64": "resnet18-tiled-fp64-v1",
+          "fixed": "resnet18-tiled-ap-trn-wrap-v1"
+        }
+      },
+      "original_sources_unchanged": true,
+      "reference_sources_unchanged": true,
+      "run_directory": "runs/existing_resnet18_tiled_seed42_v1",
+      "report": "results/existing/resnet18-tiled/summary.json",
+      "report_sha256": "e6a1bfd39a616685c1516b55e8e00b2866596c163b5deaa9f38d795377d67afd",
+      "artifacts": {
+        "results/existing/resnet18-tiled/comparison.json": "cf8cb7d625e8287f9ee46d31db6c699f600b494d6cc43a1eb1289846b5c92077",
+        "results/existing/resnet18-tiled/manifest.json": "cf8efedcb07314ae234aa79fbc3906ef3e39a9a24432dfe6c556ed6edb2ce419",
+        "results/existing/resnet18-tiled/simulation.json": "7270f8aac2d570e72fe50043137790929e2f6fdf0f0f452aa034f54383eabcd2",
+        "results/existing/resnet18-tiled/simulation.log": "03d17292bca1223cc8f310006e6e855917bae3e58fa74508c8cbf879c81ca7a5",
+        "results/existing/resnet18-tiled/summary.json": "e6a1bfd39a616685c1516b55e8e00b2866596c163b5deaa9f38d795377d67afd",
+        "results/existing/resnet18-tiled/summary.txt": "ff57d11721461e645721d0195c93c6415623e06d6725d2ddb831737b1884cada",
+        "results/existing/resnet18-tiled/verification.log": "cfcb2f980424da9454baa6a1846b1666dc1e770105db8b2999b867e0a9e15043"
+      },
+      "compared_checkpoints": 12,
+      "compared_codes": 1757672,
+      "mismatching_codes": 0,
+      "logit_errors": {
+        "max_abs": 1.9860211846219684,
+        "relative_l2": 1.4243888216790743,
+        "mae": 0.46244854334304253,
+        "rmse": 0.5828954103712004
+      }
+    },
+    "resnet18-full": {
+      "status": "ERROR",
+      "implementation_verdict": "NOT_RUN",
+      "mathematical_verdict": "NOT_RUN",
+      "accelerator_executed": false,
+      "exit_code": 2,
+      "elapsed_seconds": 24.777650674997858,
+      "reference_pairs": {
+        "resnet18-full": {
+          "fp64": "resnet18-full-fp64-v1",
+          "fixed": "resnet18-full-ap-trn-wrap-v1"
+        }
+      },
+      "original_sources_unchanged": true,
+      "reference_sources_unchanged": true,
+      "run_directory": "runs/existing_resnet18_full_seed42_v1",
+      "report": "results/existing/resnet18-full/summary.json",
+      "report_sha256": "8a8601bd11f127578275a79c65aa4562d337f805b1fd5456c7f273cb1b3a35d2",
+      "artifacts": {
+        "results/existing/resnet18-full/diagnostic_replay.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "results/existing/resnet18-full/manifest.json": "cf8efedcb07314ae234aa79fbc3906ef3e39a9a24432dfe6c556ed6edb2ce419",
+        "results/existing/resnet18-full/simulation.json": "80bbc806b5abc06aa88b38c2f0e918a10ba0acad235dfba4c83d82fdd5ab55c7",
+        "results/existing/resnet18-full/simulation.log": "b7a475436c8a485a7f36afa54ba49eee65ac9631287a5aff2b4bda8808dbdcc3",
+        "results/existing/resnet18-full/summary.json": "8a8601bd11f127578275a79c65aa4562d337f805b1fd5456c7f273cb1b3a35d2",
+        "results/existing/resnet18-full/summary.txt": "19e7b3bd7b7bb4baca5f4c194cf382d4a297c4e8b0bebfa3bde4dc9009b33774",
+        "results/existing/resnet18-full/verification.log": "df12b340bf674955a5be3b18214b8028f1ba6f364fd3d0bf0798c63bb070f332"
+      },
+      "signal": "SIGFPE",
+      "finding": "Parameter/BN ports are unread; zero-initialized BN variance makes a zero denominator."
+    },
+    "llama3-8b": {
+      "status": "INVALID_DESIGN",
+      "implementation_verdict": "NOT_RUN",
+      "mathematical_verdict": "NOT_RUN",
+      "accelerator_executed": false,
+      "exit_code": 2,
+      "elapsed_seconds": 0.25611480999941705,
+      "reference_pairs": {
+        "llama3-prefill": {
+          "fp64": "llama3-prefill-fp64-v1",
+          "fixed": "llama3-prefill-ap-trn-wrap-v1"
+        },
+        "llama3-decode": {
+          "fp64": "llama3-decode-fp64-v1",
+          "fixed": "llama3-decode-ap-trn-wrap-v1"
+        }
+      },
+      "original_sources_unchanged": true,
+      "reference_sources_unchanged": true,
+      "run_directory": "runs/existing_llama3_8b_seed42_v1",
+      "report": "results/existing/llama3-8b/summary.json",
+      "report_sha256": "8f8bce2e4003ffd040c520705d6c946b7392e6d7cf3da7bc4c5dbfed8738f354",
+      "artifacts": {
+        "results/existing/llama3-8b/summary.json": "8f8bce2e4003ffd040c520705d6c946b7392e6d7cf3da7bc4c5dbfed8738f354",
+        "results/existing/llama3-8b/summary.txt": "351a0f668e240f96a8e19bb16290448de1d7597de8718f1f4a8ee0e3a97d6645",
+        "results/existing/llama3-8b/verification.log": "31987c5879d84ed3b0e66056fc54cadfaa35455a0abbc7d74949a848e0c014e1"
+      },
+      "preflight_failures": [
+        "token IDs cannot be represented by the existing data_t interface",
+        "RMSNorm: (ap_fixed<32,10>)4096 is zero; cannot divide",
+        "attention: hls::sqrt((ap_fixed<16,5>)128) is zero"
+      ]
+    }
+  }
+}

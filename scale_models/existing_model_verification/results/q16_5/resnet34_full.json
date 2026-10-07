@@ -1,0 +1,1856 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "implementation_verdict": "PASS",
+  "mathematical_verdict": "PASS",
+  "seed": 42,
+  "threads": 8,
+  "thresholds": {
+    "relative_l2": 0.05,
+    "zero_reference_max_absolute": 0.1
+  },
+  "execution": "Vitis HLS C simulation",
+  "accelerator_executed": true,
+  "claim": "saved production source; synthetic parameters; no trained accuracy or RTL claim",
+  "versions": {
+    "python": "3.9.13 (main, Aug 25 2022, 23:26:10) \n[GCC 11.2.0]",
+    "torch": "2.2.0",
+    "numpy": "1.24.4"
+  },
+  "reference_sources": {
+    "references/__init__.py": "50a7a0dc1cacd9b21aa1ef03d4714756ad6b20d278884f2e1914eda39501744a",
+    "references/arithmetic.py": "6fb0022c455bd2776e91e298f49a11454b64d3b727c12bd414c4c18af6375d42",
+    "references/contracts.json": "d59e243e78ca15112228014d05ba4892dfaf5e4942a8d08f6e116848c2be9f56",
+    "references/llama.py": "189203a5c9571d6f70d22ecfceceb78dea1b1deac9fe4eae0ef662ead8331dad",
+    "references/project.py": "6ea9c8ccaed49e2dcaef55d25872ab494f91eaa501ead716e882e0cf6721b0da",
+    "references/repaired.py": "07e1ef9e20574b1fe1f3a9a0320deeb4e9c3866153cac763fe160ac4daf7a907",
+    "references/resnet.py": "35cb0dd1e7870a3e3e56947c813453f01a85d546f5948659c1ed04af7cbe6c39",
+    "references/runner.py": "363e55e6db246c31dfaa387e7966acd0e892090056ce3bc8f3aa14662fe272d5",
+    "references/vendor_math.py": "7cf76171699faeb1084101936c494ca6c669b5f7620c5e4029d9cad841735813",
+    "references/wide.py": "5ea6aa9b927ee73215b0ac86849581ba8478748893f2f7470e85dda460020e44",
+    "verify.py": "672814a1c907787e0bd646d4b324a334e5936a5475a056f8337508df8fea440d"
+  },
+  "projects": [
+    {
+      "project": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/hls_files/RESNET34_config_ap_fixed_16_5_",
+      "family": "resnet34",
+      "variant": "resnet34-full",
+      "sources": {
+        "top.cpp": "c5e58b058d7df824754350ff4608ad6024fcb349b87d9941eb73343152210979",
+        "top.h": "583fca517dcd2026c0b79e15017093a8cf1185815c5d7003ad96e9ec1720baf8"
+      },
+      "ports": {
+        "DRAM_input": [
+          3,
+          224,
+          224
+        ],
+        "DRAM_w_stem": [
+          64,
+          3,
+          7,
+          7
+        ],
+        "DRAM_bn_stem": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b0_1": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b0_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b0_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b0_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b1_1": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b1_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b1_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b1_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b2_1": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b2_1": [
+          4,
+          64
+        ],
+        "DRAM_w_s1_b2_2": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s1_b2_2": [
+          4,
+          64
+        ],
+        "DRAM_w_s2_b0_1": [
+          128,
+          64,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b0_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b0_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b0_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b0_down": [
+          128,
+          64,
+          1,
+          1
+        ],
+        "DRAM_w_s2_b1_1": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b1_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b1_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b1_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b2_1": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b2_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b2_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b2_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b3_1": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b3_1": [
+          4,
+          128
+        ],
+        "DRAM_w_s2_b3_2": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s2_b3_2": [
+          4,
+          128
+        ],
+        "DRAM_w_s3_b0_1": [
+          256,
+          128,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b0_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b0_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b0_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b0_down": [
+          256,
+          128,
+          1,
+          1
+        ],
+        "DRAM_w_s3_b1_1": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b1_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b1_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b1_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b2_1": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b2_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b2_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b2_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b3_1": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b3_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b3_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b3_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b4_1": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b4_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b4_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b4_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b5_1": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b5_1": [
+          4,
+          256
+        ],
+        "DRAM_w_s3_b5_2": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s3_b5_2": [
+          4,
+          256
+        ],
+        "DRAM_w_s4_b0_1": [
+          512,
+          256,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b0_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b0_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b0_2": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b0_down": [
+          512,
+          256,
+          1,
+          1
+        ],
+        "DRAM_w_s4_b1_1": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b1_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b1_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b1_2": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b2_1": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b2_1": [
+          4,
+          512
+        ],
+        "DRAM_w_s4_b2_2": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "DRAM_bn_s4_b2_2": [
+          4,
+          512
+        ],
+        "DRAM_out": [
+          1000,
+          1,
+          1
+        ],
+        "DRAM_fc": [
+          1000,
+          512,
+          1,
+          1
+        ]
+      },
+      "port_types": {
+        "DRAM_input": "data_t",
+        "DRAM_w_stem": "data_t",
+        "DRAM_bn_stem": "data_t",
+        "DRAM_w_s1_b0_1": "data_t",
+        "DRAM_bn_s1_b0_1": "data_t",
+        "DRAM_w_s1_b0_2": "data_t",
+        "DRAM_bn_s1_b0_2": "data_t",
+        "DRAM_w_s1_b1_1": "data_t",
+        "DRAM_bn_s1_b1_1": "data_t",
+        "DRAM_w_s1_b1_2": "data_t",
+        "DRAM_bn_s1_b1_2": "data_t",
+        "DRAM_w_s1_b2_1": "data_t",
+        "DRAM_bn_s1_b2_1": "data_t",
+        "DRAM_w_s1_b2_2": "data_t",
+        "DRAM_bn_s1_b2_2": "data_t",
+        "DRAM_w_s2_b0_1": "data_t",
+        "DRAM_bn_s2_b0_1": "data_t",
+        "DRAM_w_s2_b0_2": "data_t",
+        "DRAM_bn_s2_b0_2": "data_t",
+        "DRAM_w_s2_b0_down": "data_t",
+        "DRAM_w_s2_b1_1": "data_t",
+        "DRAM_bn_s2_b1_1": "data_t",
+        "DRAM_w_s2_b1_2": "data_t",
+        "DRAM_bn_s2_b1_2": "data_t",
+        "DRAM_w_s2_b2_1": "data_t",
+        "DRAM_bn_s2_b2_1": "data_t",
+        "DRAM_w_s2_b2_2": "data_t",
+        "DRAM_bn_s2_b2_2": "data_t",
+        "DRAM_w_s2_b3_1": "data_t",
+        "DRAM_bn_s2_b3_1": "data_t",
+        "DRAM_w_s2_b3_2": "data_t",
+        "DRAM_bn_s2_b3_2": "data_t",
+        "DRAM_w_s3_b0_1": "data_t",
+        "DRAM_bn_s3_b0_1": "data_t",
+        "DRAM_w_s3_b0_2": "data_t",
+        "DRAM_bn_s3_b0_2": "data_t",
+        "DRAM_w_s3_b0_down": "data_t",
+        "DRAM_w_s3_b1_1": "data_t",
+        "DRAM_bn_s3_b1_1": "data_t",
+        "DRAM_w_s3_b1_2": "data_t",
+        "DRAM_bn_s3_b1_2": "data_t",
+        "DRAM_w_s3_b2_1": "data_t",
+        "DRAM_bn_s3_b2_1": "data_t",
+        "DRAM_w_s3_b2_2": "data_t",
+        "DRAM_bn_s3_b2_2": "data_t",
+        "DRAM_w_s3_b3_1": "data_t",
+        "DRAM_bn_s3_b3_1": "data_t",
+        "DRAM_w_s3_b3_2": "data_t",
+        "DRAM_bn_s3_b3_2": "data_t",
+        "DRAM_w_s3_b4_1": "data_t",
+        "DRAM_bn_s3_b4_1": "data_t",
+        "DRAM_w_s3_b4_2": "data_t",
+        "DRAM_bn_s3_b4_2": "data_t",
+        "DRAM_w_s3_b5_1": "data_t",
+        "DRAM_bn_s3_b5_1": "data_t",
+        "DRAM_w_s3_b5_2": "data_t",
+        "DRAM_bn_s3_b5_2": "data_t",
+        "DRAM_w_s4_b0_1": "data_t",
+        "DRAM_bn_s4_b0_1": "data_t",
+        "DRAM_w_s4_b0_2": "data_t",
+        "DRAM_bn_s4_b0_2": "data_t",
+        "DRAM_w_s4_b0_down": "data_t",
+        "DRAM_w_s4_b1_1": "data_t",
+        "DRAM_bn_s4_b1_1": "data_t",
+        "DRAM_w_s4_b1_2": "data_t",
+        "DRAM_bn_s4_b1_2": "data_t",
+        "DRAM_w_s4_b2_1": "data_t",
+        "DRAM_bn_s4_b2_1": "data_t",
+        "DRAM_w_s4_b2_2": "data_t",
+        "DRAM_bn_s4_b2_2": "data_t",
+        "DRAM_out": "data_t",
+        "DRAM_fc": "data_t"
+      },
+      "arithmetic": {
+        "word_bits": 16,
+        "integer_bits": 5,
+        "rounding": "AP_TRN",
+        "overflow": "AP_WRAP",
+        "fractional_bits": 11
+      },
+      "reference_contract_version": 2,
+      "findings": [],
+      "config": "/export/hdd/scratch/hchen799/ForgeBench_FPT_revise_2/ForgeBench/scale_models/auto_generated_configs/RESNET34_config_ap_fixed_16_5_.json",
+      "config_sha256": "fd22537a3c51e3052994e47a36629dc2ee041e63bd40467aab890c715adde1e7"
+    }
+  ],
+  "reference_pairs": {
+    "resnet34-full": {
+      "fp64": "resnet34-full-fp64-q16_5-v2",
+      "fixed": "resnet34-full-ap-trn-wrap-q16_5-v2"
+    }
+  },
+  "preflight_failures": [],
+  "vendor_headers": {
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/ap_fixed.h": "8c0990470e583216b8bb34d9b132691a13943dcea5935cbabcfa62a2047f9c69",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/ap_fixed_base.h": "22765417d6583f16733dc1632c04f87405ea9ed5094b471dd8b8bc846664467c",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/hls_math.h": "0788275c5f00049a11c6d3be30d8b04e83008f4ddbd20fc497b169347e06f35f",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_sqrt_apfixed.h": "d5cd7eab608829b11ed62d2081392d40010a9da804d0dd989899af679227edd8",
+    "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/include/etc/hls_exp_apfixed.h": "65bcc9ef7b7ba5141de7ac817f4aa03e3ad28417dec0988ea1b1f8add9c85794"
+  },
+  "cases": {
+    "resnet34": {
+      "logits": {
+        "elements": 1000,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.012352018361230899,
+        "mae": 0.0027220907945361954,
+        "rmse": 0.0034072728107376257,
+        "relative_l2": 0.007648993730727061,
+        "zero_reference": false,
+        "shape": [
+          1000
+        ],
+        "sha256": {
+          "actual": "a2fd0cd4f27d6701e8f97d393eb9173c569f2474d46f793a58b266732830aac2",
+          "fixed": "8b89b9e56e081ce2cd2c6b08658b4f9fe8c644858ed80cefc5ff0827128d4024",
+          "fp64": "f0660d8b8eaf1735c320d567af0b2519df773df58161b8f69d9981d6530dbb6b"
+        }
+      },
+      "stem": {
+        "elements": 802816,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.0010252272577856991,
+        "mae": 0.00024271412846711335,
+        "rmse": 0.0003712244241335786,
+        "relative_l2": 0.0009165761914004574,
+        "zero_reference": false,
+        "shape": [
+          64,
+          112,
+          112
+        ],
+        "sha256": {
+          "actual": "42941eb096de1030fdec1e1e4aaf83036613a4f453b286fd39e7aadfdca5d5ef",
+          "fixed": "0f8cecb116ee66f6a5b56afb9c72d012581c6d92afe4747924568f6d3ff290c4",
+          "fp64": "b072de0529971955c0ebf8966ab27b834fecae3aac5049d79bb7e77291115c85"
+        }
+      },
+      "pool": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.0010223432673475141,
+        "mae": 0.0004857239390332609,
+        "rmse": 0.0005255676401477437,
+        "relative_l2": 0.0005757778450255968,
+        "zero_reference": false,
+        "shape": [
+          64,
+          56,
+          56
+        ],
+        "sha256": {
+          "actual": "1eefe0f8bf92c4aef49c69517cd18c878f6edb81e227d2044998c5d9bf1a54fc",
+          "fixed": "19d449abc1431476651fec62bbf130d7f7f5d675a11d6e64265e27127a3bfc67",
+          "fp64": "4318f2b7caf8baf4c7fc8f5c40a6608e31e35ab1faf4c69f4ccd26c466012166"
+        }
+      },
+      "gap": {
+        "elements": 512,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.014859350511915448,
+        "mae": 0.002377440269929216,
+        "rmse": 0.0033872876071438466,
+        "relative_l2": 0.007576306200379156,
+        "zero_reference": false,
+        "shape": [
+          512
+        ],
+        "sha256": {
+          "actual": "b8646130460526de72975f0a3dee8222d4e7a473d696e951f25598eb118a1100",
+          "fixed": "15a86008a41ac16f3377a5e1a51fc868799030a863cb6c2579281ee66c805268",
+          "fp64": "f23cf62ed249cee8412d3dad1e135c33d64d742e3c8ba2e4bdbe5f98899df9ec"
+        }
+      },
+      "s1_b0": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.00381024439433153,
+        "mae": 0.0008850161335162181,
+        "rmse": 0.0011345602775682318,
+        "relative_l2": 0.001059891719788222,
+        "zero_reference": false,
+        "shape": [
+          64,
+          56,
+          56
+        ],
+        "sha256": {
+          "actual": "8f3fbcef5eea00f4c6df54bc40a62824a73d00e7b533f1b24fe8d73f09bfa507",
+          "fixed": "e648f9e356db638a3cf52cbbd86f3fddb518b77cbd3ff8719c3eb3dfaeb0e6a0",
+          "fp64": "cc9cebd71d2974ceae80fc4f7c40637284ed89687e0f0a6ab9a779e5534dc0e8"
+        }
+      },
+      "s1_b1": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.006056849429056044,
+        "mae": 0.0013463348518125387,
+        "rmse": 0.0017685430251054564,
+        "relative_l2": 0.0014577200965780503,
+        "zero_reference": false,
+        "shape": [
+          64,
+          56,
+          56
+        ],
+        "sha256": {
+          "actual": "f313c2707d035f2e5296953c1c7e155ae30c3414718a46eba113335be8801dd0",
+          "fixed": "db34fe8f21548c49304e5b6bbfef46892bff6c9a1f9a2c9f69bf4af0cf610242",
+          "fp64": "45cd80a240e55524e28bedba9c59d2a02e6a700a8b9c3b260d8a86179a9e6199"
+        }
+      },
+      "s1_b2": {
+        "elements": 200704,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.008018879869000628,
+        "mae": 0.0017584871757344858,
+        "rmse": 0.0023464557060971654,
+        "relative_l2": 0.0018391475637680942,
+        "zero_reference": false,
+        "shape": [
+          64,
+          56,
+          56
+        ],
+        "sha256": {
+          "actual": "9ef3a077d5a24fc2e1bcdfe3c50e4fea5583b17299248471bf706d356fc226af",
+          "fixed": "37c397111afb45edd12c58b4f3271d55b4754169a3b23ae0f878386c501b7f1e",
+          "fp64": "5dd3fdab41dbea6a56e5caf287622bab32f154b9300e90067c9f773127692947"
+        }
+      },
+      "s2_b0": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.010379180858476111,
+        "mae": 0.0012640367445937134,
+        "rmse": 0.002313285990576326,
+        "relative_l2": 0.0022781971624772405,
+        "zero_reference": false,
+        "shape": [
+          128,
+          28,
+          28
+        ],
+        "sha256": {
+          "actual": "85980e59a51da2ee55e2fcf03cf13d20aab6fb458cd9646a682efc42ae7f3130",
+          "fixed": "c156427b19b56a13f5be6917708963d5c1a196452c35c8e9f25445978466e7e3",
+          "fp64": "bdf62e723b4affe30e7e26d4c55201d2f5b662ddda1c7803f3251b882be64629"
+        }
+      },
+      "s2_b1": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.013632091438907423,
+        "mae": 0.001668976862577946,
+        "rmse": 0.002782953199423543,
+        "relative_l2": 0.0025726237980831356,
+        "zero_reference": false,
+        "shape": [
+          128,
+          28,
+          28
+        ],
+        "sha256": {
+          "actual": "94fb3a61a7177a5dccd03ca71df7a2537af300d93308c7ae8c7d97fd2c9ca95f",
+          "fixed": "b0b01ba67e53c089e0c0b4ddac47945fe6b76d089a3847ae54d56304609bdbdb",
+          "fp64": "f0f979bd0564a4a52d6bb81e8a225fda4437c24dee11c3e0e4d78b00612fdb89"
+        }
+      },
+      "s2_b2": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.01391278792441053,
+        "mae": 0.0021630939731985743,
+        "rmse": 0.00331244290898117,
+        "relative_l2": 0.0028844865577034896,
+        "zero_reference": false,
+        "shape": [
+          128,
+          28,
+          28
+        ],
+        "sha256": {
+          "actual": "78a742d9538d679a46e7d175bac14a9aedafe399954c1d0add09749093111c1b",
+          "fixed": "32bb844482041155c92e3a1363491d458d945ea4db620eaa23c35a5d72ad700e",
+          "fp64": "a817c531d7f93e02b690e06215a61dd1afdde85e7e9f9c57e711f7fdd34dd70c"
+        }
+      },
+      "s2_b3": {
+        "elements": 100352,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.01699060471585412,
+        "mae": 0.0026447679529275495,
+        "rmse": 0.004035586010190073,
+        "relative_l2": 0.0033033430765223777,
+        "zero_reference": false,
+        "shape": [
+          128,
+          28,
+          28
+        ],
+        "sha256": {
+          "actual": "6227ba1f1acc979f835a1d0b715b3e7ae18d7c67041b746ff1e2685ffc731e7e",
+          "fixed": "1d2862fe2ec21478f123c5190269010805baadb439a5d8e31c8ebc88cf394616",
+          "fp64": "bea8a3428ef83fe0cd792b7e86bfda35e06b6bdeed93a1be9d94ac6c468a7fd9"
+        }
+      },
+      "s3_b0": {
+        "elements": 50176,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.01636223754973276,
+        "mae": 0.0021251420245903775,
+        "rmse": 0.0036804841546826277,
+        "relative_l2": 0.0037404491798791626,
+        "zero_reference": false,
+        "shape": [
+          256,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "faf25c0f60f4db0892957b07cebfd9cc5f5bf53c44e75574e5be3b40bf36dcb9",
+          "fixed": "a2c48dd16069076f728cc7e42a1d0caf1d3b1962964a94c31e4c31d9a772b9a4",
+          "fp64": "88acbd6c56a5110699fa5040fb3ec8047c710bc51b68294924770bc01a01dfb5"
+        }
+      },
+      "s3_b1": {
+        "elements": 50176,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.021247346769145636,
+        "mae": 0.002300812139218814,
+        "rmse": 0.0038778008669567584,
+        "relative_l2": 0.004046305260137595,
+        "zero_reference": false,
+        "shape": [
+          256,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "c31f3e16643869b0eaac34252ae6d9f5c464c41c4b5146118739867ee87e4d81",
+          "fixed": "c2e089fdb22d60ebcca74a03fa5b50e5aa4d05cfa9db4e03049475dadc8d4350",
+          "fp64": "c871751b253e7422ede08aabb19ca7997395e34997db9486832ad378e15e3ac5"
+        }
+      },
+      "s3_b2": {
+        "elements": 50176,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.023324965507641515,
+        "mae": 0.0025769706508164962,
+        "rmse": 0.0041662499298981736,
+        "relative_l2": 0.004369733018515084,
+        "zero_reference": false,
+        "shape": [
+          256,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "c923b73265700f384b5bd709ab785faf95e4ed0a14bd048b52ab6946b4ea0660",
+          "fixed": "1b98d781d57df1616b1f8dbcfcf8f8c80586915c23acbd9a95f88ad4471d9dcf",
+          "fp64": "2af9acf17bde1829483864d5f90c117266597d71a9d0085c1b5b9369e3ecd114"
+        }
+      },
+      "s3_b3": {
+        "elements": 50176,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.025131575345335833,
+        "mae": 0.0027492114639294635,
+        "rmse": 0.004377545290498522,
+        "relative_l2": 0.0046450513566103895,
+        "zero_reference": false,
+        "shape": [
+          256,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "2c5acd0115d8b1c74cf9298b9927ce44785e3f3cc5715e4991cf82315ac2b12d",
+          "fixed": "0956961a09c54645ee03325c3408585d9d2a417311e75a9b8965d2b445917d7d",
+          "fp64": "527939f819669b35a398f9aabbbb315779475afb5b0b455a8363ee960c76565e"
+        }
+      },
+      "s3_b4": {
+        "elements": 50176,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.024170971610114833,
+        "mae": 0.003098326824645523,
+        "rmse": 0.004777050230275262,
+        "relative_l2": 0.005023433602598215,
+        "zero_reference": false,
+        "shape": [
+          256,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "253ab729e6368dd64610dde434ec7f06cdb64f91f86e5127a1f9db2bc8bed2bb",
+          "fixed": "bfa1c93ad46024134015b42fbdaf6f8086aa45b0f4918199c2953b54e97ecd9d",
+          "fp64": "4e3eefd549a33700ab58fb6d9649521baf9f6c3be1a7aa15e36e4c3bf5b57d66"
+        }
+      },
+      "s3_b5": {
+        "elements": 50176,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.02587009509087812,
+        "mae": 0.0034647591198871974,
+        "rmse": 0.005151174658928134,
+        "relative_l2": 0.005458563576495233,
+        "zero_reference": false,
+        "shape": [
+          256,
+          14,
+          14
+        ],
+        "sha256": {
+          "actual": "c6edb7ab2a7326c72b723b25020cf7f72b1f224fa7b65ee3ea0b80d87300e3da",
+          "fixed": "f1fed30f71e446d869a64cc8aded825012a87ebdadeefbe97a829612f7a8d643",
+          "fp64": "3c9a84daa082d33ecc9502d5b20d7e75cdeaf0ae57f0c5e02e16ca487979ff97"
+        }
+      },
+      "s4_b0": {
+        "elements": 25088,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.020567195949472428,
+        "mae": 0.0019345174017027565,
+        "rmse": 0.003627865116789014,
+        "relative_l2": 0.006424335800011385,
+        "zero_reference": false,
+        "shape": [
+          512,
+          7,
+          7
+        ],
+        "sha256": {
+          "actual": "bf99078e90dd6f5fd540b8e9a48252909c02020a0d037eb9ff401cd0679b4aa7",
+          "fixed": "fe19605e1eadc122eefc6a95d7a4417e5cd082abf9ec4600be4f26451e593a4c",
+          "fp64": "0894603d51d725941876907a5bac1917eadedcc7e2220cd591ec7bd9f873b514"
+        }
+      },
+      "s4_b1": {
+        "elements": 25088,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.02187348566549918,
+        "mae": 0.0021441047312306906,
+        "rmse": 0.003736321458958635,
+        "relative_l2": 0.006877225067127829,
+        "zero_reference": false,
+        "shape": [
+          512,
+          7,
+          7
+        ],
+        "sha256": {
+          "actual": "532adb27a50f4dd7fd1c30d8dc6fd6fec95f3d4bfefb5a315d3930612e029062",
+          "fixed": "89a86648c9bd5ca1bba0d5fe98cf0ef4aa59d6934e64384b21eec68dc6c7422a",
+          "fp64": "719559c273432c7984b9c333d6f24e0adc9da576e8eaf94e58f44f979aa63fb6"
+        }
+      },
+      "s4_b2": {
+        "elements": 25088,
+        "implementation_verdict": "PASS",
+        "mismatching_codes": 0,
+        "max_code_error": 0,
+        "mathematical_verdict": "PASS",
+        "max_abs": 0.02198998433612509,
+        "mae": 0.002223573581211591,
+        "rmse": 0.003841913963815811,
+        "relative_l2": 0.007326378342004775,
+        "zero_reference": false,
+        "shape": [
+          512,
+          7,
+          7
+        ],
+        "sha256": {
+          "actual": "f9dc774d1213418d2f519a5e0b5d667a31903c48bb0f594cc8a94fe029ddad7d",
+          "fixed": "99be9f7673fddd7b4b93df7f17bb8c9ceabd565532aaa7f719219ecf5c404c2a",
+          "fp64": "c2e06aceb56604d9ef0539bcbec1094e19c59f90044f56a4d8af4f79cc613138"
+        }
+      }
+    }
+  },
+  "simulation": {
+    "returncode": 0,
+    "executed": true,
+    "elapsed_seconds": 132.28173224799684,
+    "command": [
+      "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "-f",
+      "run_existing_csim.tcl"
+    ],
+    "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+    "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+    "log_sha256": "e070767878de637acf3d3661a60194d1e51c1a730dd662b9eda766f249ce391c",
+    "testbench_sha256": "a7486f15976dab5318f28de07a8adfdbc5144723b3a82e24e444d9332cf34131",
+    "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+    "executable_sha256": "40ea48e52d23f98f02387947260dfd9f815db526a1683d064fdf144ef0862e23"
+  },
+  "input_manifest": {
+    "DRAM_input": {
+      "shape": [
+        3,
+        224,
+        224
+      ],
+      "dtype": "<i2",
+      "sha256": "6fc8fab8da0076b7e8adff110c71d3c0ad15383b05734502d4a1c9ac6aa81d6b",
+      "seed": 15347494563410731845,
+      "distribution": "uniform",
+      "bound": 1.0
+    },
+    "DRAM_w_stem": {
+      "shape": [
+        64,
+        3,
+        7,
+        7
+      ],
+      "dtype": "<i2",
+      "sha256": "4c4146a2fee5b94ee85e1fc9cceed1a0d1c4949090fc978bc321e9608e84f5b6",
+      "seed": 13569812220484217337,
+      "distribution": "uniform",
+      "bound": 0.14285714285714285
+    },
+    "DRAM_bn_stem": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "2c7020bf73f70b9ddca70d3a581987fa96a701e5a9137fb003c91b3e3dca4c1d",
+      "seed": 4865607282156307385,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b0_1": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "3f007b6e68d9507c2ef2472f07c371371becb2e0ccc5af4caa441bb17b237393",
+      "seed": 11266071970971629448,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b0_1": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "7956170da6da74e663b457b870da40c25595165a6fed5f5c68b144e8f9a4d6a9",
+      "seed": 8675639599319751741,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b0_2": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "ba6667099b0346f1fe7757e136ac9f4bbd829572c051f86ee94c92abae707c97",
+      "seed": 6533438168354281330,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b0_2": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "77a26282aad9b27f468cab4ad6f5254758b4fd305a5c3b3a89f9a26f69a16f77",
+      "seed": 5059996083820397501,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b1_1": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "bd5fde2b64839dfe40a8d5a2595244327561961c4e71d0b12b202a9601631b82",
+      "seed": 9097719659989986977,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b1_1": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "2bf867c4b96408893bb4c68e0b804a1c451e1ea9521af792e57f24c6e9751140",
+      "seed": 13875478473864044352,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b1_2": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "9e22809d614684310855f6e1aaf7b362bd9b4291ebbd818ba3b3898218a4cf95",
+      "seed": 8171887877567747929,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b1_2": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "347defe1e196de3b619e614d6a0f6390dd589ab335c8c1f159d921610c985d49",
+      "seed": 5069630814736497283,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b2_1": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "f87806d726bd31b61598b558a48c83fb396bfe653247c81404d417bd8bf9b2ca",
+      "seed": 18296338995420095986,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b2_1": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "34859124571237e1cca13af08c62337edd7fb7fe557c9adbeebdaf07c15a5f64",
+      "seed": 51345079365106426,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s1_b2_2": {
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "4eb65b1ae85005965823d3654afbd1743d5b82796e7c1ad511b07414b8d3b2af",
+      "seed": 14794198847303982794,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s1_b2_2": {
+      "shape": [
+        4,
+        64
+      ],
+      "dtype": "<i2",
+      "sha256": "72670fdac839866f2cea67ca47c5ca68fec00823ca12ea1f043b097ccc48eed3",
+      "seed": 13065931665003317058,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_1": {
+      "shape": [
+        128,
+        64,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "17f33678b4d972fb18d9f7542f0533aee4432016887d390fc34ef0112b7abe8a",
+      "seed": 8509880825940880424,
+      "distribution": "uniform",
+      "bound": 0.07216878364870322
+    },
+    "DRAM_bn_s2_b0_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "49730fb429efb44d8ba84d59d4925efe27b2ca44ea017720cb75645d0db0ecd7",
+      "seed": 14633970099819290461,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "89c63985435335f398db09edf5882e2116d994ede6fe623eeccff8654b740758",
+      "seed": 3016235248685400482,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b0_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "3a3d168f38308ecf1af29302f11c01cbb91041a2a9707054375ab9e40d6171ce",
+      "seed": 9602492907508946404,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b0_down": {
+      "shape": [
+        128,
+        64,
+        1,
+        1
+      ],
+      "dtype": "<i2",
+      "sha256": "c9f15832cbd0b26265978742666db7eacdd2063e70445f7fd15102f76b372a60",
+      "seed": 8921849094486768363,
+      "distribution": "uniform",
+      "bound": 0.21650635094610965
+    },
+    "DRAM_w_s2_b1_1": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "6560cb4e1f5576065675a18b4a2242820db9e93f0d1571476cab6a46d6680922",
+      "seed": 6385263582519116567,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b1_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "8f0d1e5a4714abad70ed907b5fcf44ebc5983db165723414a77ee039de6e2601",
+      "seed": 18400887538126621155,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b1_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "72d860b81832549ebcee40c28e9b13fab0317b05f42eebb61b2cda29d6b6cdb6",
+      "seed": 16917486724429730369,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b1_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "a2e46c9bf299a32048d188774075360c7b8e2871e12e94ae1a74c30c9fe8bb2f",
+      "seed": 16149120822692661077,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b2_1": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "15c1174a04bd8355a6bcbc2e307af0079acb2c96f9f25748382da1963e91889e",
+      "seed": 6610356635783300283,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b2_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "00e8b0fab799652f353b425ef65cea92e78940b480e390e04f75096157c3ba42",
+      "seed": 16080469756629870272,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b2_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "1d5f1f95c6eaadafa375229f2b414de019657d600ed671efefa585f8a85ece5b",
+      "seed": 10518712719714353985,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b2_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "6b28267f8d667d8d9a7436d03c8f73d1cbfdd2e999108408c0779c0d685938cb",
+      "seed": 9846401122534286381,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b3_1": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "3ea888d5cd6ac026cb253a307c7663594f1a816cbacd07ecd46af895a9657794",
+      "seed": 18403081780483945827,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b3_1": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "5b1cffe2602f7114920b222f42ba77cf13908d33d83cbb746fcc7f7d13bdbffd",
+      "seed": 9029430856951810396,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s2_b3_2": {
+      "shape": [
+        128,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "05623971d37bc4ffd18803b2719a1a463ff038259ae0951b0d535ff715e17549",
+      "seed": 13692353556208424882,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s2_b3_2": {
+      "shape": [
+        4,
+        128
+      ],
+      "dtype": "<i2",
+      "sha256": "62bb656749b8b81433ee972ab7ff990f7b422afa2527cf0135c6de0e9d7f3126",
+      "seed": 6693029191799228354,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_1": {
+      "shape": [
+        256,
+        128,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "71ff1941d91b3aba0bed2f3a4683535af05ae423a5cdc7c5e21f29af2fda07ff",
+      "seed": 9315864944675994010,
+      "distribution": "uniform",
+      "bound": 0.05103103630798288
+    },
+    "DRAM_bn_s3_b0_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "a26c01ef6aa2aca6c210dd5413074ac62f61048c5e358b908d31c2065fe346f9",
+      "seed": 6089929426239414765,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "cb4d3d5640f2be7437933ed0a06de2ec3a75ffd6f81569f6762a287f6f4f484b",
+      "seed": 3976508106970574202,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b0_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "8b7f98ebd605dab14a192570d39d8c99fee33604106636e4f1c9fb37f2b15f73",
+      "seed": 1236876505187843137,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b0_down": {
+      "shape": [
+        256,
+        128,
+        1,
+        1
+      ],
+      "dtype": "<i2",
+      "sha256": "dc1979347f9c912f362817cb4b57bcc725f0e6668797e13b8084fe69c4389dea",
+      "seed": 6271329771114412184,
+      "distribution": "uniform",
+      "bound": 0.15309310892394862
+    },
+    "DRAM_w_s3_b1_1": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "4fa8d73af1f777b5b20a223228d2e83d69a541268e6c808d3302a459572e5a95",
+      "seed": 8127183675232140894,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b1_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "e6d7a6244857288787f3202a980709ead3c9ad51898384dd8a3432bf07384996",
+      "seed": 18096029583507742261,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b1_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "dbde485116618126db6a7580227fd0d10781d95a53826f7ef697a26fbe76963a",
+      "seed": 5262504063494694424,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b1_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "0683c1e447200f90b8805e08a15dad8a085df905c7e3b9c261a25d41ac909655",
+      "seed": 10509738307655378993,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b2_1": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "8961e64545b263e5cad2dd8215b399b2b67271f44d350943c47ce82d768be30b",
+      "seed": 11257752545867656730,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b2_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "cf22ec4eb2fd24a306570a9488bf663ec541ec10714731f2ecb0b1b8c7769921",
+      "seed": 14273388836847801466,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b2_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "c4cb42fea3100899eeace4efecc15aa9ad25d9ddd553902f44908a44175f74ad",
+      "seed": 2423786034940920814,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b2_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "f12be1ea556d561237224d83f5256c6861c5acb7d51d91291afe63162aac2993",
+      "seed": 5572118061403549053,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b3_1": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "9266fa3814432e4ccdb7d988b8b8ef1cea614d6758b57bee1ceab91da343e585",
+      "seed": 9960118383940047285,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b3_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "7313fa9608745a2b7cd43f78559f072aeb3c94e2b582a0ab1c08c2f123a851da",
+      "seed": 14913874952686088721,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b3_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "aded4524693132c3e9e68e6e6105c78cf8a59c380f7887ccc518a7c9d6e9a169",
+      "seed": 10084612153503995881,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b3_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "a071ded81ede3764b042a80b15c5969e34fe5fba337208b49cd3ba05d14ba2ac",
+      "seed": 14657066681961688827,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b4_1": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "db105452416c3de3bd39c29ec3a6112977d36cdee3a18a0211ee2b1ab588f144",
+      "seed": 2872228221282366855,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b4_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "a5ede9f9cbbe21797aaba2b36b469d8ec2eeb547bc4b515d8f2b442fa2bd8605",
+      "seed": 16066598335172445090,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b4_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "19db9199938dfc961937749799d1fe7ac07d7bce202b593436c36cd93e40de8e",
+      "seed": 9422387199384670396,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b4_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "b43f85a6758bad08ead720951125f7a9b47840566b810949571c61ce7b2d53b8",
+      "seed": 10926138878202245601,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b5_1": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "c6e3acef358da6969228b3ff3a0266af883b166fd653729b7a7d237a9458fce7",
+      "seed": 7131656122689007602,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b5_1": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "b04040b2294a6f0294ea34fc65ab92ffd2fb4dc4f1fa5de4dc7a65bbda24e619",
+      "seed": 10705330414532955064,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s3_b5_2": {
+      "shape": [
+        256,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "e158deecc560d6336e50e412d85d2f39fdcdfc2e47b08ef2318f0c0a4569d774",
+      "seed": 5224116768507356967,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s3_b5_2": {
+      "shape": [
+        4,
+        256
+      ],
+      "dtype": "<i2",
+      "sha256": "c60f463ff608ad0b767d14a66398b9ded2d2cb5db8ca4cbb134df792f33fc137",
+      "seed": 7026725142684569886,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_1": {
+      "shape": [
+        512,
+        256,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "d9818f618b803596f5af94e09a72a0e83e22baffc36a917c653e6de4c25c4cb5",
+      "seed": 13683201705902468508,
+      "distribution": "uniform",
+      "bound": 0.03608439182435161
+    },
+    "DRAM_bn_s4_b0_1": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "1de5ffa249bf56fa1dad69b1b3b7134df96a7c6b18d0b197950dbdcdb5ba6860",
+      "seed": 18276441843290746859,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_2": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "0e080d119272048d33cf71df6b202209cab853ee40258fed1476811f2d191fa1",
+      "seed": 9880512077919396805,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b0_2": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "3a505169d7c4716ae890ca5847d24d3a28d8cd9887ae1967fbd96a499d0b62e3",
+      "seed": 11983562945054970995,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b0_down": {
+      "shape": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "dtype": "<i2",
+      "sha256": "405df2a2e5d7c45aa96c6e0371676e3370abf408a34171700826c554d887c891",
+      "seed": 10383627806928977312,
+      "distribution": "uniform",
+      "bound": 0.10825317547305482
+    },
+    "DRAM_w_s4_b1_1": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "26db852bad08b065101c50f61ecc98a78ad7baadf63f9d9740c53f8db83f8903",
+      "seed": 11681388287182853077,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b1_1": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "d08b477cf35ae4cac0e5ec76e602c63133b39b6bca375e6f7d20eb65e60cc7f4",
+      "seed": 2639078618020728400,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b1_2": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "6d00ef26a7fc61fd3e30edaf63ba21e7799d16110bf9939f6c184aa53d96a7b8",
+      "seed": 6202476536058152924,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b1_2": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "4f7a0db4f50960e4d82d4a00fae71af441b0e7fa486f403f94ba4a2046ff06de",
+      "seed": 6673181373542222793,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b2_1": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "1ac24f9234cc260362e11f7dc85580d276cb4563081f6cd6141e99357df80629",
+      "seed": 385605422808914916,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b2_1": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "7be2dced23799b07403c5da69779fb3b9b9ec829c2aebf95544d8991dd9809ff",
+      "seed": 11242552425533311080,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_w_s4_b2_2": {
+      "shape": [
+        512,
+        512,
+        3,
+        3
+      ],
+      "dtype": "<i2",
+      "sha256": "caba0e75a5d3a64ae9c8edf315ae9895e4af613b8afe07ea1c06799d10f578ae",
+      "seed": 6048520390714436247,
+      "distribution": "uniform",
+      "bound": 0.02551551815399144
+    },
+    "DRAM_bn_s4_b2_2": {
+      "shape": [
+        4,
+        512
+      ],
+      "dtype": "<i2",
+      "sha256": "9c90cf6296513035209b0432bc2946b054a58a730ffb7b73dbccf5dd2fadba35",
+      "seed": 12940092271349615762,
+      "distribution": "bn_rows",
+      "bound": null
+    },
+    "DRAM_fc": {
+      "shape": [
+        1000,
+        512,
+        1,
+        1
+      ],
+      "dtype": "<i2",
+      "sha256": "fb81cb0ed1af3b10d0af4774f58346a5d6a8c8901eb8c67c9673f602fe440c37",
+      "seed": 4670880183962652993,
+      "distribution": "uniform",
+      "bound": 0.07654655446197431
+    }
+  },
+  "original_sources_unchanged": true,
+  "reference_sources_unchanged": true,
+  "simulations": {
+    "case": {
+      "returncode": 0,
+      "executed": true,
+      "elapsed_seconds": 132.28173224799684,
+      "command": [
+        "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+        "-f",
+        "run_existing_csim.tcl"
+      ],
+      "tool": "/tools/software/amd/xilinx/ARCHIVE/Vitis_HLS/2024.1/bin/vitis_hls",
+      "tool_sha256": "2f82805854e26600be83eaccf69e9389b2638e156b0e40133492f3be70cf2181",
+      "log_sha256": "e070767878de637acf3d3661a60194d1e51c1a730dd662b9eda766f249ce391c",
+      "testbench_sha256": "a7486f15976dab5318f28de07a8adfdbc5144723b3a82e24e444d9332cf34131",
+      "tcl_sha256": "b6274b0434e98d7f77746dab4a6f3920b1f9d02279886ea8aad7e8de6f30a57c",
+      "executable_sha256": "40ea48e52d23f98f02387947260dfd9f815db526a1683d064fdf144ef0862e23"
+    }
+  },
+  "elapsed_seconds": 133.63070609800343,
+  "exit_code": 0,
+  "verdict_re_evaluation": {
+    "metrics_reused": [
+      "max_abs",
+      "relative_l2"
+    ],
+    "accelerator_rerun": false,
+    "previous_thresholds": {
+      "max_absolute": 0.1,
+      "relative_l2": 0.05
+    }
+  }
+}

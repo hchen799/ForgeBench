@@ -17,7 +17,7 @@ void adaptive_avgpool(
                     w_end = {W_IN};
                 }}
 
-                data_t sum = 0;
+                acc_t sum = 0;
                 int count = 0;
                 for (int h = h_start; h < h_end; h++) {{
                     for (int w = w_start; w < w_end; w++) {{
@@ -26,14 +26,13 @@ void adaptive_avgpool(
                     }}
                 }}
                 if (count > 0)
-                    output[c][oh][ow] = sum / (data_t)count;
+                    output[c][oh][ow] = fb_div(sum, acc_t(count));
                 else
                     output[c][oh][ow] = 0;
             }}
         }}
     }}
 }}
-
 
 
 

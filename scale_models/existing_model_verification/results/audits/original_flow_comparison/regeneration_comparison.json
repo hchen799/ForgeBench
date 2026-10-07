@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "inspected_commit": "2403341e61ae21324e10a63faaa0fe0f0eb1ff34",
+  "path_base": "scale_models",
+  "method": "Call gen_configs.run_hls_flow for the three supplied JSONs into a temporary directory; compare all four emitted files byte-for-byte to saved projects; static inspect both generation paths. No Vitis simulation/synthesis was launched by this audit.",
+  "original_hls_unchanged": true,
+  "generator_sources": {
+    "gen_configs.py": "400a6803946b66cd8afd3982487637d23fe79d14c2717480bcaa8ada47de701f",
+    "generate_code.py": "e001ba2cd42687846d9fa13174ef81a489f16a7e8e33cb427672921e1ba9ae82",
+    "auto_generate_json.py": "4a6afe7cd350345148909e11233a8e2cd97d64f80560c1f43658b224f0cd97aa",
+    "generate_tiled_resnet18.py": "90880a643c57ec65308212a44846000ada26cd7465dcf5b373bfb4fd148bfe03",
+    "conv_template.cpp": "7ff533dc669d05848d64fdc25ada340116d061c01e1cd68312c2e352057b2d69",
+    "batch_norm_template.cpp": "c16dea4f197d39a6e2d62afe3b3203685f0db29cf4612e7241fdc3cebdcc5b1f",
+    "adaptive_avgpool_template.cpp": "1ea7981a8e740254eef76c36fef2a76f7c27d001e906dffd564d3fbe0049c852",
+    "verification/verify.py": "ea0e99b5cc636127b0f7ea7f82bdf4e6fd5409ec5fa989910626eb38d99896ec",
+    "verification/models/resnet18/codegen.py": "344a63db7fd50d6501e08e73cf57901c458b7b67871b51def52a10bf6db74571",
+    "verification/models/llama3/codegen.py": "ef9f551cfd9b8c69d7d870f52e720741143b36a623d859c6c48269d45a7a34c7",
+    "verification/models/llama3/kernel.cpp.in": "0211661a3e3556945197d26f75940c736c1156b1eccdd113ba1b8d12b97eb881"
+  },
+  "projects": [
+    {
+      "config": "auto_generated_configs/RESNET50_config_ap_fixed_16_5_.json",
+      "files": {
+        "top.cpp": {
+          "identical": true,
+          "sha256": "b5f33257eae50a5da82b885ca5a47194e07bde24a8f36e8f9281c18e2f3e80b9"
+        },
+        "top.h": {
+          "identical": true,
+          "sha256": "369a459569e48417ec70c570a402cc53ec3b2c9f24cc0aa2c5c92a854e34dcfd"
+        },
+        "tb_top.cpp": {
+          "identical": true,
+          "sha256": "50272f581e8fbdeeb843813c555755cced1be4c003e6be2f7e42aa6acb38b14a"
+        },
+        "run_hls.tcl": {
+          "identical": true,
+          "sha256": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+        }
+      },
+      "task": [
+        "csynth"
+      ],
+      "config_sha256": "c8ca70e2cece08ad830d7a785664848b18365ef40ba4674137d92d3b4107137f",
+      "counts": {
+        "brams": 140,
+        "drams": 105,
+        "ops": 172
+      },
+      "unread_parameter_ports": [
+        "DRAM_w_stem",
+        "DRAM_bn_stem",
+        "DRAM_w_s1_b0_1",
+        "DRAM_bn_s1_b0_1",
+        "DRAM_w_s1_b0_2",
+        "DRAM_bn_s1_b0_2",
+        "DRAM_w_s1_b0_3",
+        "DRAM_bn_s1_b0_3",
+        "DRAM_w_s1_b0_down",
+        "DRAM_w_s1_b1_1",
+        "DRAM_bn_s1_b1_1",
+        "DRAM_w_s1_b1_2",
+        "DRAM_bn_s1_b1_2",
+        "DRAM_w_s1_b1_3",
+        "DRAM_bn_s1_b1_3",
+        "DRAM_w_s1_b2_1",
+        "DRAM_bn_s1_b2_1",
+        "DRAM_w_s1_b2_2",
+        "DRAM_bn_s1_b2_2",
+        "DRAM_w_s1_b2_3",
+        "DRAM_bn_s1_b2_3",
+        "DRAM_w_s2_b0_1",
+        "DRAM_bn_s2_b0_1",
+        "DRAM_w_s2_b0_2",
+        "DRAM_bn_s2_b0_2",
+        "DRAM_w_s2_b0_3",
+        "DRAM_bn_s2_b0_3",
+        "DRAM_w_s2_b0_down",
+        "DRAM_w_s2_b1_1",
+        "DRAM_bn_s2_b1_1",
+        "DRAM_w_s2_b1_2",
+        "DRAM_bn_s2_b1_2",
+        "DRAM_w_s2_b1_3",
+        "DRAM_bn_s2_b1_3",
+        "DRAM_w_s2_b2_1",
+        "DRAM_bn_s2_b2_1",
+        "DRAM_w_s2_b2_2",
+        "DRAM_bn_s2_b2_2",
+        "DRAM_w_s2_b2_3",
+        "DRAM_bn_s2_b2_3",
+        "DRAM_w_s2_b3_1",
+        "DRAM_bn_s2_b3_1",
+        "DRAM_w_s2_b3_2",
+        "DRAM_bn_s2_b3_2",
+        "DRAM_w_s2_b3_3",
+        "DRAM_bn_s2_b3_3",
+        "DRAM_w_s3_b0_1",
+        "DRAM_bn_s3_b0_1",
+        "DRAM_w_s3_b0_2",
+        "DRAM_bn_s3_b0_2",
+        "DRAM_w_s3_b0_3",
+        "DRAM_bn_s3_b0_3",
+        "DRAM_w_s3_b0_down",
+        "DRAM_w_s3_b1_1",
+        "DRAM_bn_s3_b1_1",
+        "DRAM_w_s3_b1_2",
+        "DRAM_bn_s3_b1_2",
+        "DRAM_w_s3_b1_3",
+        "DRAM_bn_s3_b1_3",
+        "DRAM_w_s3_b2_1",
+        "DRAM_bn_s3_b2_1",
+        "DRAM_w_s3_b2_2",
+        "DRAM_bn_s3_b2_2",
+        "DRAM_w_s3_b2_3",
+        "DRAM_bn_s3_b2_3",
+        "DRAM_w_s3_b3_1",
+        "DRAM_bn_s3_b3_1",
+        "DRAM_w_s3_b3_2",
+        "DRAM_bn_s3_b3_2",
+        "DRAM_w_s3_b3_3",
+        "DRAM_bn_s3_b3_3",
+        "DRAM_w_s3_b4_1",
+        "DRAM_bn_s3_b4_1",
+        "DRAM_w_s3_b4_2",
+        "DRAM_bn_s3_b4_2",
+        "DRAM_w_s3_b4_3",
+        "DRAM_bn_s3_b4_3",
+        "DRAM_w_s3_b5_1",
+        "DRAM_bn_s3_b5_1",
+        "DRAM_w_s3_b5_2",
+        "DRAM_bn_s3_b5_2",
+        "DRAM_w_s3_b5_3",
+        "DRAM_bn_s3_b5_3",
+        "DRAM_w_s4_b0_1",
+        "DRAM_bn_s4_b0_1",
+        "DRAM_w_s4_b0_2",
+        "DRAM_bn_s4_b0_2",
+        "DRAM_w_s4_b0_3",
+        "DRAM_bn_s4_b0_3",
+        "DRAM_w_s4_b0_down",
+        "DRAM_w_s4_b1_1",
+        "DRAM_bn_s4_b1_1",
+        "DRAM_w_s4_b1_2",
+        "DRAM_bn_s4_b1_2",
+        "DRAM_w_s4_b1_3",
+        "DRAM_bn_s4_b1_3",
+        "DRAM_w_s4_b2_1",
+        "DRAM_bn_s4_b2_1",
+        "DRAM_w_s4_b2_2",
+        "DRAM_bn_s4_b2_2",
+        "DRAM_w_s4_b2_3",
+        "DRAM_bn_s4_b2_3",
+        "DRAM_fc"
+      ]
+    },
+    {
+      "config": "auto_generated_configs/LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_16_5_.json",
+      "files": {
+        "top.cpp": {
+          "identical": true,
+          "sha256": "fcc31d3cb1a22ac512f7b6a5c92a5b4c4fab01f75137f3ae42f413464a382f35"
+        },
+        "top.h": {
+          "identical": true,
+          "sha256": "1584171ae4e71c283875b1a5afe41d8e186a35af1dabe932b1b4283353a75498"
+        },
+        "tb_top.cpp": {
+          "identical": true,
+          "sha256": "8080c0b83206a84027f4c09e54b886f4739beced137b59386fe5ae155674ca5e"
+        },
+        "run_hls.tcl": {
+          "identical": true,
+          "sha256": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+        }
+      },
+      "task": [
+        "csynth"
+      ],
+      "config_sha256": "b6065caf4ca796e021de1c808883833acf08e6e2d1f352023073d2f7a53a465e",
+      "counts": {
+        "brams": 20,
+        "drams": 30,
+        "ops": 5440
+      }
+    },
+    {
+      "config": "auto_generated_configs/LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_16_5_.json",
+      "files": {
+        "top.cpp": {
+          "identical": true,
+          "sha256": "4f689f0fea44766f0e5a27db6e1990973f47e74931affdc62054e8456f0575f0"
+        },
+        "top.h": {
+          "identical": true,
+          "sha256": "c52794d534561e4ff2c4876537194d4a3fc2c86772cbe348efc81c222812ea6b"
+        },
+        "tb_top.cpp": {
+          "identical": true,
+          "sha256": "0ae111120206e4c84be4de6dc520b4f9b437bfbb1b16e33bfd2c60e2cf450123"
+        },
+        "run_hls.tcl": {
+          "identical": true,
+          "sha256": "322237ee886f03464404802766dca3f9e01257458c2f3a154234ade6b84156a9"
+        }
+      },
+      "task": [
+        "csynth"
+      ],
+      "config_sha256": "b7fdefa90a4181b42ee93303e5ffe67e698dcc5827b7feba204692b1c5445a19",
+      "counts": {
+        "brams": 20,
+        "drams": 30,
+        "ops": 5440
+      }
+    }
+  ]
+}
