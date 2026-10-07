@@ -6,7 +6,7 @@ import re
 import shutil
 from pathlib import Path
 
-from .arithmetic import DATA, Format
+from .arithmetic import DATA, Format, set_storage_modes
 from .resnet import RESNET_SPECS
 
 
@@ -59,12 +59,17 @@ class Project:
         if len(types) != 1:
             raise ValueError("expected one explicit ap_fixed data_t in saved top.h")
         self.dtype = re.sub(r"\s+", "", types[0])
-        match = re.fullmatch(r"ap_fixed<(16,5|32,10)(?:,AP_TRN,AP_WRAP)?>", self.dtype)
+        match = re.fullmatch(
+            r"ap_fixed<(16,5|32,10)(?:,AP_(TRN|RND),AP_(WRAP|SAT))?>", self.dtype
+        )
         if match is None:
             raise ValueError(
-                "unsupported arithmetic variant: production references support Q16.5 and Q32.10 with AP_TRN/AP_WRAP"
+                "unsupported arithmetic variant: production references support Q16.5 and Q32.10 with AP_TRN|AP_RND and AP_WRAP|AP_SAT"
             )
         self.format = Format(*map(int, match[1].split(",")))
+        # storage modes of data_t; the fixed references honour them at every (data_t) conversion
+        self.storage_modes = (match[2] or "TRN", match[3] or "WRAP")
+        set_storage_modes(rnd=self.storage_modes[0] == "RND", sat=self.storage_modes[1] == "SAT")
         source_dtype = re.search(
             r"typedef\s+(ap_fixed\s*<[^>]+>)\s+data_t\s*;", self.source
         )

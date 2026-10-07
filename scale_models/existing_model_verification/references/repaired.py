@@ -9,7 +9,7 @@ import math
 import torch
 import torch.nn.functional as F
 
-from .arithmetic import DATA, exact_matmul, sqrt_codes, wrap
+from .arithmetic import DATA, exact_matmul, sqrt_codes, store, wrap
 from .llama import FixedOps as LegacyLlamaOps
 
 FRAC = 22
@@ -43,33 +43,35 @@ class ResNetOps:
         if bound >= 2**53:
             raise ValueError("convolution exceeds exact FP64 integer bound")
         sums = F.conv2d(x[None].double(), w.double(), stride=stride, padding=padding)[0]
-        return wrap(sums.long() >> 11)
+        return store(sums.long(), 11)
 
     def bn(self, x, p):
         gamma, beta, mean, var = [v[:, None, None] for v in p]
         denom = sqrt_codes((var << 11) + EPSILON, FRAC)
         norm = divide((x - mean) << 33, denom)
-        return wrap((gamma * norm >> 22) + beta)
+        # (data_t)(acc_t(gamma) * norm + acc_t(beta)): one conversion of the exact F33 value
+        return store(gamma * norm + (beta << 22), 22)
 
     def add(self, a, b):
-        return wrap(a + b)
+        return store(a + b)
 
     def gap(self, x):
-        return wrap(divide(x.sum((1, 2)), x.shape[1] * x.shape[2]))
+        # fb_div(sum, acc_t(area)) at F22, then (data_t)
+        return store(divide(x.sum((1, 2)) << 11, x.shape[1] * x.shape[2]), 11)
 
     def fc(self, x, w):
-        return wrap(exact_matmul(w, x[:, None])[:, 0] >> 11)
+        return store(exact_matmul(w, x[:, None])[:, 0], 11)
 
 
 class LlamaOps(LegacyLlamaOps):
     def linear(self, x, w):
-        return wrap(exact_matmul(x, w.T) >> 11)
+        return store(exact_matmul(x, w.T), 11)
 
     def rmsnorm(self, x, gamma):
         mean = divide((x * x).sum(-1), x.shape[1]) + EPSILON
         denominator = sqrt_codes(mean, FRAC)
         inverse = divide(torch.full_like(denominator, 1 << 44), denominator)
-        return wrap((x * gamma * inverse[:, None]) >> 33)
+        return store(x * gamma * inverse[:, None], 33)
 
     def attention(self, q, k, v, start):
         heads, kv_heads = q.shape[1] // 128, k.shape[1] // 128
@@ -90,7 +92,7 @@ class LlamaOps(LegacyLlamaOps):
                 weights = exp_negative(local - local.max())
                 values = v[:visible, kh * 128 : (kh + 1) * 128]
                 context = ((weights[:, None] * values) >> 11).sum(0)
-                rows.append(wrap(divide(context << FRAC, weights.sum()) >> 11))
+                rows.append(store(divide(context << FRAC, weights.sum()), 11))
             outputs.append(torch.stack(rows))
         return torch.cat(outputs, 1)
 
@@ -98,5 +100,5 @@ class LlamaOps(LegacyLlamaOps):
         x = gate << 11
         e = exp_negative(-x.abs())
         numerator = torch.where(x < 0, (x * e) >> FRAC, x)
-        silu = wrap(divide(numerator << FRAC, SCALE + e) >> 11)
-        return wrap((silu * up) >> 11)
+        silu = store(divide(numerator << FRAC, SCALE + e), 11)
+        return store(silu * up, 11)

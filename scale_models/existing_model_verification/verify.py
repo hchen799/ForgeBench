@@ -140,7 +140,7 @@ def main(argv=None):
             report["reference_pairs"] = {
                 p.variant: dict(
                     fp64=f"{p.variant}-fp64-q{p.format.word}_{p.format.integer}-v{p.contract_version}",
-                    fixed=f"{p.variant}-ap-trn-wrap-q{p.format.word}_{p.format.integer}-v{p.contract_version}",
+                    fixed=f"{p.variant}-ap-{p.storage_modes[0].lower()}-{p.storage_modes[1].lower()}-q{p.format.word}_{p.format.integer}-v{p.contract_version}",
                 )
                 for p in projects
             }

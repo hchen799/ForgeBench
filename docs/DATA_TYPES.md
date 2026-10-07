@@ -31,3 +31,24 @@ Rules:
   (e.g. GELU's `0.044715 * x`), which is ambiguous for non-default modes.
 * The numeric emulation used by verification (`verification/fixedpoint.py`) is validated bit-for-bit against the real Vitis `ap_fixed` conversion
   (`verification/tests/test_fixedpoint.py`) for both default and explicit modes.
+
+## Full-model designs (`scale_models/`): arithmetic in the design JSON
+
+The full-model generator (`scale_models/gen_configs.run_hls_flow`) reads the same `data_type` field plus optional arithmetic fields.
+Without them the emitted C++ is unchanged (the production revision-2 arithmetic: truncate + wrap storage, a persistent wide accumulator
+`acc_t` of `max(64, 2W+16)` bits with `2F` fractional bits, ROM `exp` and integer-code division / square root).
+
+| field | values | effect |
+|---|---|---|
+| `data_type` | any spelling above, e.g. `fixed<16,5,rnd,sat>` | storage type `data_t` |
+| `acc_type`, `acc_rounding`, `acc_overflow` | e.g. `fixed<64,42>`, `trn\|rnd`, `wrap\|sat` | the accumulator `acc_t` (same field names as the per-operator fields of the operator library) |
+| `math` | `table` (default) \| `hls` | `table`: ROM `exp` with interpolation, integer-code `div`/`sqrt` on `acc_t`; `hls`: Vitis `hls::exp` / `hls::sqrt` on `math_type`, division in `acc_t` |
+| `math_type` | default `fixed<48,16>` | type of the `hls::` math calls (always truncate + wrap: Vitis `hls_math` only accepts the default modes) |
+| `brams[*].data_type`, `drams[*].data_type` | `acc` \| `data` \| `int32` \| any type spelling | per-buffer type; overrides the role-derived default (accumulating buffers are `acc_t`) |
+
+Vitis caveat for `math: hls`: `hls::exp` / `hls::sqrt` compile for `ap_fixed<64,42>` but return 0 (integer part too wide); `<48,16>` and
+`<56,24>` are accurate, `<32,10>` is accurate except that `exp(-20)` underflows to 0. With non-default modes (`AP_RND`, `AP_SAT`) they do not compile at all.
+
+The fixed-point reference of the full-model verifier (`scale_models/existing_model_verification`) follows the storage modes of the saved
+`data_t` typedef: every `(data_t)` conversion rounds half up under `AP_RND` and saturates under `AP_SAT`; `acc_t` stays truncate + wrap.
+Generated sources are hash-locked; register new ones with `existing_model_verification/register_sources.py` before running `verify.py`.

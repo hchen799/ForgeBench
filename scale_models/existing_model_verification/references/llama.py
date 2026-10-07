@@ -18,6 +18,7 @@ from .arithmetic import (
     exact_matmul,
     exp_codes,
     sqrt_codes,
+    store,
     trunc_div,
     wrap,
 )
@@ -137,8 +138,8 @@ class FixedOps:
         c, s = table[:, :, 0][:, None], table[:, :, 1][:, None]
         paired = x.reshape(len(x), heads, head_dim // 2, 2)
         a, b = paired[..., 0], paired[..., 1]
-        return wrap(
-            torch.stack(((a * c - b * s) >> 11, (a * s + b * c) >> 11), -1)
+        return torch.stack(
+            (store(a * c - b * s, 11), store(a * s + b * c, 11)), -1
         ).reshape_as(x)
 
     def attention(self, q, k, v, start):
@@ -177,7 +178,7 @@ class FixedOps:
         return torch.cat(outputs, 1)
 
     def add(self, a, b):
-        return wrap(a + b)
+        return store(a + b)
 
     def swiglu(self, gate, up):
         # Unary minus widens data_t to W=17,I=6; exp has that same type.

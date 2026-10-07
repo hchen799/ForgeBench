@@ -1,7 +1,7 @@
 import re
 import random
 import math
-from production_types import annotate_storage, numeric_support, specialize
+from production_types import annotate_storage, buffer_typedefs, numeric_support, specialize
 
 DEFAULT_LEGACY_CONV_CI_FACTOR = 8
 DEFAULT_LEGACY_CONV_CO_FACTOR = 64
@@ -3159,7 +3159,7 @@ def generate_operator_call(op_info, data_type):
     return f"{full_func_name}({args_str});"
     
     
-def generate_top_function(brams, drams, ops, data_type="float", top_func_name="top"):
+def generate_top_function(brams, drams, ops, data_type="float", top_func_name="top", arith=None):
     """
     Generates the complete HLS C top function.
     
@@ -3198,7 +3198,8 @@ def generate_top_function(brams, drams, ops, data_type="float", top_func_name="t
     
     # 1. Write typedef.
     code_lines.append(f"typedef {data_type} data_t;")
-    code_lines.append(numeric_support(data_type))
+    code_lines.append(numeric_support(data_type, arith))
+    code_lines.extend(buffer_typedefs(brams + drams))
     
     # 2. Declare BRAM arrays.
     for bram in brams:
@@ -3295,6 +3296,7 @@ def generate_top_h(drams, data_type="float", top_func_name="top"):
     lines.append("#define TOP_H")
     lines.append("")
     lines.append(f"typedef {data_type} data_t;")
+    lines.extend(buffer_typedefs(drams))
     lines.append("")
     
     # Build function parameter list for DRAM arrays.
@@ -3339,6 +3341,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     
     # Define data type.
     code_lines.append(f"typedef {data_type} data_t;")
+    code_lines.extend(buffer_typedefs(drams))
     code_lines.append("")
     
     # Declare DRAM arrays.

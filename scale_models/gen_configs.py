@@ -1,7 +1,7 @@
 import os
 import json
 import shutil
-from production_types import REVISION, annotate_storage
+from production_types import REVISION, annotate_storage, arithmetic, c_type
 from generate_code import (
     generate_top_function,
     generate_top_h,
@@ -27,14 +27,17 @@ def run_hls_flow(config_path, base_dir="runs", FPGA_name="xczu9eg-ffvb1156-2-e",
     ops = config["ops"]
     brams, drams = annotate_storage(config["brams"], config["drams"], ops)
     output_dram_names = config["output_dram_names"]
-    data_type = config.get("data_type", "ap_fixed<16, 5>")
+    data_type = c_type(config.get("data_type", "ap_fixed<16, 5>"))     # generic spellings (fixed<16,5,rnd,sat>) -> Vitis type
+    arith = arithmetic(config)
     top_func_name = config.get("top_func_name", "top")
     fpga_name = config.get("FPGA_name", FPGA_name)
     clock= config.get("clock_period", clock_period)
     tasks = config.get("task", task)
     config.update(brams=brams, drams=drams, production_revision=REVISION)
+    if config.get("data_type") not in (None, data_type):         # resolved config records the C++ type; keep the JSON spelling too
+        config.update(data_type_spec=config["data_type"], data_type=data_type)
     # Validate and construct the code before replacing any saved project file.
-    top_code = generate_top_function(brams, drams, ops, data_type, top_func_name)
+    top_code = generate_top_function(brams, drams, ops, data_type, top_func_name, arith)
     top_h_code = generate_top_h(drams, data_type, top_func_name)
     tb_code = generate_testbench_code(drams, output_dram_names, data_type, top_func_name)
 

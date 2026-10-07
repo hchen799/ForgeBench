@@ -11,7 +11,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from .arithmetic import Format, wrap
+from .arithmetic import STORAGE, Format, store, wrap
 from .llama import FP64Ops, LlamaReference
 from .resnet import (
     forward as resnet_forward,
@@ -37,7 +37,14 @@ def tensor(x):
 
 
 def cast(x, shift=0):
-    return tensor((((objects(x) >> shift) + (1 << 31)) % (1 << 32)) - (1 << 31))
+    """(data_t) conversion (Q32.10) of an exact value carrying `shift` extra fractional bits; honours the storage modes."""
+    v = objects(x)
+    if shift and STORAGE["rnd"]:
+        v = v + (1 << (shift - 1))
+    v = v >> shift
+    if STORAGE["sat"]:
+        return tensor(np.minimum(np.maximum(v, -(1 << 31)), (1 << 31) - 1))
+    return tensor(((v + (1 << 31)) % (1 << 32)) - (1 << 31))
 
 
 def sqrt_nearest(x):
@@ -105,13 +112,15 @@ class ResNetOps:
         gamma, beta, mean, var = [objects(v[:, None, None]) for v in p]
         denom = sqrt_nearest((var << 22) + EPSILON)
         norm = ((objects(x) - mean) << 66) // denom
-        return cast((gamma * norm >> FRAC) + beta)
+        # (data_t)(acc_t(gamma) * norm + acc_t(beta)): one conversion of the exact F66 value
+        return cast(gamma * norm + (beta << FRAC), FRAC)
 
     def add(self, a, b):
-        return wrap(a + b, 32)
+        return store(a + b, 0, 32)
 
     def gap(self, x):
-        return cast(objects(x).sum((1, 2)) // (x.shape[1] * x.shape[2]))
+        # fb_div(sum, acc_t(area)) at F44, then (data_t)
+        return cast((objects(x).sum((1, 2)) << 22) // (x.shape[1] * x.shape[2]), 22)
 
     def fc(self, x, w):
         return cast(dot(w, x[:, None])[:, 0], 22)
@@ -196,7 +205,7 @@ class LlamaOps:
         return cast(objects(silu) * objects(up), 22)
 
     def add(self, a, b):
-        return wrap(a + b, 32)
+        return store(a + b, 0, 32)
 
 
 class ResNetReference32:

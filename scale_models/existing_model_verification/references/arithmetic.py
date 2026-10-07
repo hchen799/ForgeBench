@@ -19,6 +19,33 @@ def wrap(x, bits=16):
     return (x + (1 << (bits - 1))) % (1 << bits) - (1 << (bits - 1))
 
 
+# Quantization / overflow modes of the design's storage type data_t. AP_TRN/AP_WRAP unless the saved
+# typedef says otherwise (Project sets them); the wide accumulator acc_t always truncates and wraps.
+STORAGE = {"rnd": False, "sat": False}
+
+
+def set_storage_modes(rnd=False, sat=False):
+    STORAGE.update(rnd=bool(rnd), sat=bool(sat))
+
+
+def saturate(x, bits=16):
+    return torch.as_tensor(x, dtype=torch.int64).clamp(-(1 << (bits - 1)), (1 << (bits - 1)) - 1)
+
+
+def store(x, shift=0, bits=16):
+    """(data_t) conversion of an exact value carrying `shift` extra fractional bits.
+
+    AP_TRN floors and AP_RND rounds half toward +infinity; AP_WRAP wraps and
+    AP_SAT saturates. With the default modes this is wrap(x >> shift).
+    """
+    x = torch.as_tensor(x, dtype=torch.int64)
+    if shift:
+        if STORAGE["rnd"]:
+            x = x + (1 << (shift - 1))
+        x = x >> shift
+    return saturate(x, bits) if STORAGE["sat"] else wrap(x, bits)
+
+
 def trunc_div(n, d):
     n, d = torch.broadcast_tensors(
         torch.as_tensor(n, dtype=torch.int64), torch.as_tensor(d, dtype=torch.int64)
@@ -48,6 +75,7 @@ def sqrt_codes(x, fractional=11):
 class Format:
     word: int = 16
     integer: int = 5
+    storage: bool = True        # follows STORAGE modes (data_t); False: always AP_TRN/AP_WRAP
 
     @property
     def frac(self):
@@ -61,20 +89,23 @@ class Format:
         real = torch.as_tensor(real, dtype=torch.float64)
         if not torch.isfinite(real).all():
             raise ArithmeticFault("nonfinite input")
-        return wrap(torch.floor(real * self.scale).to(torch.int64), self.word)
+        rnd, sat = (STORAGE["rnd"], STORAGE["sat"]) if self.storage else (False, False)
+        codes = torch.floor(real * self.scale + (0.5 if rnd else 0.0)).to(torch.int64)
+        return saturate(codes, self.word) if sat else wrap(codes, self.word)
 
     def describe(self):
+        rnd, sat = (STORAGE["rnd"], STORAGE["sat"]) if self.storage else (False, False)
         return dict(
             word_bits=self.word,
             integer_bits=self.integer,
-            rounding="AP_TRN",
-            overflow="AP_WRAP",
+            rounding="AP_RND" if rnd else "AP_TRN",
+            overflow="AP_SAT" if sat else "AP_WRAP",
             fractional_bits=self.frac,
         )
 
 
 DATA = Format()
-ACC = Format(32, 10)
+ACC = Format(32, 10, storage=False)
 
 
 def product_sum(x, weight, chunk=32):
