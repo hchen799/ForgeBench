@@ -62,3 +62,8 @@ tmux-*.log
 _sweeps/
 verification/_selfcheck_ops/
 verification/_regression/
+
+# bulk verification outputs (per-trial CSVs, sweep curves, paper-run working dirs); summaries are committed explicitly
+verification/results_paper/
+verification/results*/**/trials/
+verification/results*/**/sweep_curves/
