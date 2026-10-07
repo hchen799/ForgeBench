@@ -26,12 +26,14 @@ Config (all keys optional; later files/overrides win; `extends` takes a path rel
   "sim": ["csim", "cosim"],
   "n_trials": 100, "seed_base": 42, "cosim_trials": 20,
   "golden": {"precision": "float64"},
-  "inputs": {"range": "auto" | "design" | [lo, hi] | {"DRAM_x": [lo, hi]}, "static_dir": null},
+  "inputs": {"range": "auto" | "design" | <magnitude> | [lo, hi] | {"DRAM_x": [lo, hi]}, "static_dir": null},   # <magnitude>: every input +-mag, no search
   "tolerance": {"mode": "format_bound" | "explicit", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5, "stages": 4, "peak_fraction": 0.01},
   "range_search": {"enabled": true, "samples": 20, "factor": 1.4142, "float_span": [1e-3, 1e3], "fixed_start": 1e-3, "fixed_stop_hi_multiple": 2,
-                   "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8},
+                   "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8, "margin_steps": 0},
   "stress": {"enabled": true, "factor": 4, "trials": 20},
   "fixed_ranges": {"weights": 0.1},   # optional: DRAMs whose name contains the key keep +-value (not scaled by the range search)
+  "fixed_ranges_by_operator": {"mha": {"weights": 0.1}},   # same, for one operator only
+  "report_seed_offset": 1000000,      # the reported N trials use seeds seed_base+offset+k (disjoint from the range-confirmation seeds)
   "op_params": {"acc_type": "fixed<32,10>", "acc_rounding": "rnd", "acc_overflow": "wrap"}   # optional: set on the operator under test
 }
 """
@@ -69,10 +71,12 @@ BUILTIN_DEFAULTS = {
     "inputs": {"range": "auto", "static_dir": None},
     "tolerance": {"mode": "format_bound", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5, "stages": 4, "peak_fraction": 0.01},
     "range_search": {"enabled": True, "samples": 20, "factor": 2 ** 0.5, "float_span": [1e-3, 1e3], "fixed_start": 1e-3,
-                     "fixed_stop_hi_multiple": 2, "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8},
+                     "fixed_stop_hi_multiple": 2, "bisect_steps": 4, "step_down": 1.19, "max_step_downs": 8, "margin_steps": 0},
     "stress": {"enabled": True, "factor": 4, "trials": 20},
     "op_params": {},
     "fixed_ranges": {},
+    "fixed_ranges_by_operator": {},
+    "report_seed_offset": 0,
 }
 
 SUMMARY_COLS = [
@@ -204,7 +208,7 @@ class Harness:
         for d in self.config["drams"]:                  # DRAMs whose name contains a key keep +-value while the search scales the others (e.g. weights)
             for key, mag in (fixed_ranges or {}).items():
                 if key in d["name"]:
-                    d["input_range"], d["fixed_range"] = [-mag, mag], True
+                    d["input_range"], d["fixed_range"] = (list(mag) if isinstance(mag, (list, tuple)) else [-mag, mag]), True     # +-mag, or an explicit [lo, hi]
         rc, _ = run_vitis(self.run_dir, log_name="vitis_trial0.log")
         self.build = csim_build_dir(self.run_dir)
         if self.build is None:
@@ -273,7 +277,8 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
     try:
         base = os.path.join(work, domain, dt.tag())      # domain matters: activation/matrix_add exist in several domains with identical stems
         os.makedirs(base, exist_ok=True)
-        h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None, cfg.get("fixed_ranges"))
+        h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None,
+                    {**(cfg.get("fixed_ranges") or {}), **((cfg.get("fixed_ranges_by_operator") or {}).get(v["operator"], {}))})
         op = op_under_test(h.config)
         L = accum_length(op["func_name"], op.get("dims", []))
         kind, boundfn, _ = bound_for(cfg, dt, L)
@@ -293,6 +298,10 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
                 grid = geometric_grid(rs["float_span"][0], rs["float_span"][1], rs["factor"])
             else:
                 grid = geometric_grid(rs["fixed_start"], rs["fixed_stop_hi_multiple"] * 2.0 ** (dt.I - 1), rs["factor"])
+            for key, cap in (rs.get("caps") or {}).items():
+                if key in v["id"] and dt.kind != "float":      # e.g. Vitis hls::tanh misbehaves for large |x| (crash / sign flip)
+                    grid = [g for g in grid if g <= cap]
+                    row["notes"] = (row["notes"] + f" range capped at {cap} ({key})").strip()
             counter = [0]
 
             def faithful(r):
@@ -326,9 +335,17 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
                 if r_val is None:
                     row.update({"status": "no_faithful_range", "notes": "window did not survive N-trial confirmation"})
                     raise _Done()
+                # safety margin: the window edge is statistically soft (an overflow there needs a rare input combination), so back
+                # off by `margin_steps` grid steps below the confirmed edge
+                r_val = r_val / rs["step_down"] ** rs.get("margin_steps", 0)
                 row["range_hi"] = r_val
                 row["run_range"] = f"+-{r_val:.6g}"
                 run_cfg = ranged_config(h.config, r_val)
+        elif isinstance(rng_spec, (int, float)) and not isinstance(rng_spec, bool):
+            # a single magnitude: every input spans +-mag (or [0, mag] where its configured range is non-negative); no search
+            run_cfg, row["range_source"], r_val = ranged_config(h.config, float(rng_spec)), "fixed", None
+            row["range_hi"] = float(rng_spec)
+            row["run_range"] = f"+-{float(rng_spec):g}"
         elif isinstance(rng_spec, (list, dict)):
             run_cfg, row["range_source"], r_val = explicit_config(h.config, rng_spec), "explicit", None
             row["range_hi"] = row["run_range"] = json.dumps(rng_spec)
@@ -342,7 +359,7 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
         raw_ok = dt.kind == "fixed"
         N_eff = 1 if static else N
         for k in range(N_eff):
-            seed = cfg["seed_base"] + k
+            seed = cfg["seed_base"] + cfg.get("report_seed_offset", 0) + k    # fresh inputs, disjoint from the ones that confirmed the range
             try:
                 out, g = h.run(run_cfg, seed, static_dir=static)
             except CrashError:

@@ -1,0 +1,30 @@
+% Draft text for the functional-verification subsection. Tables are generated: python verification/paper_runs/make_tables.py
+\subsection{Functional Verification}
+\label{sec:verification}
+
+We verify every generated operator against a double-precision (float64) reference computed on the same, already quantized, inputs, so that
+the reported error isolates the arithmetic of the generated design from the quantization of its inputs. Each operator variant is run through
+C~simulation with $N{=}100$ independent input sets drawn uniformly (and independently per input array) from $[-r,r]$; operators whose input
+range is configured as non-negative draw from $[0,r]$. We report the \emph{maximum absolute error} over all outputs and samples.
+
+\paragraph{Formats.} We compare four configurations: (i) \texttt{ap\_fixed<16,5>} used for all storage and arithmetic; (ii) the same
+\texttt{<16,5>} at the design interface, with each operator storing its operands in \texttt{<24,8>} and accumulating in \texttt{<32,10>}
+with round-to-nearest (both are per-operator parameters of the generator; operands are converted at the operator boundary);
+(iii) \texttt{<32,10>} throughout; and (iv) IEEE single-precision float. Fixed-point types use the Vitis default truncation and wrap unless
+stated; \texttt{ap\_fixed<W,I>} has $W$ total bits of which $I$ (including the sign) are integer bits.
+
+\paragraph{Operating range.} Fixed-point arithmetic wraps on overflow, so an operator is only meaningful over a bounded input range. For each
+operator and format we search for the largest range $\pm r$ for which every sampled input stays within an error bound
+\textbf{[bound: to be defined by the authors]}, confirm it with the full $N$ samples (stepping down on failure), back off by one further search step (a factor of $1.19$) because the edge of
+a window is statistically soft (an overflow there needs a rare input combination), and then report the error on a fresh set of $N$
+samples at that range (Table~\ref{tab:verif-range}). Because the bound is format-specific, ranges are not directly comparable across
+columns; Table~\ref{tab:verif-pm1} therefore reports all four formats on the same inputs in $[-1,1]$. Windows assume uniformly distributed
+inputs. The weights of matmul, MHA, sliding-window attention and convolution are held at $\pm0.1$ (a typical trained-weight scale) while
+the activations are scaled, and batchnorm's parameters (scale, shift, mean, variance) are drawn from $[0.25,1]$, so that the variance has a
+valid, non-degenerate floor. The range of the \texttt{tanh} activation is capped (16 for column~(ii), 24 for column~(iii)) because the Vitis
+\texttt{hls::tanh} fixed-point routine crashes or returns the wrong sign for isolated large arguments (from $|x|\approx20$ in \texttt{<24,8>}
+and $|x|\approx26$ in \texttt{<32,10>}). For float, verification is pass/fail against a relative--absolute tolerance, so its ``range''
+is the search ceiling and its error is measured at the design's nominal input range. A dagger in Table~\ref{tab:verif-pm1} marks a format and
+operator for which at least one of the $N$ samples left the format's error bound.
+
+\input{verif_ops}
