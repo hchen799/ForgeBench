@@ -59,11 +59,16 @@ def cosim_latency(run_dir):
     return None
 
 
-def run_cosim(domain, cfg_path, dtype_text, k, work, input_range=None, keep=False):
-    """-> dict(status, notes, trials=[{trial, c_vs_rtl_mismatch, max_abs_err, ...}], latency)."""
+def run_cosim(domain, cfg_path, dtype_text, k, work, input_range=None, inputs_config=None, keep=False):
+    """-> dict(status, notes, trials=[{trial, c_vs_rtl_mismatch, max_abs_err, ...}], latency).
+
+    `inputs_config` (a design config whose `input_range` and per-DRAM `input_range`s are used to draw the trial inputs, e.g. the ranged
+    config of the CSIM run) takes precedence over `input_range`."""
     dt = DType(dtype_text)
     overrides = {"trials": k}
-    if input_range is not None:
+    if inputs_config is not None and inputs_config.get("input_range") is not None:
+        overrides["input_range"] = inputs_config["input_range"]
+    elif input_range is not None:
         overrides["input_range"] = input_range
     os.makedirs(work, exist_ok=True)
     run_dir, config = generate_design(domain, cfg_path, work, ["csim", "csynth", "cosim"], data_type=dtype_text, config_overrides=overrides)
@@ -72,6 +77,12 @@ def run_cosim(domain, cfg_path, dtype_text, k, work, input_range=None, keep=Fals
         names = config["output_dram_names"]
         qf = (lambda x: quantize(x, dt))
         goldens = []
+        if inputs_config is not None:                                         # per-DRAM ranges (e.g. weights fixed at +-0.1)
+            ranges = {d["name"]: d for d in inputs_config["drams"]}
+            for d in config["drams"]:
+                for key in ("input_range", "fixed_range"):
+                    if key in ranges.get(d["name"], {}):
+                        d[key] = ranges[d["name"]][key]
         for t in range(k):
             refresh_inputs(domain, config, run_dir, seed=BASE_SEED + t)       # writes <DRAM>.txt for this seed
             for d in config["drams"]:

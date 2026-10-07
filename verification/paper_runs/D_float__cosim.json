@@ -1,0 +1,7 @@
+{
+  "extends": "D_float__pm1.json",
+  "_comment": "CO-SIM for paper column D_float: same design and inputs as the +-1 run (weights +-0.1 etc. via fixed_ranges_by_operator); 20 looped trials, RTL vs C bit-exact + latency. CSIM numbers come from the __pm1 / __max_range runs, so n_trials is 1 here.",
+  "sim": ["csim", "cosim"],
+  "n_trials": 1,
+  "cosim_trials": 20
+}
