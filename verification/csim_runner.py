@@ -142,6 +142,15 @@ def csim_build_dir(run_dir):
     return None
 
 
+class CrashError(Exception):
+    """csim.exe ended abnormally (assertion, SIGFPE, ...). Defined here, not in functional_verification, so the class is the same
+    object whether the engine runs as __main__ (python -m) or is imported (manual_designs raises it too)."""
+
+    def __init__(self, rc):
+        super().__init__(f"csim.exe exited with {rc}")
+        self.rc = rc
+
+
 def rerun_csim_exe(run_dir, build):
     """Re-execute the Vitis-built csim.exe against the current inputs/goldens."""
     for name in os.listdir(run_dir):

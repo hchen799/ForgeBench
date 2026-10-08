@@ -20,7 +20,7 @@ import shutil
 
 import numpy as np
 
-from verification.csim_runner import csim_build_dir, rerun_csim_exe, run_vitis
+from verification.csim_runner import CrashError, csim_build_dir, rerun_csim_exe, run_vitis
 from verification.fixedpoint import quantize
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -296,7 +296,6 @@ class ManualHarness:
         return np.concatenate([np.asarray(g[p["name"]], dtype=np.float64).reshape(-1) for p in self.outs])
 
     def run(self, cfg_ranged, seed, static_dir=None):
-        from verification.functional_verification import CrashError
         self._write_inputs(cfg_ranged, seed)
         for p in self.outs:
             f = os.path.join(self.build, f"{p['name']}_output.txt")

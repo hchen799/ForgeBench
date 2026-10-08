@@ -53,7 +53,7 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 from verification import fp, layout
-from verification.csim_runner import BASE_SEED, csim_build_dir, refresh_inputs, rerun_csim_exe, run_vitis
+from verification.csim_runner import BASE_SEED, CrashError, csim_build_dir, refresh_inputs, rerun_csim_exe, run_vitis
 from verification.fixedpoint import DType, error_metrics, quantize
 from verification.fixed_runner import accum_length, op_under_test, read_outputs
 from verification.golden_ref import compute_goldens
@@ -256,12 +256,6 @@ class Harness:
     def close(self, keep=False):
         if not keep:
             shutil.rmtree(self.run_dir, ignore_errors=True)
-
-
-class CrashError(Exception):
-    def __init__(self, rc):
-        super().__init__(f"csim.exe exited with {rc}")
-        self.rc = rc
 
 
 def sample_ok(h, cfg_r, seed, boundfn):
