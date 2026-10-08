@@ -12,7 +12,7 @@
 #include <hls_math.h>
 
 
-#define MAX_LOCAL_SIZE 9 //stride*(BLOCK_OUT_H - 1) + KSIZE = 1 * 6 + 3 = 9
+#define MAX_LOCAL_SIZE 16 //stride*(BLOCK_OUT_H - 1) + KSIZE = 1 * 13 + 3 = 16
 
 // define the size of the conv 1x1 and 3x3 kernel
 #define BLOCK_IN_CH 64
@@ -46,7 +46,9 @@
 
 
 
-typedef ap_fixed<16, 5> data_t;
+typedef ap_fixed<32, 10> data_t;
+typedef ap_fixed<32, 10> acc_t;    // accumulators and normalization arithmetic
+typedef ap_fixed<32, 10> math_t;   // operand type of hls::sqrt / hls::exp (needs default AP_TRN/AP_WRAP modes)
 
 // Inline functions or function definitions in a header should be marked inline
 int out_dim(int size, int pad, int stride, int kernel) {

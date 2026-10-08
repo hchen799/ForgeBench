@@ -25,6 +25,7 @@ Config (all keys optional; later files/overrides win; `extends` takes a path rel
   "datatypes": ["float", "fixed<16,5>", "fixed<32,10>"],          # 'fixed<W,I[,trn|rnd,wrap|sat]>' or 'ap_fixed<...>' (see docs/DATA_TYPES.md)
   "sim": ["csim", "cosim"],
   "n_trials": 100, "seed_base": 42, "cosim_trials": 20,
+  "n_trials_by_design": {"conv_block_op1": 10},   # optional: per-design N (id or stem)
   "golden": {"precision": "float64"},
   "inputs": {"range": "auto" | "design" | <magnitude> | [lo, hi] | {"DRAM_x": [lo, hi]}, "static_dir": null},   # <magnitude>: every input +-mag, no search
   "tolerance": {"mode": "format_bound" | "explicit", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5, "stages": 4, "peak_fraction": 0.01},
@@ -277,12 +278,18 @@ def sample_ok(h, cfg_r, seed, boundfn):
     return outside == 0, float(err.max()), outside, ("exceeds bound" if outside else "")
 
 
+def n_trials_for(cfg, v):
+    """N, unless `n_trials_by_design` names this variant (id or stem), e.g. {"conv_block_op1": 10} for a design whose CSIM trial takes ~30 min."""
+    by = cfg.get("n_trials_by_design") or {}
+    return int(by.get(v["id"], by.get(v["stem"], cfg["n_trials"])))
+
+
 def verify_variant(v, dt, cfg, work, out_dir, keep=False):
     t0 = time.time()
     domain, stem, path = v["domain"], v["stem"], v["path"]
     row = {"design": v["id"], "domain": domain, "operator": v["operator"], "variant": "" if v["variant"] == "default" else v["variant"],
            "datatype": dt.text, "rounding_overflow": "" if dt.kind == "float" else f"{dt.q[3:]}/{dt.o[3:]}", "sim_level": "csim",
-           "n_trials": cfg["n_trials"], "seed_base": cfg["seed_base"], "status": "ok", "notes": "",
+           "n_trials": n_trials_for(cfg, v), "seed_base": cfg["seed_base"], "status": "ok", "notes": "",
            "golden": f"numpy {cfg['golden']['precision']} on " + ("quantized inputs" if dt.kind == "fixed" else "float32 inputs")}
     h = None
     try:
@@ -293,7 +300,7 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
         if manual:
             # hand-written design: own testbench + golden (verification/manual_designs.py); its ports carry their own input ranges
             from verification.manual_designs import ManualHarness, SPECS
-            h = ManualHarness(v["id"].split("/", 1)[1], dt, base)
+            h = ManualHarness(v["id"].split("/", 1)[1], dt, base, cfg.get("op_params") or None)
         else:
             h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None,
                         {**(cfg.get("fixed_ranges") or {}), **((cfg.get("fixed_ranges_by_operator") or {}).get(v["operator"], {}))},
@@ -303,7 +310,7 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
             sp = SPECS[v["id"].split("/", 1)[1]]
             op = {"func_name": "manual", "dims": []}
             bcfg = {**cfg, "tolerance": {**cfg["tolerance"], "stages": cfg["tolerance"]["stages"] + sp["ops"] - 1}}
-            row["notes"] = f"hand-written; {sp['ops']} compute stages; " + ("op_params not applicable; " if cfg.get("op_params") else "")
+            row["notes"] = f"hand-written; {sp['ops']} compute stages; acc_t={h.types['acc_t']}; "
         elif whole:
             # a chain of operators: the longest accumulation of any operator, plus one dependent rounding stage per further operator
             ops = compute_ops(h.config)
@@ -316,7 +323,7 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
         kind, boundfn, _ = bound_for(bcfg, dt, L)
         row.update({"accum_len": L, "tolerance_kind": kind, "analytic_range": analytic_range(op["func_name"], op.get("dims", []), dt)})
         row["tol_abs"] = "" if dt.kind == "float" or cfg["tolerance"]["mode"] == "explicit" else f"{float(np.asarray(boundfn(np.zeros(1))).ravel()[0]):.6g}"
-        rs, N = cfg["range_search"], cfg["n_trials"]
+        rs, N = cfg["range_search"], n_trials_for(cfg, v)
         static = cfg["inputs"].get("static_dir")
         rng_spec = cfg["inputs"]["range"]
         sweep_bound = float_bound_no_atol(cfg) if dt.kind == "float" else boundfn
@@ -468,6 +475,9 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
         if h:
             h.close(keep)
     row["total_s"] = f"{time.time() - t0:.1f}"
+    os.makedirs(os.path.join(out_dir, "rows"), exist_ok=True)       # per-variant row as soon as it is done (summary.csv is written at the end)
+    with open(os.path.join(out_dir, "rows", f"{v['id'].replace('/', '__')}__{dt.tag()}.json"), "w") as f:
+        json.dump(row, f, indent=1, default=str)
     with _LOCK:
         print(f"  {v['id']} [{dt.text}] {row['status']} range_hi={row.get('range_hi', '-')} max_abs={row.get('max_abs_err', '-')} "
               f"within={row.get('trials_within_bound', '-')}/{row['n_trials']} ({row['total_s']}s) {row['notes'][:80]}", flush=True)

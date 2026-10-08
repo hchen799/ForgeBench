@@ -23,7 +23,7 @@ data_t FM_buffer_3[MAX_C][MAX_H][MAX_W];
 void conv_kernel_3x3(
     data_t inData[BLOCK_IN_CH][MAX_LOCAL_SIZE][MAX_LOCAL_SIZE],
     data_t weight[BLOCK_OUT_CH][BLOCK_IN_CH][KSIZE][KSIZE],
-    data_t outData[BLOCK_OUT_CH][BLOCK_OUT_H][BLOCK_OUT_W],
+    acc_t outData[BLOCK_OUT_CH][BLOCK_OUT_H][BLOCK_OUT_W],
     int outTileH, int outTileW,
     int localInH, int localInW,
     int stride
@@ -112,14 +112,14 @@ void conv_via_tiling_3x3(
                 int cur_out_ch = (oc_offset + BLOCK_OUT_CH <= out_ch) ? BLOCK_OUT_CH : (out_ch - oc_offset);
 
                 // Copy current partial sums from global output into a local buffer.
-                data_t localOut[BLOCK_OUT_CH][BLOCK_OUT_H][BLOCK_OUT_W];
+                acc_t localOut[BLOCK_OUT_CH][BLOCK_OUT_H][BLOCK_OUT_W];
                 for (int block_out_ch_i = 0; block_out_ch_i < BLOCK_OUT_CH; block_out_ch_i++)
                 {
                     for (int block_out_h_i = 0; block_out_h_i < BLOCK_OUT_H; block_out_h_i++)
                     {
                         for (int block_out_w_i = 0; block_out_w_i < BLOCK_OUT_W; block_out_w_i++)
                         {
-                            localOut[block_out_ch_i][block_out_h_i][block_out_w_i] = (data_t) 0;
+                            localOut[block_out_ch_i][block_out_h_i][block_out_w_i] = (acc_t) 0;
                         }
                     }
                 }
@@ -197,7 +197,7 @@ void conv_via_tiling_3x3(
                 for (int oc2 = 0; oc2 < cur_out_ch; oc2++) {
                     for (int r = 0; r < tileH; r++) {
                         for (int c = 0; c < tileW; c++) {
-                            output[oc_offset + oc2][out_row0 + r][out_col0 + c] = localOut[oc2][r][c];
+                            output[oc_offset + oc2][out_row0 + r][out_col0 + c] = (data_t) localOut[oc2][r][c];
                         }
                     }
                 }
@@ -209,7 +209,7 @@ void conv_via_tiling_3x3(
 void conv_kernel_1x1(
     data_t inData[BLOCK_IN_CH][MAX_LOCAL_SIZE][MAX_LOCAL_SIZE],
     data_t weight[BLOCK_OUT_CH][BLOCK_IN_CH][1][1],
-    data_t outData[BLOCK_OUT_CH][BLOCK_OUT_H][BLOCK_OUT_W],
+    acc_t outData[BLOCK_OUT_CH][BLOCK_OUT_H][BLOCK_OUT_W],
     int outTileH, int outTileW,
     int localInH, int localInW,
     int stride
@@ -301,14 +301,14 @@ void conv_via_tiling_1x1(
                 int cur_out_ch = (oc_offset + BLOCK_OUT_CH <= out_ch) ? BLOCK_OUT_CH : (out_ch - oc_offset);
 
                 // Copy current partial sums from global output into a local buffer.
-                data_t localOut[BLOCK_OUT_CH][BLOCK_OUT_H][BLOCK_OUT_W];
+                acc_t localOut[BLOCK_OUT_CH][BLOCK_OUT_H][BLOCK_OUT_W];
                 for (int block_out_ch_i = 0; block_out_ch_i < BLOCK_OUT_CH; block_out_ch_i++)
                 {
                     for (int block_out_h_i = 0; block_out_h_i < BLOCK_OUT_H; block_out_h_i++)
                     {
                         for (int block_out_w_i = 0; block_out_w_i < BLOCK_OUT_W; block_out_w_i++)
                         {
-                            localOut[block_out_ch_i][block_out_h_i][block_out_w_i] = (data_t) 0;
+                            localOut[block_out_ch_i][block_out_h_i][block_out_w_i] = (acc_t) 0;
                         }
                     }
                 }
@@ -386,7 +386,7 @@ void conv_via_tiling_1x1(
                 for (int oc2 = 0; oc2 < cur_out_ch; oc2++) {
                     for (int r = 0; r < tileH; r++) {
                         for (int c = 0; c < tileW; c++) {
-                            output[oc_offset + oc2][out_row0 + r][out_col0 + c] = localOut[oc2][r][c];
+                            output[oc_offset + oc2][out_row0 + r][out_col0 + c] = (data_t) localOut[oc2][r][c];
                         }
                     }
                 }
@@ -405,11 +405,11 @@ void batch_norm_kernel(
 {
     #pragma HLS inline off
     for (int c = 0; c < tile_C; c++) {
-        data_t denom = hls::sqrt(localWeights[3][c] + (data_t) EPSILON);
+        acc_t denom = (acc_t) hls::sqrt((math_t) ((math_t) localWeights[3][c] + (math_t) EPSILON));
         for (int h = 0; h < tile_H; h++) {
             for (int w = 0; w < tile_W; w++) {
-                data_t norm = (localInput[c][h][w] - localWeights[2][c]) / denom;
-                localOutput[c][h][w] = localWeights[0][c] * norm + localWeights[1][c];
+                acc_t norm = ((acc_t) localInput[c][h][w] - (acc_t) localWeights[2][c]) / denom;
+                localOutput[c][h][w] = (data_t) ((acc_t) localWeights[0][c] * norm + (acc_t) localWeights[1][c]);
             }
         }
     }
@@ -933,7 +933,7 @@ void top_C(
     batch_norm_tiled(64, 56, 56, FM_buffer_2, batch_norm_weight_buffer, FM_buffer_1);
     relu_tiled(64, 56, 56, FM_buffer_1, FM_buffer_2);
 
-    load_weights(conv_weight_2, weight_buffer, 64, 64, 1);
+    load_weights(conv_weight_2, weight_buffer, 64, 64, 3);
     load_bias(conv_bias_2, bias_buffer, 64);
     load_batch_norm_weights(batch_norm_weight_2, batch_norm_weight_buffer, 64);
     conv_via_tiling_3x3(64, 64, 56, 56, FM_buffer_2, weight_buffer, bias_buffer, FM_buffer_1, 1, 1);
@@ -1104,7 +1104,7 @@ void top(
     // batch_norm_tiled(64, 56, 56, FM_buffer_2, batch_norm_weight_buffer, FM_buffer_1);
     // relu_tiled(64, 56, 56, FM_buffer_1, FM_buffer_2);
 
-    // load_weights(conv_weight_2_C, weight_buffer, 64, 64, 1);
+    // load_weights(conv_weight_2_C, weight_buffer, 64, 64, 3);
     // load_bias(conv_bias_2_C, bias_buffer, 64);
     // load_batch_norm_weights(batch_norm_weight_2_C, batch_norm_weight_buffer, 64);
     // conv_via_tiling_3x3(64, 64, 56, 56, FM_buffer_2, weight_buffer, bias_buffer, FM_buffer_1, 1, 1);

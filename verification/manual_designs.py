@@ -4,7 +4,8 @@ These designs have no JSON config and no testbench: they were written by hand (`
 Each entry of SPECS describes one design's top-level ports (declared C++ extents and the region the design actually uses), the input
 ranges, and an independent float64 golden of what the design is meant to compute. The harness
 
-  * copies the design, rebinds `typedef ... data_t;` to the format under test (float / any ap_fixed spelling),
+  * copies the design, rebinds `typedef ... data_t;` to the format under test (float / any ap_fixed spelling) and `acc_t` / `math_t`
+    (accumulators / hls::sqrt+exp operands) to the config's op_params acc_type / acc_rounding / acc_overflow (default: data_t),
   * writes a generic testbench (reads `<port>.txt` for every input port, calls `top`, writes `<port>_output.txt` for every output port),
   * builds it once with Vitis CSIM and re-runs the built csim.exe for every trial (same scheme as the generated designs),
 
@@ -97,6 +98,13 @@ FM, WK3, WK1, BIAS, BN = [256, 56, 56], [256, 256, 3, 3], [256, 256, 1, 1], [256
 BN_RANGE = [0.25, 1.0]          # gamma, beta, mean, var all in [0.25, 1] (variance floor), as for the batchnorm operator
 
 
+def _w(fan_in):
+    """Weight range +-sqrt(3/fan_in): unit-variance weight sums (each layer keeps its input's scale), so a chain of layers stays
+    within the data format for +-1 inputs instead of growing by sqrt(fan_in) * 0.1 per layer."""
+    a = float(np.sqrt(3.0 / fan_in))
+    return (-a, a)
+
+
 def _p(name, decl, active=None, out=False, rng=(-1.0, 1.0), fixed=False):
     return {"name": name, "decl": list(decl), "active": list(active or decl), "out": out, "input_range": list(rng), "fixed_range": fixed}
 
@@ -107,17 +115,17 @@ def _act_ports():
 
 def _conv_block_ports():
     A = [_p("input_A", FM, [128, 56, 56])] + [q for i in range(1, 5) for q in (
-        _p(f"conv_weight_{i}_A", WK3, [256, 128 if i == 1 else 256, 3, 3], rng=(-0.1, 0.1), fixed=True),
+        _p(f"conv_weight_{i}_A", WK3, [256, 128 if i == 1 else 256, 3, 3], rng=_w(9 * (128 if i == 1 else 256)), fixed=True),
         _p(f"conv_bias_{i}_A", BIAS, rng=(-0.1, 0.1), fixed=True))] + [_p("output_A", FM, [256, 28, 28], out=True)]
     B = [_p("input_B", FM, [256, 14, 14])] + [q for i in (1, 2) for q in (
-        _p(f"conv_weight_{i}_B", WK3, rng=(-0.1, 0.1), fixed=True), _p(f"conv_bias_{i}_B", BIAS, rng=(-0.1, 0.1), fixed=True),
+        _p(f"conv_weight_{i}_B", WK3, rng=_w(9 * 256), fixed=True), _p(f"conv_bias_{i}_B", BIAS, rng=(-0.1, 0.1), fixed=True),
         _p(f"batch_norm_weight_{i}_B", BN, rng=BN_RANGE, fixed=True))] + [_p("output_B", FM, [256, 14, 14], out=True)]
     C = [_p("input_C", FM, [256, 56, 56]),
-         _p("conv_weight_1_C", WK1, [64, 256, 1, 1], rng=(-0.1, 0.1), fixed=True), _p("conv_bias_1_C", BIAS, [64], rng=(-0.1, 0.1), fixed=True),
+         _p("conv_weight_1_C", WK1, [64, 256, 1, 1], rng=_w(256), fixed=True), _p("conv_bias_1_C", BIAS, [64], rng=(-0.1, 0.1), fixed=True),
          _p("batch_norm_weight_1_C", BN, [4, 64], rng=BN_RANGE, fixed=True),
-         _p("conv_weight_2_C", WK3, [64, 64, 3, 3], rng=(-0.1, 0.1), fixed=True), _p("conv_bias_2_C", BIAS, [64], rng=(-0.1, 0.1), fixed=True),
+         _p("conv_weight_2_C", WK3, [64, 64, 3, 3], rng=_w(9 * 64), fixed=True), _p("conv_bias_2_C", BIAS, [64], rng=(-0.1, 0.1), fixed=True),
          _p("batch_norm_weight_2_C", BN, [4, 64], rng=BN_RANGE, fixed=True),
-         _p("conv_weight_3_C", WK1, [256, 64, 1, 1], rng=(-0.1, 0.1), fixed=True), _p("conv_bias_3_C", BIAS, [256], rng=(-0.1, 0.1), fixed=True),
+         _p("conv_weight_3_C", WK1, [256, 64, 1, 1], rng=_w(64), fixed=True), _p("conv_bias_3_C", BIAS, [256], rng=(-0.1, 0.1), fixed=True),
          _p("batch_norm_weight_3_C", BN, [4, 256], rng=BN_RANGE, fixed=True),
          _p("output_C", FM, [256, 56, 56], out=True)]
     return A, B, C
@@ -143,8 +151,8 @@ def _golden_block(which, t):
 
 def _attn_ports():
     return [q for s in ("A", "B") for q in (
-        _p(f"input_dram_{s}", [8, 32]), _p(f"Q_weight_dram_{s}", [32, 32], rng=(-0.1, 0.1), fixed=True),
-        _p(f"K_weight_dram_{s}", [32, 32], rng=(-0.1, 0.1), fixed=True), _p(f"V_weight_dram_{s}", [32, 32], rng=(-0.1, 0.1), fixed=True),
+        _p(f"input_dram_{s}", [8, 32]), _p(f"Q_weight_dram_{s}", [32, 32], rng=_w(32), fixed=True),
+        _p(f"K_weight_dram_{s}", [32, 32], rng=_w(32), fixed=True), _p(f"V_weight_dram_{s}", [32, 32], rng=_w(32), fixed=True),
         _p(f"output_dram_{s}", [8, 32], out=True))]
 
 
@@ -179,7 +187,8 @@ def variants():
 
 
 # ----------------------------------------------------------------------------- testbench / build
-_TYPEDEF = re.compile(r"typedef\s+ap_fixed\s*<[^;]*>\s*data_t\s*;")
+def _typedef_re(name):
+    return re.compile(r"typedef\s+ap_fixed\s*<[^;]*>\s*" + name + r"\s*;")
 
 
 def _cdims(dims):
@@ -206,15 +215,30 @@ def testbench(spec):
     return "\n".join(L) + "\n"
 
 
-def prepare(spec, dtype_text, run_dir, tasks=("csim",), trials_tcl=""):
-    """Copy the design into run_dir with data_t rebound and a testbench + run_hls.tcl added."""
+def types(dtype_text, op_params=None):
+    """-> {typedef name: C type}. data_t is the format under test; acc_t / math_t (accumulators; operand of hls::sqrt/exp) follow
+    op_params acc_type / acc_rounding / acc_overflow exactly as a generated operator's ACC / ACCM do, else they are data_t."""
+    from backends import current
+    if dtype_text == "float":
+        return {"data_t": "float", "acc_t": "float", "math_t": "float"}
+    acc, accm = current().acc_decls(dtype_text, op_params or {})
+    data = _ctype(dtype_text)
+    return {"data_t": data, "acc_t": data if acc == "data_t" else acc, "math_t": data if accm == "data_t" else accm}
+
+
+def prepare(spec, dtype_text, run_dir, tasks=("csim",), trials_tcl="", op_params=None):
+    """Copy the design into run_dir with data_t / acc_t / math_t rebound and a testbench + run_hls.tcl added."""
     src = os.path.join(REPO, spec["dir"])
     os.makedirs(run_dir, exist_ok=True)
-    ctype = "float" if dtype_text == "float" else _ctype(dtype_text)
+    tys = types(dtype_text, op_params)
+    ctype = tys["data_t"]
     for fn in ("top.cpp", "top.h"):
         p = os.path.join(src, fn)
         if os.path.isfile(p):
-            open(os.path.join(run_dir, fn), "w").write(_TYPEDEF.sub(f"typedef {ctype} data_t;", open(p).read()))
+            text = open(p).read()
+            for name, c in tys.items():
+                text = _typedef_re(name).sub(f"typedef {c} {name};", text)
+            open(os.path.join(run_dir, fn), "w").write(text)
     open(os.path.join(run_dir, "tb_top.cpp"), "w").write(testbench(spec).replace("@TYPEDEF@", f"typedef {ctype} data_t;"))
     steps = {"csim": "csim_design", "csynth": "csynth_design", "cosim": "cosim_design"}
     tcl = ["open_project -reset project_1", "set_top top", "add_files top.cpp", "add_files -tb tb_top.cpp", trials_tcl,
@@ -230,12 +254,13 @@ def _ctype(dtype_text):
 
 # ----------------------------------------------------------------------------- harness (functional_verification.Harness interface)
 class ManualHarness:
-    def __init__(self, key, dt, work):
+    def __init__(self, key, dt, work, op_params=None):
         self.key, self.spec, self.dt = key, SPECS[key], dt
         self.cfg_path = None
         self.run_dir = os.path.join(work, key.replace("/", "__"))
+        self.types = types(dt.text, op_params)
         shutil.rmtree(self.run_dir, ignore_errors=True)
-        prepare(self.spec, dt.text, self.run_dir)
+        prepare(self.spec, dt.text, self.run_dir, op_params=op_params)
         used = set(self.spec["used"])
         ins = [p for p in self.spec["ports"] if not p["out"] and p["name"] in used]
         self.outs = [p for p in self.spec["ports"] if p["out"] and p["name"] in used]

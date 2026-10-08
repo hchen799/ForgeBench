@@ -12,7 +12,9 @@
 #define TOP_H
 
 
-typedef ap_fixed<16, 5> data_t;
+typedef ap_fixed<32, 10> data_t;
+typedef ap_fixed<32, 10> acc_t;    // accumulators and normalization arithmetic
+typedef ap_fixed<32, 10> math_t;   // operand type of hls::sqrt / hls::exp (needs default AP_TRN/AP_WRAP modes)
 
 #define SEQ_LENGTH 8
 #define DIM 32

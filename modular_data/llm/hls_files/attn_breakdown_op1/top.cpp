@@ -10,7 +10,9 @@
 
 using namespace std;
 
-typedef ap_fixed<16, 5> data_t;
+typedef ap_fixed<32, 10> data_t;
+typedef ap_fixed<32, 10> acc_t;    // accumulators and normalization arithmetic
+typedef ap_fixed<32, 10> math_t;   // operand type of hls::sqrt / hls::exp (needs default AP_TRN/AP_WRAP modes)
 
 #define SEQ_LENGTH 8
 #define DIM 32
@@ -38,10 +40,11 @@ void matmul_large (data_t input_1[SEQ_LENGTH][DIM], data_t input_2[SEQ_LENGTH][D
     #pragma HLS inline off
     for (int seq = 0; seq < SEQ_LENGTH; seq++) {
         for (int dout = 0; dout < DIM; dout++) {
-            output[seq][dout] = 0;
+            acc_t sum = 0;
             for (int din = 0; din < DIM; din++) {
-                output[seq][dout] += input_1[seq][din] * input_2[dout][din];
+                sum += input_1[seq][din] * input_2[dout][din];
             }
+            output[seq][dout] = (data_t) sum;
         }
     }
 }
@@ -64,11 +67,12 @@ void matmul_small_1 (data_t Q[SEQ_LENGTH][DIM], data_t K[SEQ_LENGTH][DIM], data_
     // Scaled Dot-product: Q x K^T for head head_index
     for (int i = 0; i < SEQ_LENGTH; i++) {
         for (int j = 0; j < SEQ_LENGTH; j++) {
-            scores[i][j] = 0;
+            acc_t sum = 0;
             for (int d = 0; d < HEAD_DIM; d++) {
                 int idx = head_index * HEAD_DIM + d;
-                scores[i][j] += Q[i][idx] * K[j][idx];
+                sum += Q[i][idx] * K[j][idx];
             }
+            scores[i][j] = (data_t) sum;
         }
     }
 }
@@ -79,11 +83,11 @@ void matmul_small_2 (data_t scores[SEQ_LENGTH][SEQ_LENGTH], data_t V[SEQ_LENGTH]
     // Compute context: scores x V for head head_index.
     for (int i = 0; i < SEQ_LENGTH; i++) {
         for (int d = 0; d < HEAD_DIM; d++) {
-            data_t context = 0;
+            acc_t context = 0;
             for (int j = 0; j < SEQ_LENGTH; j++) {
                 context += scores[i][j] * V[j][head_index * HEAD_DIM + d];
             }
-            output[i][head_index * HEAD_DIM + d] = context;
+            output[i][head_index * HEAD_DIM + d] = (data_t) context;
         }
     }
 }
@@ -123,13 +127,14 @@ void softmax(
     // Compute softmax along the hidden dimension for each row.
     #pragma HLS inline off
     for (int i = 0; i < SEQ_LENGTH; i++) {
-        data_t sum = 0;
-        for (int j = 0; j < DIM; j++) {
-            output[i][j] = hls::exp(input[i][j]);
-            sum += output[i][j];
+        acc_t sum = 0;
+        acc_t e[SEQ_LENGTH];
+        for (int j = 0; j < SEQ_LENGTH; j++) {
+            e[j] = (acc_t) hls::exp((math_t) input[i][j]);
+            sum += e[j];
         }
-        for (int j = 0; j < DIM; j++) {
-            output[i][j] /= sum;
+        for (int j = 0; j < SEQ_LENGTH; j++) {
+            output[i][j] = (data_t) (e[j] / sum);
         }
     }
 }
