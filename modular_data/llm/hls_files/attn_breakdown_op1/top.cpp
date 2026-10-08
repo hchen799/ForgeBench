@@ -127,10 +127,15 @@ void softmax(
     // Compute softmax along the hidden dimension for each row.
     #pragma HLS inline off
     for (int i = 0; i < SEQ_LENGTH; i++) {
+        // numerically stable: subtract the row maximum so every exp argument is <= 0
+        data_t row_max = input[i][0];
+        for (int j = 1; j < SEQ_LENGTH; j++) {
+            if (input[i][j] > row_max) row_max = input[i][j];
+        }
         acc_t sum = 0;
         acc_t e[SEQ_LENGTH];
         for (int j = 0; j < SEQ_LENGTH; j++) {
-            e[j] = (acc_t) hls::exp((math_t) input[i][j]);
+            e[j] = (acc_t) hls::exp((math_t) (input[i][j] - row_max));
             sum += e[j];
         }
         for (int j = 0; j < SEQ_LENGTH; j++) {

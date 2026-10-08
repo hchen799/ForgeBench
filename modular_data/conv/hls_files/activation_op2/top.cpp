@@ -20,6 +20,7 @@ data_t FM_buffer_1[C][H][W];
 data_t FM_buffer_2[C][H][W];
 data_t FM_buffer_3[C][H][W];
 data_t FM_buffer_4[C][H][W];
+data_t FM_buffer_5[C][H][W];
 
 
 void load_feature_map(data_t input_dram[C][H][W], data_t input_buffer[C][H][W])
@@ -163,29 +164,71 @@ void select(data_t input_1[C][H][W], data_t input_2[C][H][W], data_t output[C][H
     }
 }
 
+void absolute(data_t input[C][H][W], data_t output[C][H][W])
+{
+    #pragma HLS inline off
+    for (int i = 0; i < C; i++)
+    {
+        for (int j = 0; j < H; j++)
+        {
+            for (int k = 0; k < W; k++)
+            {
+                output[i][j][k] = (input[i][j][k] < (data_t) 0) ? (data_t) -input[i][j][k] : input[i][j][k];
+            }
+        }
+    }
+}
+
+// output = (sign >= 0) ? pos : neg
+void select_sign(data_t sign[C][H][W], data_t pos[C][H][W], data_t neg[C][H][W], data_t output[C][H][W])
+{
+    #pragma HLS inline off
+    for (int i = 0; i < C; i++)
+    {
+        for (int j = 0; j < H; j++)
+        {
+            for (int k = 0; k < W; k++)
+            {
+                output[i][j][k] = (sign[i][j][k] >= (data_t) 0) ? pos[i][j][k] : neg[i][j][k];
+            }
+        }
+    }
+}
+
+// Numerically stable: exp is only taken of -|x| (<= 0), so it cannot overflow the format.
+// sigmoid(x) = 1 / (1 + e) for x >= 0 and e / (1 + e) for x < 0, with e = exp(-|x|)
 void sigmoid (data_t input[C][H][W], data_t output[C][H][W])
 {
     #pragma HLS inline off
-    load_feature_map(input, FM_buffer_1);
-    negative(FM_buffer_1, FM_buffer_2);
-    compute_exp(FM_buffer_2, FM_buffer_1);
+    load_feature_map(input, FM_buffer_1);                   // x
+    absolute(FM_buffer_1, FM_buffer_2);
+    negative(FM_buffer_2, FM_buffer_3);                     // -|x|
+    compute_exp(FM_buffer_3, FM_buffer_2);                  // e
     set_value(FM_buffer_3, (data_t) 1);
-    compute_add(FM_buffer_3, FM_buffer_1, FM_buffer_2);
-    compute_div(FM_buffer_3, FM_buffer_2, FM_buffer_1);
-    store_feature_map(FM_buffer_1, output);
+    compute_add(FM_buffer_3, FM_buffer_2, FM_buffer_4);     // 1 + e
+    compute_div(FM_buffer_3, FM_buffer_4, FM_buffer_5);     // sigmoid(|x|)
+    compute_div(FM_buffer_2, FM_buffer_4, FM_buffer_3);     // sigmoid(-|x|)
+    select_sign(FM_buffer_1, FM_buffer_5, FM_buffer_3, FM_buffer_2);
+    store_feature_map(FM_buffer_2, output);
 }
 
+// tanh(x) = sign(x) * (1 - t) / (1 + t), with t = exp(-2|x|) = exp(-|x|)^2 (2|x| itself could overflow the format)
 void tanh (data_t input[C][H][W], data_t output[C][H][W])
 {
     #pragma HLS inline off
-    load_feature_map(input, FM_buffer_1);
-    compute_exp(FM_buffer_1, FM_buffer_2); //exp(x)
-    negative(FM_buffer_1, FM_buffer_3);
-    compute_exp(FM_buffer_3, FM_buffer_1); //exp(-x)
-    compute_add(FM_buffer_2, FM_buffer_1, FM_buffer_3);
-    negative(FM_buffer_1, FM_buffer_4);
-    compute_add(FM_buffer_2, FM_buffer_4, FM_buffer_1);
-    compute_div(FM_buffer_1, FM_buffer_3, FM_buffer_2);
+    load_feature_map(input, FM_buffer_1);                   // x
+    absolute(FM_buffer_1, FM_buffer_2);
+    negative(FM_buffer_2, FM_buffer_3);                     // -|x|
+    compute_exp(FM_buffer_3, FM_buffer_2);                  // exp(-|x|)
+    load_feature_map(FM_buffer_2, FM_buffer_3);             // copy
+    compute_mul(FM_buffer_2, FM_buffer_3, FM_buffer_4);     // t
+    set_value(FM_buffer_5, (data_t) 1);
+    compute_add(FM_buffer_5, FM_buffer_4, FM_buffer_2);     // 1 + t
+    negative(FM_buffer_4, FM_buffer_3);
+    compute_add(FM_buffer_5, FM_buffer_3, FM_buffer_4);     // 1 - t
+    compute_div(FM_buffer_4, FM_buffer_2, FM_buffer_3);     // tanh(|x|)
+    negative(FM_buffer_3, FM_buffer_4);                     // tanh(-|x|)
+    select_sign(FM_buffer_1, FM_buffer_3, FM_buffer_4, FM_buffer_2);
     store_feature_map(FM_buffer_2, output);
 }
 
@@ -233,6 +276,8 @@ void top(
     #pragma HLS allocation function instances= compute_mul limit=1
     #pragma HLS allocation function instances= set_value limit=1
     #pragma HLS allocation function instances= select limit=1
+    #pragma HLS allocation function instances= absolute limit=1
+    #pragma HLS allocation function instances= select_sign limit=1
    
     // //sigmoid
     // load_feature_map(input_sigmoid, FM_buffer_1);
