@@ -26,6 +26,7 @@ Config (all keys optional; later files/overrides win; `extends` takes a path rel
   "sim": ["csim", "cosim"],
   "n_trials": 100, "seed_base": 42, "cosim_trials": 20,
   "n_trials_by_design": {"conv_block_op1": 10},   # optional: per-design N (id or stem)
+  "fixed_ranges_by_design": {"diff_dims_p1": {"DRAM_2": 0.0765}},   # optional: per-design DRAM ranges (substring of the DRAM name -> +-mag or [lo,hi]), kept fixed by the search
   "golden": {"precision": "float64"},
   "inputs": {"range": "auto" | "design" | <magnitude> | [lo, hi] | {"DRAM_x": [lo, hi]}, "static_dir": null},   # <magnitude>: every input +-mag, no search
   "tolerance": {"mode": "format_bound" | "explicit", "atol": 1e-5, "rtol": 1e-3, "atol_scale": 5e-5, "stages": 4, "peak_fraction": 0.01},
@@ -297,7 +298,8 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
             h = ManualHarness(v["id"].split("/", 1)[1], dt, base, cfg.get("op_params") or None)
         else:
             h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None,
-                        {**(cfg.get("fixed_ranges") or {}), **((cfg.get("fixed_ranges_by_operator") or {}).get(v["operator"], {}))},
+                        {**(cfg.get("fixed_ranges") or {}), **((cfg.get("fixed_ranges_by_operator") or {}).get(v["operator"], {})),
+                         **((cfg.get("fixed_ranges_by_design") or {}).get(v["stem"], {}))},
                         whole_design=whole)
         bcfg = cfg
         if manual:
@@ -385,6 +387,16 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
         else:
             run_cfg, row["range_source"], r_val = h.config, "design", None
             row["run_range"] = "design"
+
+        # the exact design JSON of the reported trials (data type, op_params, every input's range incl. fixed weight / batchnorm ranges)
+        cdir = os.path.join(out_dir, "configs")
+        os.makedirs(cdir, exist_ok=True)
+        eff = {**run_cfg, "data_type": dt.text, "_verification": {"run_range": row.get("run_range"), "n_trials": N, "seed_base": cfg["seed_base"],
+                                                                 "report_seed_offset": cfg.get("report_seed_offset", 0), "source": os.path.relpath(path, REPO_ROOT)}}
+        if manual:
+            eff["_verification"]["types"] = h.types
+        with open(os.path.join(cdir, f"{v['id'].replace('/', '__')}__{dt.tag()}.json"), "w") as f:
+            json.dump(eff, f, indent=1)
 
         # ---- 3. N trials at the validated range ---------------------------------------------------------------------------
         acc = {"max": 0.0, "abs_mean": 0.0, "mse": 0.0, "sig": 0.0, "err": 0.0, "raw_max": 0.0, "within": 0, "n": 0, "crash": 0}

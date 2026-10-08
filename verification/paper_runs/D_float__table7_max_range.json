@@ -1,5 +1,94 @@
 {
   "extends": "D_float__max_range.json",
-  "_comment": "Table 7 (modularization) generated programs, whole designs end to end; same column settings as D_float__max_range. op_params apply to every compute operator; tolerance stages += (#compute ops - 1).",
-  "operators": "table7"
+  "_comment": "Table 7 (modularization) generated programs, whole designs end to end; same column settings as D_float__max_range. op_params apply to every compute operator; tolerance stages += (#compute ops - 1). Per-design fixed ranges: weights +-sqrt(3/fan_in) (gemm: the second operand), conv bias +-0.1, norm parameters [0.25, 1].",
+  "operators": [
+    "design"
+  ],
+  "fixed_ranges_by_design": {
+    "conv_A": {
+      "DRAM_conv_weight": 0.0722,
+      "DRAM_conv_bias": 0.1
+    },
+    "conv_B": {
+      "DRAM_conv_weight": 0.051,
+      "DRAM_conv_bias": 0.1
+    },
+    "conv_C": {
+      "DRAM_conv_weight": 0.051,
+      "DRAM_conv_bias": 0.1
+    },
+    "diff_dims_p1": {
+      "DRAM_2": 0.0765
+    },
+    "diff_dims_p2": {
+      "DRAM_2": 0.1083
+    },
+    "diff_dims_p3": {
+      "DRAM_2": 0.1531
+    },
+    "diff_orders_p1": {
+      "DRAM_2": 0.1531
+    },
+    "diff_orders_p2": {
+      "DRAM_2": 0.1531
+    },
+    "diff_orders_p3": {
+      "DRAM_2": 0.1531
+    },
+    "mult_op_p1": {
+      "DRAM_2": 0.2165
+    },
+    "mult_op_p2": {
+      "DRAM_2": 0.2165
+    },
+    "mult_op_p3": {
+      "DRAM_2": 0.2165
+    },
+    "vec_mtx_p1": {
+      "DRAM_2": 0.2165
+    },
+    "vec_mtx_p2": {
+      "DRAM_2": 0.2165
+    },
+    "gpt_transformer_p1": {
+      "DRAM_weights_q": 0.3062,
+      "DRAM_weights_k": 0.3062,
+      "DRAM_weights_v": 0.3062,
+      "DRAM_layer_norm_weights_1": [
+        0.25,
+        1.0
+      ],
+      "DRAM_FF_weights_1": 0.3062,
+      "DRAM_FF_weights_2": 0.1531,
+      "DRAM_layer_norm_weights_2": [
+        0.25,
+        1.0
+      ]
+    },
+    "llama_transformer_p2": {
+      "DRAM_weights_q": 0.3062,
+      "DRAM_weights_k": 0.3062,
+      "DRAM_weights_v": 0.3062,
+      "DRAM_rms_norm_weights_1": [
+        0.25,
+        1.0
+      ],
+      "DRAM_FF_weights_1": 0.3062,
+      "DRAM_FF_weights_2": 0.1531,
+      "DRAM_rms_norm_weights_2": [
+        0.25,
+        1.0
+      ]
+    },
+    "tiled_attn_p1": {
+      "DRAM_weights_q": 0.1083,
+      "DRAM_weights_k": 0.1083,
+      "DRAM_weights_v": 0.1083
+    },
+    "tiled_attn_p2": {
+      "DRAM_weights_q": 0.1083,
+      "DRAM_weights_k": 0.1083,
+      "DRAM_weights_v": 0.1083
+    }
+  }
 }
