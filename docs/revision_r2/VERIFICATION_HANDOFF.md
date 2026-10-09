@@ -1,8 +1,60 @@
-# Verification: status and plan (hand-off, 2026-10-07)
+# Verification: status and plan (hand-off, updated 2026-10-09)
 
 Branch `FPT_TRETS_2026`. Deadlines: code/results freeze 2026-10-21, resubmission 2026-10-30.
 Standing rules: do not touch `scale_models/` layout until the consolidation is agreed; the LLM sweep re-run waits until verification is finished;
 the user pushes (the agent only commits locally).
+
+## 0. Status 2026-10-09 (read first; supersedes §1–§2 where they differ)
+
+**CSIM verification is complete; every run passes.** Results, tables and the exact design JSON of every experiment are committed in
+`verification/paper_results/` (commit 6646b71): `verif_ops`, `verif_modular`, `verif_fullmodel` (`.tex` + `.csv`), per run `configs/` (design JSON,
+seeds, ranges), `sweep_curves/`, `rows/`, `summary.csv`. How each experiment is defined and re-run: `verification/paper_runs/README.md`
+(`run_all.sh` ops, `run_table7.sh` Table 7, `run_fullmodel.sh` full models, `run_cosim.sh` CO-SIM, `collect_results.sh` -> tables).
+
+| Experiment | Formats | What was measured | Result |
+|---|---|---|---|
+| Operators: 57 Table-2 variants | A `<16,5>`, B mixed, C `<32,10>`, D float | largest passing range; max abs + relative L2 error there and at ±1; N=100 | 57/57 pass in every column |
+| Table 7: 18 generated programs | B, C, D | same | 18/18 pass. Weights ±√(3/fan_in), conv bias ±0.1, norm parameters [0.25, 1] |
+| Table 7: 8 hand-written designs (`verification/manual_designs.py`) | B, C, D | same; conv_block_op1 ±1 only, N=10 (35–60 min per fixed-point sample) | 8/8 pass. Designs now use `acc_t`/`math_t`; softmax subtracts the max; sigmoid/tanh only take `exp` of a negative number |
+| Full models, `<32,10>` round/saturate (`verify.py`) | C | exact match with the integer-code fixed reference + FP64 relative L2 | ResNet-18/34/50/101/152, full + tiled, 10 seeds each: 100/100 pass; Llama-3-8B ctx2048, 3 seeds: pass. Zero code mismatches; logits relative L2 ≤ ~1e-6 |
+
+Full-model inputs: input uniform ±1, weights ±√(3/fan_in), one seed = new parameter set + input. Float full models were not run (`verify.py` is
+fixed-point only; recommended skip, not yet confirmed by the user). Full-model results in `/usr/scratch/awanna3/fb_fullmodel_verif/seeds_32_10`
+(34 GB, summaries copied to `paper_results/fullmodel/`).
+
+**Pending**
+1. **Commit the `<32,10>` round/saturate full-model sources** (user approved 2026-10-09). Copy `top.cpp`, `top.h`, `tb_top.cpp`,
+   `resolved_config.json`, `run_hls.tcl` of the 12 `*_32_10_` projects from `/usr/scratch/awanna3/fb_fullmodel_verif/sources_rndsat/` over
+   `scale_models/hls_files/` (same folders, no layout change). `contracts.json` (hash entries for the RND/SAT `<32,10>` and `<16,5>` sources) is
+   already committed (5f74260); its `<16,5>` entries cover sources that are not committed and were not run through `verify.py`.
+   The agent's copy was blocked by the auto-mode permission check; the user runs it or allows it. Full-model synthesis must use these sources.
+2. **CO-SIM**: `run_cosim.sh` prepared (C and D, all 57 ops, ±1, 10 looped trials), not started; needs an idle server. Float conv ~8 h.
+3. **Catapult GEMM C-sim**: next (§0b).
+4. Open questions: modular `_module` equivalence check (each merged design reproduces every P program) not done; Llama ctx8192 not verified;
+   gpt/llama transformer programs stop at the same range in B and C (±9.3, ±4.5), probably the shared `<32,10>` accumulator in the norm, unconfirmed;
+   hand-written conv blocks in C use a truncate/wrap `acc_t` (~1e-3 error), round/saturate would likely reduce it (re-run ~10 h).
+5. After that: LLM sweep re-run (csynth 3,888 + impl 1,000), then the §2 item 5 open items.
+
+## 0b. Starting the Catapult work
+
+Scope (user, 2026-10-08): "a couple csim tests for the catapult generated gemm ops". The larger plan (96-design subset + synthesis, metrics table) is
+`REVISION_R2_AGENT_BRIEF.md` §F; its fallback is `docs/CATAPULT_STATUS.md` describing exactly what exists.
+
+What exists:
+- `backends/catapult.py`: Catapult backend, wired into **gemm only**. `ap_fixed<W,I>` -> `ac_fixed<W,I,true,AC_TRN,AC_WRAP>` (modes follow the
+  generic `fixed<W,I,rnd,sat>` spelling); its math header binds `exp/sqrt/tanh` to `ac_math` for `ac_fixed` and to `<cmath>` for float;
+  `pow/sin/cos` are float-only.
+- Selected per design by the config key `"tool": "catapult"` (`gemm/gen_configs.py::run_hls_flow`, `backends.set_current`).
+- `verification/catapult_syntax_check.py`: generates designs with the Catapult backend and runs `g++ -fsyntax-only` against the `ac_*` headers.
+  No Catapult run, no testbench run, no golden compare yet. `analysis/extractors/catapult.py` is a stub.
+- Toolchain: `/tools/software/siemens/catapult/{2025.2.1,2026.2}`, `latest -> 2026.2` (`MGC_HOME` default
+  `/tools/software/siemens/catapult/latest/Mgc_home`, headers in `shared/include`).
+- The verification engine has no backend switch yet: `functional_verification.py` / `csim_runner.py` build Vitis projects only.
+
+Suggested path: (1) generate a few gemm ops (e.g. `ops/gemm/gemm__bias1` and one unrolled variant) with `"tool": "catapult"` in float and
+`<32,10>`; (2) compile the generated `top.cpp` + testbench with g++ against the `ac_*` headers (Catapult C-sim is plain C++, no license) and compare
+with the same float64 golden and `format_bound` as the Vitis runs, ideally by adding a backend option to the engine so inputs, seeds and tables
+are shared; (3) then, if time allows, `catapult -shell -f run_hls.tcl` for the same designs and record the version in `docs/TOOL_VERSIONS.md`.
 
 ## 1. Operator-level verification (our side) — done / in place
 
