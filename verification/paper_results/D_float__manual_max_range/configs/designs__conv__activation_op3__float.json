@@ -1,0 +1,37 @@
+{
+ "input_range": [
+  -1.0,
+  1.0
+ ],
+ "output_dram_names": [
+  "output_elu"
+ ],
+ "drams": [
+  {
+   "name": "input_elu",
+   "dims": [
+    64,
+    28,
+    28
+   ],
+   "input_range": [
+    -1.0,
+    1.0
+   ]
+  }
+ ],
+ "data_type": "float",
+ "_verification": {
+  "run_range": "design",
+  "n_trials": 100,
+  "seed_base": 42,
+  "report_seed_offset": 1000000,
+  "source": "modular_data/conv/hls_files/activation_op3",
+  "types": {
+   "data_t": "float",
+   "acc_t": "float",
+   "math_t": "float"
+  },
+  "written": "post hoc (run predates the engine's config dump)"
+ }
+}

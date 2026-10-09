@@ -1,0 +1,9 @@
+PASS
+Fixed-point comparison: PASS
+FP64 comparison: PASS
+
+Final layer output comparison:
+  call0000/logits: shape=[4, 128256] codes=PASS mismatches=0 max_code_error=0 FP64=PASS max_abs=4.70898723937e-06 relative_l2=8.967707757387501e-07 relative_l2_limit=0.05
+  call0001/logits: shape=[1, 128256] codes=PASS mismatches=0 max_code_error=0 FP64=PASS max_abs=4.4311569769e-06 relative_l2=1.0202241638795125e-06 relative_l2_limit=0.05
+  call0002/logits: shape=[1, 128256] codes=PASS mismatches=0 max_code_error=0 FP64=PASS max_abs=4.93760097253e-06 relative_l2=1.0459956087578575e-06 relative_l2_limit=0.05
+

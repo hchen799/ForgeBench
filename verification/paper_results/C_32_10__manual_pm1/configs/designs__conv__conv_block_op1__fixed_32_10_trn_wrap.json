@@ -1,0 +1,137 @@
+{
+ "input_range": [
+  -1.0,
+  1.0
+ ],
+ "output_dram_names": [
+  "output_A"
+ ],
+ "drams": [
+  {
+   "name": "input_A",
+   "dims": [
+    128,
+    56,
+    56
+   ],
+   "input_range": [
+    -1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "conv_weight_1_A",
+   "dims": [
+    256,
+    128,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.05103103630798288,
+    0.05103103630798288
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_1_A",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_2_A",
+   "dims": [
+    256,
+    256,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.03608439182435161,
+    0.03608439182435161
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_2_A",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_3_A",
+   "dims": [
+    256,
+    256,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.03608439182435161,
+    0.03608439182435161
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_3_A",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_4_A",
+   "dims": [
+    256,
+    256,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.03608439182435161,
+    0.03608439182435161
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_4_A",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  }
+ ],
+ "data_type": "fixed<32,10>",
+ "_verification": {
+  "run_range": "+-1",
+  "n_trials": 10,
+  "seed_base": 42,
+  "report_seed_offset": 1000000,
+  "source": "modular_data/conv/hls_files/conv_block_op1",
+  "types": {
+   "data_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>",
+   "acc_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>",
+   "math_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>"
+  },
+  "written": "post hoc (run predates the engine's config dump)"
+ }
+}

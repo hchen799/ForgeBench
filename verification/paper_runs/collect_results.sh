@@ -16,7 +16,7 @@ for run in $SRC/*__max_range $SRC/*__pm1 $SRC/*__table7_* $SRC/*__manual_* $SRC/
   for f in summary.csv resolved_config.json configs sweep_curves rows; do
     [ -e "$run/$f" ] && cp -r "$run/$f" "$DST/$name/"
   done
-  [ -f "$SRC/$name.log" ] && cp "$SRC/$name.log" "$DST/$name/run.log"
+  [ -f "$SRC/$name.log" ] && gzip -9c "$SRC/$name.log" > "$DST/$name/run.log.gz"
 done
 if [ -n "${FULLMODEL:-}" ]; then
   mkdir -p "$DST/fullmodel"
@@ -24,7 +24,11 @@ if [ -n "${FULLMODEL:-}" ]; then
   for r in "$FULLMODEL"/*/; do
     n=$(basename "$r"); mkdir -p "$DST/fullmodel/$n"
     for f in summary.json summary.txt manifest.json inputs/manifest.json; do
-      [ -f "$r/$f" ] && cp "$r/$f" "$DST/fullmodel/$n/$(echo $f | tr / _)"
+      [ -f "$r/$f" ] || continue
+      case $f in
+        *.json) gzip -9c "$r/$f" > "$DST/fullmodel/$n/$(echo $f | tr / _).gz" ;;   # per-tensor errors; sha256 of every parameter tensor
+        *) cp "$r/$f" "$DST/fullmodel/$n/" ;;
+      esac
     done
   done
 fi

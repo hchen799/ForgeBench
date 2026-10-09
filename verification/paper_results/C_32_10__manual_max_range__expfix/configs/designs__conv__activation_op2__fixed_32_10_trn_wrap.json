@@ -1,0 +1,37 @@
+{
+ "input_range": [
+  -623.072,
+  623.072
+ ],
+ "output_dram_names": [
+  "output_tanh"
+ ],
+ "drams": [
+  {
+   "name": "input_tanh",
+   "dims": [
+    64,
+    28,
+    28
+   ],
+   "input_range": [
+    -623.072,
+    623.072
+   ]
+  }
+ ],
+ "data_type": "fixed<32,10>",
+ "_verification": {
+  "run_range": "+-623.072",
+  "n_trials": 100,
+  "seed_base": 42,
+  "report_seed_offset": 1000000,
+  "source": "modular_data/conv/hls_files/activation_op2",
+  "types": {
+   "data_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>",
+   "acc_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>",
+   "math_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>"
+  },
+  "written": "post hoc (run predates the engine's config dump)"
+ }
+}

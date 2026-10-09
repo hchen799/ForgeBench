@@ -1,0 +1,148 @@
+{
+ "input_range": [
+  -66.8818,
+  66.8818
+ ],
+ "output_dram_names": [
+  "output_C"
+ ],
+ "drams": [
+  {
+   "name": "input_C",
+   "dims": [
+    256,
+    56,
+    56
+   ],
+   "input_range": [
+    -66.8818,
+    66.8818
+   ]
+  },
+  {
+   "name": "conv_weight_1_C",
+   "dims": [
+    64,
+    256,
+    1,
+    1
+   ],
+   "input_range": [
+    -0.10825317547305482,
+    0.10825317547305482
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_1_C",
+   "dims": [
+    64
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "batch_norm_weight_1_C",
+   "dims": [
+    4,
+    64
+   ],
+   "input_range": [
+    0.25,
+    1.0
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_2_C",
+   "dims": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.07216878364870322,
+    0.07216878364870322
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_2_C",
+   "dims": [
+    64
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "batch_norm_weight_2_C",
+   "dims": [
+    4,
+    64
+   ],
+   "input_range": [
+    0.25,
+    1.0
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_3_C",
+   "dims": [
+    256,
+    64,
+    1,
+    1
+   ],
+   "input_range": [
+    -0.21650635094610965,
+    0.21650635094610965
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_3_C",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "batch_norm_weight_3_C",
+   "dims": [
+    4,
+    256
+   ],
+   "input_range": [
+    0.25,
+    1.0
+   ],
+   "fixed_range": true
+  }
+ ],
+ "data_type": "fixed<32,10>",
+ "_verification": {
+  "run_range": "+-66.8818",
+  "n_trials": 100,
+  "seed_base": 42,
+  "report_seed_offset": 1000000,
+  "source": "modular_data/conv/hls_files/conv_block_op3",
+  "types": {
+   "data_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>",
+   "acc_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>",
+   "math_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>"
+  },
+  "written": "post hoc (run predates the engine's config dump)"
+ }
+}

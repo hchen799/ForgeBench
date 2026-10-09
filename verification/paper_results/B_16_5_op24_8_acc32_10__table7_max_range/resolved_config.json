@@ -1,0 +1,184 @@
+{
+  "operators": [
+    "designs/conv/conv_A",
+    "designs/conv/conv_B",
+    "designs/conv/conv_C",
+    "designs/gemm/diff_dims_p1",
+    "designs/gemm/diff_dims_p2",
+    "designs/gemm/diff_dims_p3",
+    "designs/gemm/diff_orders_p1",
+    "designs/gemm/diff_orders_p2",
+    "designs/gemm/diff_orders_p3",
+    "designs/gemm/mult_op_p1",
+    "designs/gemm/mult_op_p2",
+    "designs/gemm/mult_op_p3",
+    "designs/gemm/vec_mtx_p1",
+    "designs/gemm/vec_mtx_p2",
+    "designs/llm/gpt_transformer_p1",
+    "designs/llm/llama_transformer_p2",
+    "designs/llm/tiled_attn_p1",
+    "designs/llm/tiled_attn_p2"
+  ],
+  "datatypes": [
+    "fixed<16,5>"
+  ],
+  "sim": [
+    "csim"
+  ],
+  "n_trials": 100,
+  "seed_base": 42,
+  "cosim_trials": 20,
+  "golden": {
+    "precision": "float64"
+  },
+  "inputs": {
+    "range": "auto",
+    "static_dir": null
+  },
+  "tolerance": {
+    "mode": "format_bound",
+    "atol": 1e-05,
+    "rtol": 0.001,
+    "atol_scale": 5e-05,
+    "stages": 4,
+    "peak_fraction": 0.01
+  },
+  "range_search": {
+    "enabled": true,
+    "samples": 20,
+    "factor": 1.4142135623730951,
+    "float_span": [
+      0.001,
+      1000.0
+    ],
+    "fixed_start": 0.001,
+    "fixed_stop_hi_multiple": 2,
+    "bisect_steps": 4,
+    "step_down": 1.19,
+    "max_step_downs": 8,
+    "margin_steps": 1,
+    "caps": {
+      "activation__tanh": 16
+    }
+  },
+  "stress": {
+    "enabled": true,
+    "factor": 4,
+    "trials": 20
+  },
+  "op_params": {
+    "data_type": "fixed<24,8>",
+    "acc_type": "fixed<32,10>",
+    "acc_rounding": "rnd"
+  },
+  "fixed_ranges": {},
+  "fixed_ranges_by_operator": {
+    "matmul": {
+      "weights": 0.1
+    },
+    "mha": {
+      "weights": 0.1
+    },
+    "swa": {
+      "weights": 0.1
+    },
+    "conv": {
+      "weight": 0.1
+    },
+    "batchnorm": {
+      "weights": [
+        0.25,
+        1.0
+      ]
+    }
+  },
+  "report_seed_offset": 1000000,
+  "_comment": "Table 7 (modularization) generated programs, whole designs end to end; same column settings as B_16_5_op24_8_acc32_10__max_range. op_params apply to every compute operator; tolerance stages += (#compute ops - 1). Per-design fixed ranges: weights +-sqrt(3/fan_in) (gemm: the second operand), conv bias +-0.1, norm parameters [0.25, 1].",
+  "fixed_ranges_by_design": {
+    "conv_A": {
+      "DRAM_conv_weight": 0.0722,
+      "DRAM_conv_bias": 0.1
+    },
+    "conv_B": {
+      "DRAM_conv_weight": 0.051,
+      "DRAM_conv_bias": 0.1
+    },
+    "conv_C": {
+      "DRAM_conv_weight": 0.051,
+      "DRAM_conv_bias": 0.1
+    },
+    "diff_dims_p1": {
+      "DRAM_2": 0.0765
+    },
+    "diff_dims_p2": {
+      "DRAM_2": 0.1083
+    },
+    "diff_dims_p3": {
+      "DRAM_2": 0.1531
+    },
+    "diff_orders_p1": {
+      "DRAM_2": 0.1531
+    },
+    "diff_orders_p2": {
+      "DRAM_2": 0.1531
+    },
+    "diff_orders_p3": {
+      "DRAM_2": 0.1531
+    },
+    "mult_op_p1": {
+      "DRAM_2": 0.2165
+    },
+    "mult_op_p2": {
+      "DRAM_2": 0.2165
+    },
+    "mult_op_p3": {
+      "DRAM_2": 0.2165
+    },
+    "vec_mtx_p1": {
+      "DRAM_2": 0.2165
+    },
+    "vec_mtx_p2": {
+      "DRAM_2": 0.2165
+    },
+    "gpt_transformer_p1": {
+      "DRAM_weights_q": 0.3062,
+      "DRAM_weights_k": 0.3062,
+      "DRAM_weights_v": 0.3062,
+      "DRAM_layer_norm_weights_1": [
+        0.25,
+        1.0
+      ],
+      "DRAM_FF_weights_1": 0.3062,
+      "DRAM_FF_weights_2": 0.1531,
+      "DRAM_layer_norm_weights_2": [
+        0.25,
+        1.0
+      ]
+    },
+    "llama_transformer_p2": {
+      "DRAM_weights_q": 0.3062,
+      "DRAM_weights_k": 0.3062,
+      "DRAM_weights_v": 0.3062,
+      "DRAM_rms_norm_weights_1": [
+        0.25,
+        1.0
+      ],
+      "DRAM_FF_weights_1": 0.3062,
+      "DRAM_FF_weights_2": 0.1531,
+      "DRAM_rms_norm_weights_2": [
+        0.25,
+        1.0
+      ]
+    },
+    "tiled_attn_p1": {
+      "DRAM_weights_q": 0.1083,
+      "DRAM_weights_k": 0.1083,
+      "DRAM_weights_v": 0.1083
+    },
+    "tiled_attn_p2": {
+      "DRAM_weights_q": 0.1083,
+      "DRAM_weights_k": 0.1083,
+      "DRAM_weights_v": 0.1083
+    }
+  }
+}

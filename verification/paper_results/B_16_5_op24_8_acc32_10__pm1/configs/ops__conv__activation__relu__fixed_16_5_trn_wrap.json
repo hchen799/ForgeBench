@@ -1,0 +1,103 @@
+{
+ "brams": [
+  {
+   "name": "BRAM_buffer_1",
+   "dims": [
+    8,
+    16,
+    16
+   ]
+  },
+  {
+   "name": "BRAM_buffer_2",
+   "dims": [
+    8,
+    16,
+    16
+   ]
+  }
+ ],
+ "drams": [
+  {
+   "name": "DRAM_input",
+   "dims": [
+    8,
+    16,
+    16
+   ],
+   "bundle": "mem1"
+  },
+  {
+   "name": "DRAM_output",
+   "dims": [
+    8,
+    16,
+    16
+   ],
+   "bundle": "mem2"
+  }
+ ],
+ "ops": {
+  "load_1": {
+   "func_name": "load",
+   "dims": [
+    8,
+    16,
+    16
+   ],
+   "args": [
+    "DRAM_input",
+    "BRAM_buffer_1"
+   ]
+  },
+  "activation_1": {
+   "func_name": "activation",
+   "dims": [
+    8,
+    16,
+    16
+   ],
+   "func_info": [
+    "activations_template.cpp",
+    "relu"
+   ],
+   "args": [
+    "BRAM_buffer_1",
+    "BRAM_buffer_2"
+   ],
+   "data_type": "fixed<24,8>",
+   "acc_type": "fixed<32,10>",
+   "acc_rounding": "rnd"
+  },
+  "store": {
+   "func_name": "store",
+   "dims": [
+    8,
+    16,
+    16
+   ],
+   "args": [
+    "BRAM_buffer_2",
+    "DRAM_output"
+   ]
+  }
+ },
+ "output_dram_names": [
+  "DRAM_output"
+ ],
+ "input_range": [
+  -1.0,
+  1.0
+ ],
+ "data_type": "fixed<16,5>",
+ "task": [
+  "csim"
+ ],
+ "_verification": {
+  "run_range": "+-1",
+  "n_trials": 100,
+  "seed_base": 42,
+  "report_seed_offset": 1000000,
+  "source": "verification/operators/activation/variants/conv/activation__relu.json"
+ }
+}

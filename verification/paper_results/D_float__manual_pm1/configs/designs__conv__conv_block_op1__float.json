@@ -1,0 +1,137 @@
+{
+ "input_range": [
+  -1.0,
+  1.0
+ ],
+ "output_dram_names": [
+  "output_A"
+ ],
+ "drams": [
+  {
+   "name": "input_A",
+   "dims": [
+    128,
+    56,
+    56
+   ],
+   "input_range": [
+    -1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "conv_weight_1_A",
+   "dims": [
+    256,
+    128,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.05103103630798288,
+    0.05103103630798288
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_1_A",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_2_A",
+   "dims": [
+    256,
+    256,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.03608439182435161,
+    0.03608439182435161
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_2_A",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_3_A",
+   "dims": [
+    256,
+    256,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.03608439182435161,
+    0.03608439182435161
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_3_A",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_4_A",
+   "dims": [
+    256,
+    256,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.03608439182435161,
+    0.03608439182435161
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_4_A",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  }
+ ],
+ "data_type": "float",
+ "_verification": {
+  "run_range": "+-1",
+  "n_trials": 100,
+  "seed_base": 42,
+  "report_seed_offset": 1000000,
+  "source": "modular_data/conv/hls_files/conv_block_op1",
+  "types": {
+   "data_t": "float",
+   "acc_t": "float",
+   "math_t": "float"
+  },
+  "written": "post hoc (run predates the engine's config dump)"
+ }
+}

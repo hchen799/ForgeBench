@@ -1,0 +1,72 @@
+{
+ "input_range": [
+  -1.0,
+  1.0
+ ],
+ "output_dram_names": [
+  "output_dram_B"
+ ],
+ "drams": [
+  {
+   "name": "input_dram_B",
+   "dims": [
+    8,
+    32
+   ],
+   "input_range": [
+    -1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "Q_weight_dram_B",
+   "dims": [
+    32,
+    32
+   ],
+   "input_range": [
+    -0.30618621784789724,
+    0.30618621784789724
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "K_weight_dram_B",
+   "dims": [
+    32,
+    32
+   ],
+   "input_range": [
+    -0.30618621784789724,
+    0.30618621784789724
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "V_weight_dram_B",
+   "dims": [
+    32,
+    32
+   ],
+   "input_range": [
+    -0.30618621784789724,
+    0.30618621784789724
+   ],
+   "fixed_range": true
+  }
+ ],
+ "data_type": "float",
+ "_verification": {
+  "run_range": "design",
+  "n_trials": 100,
+  "seed_base": 42,
+  "report_seed_offset": 1000000,
+  "source": "modular_data/llm/hls_files/attn_breakdown_op2",
+  "types": {
+   "data_t": "float",
+   "acc_t": "float",
+   "math_t": "float"
+  },
+  "written": "post hoc (run predates the engine's config dump)"
+ }
+}

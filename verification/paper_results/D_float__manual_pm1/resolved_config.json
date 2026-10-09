@@ -1,0 +1,73 @@
+{
+  "operators": [
+    "manual_design"
+  ],
+  "datatypes": [
+    "float"
+  ],
+  "sim": [
+    "csim"
+  ],
+  "n_trials": 100,
+  "seed_base": 42,
+  "cosim_trials": 20,
+  "golden": {
+    "precision": "float64"
+  },
+  "inputs": {
+    "range": 1.0,
+    "static_dir": null
+  },
+  "tolerance": {
+    "mode": "format_bound",
+    "atol": 1e-05,
+    "rtol": 0.001,
+    "atol_scale": 5e-05,
+    "stages": 4,
+    "peak_fraction": 0.01
+  },
+  "range_search": {
+    "enabled": false,
+    "samples": 20,
+    "factor": 1.4142135623730951,
+    "float_span": [
+      0.001,
+      1000.0
+    ],
+    "fixed_start": 0.001,
+    "fixed_stop_hi_multiple": 2,
+    "bisect_steps": 4,
+    "step_down": 1.19,
+    "max_step_downs": 8,
+    "margin_steps": 0
+  },
+  "stress": {
+    "enabled": false,
+    "factor": 4,
+    "trials": 20
+  },
+  "op_params": {},
+  "fixed_ranges": {},
+  "fixed_ranges_by_operator": {
+    "matmul": {
+      "weights": 0.1
+    },
+    "mha": {
+      "weights": 0.1
+    },
+    "swa": {
+      "weights": 0.1
+    },
+    "conv": {
+      "weight": 0.1
+    },
+    "batchnorm": {
+      "weights": [
+        0.25,
+        1.0
+      ]
+    }
+  },
+  "report_seed_offset": 1000000,
+  "_comment": "Table 7 hand-written designs (verification/manual_designs.py): conv_block_op1-3, attn_breakdown_op1-2, activation_op1-3; same column settings as D_float__pm1. op_params acc_type/acc_rounding/acc_overflow bind the designs' acc_t/math_t; weights use +-sqrt(3/fan_in)."
+}

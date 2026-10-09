@@ -65,6 +65,16 @@ def rows_of(res, name):
     return [json.load(open(f)) for f in sorted(glob.glob(os.path.join(res, name, "rows", "*.json")))]
 
 
+LO_START = 0.0011        # range_search fixed_start (0.001) with float slack
+
+
+def lo_note(groups):
+    """Caption sentence for windows that exclude small inputs, naming the rows/columns."""
+    hits = [f"\\texttt{{{esc(d.split('/', 1)[1])}}} ({COLS[c]}: $\\pm{lo:.3g}$--$\\pm{hi:.3g}$)" for _, rows in groups for name, by in rows
+            for c, a in by.items() if a for d, lo, hi in a.get("lo") or []]
+    return (r" $^{\S}$: faithful only above a lower edge too: " + "; ".join(hits) + ".") if hits else ""
+
+
 def agg(rows):
     """-> dict(range, max_abs, rel_l2, all_within, n) over variants (range min, errors max)."""
     ok = [r for r in rows if r.get("status") == "ok"]
@@ -72,7 +82,10 @@ def agg(rows):
     ea = [num(r["max_abs_err"]) for r in ok if num(r.get("max_abs_err")) is not None]
     er = [x for x in (num(r.get("rel_l2")) for r in ok) if x is not None and x == x and x != float("inf")]   # inf: all-zero golden (e.g. thresholded_relu at +-1)
     within = all(num(r.get("trials_within_bound")) == num(r.get("n_trials")) for r in ok)
-    return {"range": min(rs) if rs else None, "max_abs": max(ea) if ea else None, "rel_l2": max(er) if er else None,
+    # a window that does not reach down to small inputs (e.g. <16,5> softmax over 32 entries: near-equal inputs make the exponential sum ~32,
+    # past the format's +-16) -- its lower edge, else None
+    lo = [(r["design"], num(r["range_lo"]), num(r["range_hi"])) for r in ok if (num(r.get("range_lo")) or 0) > LO_START]
+    return {"range": min(rs) if rs else None, "lo": lo, "max_abs": max(ea) if ea else None, "rel_l2": max(er) if er else None,
             "all_within": within and len(ok) == len(rows), "n": min(int(num(r["n_trials"])) for r in ok) if ok else None,
             "missing": len(ok) < len(rows)}
 
@@ -103,7 +116,7 @@ def range_table(label, caption, groups, cols, wide=True):
                 if a is None:
                     cells += ["--"] * 3
                 else:
-                    cells += [rng_text(a["range"]) + (r"$^{*}$" if a["missing"] else ""), sci(a["max_abs"]), sci(a["rel_l2"])]
+                    cells += [rng_text(a["range"]) + (r"$^{*}$" if a["missing"] else "") + (r"$^{\S}$" if a.get("lo") else ""), sci(a["max_abs"]), sci(a["rel_l2"])]
             L.append(esc(name) + " & " + " & ".join(cells) + r" \\")
     L += [r"\bottomrule", r"\end{tabular}", rf"\end{{{env}}}"]
     return "\n".join(L)
@@ -144,7 +157,7 @@ def ops(res, out):
             for r in rows_of(res, f"{c}__{k}"):
                 data[(c, k)].setdefault(r["operator"], []).append(r)
                 recs.append({"design": r["design"], "column": c, "experiment": k, **{f: r.get(f) for f in (
-                    "operator", "datatype", "status", "range_hi", "first_fail_range", "n_trials", "trials_within_bound", "max_abs_err",
+                    "operator", "datatype", "status", "range_lo", "range_hi", "first_fail_range", "n_trials", "trials_within_bound", "max_abs_err",
                     "rel_l2", "rmse", "sqnr_db", "tol_abs", "notes")}})
     names = sorted({op for d in data.values() for op in d})
     rng = [(None, [(op, {c: agg(data[(c, "max_range")][op]) for c in cols if op in data[(c, "max_range")]}) for op in names])]
@@ -152,7 +165,7 @@ def ops(res, out):
     cap_r = (r"Operator verification (C simulation, $N{=}100$ input samples per variant and range): the largest input range $\pm r$ over which "
              r"the operator stays within the format's error bound, and the maximum absolute and relative L2 error over the $N$ samples at "
              r"that range (range: minimum, errors: maximum over the operator's variants). Weights of matmul, MHA, SWA and conv are held at "
-             r"$\pm0.1$, batchnorm parameters in $[0.25,1]$. Float: errors at $\pm1$; ``cap'': search ceiling. " + MIXED_NOTE)
+             r"$\pm0.1$, batchnorm parameters in $[0.25,1]$. Float: errors at $\pm1$; ``cap'': search ceiling. " + MIXED_NOTE + lo_note(rng))
     cap_p = (r"Operator verification with every input uniform in $[-1,1]$ (non-negative inputs: $[0,1]$), $N{=}100$ samples: maximum "
              r"absolute and relative L2 error (maximum over variants). $^{\dagger}$: some sample left the format's error bound. " + MIXED_NOTE)
     open(os.path.join(out, "verif_ops.tex"), "w").write(PRE + range_table("tab:verif-ops-range", cap_r, rng, cols) + "\n\n"
@@ -174,7 +187,7 @@ def modular(res, out):
             for d, r in rows.items():
                 data[(c, k, d)] = r
                 recs.append({"design": d, "column": c, "experiment": k, **{f: r.get(f) for f in (
-                    "operator", "datatype", "status", "range_hi", "first_fail_range", "n_trials", "trials_within_bound", "max_abs_err",
+                    "operator", "datatype", "status", "range_lo", "range_hi", "first_fail_range", "n_trials", "trials_within_bound", "max_abs_err",
                     "rel_l2", "rmse", "sqnr_db", "tol_abs", "notes")}})
     designs = sorted({d for (_, _, d) in data})
     gen = [d for d in designs if not any(data.get((c, k, d), {}).get("operator") == "manual_design" for c in cols for k in ("max_range", "pm1"))]
@@ -184,9 +197,10 @@ def modular(res, out):
         return [(t, [(d.split("/", 1)[1], {c: agg([data[(c, k, d)]]) for c in cols if (c, k, d) in data}) for d in ds])
                 for t, ds in (("Generated programs (ForgeBench JSON)", gen), ("Hand-written designs", man)) if ds]
     note = (r"Per-design input constraints: weights $\pm\sqrt{3/\mathrm{fan\_in}}$ (gemm: the second operand), conv bias $\pm0.1$, "
-            r"norm/batchnorm parameters $[0.25,1]$. conv\_block\_op1 ($\approx$35\,min per fixed-point sample) uses $N{=}10$ and no range search.")
+            r"norm/batchnorm parameters $[0.25,1]$. conv\_block\_op1 (35--60\,min per fixed-point sample) uses $N{=}10$ and no range search.")
     cap_r = (r"Modularization designs (Table~\ref{tab:modular}), whole designs end to end, C simulation, $N{=}100$: largest faithful input "
-             r"range $\pm r$ and maximum absolute / relative L2 error at $r$. " + note + " " + MIXED_NOTE.replace(r" (operators: \texttt{<24,8>} operator storage)", ""))
+             r"range $\pm r$ and maximum absolute / relative L2 error at $r$. " + note + " " + MIXED_NOTE.replace(r" (operators: \texttt{<24,8>} operator storage)", "")
+             + lo_note(grp("max_range")))
     cap_p = (r"Modularization designs with every input in $[-1,1]$, $N{=}100$: maximum absolute and relative L2 error. "
              r"$^{\dagger}$: some sample left the format's error bound. " + note)
     open(os.path.join(out, "verif_modular.tex"), "w").write(PRE + range_table("tab:verif-mod-range", cap_r, grp("max_range"), cols) + "\n\n"

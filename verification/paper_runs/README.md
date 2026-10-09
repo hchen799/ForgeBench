@@ -3,7 +3,8 @@
 Everything the paper reports about functional verification is produced by the scripts in this folder. Each run is one JSON config
 (`<column>__<experiment>.json`, resolved through `extends`) given to the engine `verification/functional_verification.py`.
 Raw outputs go to `verification/results_paper/<config>/` (untracked, release bundle); `collect_results.sh` copies the compact part to
-the tracked `verification/paper_results/` and builds the tables.
+the tracked `verification/paper_results/` (per run: `summary.csv`, `resolved_config.json`, `configs/`, `sweep_curves/`, `rows/`,
+`run.log.gz`; full models: `summary.txt` + gzipped `summary.json` and input manifests) and builds the tables.
 
 ## Columns (data formats)
 
@@ -36,6 +37,11 @@ Every run writes `configs/<design>__<format>.json`: the exact design JSON of the
 every input's range at the reported range (including fixed weight / batchnorm ranges) and `_verification` (`run_range`, `n_trials`,
 `seed_base`, `report_seed_offset`, source JSON). Trial *k* of a report uses seed `seed_base + report_seed_offset + k`.
 
+The hand-written runs predate this dump; their `configs/` were written afterwards from the same specs (`manual_designs.SPECS`, the run's
+`resolved_config.json` and the reported `run_range`) and carry `"written": "post hoc ..."`. The `*__manual_*__expfix` runs re-verify
+activation_op1-3 and attn_breakdown_op1-2 after the numerically stable exp change (commit 24655d8: softmax subtracts the row max;
+sigmoid/tanh evaluate exp(-|x|)); `make_tables.py` lets them override the same designs in the earlier `*__manual_*` runs.
+
 ### Input constraints (per design)
 
 - Operators (`fixed_ranges_by_operator`): weights of matmul, mha, swa, conv held at +-0.1; batchnorm parameters in [0.25, 1] (variance floor).
@@ -43,7 +49,7 @@ every input's range at the reported range (including fixed weight / batchnorm ra
 - Table 7 generated programs (`fixed_ranges_by_design`): weights +-sqrt(3/fan_in) (gemm: the second operand), conv bias +-0.1,
   layernorm/rmsnorm parameters [0.25, 1].
 - Hand-written designs (`manual_designs.SPECS`): weights +-sqrt(3/fan_in), conv bias +-0.1, batchnorm [0.25, 1].
-  `n_trials_by_design`: conv_block_op1 uses N=10 (~35 min per fixed-point trial) and is left out of the range search.
+  `n_trials_by_design`: conv_block_op1 uses N=10 (35-60 min per fixed-point trial) and is left out of the range search.
 - Full models (`existing_model_verification/references/runner.py`): input +-1, weights +-sqrt(3/fan_in), BN gamma/var [0.9, 1.1],
   beta/mean +-0.05; Llama embedding +-0.5, norm weights [0.9, 1.1]; 4 prefill tokens + 2 decode steps.
 
@@ -53,6 +59,8 @@ every input's range at the reported range (including fixed weight / batchnorm ra
    20 samples per point; a point passes if every output element of every sample is within the error bound and nothing crashed.
 2. The window is the largest contiguous run of passing points; bisect (4 steps, log space) between its top and the first failure.
 3. Confirm the top with N=100 samples, stepping down by x1/1.19 until all pass; then back off one more step (safety margin).
+   The window need not start at 0: `<16,5>` gemm softmax (rows of 32) is faithful only on +-1.45..+-19.5, because near-equal inputs make
+   the exponential sum ~32, past the format's +-16 (wrap). The tables mark such rows with section sign and name the window in the caption.
 4. Report N=100 fresh samples (disjoint seeds) at that range: max abs error, relative L2, RMSE, SQNR; fixed point also a stress
    range (4x the format's range) to record how the design fails.
 
@@ -65,7 +73,7 @@ rounding stages (+ #ops - 1 for whole designs). Float: rtol 1e-3, atol 1e-5. Gol
 JOBS=8 bash verification/paper_runs/run_all.sh            # operators, A-D (~1.5 h on 128 cores)
 JOBS=6 bash verification/paper_runs/run_table7.sh          # Table 7, B-D (conv_block_op1 dominates: ~6 h)
 SOURCES=<full-model projects> OUT=<dir> PY=<python with torch> bash verification/paper_runs/run_fullmodel.sh
-JOBS=16 bash verification/paper_runs/run_cosim.sh          # CO-SIM, C and D (idle server; float conv ~8 h)
+JOBS=16 bash verification/paper_runs/run_cosim.sh          # CO-SIM, C and D (idle server; float: conv ~8 h, mha ~16.5 h for 10 trials)
 FULLMODEL=<dir> bash verification/paper_runs/collect_results.sh
 ```
 

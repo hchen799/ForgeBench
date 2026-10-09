@@ -1,0 +1,111 @@
+{
+ "input_range": [
+  -1.0,
+  1.0
+ ],
+ "output_dram_names": [
+  "output_B"
+ ],
+ "drams": [
+  {
+   "name": "input_B",
+   "dims": [
+    256,
+    14,
+    14
+   ],
+   "input_range": [
+    -1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "conv_weight_1_B",
+   "dims": [
+    256,
+    256,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.03608439182435161,
+    0.03608439182435161
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_1_B",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "batch_norm_weight_1_B",
+   "dims": [
+    4,
+    256
+   ],
+   "input_range": [
+    0.25,
+    1.0
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_weight_2_B",
+   "dims": [
+    256,
+    256,
+    3,
+    3
+   ],
+   "input_range": [
+    -0.03608439182435161,
+    0.03608439182435161
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "conv_bias_2_B",
+   "dims": [
+    256
+   ],
+   "input_range": [
+    -0.1,
+    0.1
+   ],
+   "fixed_range": true
+  },
+  {
+   "name": "batch_norm_weight_2_B",
+   "dims": [
+    4,
+    256
+   ],
+   "input_range": [
+    0.25,
+    1.0
+   ],
+   "fixed_range": true
+  }
+ ],
+ "data_type": "fixed<32,10>",
+ "_verification": {
+  "run_range": "+-1",
+  "n_trials": 100,
+  "seed_base": 42,
+  "report_seed_offset": 1000000,
+  "source": "modular_data/conv/hls_files/conv_block_op2",
+  "types": {
+   "data_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>",
+   "acc_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>",
+   "math_t": "ap_fixed<32, 10, AP_TRN, AP_WRAP>"
+  },
+  "written": "post hoc (run predates the engine's config dump)"
+ }
+}
