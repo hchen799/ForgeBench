@@ -6,8 +6,9 @@ Outputs (in --out):
   verif_ops.tex        tab:verif-ops-range  operators, columns A-D: largest faithful range r, max abs error and relative L2 error at r (N=100)
                        tab:verif-ops-pm1    operators, columns A-D: max abs and relative L2 error with every input in [-1, 1] (N=100)
   verif_modular.tex    tab:verif-mod-range / tab:verif-mod-pm1: the same for the Table 7 designs (18 generated, 8 hand-written), columns B-D
+  verif_catapult.tex   tab:verif-catapult   Catapult backend: Table-2 GEMM variants, C sim (vs Vitis per seed), synthesis + RTL sim
   verif_fullmodel.tex  tab:verif-fullmodel  full-scale models at <32,10>: seeds, fixed-reference code mismatches, FP64 logit errors
-  verif_ops.csv, verif_modular.csv, verif_fullmodel.csv   every number above, one row per (design, column, experiment)
+  verif_ops.csv, verif_modular.csv, verif_catapult.csv, verif_fullmodel.csv   every number above, one row per (design, column, experiment)
 
 Aggregation over an operator's variants: range = minimum (conservative), errors = maximum. Relative L2 = ||out - golden|| / ||golden||
 over all N trials. Float is characterised, not bounded: its range is the span over which it stays within the float tolerance (search
@@ -246,6 +247,57 @@ def fullmodel(src, out):
     return len(recs)
 
 
+def _trials(res, name, design, dt_tag):
+    import gzip
+    p = os.path.join(res, name, "trials", f"{design.split('/')[1]}__{design.split('/')[2]}__{dt_tag}.csv.gz")
+    return list(csv.DictReader(gzip.open(p, "rt"))) if os.path.isfile(p) else None
+
+
+def catapult(res, out):
+    """Catapult backend check (Table-2 GEMM variants): SCVerify C sim at +-1 (N trials, compared per seed with the Vitis run of the same
+    column), then synthesis + SCVerify RTL sim (looped trials, RTL vs C) with the QoR of the synthesized design."""
+    recs, body = [], []
+    for c in ("C_32_10", "D_float"):
+        csim = {r["design"]: r for r in rows_of(res, f"{c}__catapult_pm1")}
+        cos = {r["design"]: r for r in rows_of(res, f"{c}__catapult_cosim")}
+        for d, r in sorted(csim.items()):
+            tag = "float" if c == "D_float" else "fixed_32_10_trn_wrap"
+            cat, vit = _trials(res, f"{c}__catapult_pm1", d, tag), _trials(res, f"{c}__pm1", d, tag)
+            same = (sum(x["seed"] == y["seed"] and x["max_abs_err"] == y["max_abs_err"] and x["rmse"] == y["rmse"] for x, y in zip(cat, vit))
+                    if cat and vit else None)
+            q = {}
+            qp = os.path.join(res, f"{c}__catapult_cosim", "catapult_qor", f"{d.replace('/', '__')}__{tag}.json")
+            if os.path.isfile(qp):
+                q = json.load(open(qp))
+            k = cos.get(d, {})
+            rec = {"design": d, "column": c, "csim_status": r["status"], "csim_n": r["n_trials"], "csim_within": r["trials_within_bound"],
+                   "max_abs_err": r["max_abs_err"], "rel_l2": r["rel_l2"], "same_as_vitis_per_seed": "" if same is None else same,
+                   "rtl_status": k.get("cosim_status", ""), "rtl_trials": k.get("cosim_trials", ""),
+                   "rtl_vs_c_mismatches": k.get("cosim_c_vs_rtl_mismatches", ""), "rtl_latency_cycles": k.get("cosim_latency_max", ""),
+                   "latency_cycles": q.get("latency_cycles", ""), "throughput_cycles": q.get("throughput_cycles", ""),
+                   "area_score": q.get("area_score", ""), "slack_ns": q.get("slack_ns", ""), "synth_and_rtl_sim_s": q.get("synth_and_rtl_sim_s", "")}
+            recs.append(rec)
+            fmt = lambda x: "--" if x in ("", None) else str(x)
+            body.append(f"\\texttt{{{esc(d.split('/', 2)[2])}}} & {COLS[c]} & {rec['csim_within']}/{rec['csim_n']} & {sci(num(rec['max_abs_err']))} & "
+                        f"{sci(num(rec['rel_l2']))} & {fmt(rec['same_as_vitis_per_seed'])}/{rec['csim_n']} & "
+                        f"{fmt(rec['rtl_vs_c_mismatches'])} ({fmt(rec['rtl_trials'])}) & {fmt(rec['latency_cycles'])} & "
+                        f"{fmt(round(num(rec['area_score'])) if num(rec['area_score']) is not None else '')} \\\\")
+    if not recs:
+        return 0
+    write_csv(os.path.join(out, "verif_catapult.csv"), recs)
+    tex = (r"\begin{table}[t]\centering\small" "\n"
+           r"\caption{Catapult backend (Catapult 2026.2, Nangate 45\,nm, 10\,ns): the Table-2 GEMM variants generated with the Catapult "
+           r"backend. C simulation (SCVerify) with every input in $[-1,1]$, N trials checked against the float64 golden with the same "
+           r"bound as Table~\ref{tab:verif-ops-pm1}; ``= Vitis'': trials whose max abs error and RMSE equal the Vitis run on the same "
+           r"seed. RTL: SCVerify Verilog simulation (Questa) of the synthesized design over looped trials, outputs compared with C "
+           r"(mismatching elements, trials). Float designs use \texttt{ac\_ieee\_float<binary32>}.}" "\n"
+           r"\label{tab:verif-catapult}" "\n" r"\begin{tabular}{llrrrrrrr}\toprule" "\n"
+           r"Design & Format & within & max abs & rel.\ L2 & = Vitis & RTL$\neq$C & latency & area \\ \midrule" "\n"
+           + "\n".join(body) + "\n" r"\bottomrule\end{tabular}\end{table}" "\n")
+    open(os.path.join(out, "verif_catapult.tex"), "w").write(tex)
+    return len(recs)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--results", default=os.path.join(HERE, "..", "results_paper"))
@@ -254,6 +306,7 @@ def main():
     a = ap.parse_args()
     print("operators:", ops(a.results, a.out))
     print("modular designs:", modular(a.results, a.out))
+    print("catapult:", catapult(a.results, a.out))
     if a.fullmodel:
         print("full-scale models:", fullmodel(a.fullmodel, a.out))
 

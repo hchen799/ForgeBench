@@ -28,8 +28,10 @@ the tracked `verification/paper_results/` (per run: `summary.csv`, `resolved_con
 | Table 7 hand-written designs | 8 (`verification/manual_designs.py`: activation_op1-3, conv_block_op1-3, attn_breakdown_op1-2) | `{B,C,D}_*__manual_{max_range,pm1}.json` | `run_table7.sh` |
 | Full-scale models | ResNet-18/34/50/101/152 (full, tiled), Llama-3-8B ctx2048, `<32,10>` RND/SAT | — (verify.py) | `run_fullmodel.sh` |
 | CO-SIM | 57 operator variants, +-1, 10 looped trials | `{C,D}_*__cosim.json` | `run_cosim.sh` |
+| Catapult backend, C sim | 2 Table-2 GEMM variants (`gemm__bias0`, `gemm__bias1`), Catapult backend, +-1, N=100 | `{C,D}_*__catapult_pm1.json` | `run_catapult.sh` |
+| Catapult backend, synthesis + RTL sim | same, one Catapult run each, 10 looped trials | `{C,D}_*__catapult_cosim.json` | `run_catapult.sh` |
 
-Tables: `make_tables.py` -> `verif_ops.tex`, `verif_modular.tex`, `verif_fullmodel.tex` + one CSV each.
+Tables: `make_tables.py` -> `verif_ops.tex`, `verif_modular.tex`, `verif_catapult.tex`, `verif_fullmodel.tex` + one CSV each.
 
 ### Per-experiment design JSON
 
@@ -74,8 +76,31 @@ JOBS=8 bash verification/paper_runs/run_all.sh            # operators, A-D (~1.5
 JOBS=6 bash verification/paper_runs/run_table7.sh          # Table 7, B-D (conv_block_op1 dominates: ~6 h)
 SOURCES=<full-model projects> OUT=<dir> PY=<python with torch> bash verification/paper_runs/run_fullmodel.sh
 JOBS=16 bash verification/paper_runs/run_cosim.sh          # CO-SIM, C and D (idle server; float: conv ~8 h, mha ~16.5 h for 10 trials)
+bash verification/paper_runs/run_catapult.sh                # Catapult 2026.2: C sim N=100, then synthesis + RTL sim (sets the Siemens licenses)
 FULLMODEL=<dir> bash verification/paper_runs/collect_results.sh
 ```
 
 One design / one format: `python3 -m verification.functional_verification --config verification/paper_runs/C_32_10__pm1.json
 --operators ops/gemm/gemm__bias1 --out /tmp/x` (`--n`, `--range`, `--dtypes`, `--sim` override the config).
+
+## Catapult backend check (`run_catapult.sh`)
+
+Shows that the Catapult backend (`backends/catapult.py`, selected per design by `"tool": "catapult"`) generates functionally correct
+designs. Scope: the two Table-2 GEMM variants (16x64x32, loop order ijk, unroll i/j/k = 8/16/16, without and with bias), columns C
+(`<32,10>` -> `ac_fixed<32,10,true,AC_TRN,AC_WRAP>`) and D (float -> `ac_ieee_float<binary32>`; Catapult does not synthesize C `float`).
+Everything runs inside Catapult 2026.2 (versions: `docs/TOOL_VERSIONS.md`); the engine option `"backend": "catapult"` swaps the build:
+
+- **C sim** (`*__catapult_pm1`): Catapult runs SCVerify's original-C++ simulation (`Verify_orig_cxx_osci.mk`) once per design; like
+  Vitis' `csim.exe`, the executable it builds (`scverify_top`) is then re-run on each trial's inputs. Inputs, seeds, float64 golden,
+  bound and N are those of the Vitis `{C,D}__pm1` runs (the configs extend them), so every trial can be compared seed by seed.
+- **Synthesis + RTL sim** (`*__catapult_cosim`, `verification/cosim.py::run_cosim_catapult`): one Catapult run per design with a
+  10-trial looped testbench: SCVerify C sim, synthesis to RTL (`go extract`), SCVerify Verilog simulation in Questa. The C and RTL
+  outputs of each trial are compared element by element (`cosim_c_vs_rtl_mismatches`); SCVerify's own transaction comparison must
+  report `Simulation PASSED`. QoR from `rtl.rpt` (latency, throughput, area score, slack) -> `catapult_qor/<design>__<format>.json`;
+  `cosim_latency_*` is the latency the SCVerify monitor measured in the RTL simulation.
+
+Generator changes this needed (Catapult backend only; Vitis output byte-identical, `verification/regression_check.py`, 273 designs):
+testbench conversions through `fb_to_double()` (`ac_fixed` has no conversion operator), SCVerify's `CCS_MAIN` / `CCS_DESIGN(top)` /
+`CCS_RETURN`, float as `ac_ieee_float<binary32>`, `data_t(0)` for the GEMM accumulator initialisation, and a script that runs C sim
+(`csim`), synthesis (`csynth`) and RTL sim (`cosim`) per task. No generated source was edited by hand.
+

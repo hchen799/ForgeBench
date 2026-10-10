@@ -153,6 +153,26 @@ class ToolBackend:
     def includes_tb(self):
         raise NotImplementedError
 
+    def tb_cast(self, expr, ctype):
+        """Testbench conversion of a `data_t` value to the C scalar `ctype` ("double" or "float")."""
+        return f"({ctype}){expr}"
+
+    def zero(self):
+        """A zero of the design's `data_t`, as assigned in generated kernels."""
+        return "0"
+
+    def tb_main(self):
+        """Opening line of the testbench's main function."""
+        return "int main() {"
+
+    def tb_call(self, top_func_name):
+        """How the testbench names the top function in its call."""
+        return top_func_name
+
+    def tb_return(self, value):
+        """Return statement of the testbench's main function."""
+        return f"return {value};"
+
     # -- pragmas -----------------------------------------------------------
 
     def open_loop(self, header, factor):

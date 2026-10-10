@@ -1,0 +1,6 @@
+{
+  "extends": "C_32_10__pm1.json",
+  "operators": ["gemm"],
+  "backend": "catapult",
+  "_comment": "Catapult backend check: the Table-2 GEMM variants generated with backends/catapult.py (ac_fixed / float), C-sim = Catapult's g++ + ac_* headers; same inputs, seeds, golden and bound as C_32_10__pm1 (Vitis)"
+}

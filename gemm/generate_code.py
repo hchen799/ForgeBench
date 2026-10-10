@@ -221,7 +221,7 @@ def generate_gemm_function(
     {data_type} input_B[{N}][{K}],
     {data_type} output[{M}][{K}]
 )"""
-        init_out = "output[i][k] = 0;"
+        init_out = f"output[i][k] = {_backend().zero()};"
 
     partitioning = ""
     for idx, v in enumerate(unroll):
@@ -1646,7 +1646,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     code_lines.append("")
 
     # Main function.
-    code_lines.append("int main() {")
+    code_lines.append(_backend().tb_main())
 
     # Multi-trial mode (trials > 1, used for CO-SIM): one run loops over per-trial input files <DRAM>.t<k>.txt and writes
     # <out>_output.t<k>.txt, so RTL elaboration is paid once. trials == 1 emits exactly the historical single-shot testbench.
@@ -1668,7 +1668,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
 
     # Insert top function call. DRAM arguments in the order of the drams list.
     dram_args = ", ".join(d["name"] for d in drams)
-    code_lines.append(f"    {top_func_name}({dram_args});")
+    code_lines.append(f"    {_backend().tb_call(top_func_name)}({dram_args});")
     code_lines.append("")
 
     # Golden-reference verification accumulators (declared before the trial loop in multi-trial mode).
@@ -1698,7 +1698,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
             code_lines.append(f"        FILE *fp = fopen(\"{out_name}_output.txt\", \"w\");")
         code_lines.append("        if (fp != NULL) {")
         code_lines.append(f"            for (int i = 0; i < {total_out}; i++) {{")
-        code_lines.append(f"                fprintf(fp, \"%.17g \", (double)((data_t*){out_name})[i]);")
+        code_lines.append(f"                fprintf(fp, \"%.17g \", {_backend().tb_cast(f'((data_t*){out_name})[i]', 'double')});")
         code_lines.append("            }")
         code_lines.append("            fclose(fp);")
         code_lines.append("        }")
@@ -1727,7 +1727,7 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
         code_lines.append("            }")
         code_lines.append("            double verif_atol = VERIF_ATOL + VERIF_ATOL_SCALE * verif_scale;")
         code_lines.append("            for (long i = 0; i < gn; i++) {")
-        code_lines.append(f"                double a = (double)(float)((data_t*){out_name})[i];")
+        code_lines.append(f"                double a = (double){_backend().tb_cast(f'((data_t*){out_name})[i]', 'float')};")
         code_lines.append("                double b = (double)verif_golden[i];")
         code_lines.append("                double abs_err = fabs(a - b);")
         code_lines.append("                double rel_err = abs_err / (fabs(b) + 1e-12);")
@@ -1749,14 +1749,14 @@ def generate_testbench_code(drams, output_dram_names, data_type="float", top_fun
     # Emit a machine-parseable verdict and return nonzero on failure.
     code_lines.append("    if (verif_n_checked == 0) {")
     code_lines.append("        printf(\"VERIFICATION: SKIP (no golden files found)\\n\");")
-    code_lines.append("        return 0;")
+    code_lines.append(f"        {_backend().tb_return(0)}")
     code_lines.append("    }")
     code_lines.append("    if (verif_n_mismatch == 0) {")
     code_lines.append("        printf(\"VERIFICATION: PASS (max_abs=%g, max_rel=%g, n=%ld)\\n\", verif_max_abs, verif_max_rel, verif_n_total);")
-    code_lines.append("        return 0;")
+    code_lines.append(f"        {_backend().tb_return(0)}")
     code_lines.append("    }")
     code_lines.append("    printf(\"VERIFICATION: FAIL (max_abs=%g, max_rel=%g, n_mismatch=%ld/%ld)\\n\", verif_max_abs, verif_max_rel, verif_n_mismatch, verif_n_total);")
-    code_lines.append("    return 1;")
+    code_lines.append(f"    {_backend().tb_return(1)}")
     code_lines.append("}")
 
     return "\n".join(code_lines)

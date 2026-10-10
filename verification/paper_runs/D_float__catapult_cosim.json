@@ -1,0 +1,10 @@
+{
+  "extends": "D_float__catapult_pm1.json",
+  "_comment": "Catapult synthesis + RTL verification for column D_float: one Catapult 2026.2 run per design = SCVerify C sim, synthesis to RTL (go extract, Nangate 45nm, 10 ns), SCVerify RTL (Verilog, Questa) sim of a 10-trial looped testbench at +-1; RTL vs C bit-exact. Same settings as D_float__cosim (Vitis).",
+  "sim": [
+    "csim",
+    "cosim"
+  ],
+  "n_trials": 1,
+  "cosim_trials": 10
+}

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copy the compact, reviewable part of the paper verification runs into the tracked folder verification/paper_results/:
 # per run: summary.csv, resolved_config.json (run settings), configs/ (exact design JSON of every experiment), sweep_curves/ (range search),
-# rows/; per-trial logs (trials/*.csv.gz) stay in verification/results_paper/ (release bundle). Full-scale models: summary.json/.txt and
+# rows/, catapult_qor/ (Catapult runs: synthesis QoR per design); per-trial logs (trials/*.csv.gz) stay in verification/results_paper/ (release bundle). Full-scale models: summary.json/.txt and
 # the input manifests (seeds, distributions, sha256 of every parameter tensor) of every run_fullmodel.sh run.
 #   FULLMODEL=<run_fullmodel.sh OUT dir> bash verification/paper_runs/collect_results.sh
 set -eu
@@ -9,11 +9,11 @@ cd "$(dirname "$0")/../.."
 SRC=verification/results_paper
 DST=verification/paper_results
 mkdir -p "$DST"
-for run in $SRC/*__max_range $SRC/*__pm1 $SRC/*__table7_* $SRC/*__manual_* $SRC/*__cosim; do
+for run in $SRC/*__max_range $SRC/*__pm1 $SRC/*__table7_* $SRC/*__manual_* $SRC/*__cosim $SRC/*__catapult_*; do
   [ -d "$run" ] || continue
   name=$(basename "$run")
   rm -rf "$DST/$name"; mkdir -p "$DST/$name"
-  for f in summary.csv resolved_config.json configs sweep_curves rows; do
+  for f in summary.csv resolved_config.json configs sweep_curves rows catapult_qor; do
     [ -e "$run/$f" ] && cp -r "$run/$f" "$DST/$name/"
   done
   [ -f "$SRC/$name.log" ] && gzip -9c "$SRC/$name.log" > "$DST/$name/run.log.gz"

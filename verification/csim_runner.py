@@ -32,6 +32,7 @@ CLI:
 """
 import argparse
 import csv
+import glob
 import importlib.util
 import json
 import os
@@ -131,6 +132,31 @@ def run_vitis(run_dir, log_name="vitis_hls_run.log"):
     with open(os.path.join(run_dir, log_name), "w") as f:
         f.write(out)
     return cp.returncode, out
+
+
+def run_catapult(run_dir, log_name="catapult_run.log"):
+    """`catapult -shell -f run_hls.tcl` in run_dir (Catapult backend designs). -> (rc, combined output).
+    The license environment (MGLS_LICENSE_FILE / SALT_LICENSE_SERVER) is inherited from the caller.
+    Not named catapult.log: Catapult writes its own session transcript under that name in the working directory."""
+    cp = subprocess.run(["catapult", "-shell", "-f", "run_hls.tcl"], cwd=run_dir, capture_output=True, text=True)
+    out = (cp.stdout or "") + (cp.stderr or "")
+    with open(os.path.join(run_dir, log_name), "w") as f:
+        f.write(out)
+    return cp.returncode, out
+
+
+def catapult_csim_exe(run_dir):
+    """The executable Catapult's SCVerify C simulation (Verify_orig_cxx_osci.mk) built, or None. It runs with the design dir as cwd."""
+    for project in sorted(os.listdir(run_dir)):
+        for sol in sorted(glob.glob(os.path.join(run_dir, project, "*", "scverify", "orig_cxx_osci", "scverify_top"))):
+            return sol
+    return None
+
+
+def rerun_catapult_csim(run_dir, exe):
+    """Re-execute Catapult's C-sim executable against the current inputs (read from and written to run_dir, as SCVerify runs it)."""
+    cp = subprocess.run([exe], cwd=run_dir, capture_output=True, text=True)
+    return cp.returncode, (cp.stdout or "") + (cp.stderr or "")
 
 
 def csim_build_dir(run_dir):

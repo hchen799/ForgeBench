@@ -24,6 +24,7 @@ Config (all keys optional; later files/overrides win; `extends` takes a path rel
   "operators": "table2" | "table7" | ["gemm", "vmm"] | ["ops/gemm/gemm__bias1", "designs/gemm/mlp"],   # table7: whole multi-operator designs
   "datatypes": ["float", "fixed<16,5>", "fixed<32,10>"],          # 'fixed<W,I[,trn|rnd,wrap|sat]>' or 'ap_fixed<...>' (see docs/DATA_TYPES.md)
   "sim": ["csim", "cosim"],
+  "backend": "vitis" | "catapult",   # optional (default vitis); catapult: generate with backends/catapult.py, C-sim = Catapult SCVerify (gemm; cosim = synthesis + SCVerify RTL sim in Questa)
   "n_trials": 100, "seed_base": 42, "cosim_trials": 20,
   "n_trials_by_design": {"conv_block_op1": 10},   # optional: per-design N (id or stem)
   "fixed_ranges_by_design": {"diff_dims_p1": {"DRAM_2": 0.0765}},   # optional: per-design DRAM ranges (substring of the DRAM name -> +-mag or [lo,hi]), kept fixed by the search
@@ -54,7 +55,8 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 from verification import fp, layout
-from verification.csim_runner import BASE_SEED, CrashError, csim_build_dir, refresh_inputs, rerun_csim_exe, run_vitis
+from verification.csim_runner import (BASE_SEED, CrashError, catapult_csim_exe, csim_build_dir, refresh_inputs, rerun_catapult_csim,
+                                      rerun_csim_exe, run_catapult, run_vitis)
 from verification.fixedpoint import DType, error_metrics, quantize
 from verification.fixed_runner import accum_length, op_under_test, read_outputs
 from verification.golden_ref import compute_goldens
@@ -207,7 +209,7 @@ def analytic_range(op_func, dims, dt):
 class Harness:
     """A built CSIM design that can be re-run on new input sets."""
 
-    def __init__(self, domain, cfg_path, dt, work, seed_base, op_params=None, fixed_ranges=None, whole_design=False):
+    def __init__(self, domain, cfg_path, dt, work, seed_base, op_params=None, fixed_ranges=None, whole_design=False, backend="vitis"):
         self.domain, self.dt, self.seed_base = domain, dt, seed_base
         if op_params:                                   # e.g. acc_type / acc_rounding on the operator under test (patched copy of the config)
             cfg = json.load(open(cfg_path))
@@ -217,15 +219,24 @@ class Harness:
             cfg_path = os.path.join(work, f"_patched_{os.path.basename(cfg_path)}")
             json.dump(cfg, open(cfg_path, "w"))
         self.cfg_path = cfg_path                        # the (possibly patched) config the design was generated from; CO-SIM reuses it
-        self.run_dir, self.config = generate_design(domain, cfg_path, work, ["csim"], data_type=dt.text)
+        self.run_dir, self.config = generate_design(domain, cfg_path, work, ["csim"], data_type=dt.text,
+                                                    config_overrides=None if backend == "vitis" else {"tool": backend})
         for d in self.config["drams"]:                  # DRAMs whose name contains a key keep +-value while the search scales the others (e.g. weights)
             for key, mag in (fixed_ranges or {}).items():
                 if key in d["name"]:
                     d["input_range"], d["fixed_range"] = (list(mag) if isinstance(mag, (list, tuple)) else [-mag, mag]), True     # +-mag, or an explicit [lo, hi]
-        rc, _ = run_vitis(self.run_dir, log_name="vitis_trial0.log")
-        self.build = csim_build_dir(self.run_dir)
-        if self.build is None:
-            raise RuntimeError(f"CSIM build failed (rc={rc}); see {self.run_dir}/vitis_trial0.log")
+        self.backend = backend
+        if backend == "vitis":
+            rc, _ = run_vitis(self.run_dir, log_name="vitis_trial0.log")
+            self.build = csim_build_dir(self.run_dir)
+            if self.build is None:
+                raise RuntimeError(f"CSIM build failed (rc={rc}); see {self.run_dir}/vitis_trial0.log")
+        else:                                           # catapult: SCVerify C simulation built by Catapult; it runs in the design dir
+            rc, _ = run_catapult(self.run_dir)
+            self.exe = catapult_csim_exe(self.run_dir)
+            if rc != 0 or self.exe is None:
+                raise RuntimeError(f"Catapult C-sim build failed (rc={rc}); see {self.run_dir}/catapult_run.log")
+            self.build = self.run_dir
         self.names = self.config["output_dram_names"]
         self.qf = (lambda x: quantize(x, dt))
 
@@ -242,7 +253,7 @@ class Harness:
             p = os.path.join(self.build, f"{n}_output.txt")
             if os.path.isfile(p):
                 os.remove(p)
-        rc, _ = rerun_csim_exe(self.run_dir, self.build)
+        rc, _ = rerun_csim_exe(self.run_dir, self.build) if self.backend == "vitis" else rerun_catapult_csim(self.run_dir, self.exe)
         if rc != 0:
             raise CrashError(rc)
         out = read_outputs(self.build, self.names)
@@ -286,6 +297,9 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
            "datatype": dt.text, "rounding_overflow": "" if dt.kind == "float" else f"{dt.q[3:]}/{dt.o[3:]}", "sim_level": "csim",
            "n_trials": n_trials_for(cfg, v), "seed_base": cfg["seed_base"], "status": "ok", "notes": "",
            "golden": f"numpy {cfg['golden']['precision']} on " + ("quantized inputs" if dt.kind == "fixed" else "float32 inputs")}
+    backend = cfg.get("backend", "vitis")         # "catapult": generate with the Catapult backend, C-sim / synthesis / RTL sim in Catapult (gemm only)
+    if backend != "vitis":
+        row["notes"] = f"backend={backend} (SCVerify C-sim); "
     h = None
     try:
         base = os.path.join(work, domain, dt.tag())      # domain matters: activation/matrix_add exist in several domains with identical stems
@@ -297,10 +311,12 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
             from verification.manual_designs import ManualHarness, SPECS
             h = ManualHarness(v["id"].split("/", 1)[1], dt, base, cfg.get("op_params") or None)
         else:
+            if backend != "vitis" and domain != "gemm":
+                raise ValueError(f"backend {backend!r} is wired for gemm only")
             h = Harness(domain, path, dt, base, cfg["seed_base"], cfg.get("op_params") or None,
                         {**(cfg.get("fixed_ranges") or {}), **((cfg.get("fixed_ranges_by_operator") or {}).get(v["operator"], {})),
                          **((cfg.get("fixed_ranges_by_design") or {}).get(v["stem"], {}))},
-                        whole_design=whole)
+                        whole_design=whole, backend=backend)
         bcfg = cfg
         if manual:
             sp = SPECS[v["id"].split("/", 1)[1]]
@@ -461,10 +477,20 @@ def verify_variant(v, dt, cfg, work, out_dir, keep=False):
         if "cosim" in cfg["sim"] and manual:
             row["notes"] += "cosim not wired for hand-written designs; "
         elif "cosim" in cfg["sim"]:
-            from verification.cosim import run_cosim
+            from verification.cosim import run_cosim, run_cosim_catapult
             # same design (op_params patch included) and the same per-DRAM input ranges as the CSIM trials above
-            cs = run_cosim(domain, h.cfg_path, dt.text, cfg["cosim_trials"], os.path.join(work, domain, f"{dt.tag()}_cosim"),
-                           inputs_config=run_cfg, keep=keep)
+            if backend == "catapult":           # one Catapult run: SCVerify C sim, synthesis (go extract), SCVerify RTL (Questa) sim
+                cs = run_cosim_catapult(domain, h.cfg_path, dt.text, cfg["cosim_trials"], os.path.join(work, domain, f"{dt.tag()}_cosim"),
+                                        inputs_config=run_cfg, keep=keep)
+                row["notes"] += f"catapult synth+rtl sim {cs.get('synth_s', '-')}s; "
+                qdir = os.path.join(out_dir, "catapult_qor")
+                os.makedirs(qdir, exist_ok=True)
+                with open(os.path.join(qdir, f"{v['id'].replace('/', '__')}__{dt.tag()}.json"), "w") as f:
+                    json.dump({"design": v["id"], "datatype": dt.text, "status": cs["status"], "synth_and_rtl_sim_s": cs.get("synth_s"),
+                               **cs.get("qor", {})}, f, indent=1)
+            else:
+                cs = run_cosim(domain, h.cfg_path, dt.text, cfg["cosim_trials"], os.path.join(work, domain, f"{dt.tag()}_cosim"),
+                               inputs_config=run_cfg, keep=keep)
             tr = cs["trials"]
             row.update({"cosim_status": cs["status"], "cosim_trials": len(tr),
                         "cosim_c_vs_rtl_mismatches": sum(t["c_vs_rtl_mismatch"] for t in tr)})
@@ -514,6 +540,7 @@ def main(default_config=None, default_operators=None, argv=None):
     ap.add_argument("--sim", nargs="+", choices=["csim", "cosim"])
     ap.add_argument("--range", dest="range_spec", help='"auto", "design", or JSON like [-1,1]')
     ap.add_argument("--no-stress", action="store_true")
+    ap.add_argument("--backend", choices=["vitis", "catapult"], help="code generation backend (default vitis; catapult: gemm, Catapult SCVerify C-sim)")
     ap.add_argument("--jobs", type=int, default=8)
     ap.add_argument("--out", required=True)
     ap.add_argument("--work")
@@ -533,6 +560,8 @@ def main(default_config=None, default_operators=None, argv=None):
         ov["inputs"] = {"range": a.range_spec if a.range_spec in ("auto", "design") else json.loads(a.range_spec)}
     if a.no_stress:
         ov["stress"] = {"enabled": False}
+    if a.backend:
+        ov["backend"] = a.backend
     cfg = resolve_config(a.config, ov)
     out_dir = os.path.abspath(a.out)
     work = os.path.abspath(a.work or os.path.join(out_dir, "_work"))
