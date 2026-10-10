@@ -11,7 +11,7 @@
 #include <hls_math.h>
 using namespace std;
 
-typedef ap_fixed<32,10> data_t;
+typedef ap_fixed<32, 10, AP_RND, AP_SAT> data_t;
 // Production arithmetic revision 2: persistent wide sums.
 typedef ap_fixed<80,36,AP_TRN,AP_WRAP> acc_t;
 static const int FB_ACC_BITS = 80;
@@ -339,14 +339,14 @@ acc_t BRAM_score_tile[16][4][128];
 acc_t BRAM_rowmax[16][4];
 acc_t BRAM_rowsum[16][4];
 
-void load_1_ap_fixed_32_10___int32_t_int32_t(int32_t input[1], int32_t output[1])
+void load_1_ap_fixed_32_10_AP_RND_AP_SAT___int32_t_int32_t(int32_t input[1], int32_t output[1])
 {
     for (int idx0 = 0; idx0 < 1; idx0++) {
         output[idx0] = input[idx0];
     }
 }
 
-void embedding_lookup_chunk_2048_128256_4096_16_128_1_ap_fixed_32_10___int32_t_data_t_data_t(
+void embedding_lookup_chunk_2048_128256_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___int32_t_data_t_data_t(
     int32_t token_ids[2048],
     data_t embedding[128256][4096],
     data_t output[16][128],
@@ -365,7 +365,7 @@ void embedding_lookup_chunk_2048_128256_4096_16_128_1_ap_fixed_32_10___int32_t_d
     }
 }
 
-void store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(
+void store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[16][128],
     data_t output[2048][4096],
     int row_base,
@@ -381,14 +381,14 @@ void store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void clear_vector_tile_16_ap_fixed_32_10___acc_t(acc_t output[16])
+void clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t output[16])
 {
     for (int r = 0; r < 16; ++r) {
         output[r] = (data_t)0;
     }
 }
 
-void load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(
+void load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[2048][4096],
     data_t output[16][128],
     int row_base,
@@ -408,7 +408,7 @@ void load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(
+void rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(
     data_t input[16][128],
     acc_t sumsq[16],
     int valid_rows,
@@ -424,7 +424,7 @@ void rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(
     }
 }
 
-void rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(
+void rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(
     acc_t sumsq[16],
     acc_t inv_rms[16],
     int valid_rows
@@ -436,7 +436,7 @@ void rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(
     }
 }
 
-void load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(
+void load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[32][4096],
     data_t output[128],
     int layer_idx,
@@ -453,7 +453,7 @@ void load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(
     }
 }
 
-void rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(
+void rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(
     data_t input[16][128],
     data_t gamma[128],
     acc_t inv_rms[16],
@@ -469,7 +469,7 @@ void rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(
     }
 }
 
-void clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(acc_t tile[16][256])
+void clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t tile[16][256])
 {
     for (int r = 0; r < 16; ++r) {
         for (int c = 0; c < 256; ++c) {
@@ -478,7 +478,7 @@ void clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(acc_t tile[16][256])
     }
 }
 
-void load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(
+void load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[32][4096][4096],
     data_t output[256][128],
     int layer_idx,
@@ -499,7 +499,7 @@ void load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(
     }
 }
 
-void linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(
+void linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(
     data_t input[16][128],
     data_t weight[256][128],
     acc_t output[16][256],
@@ -519,7 +519,7 @@ void linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(
     }
 }
 
-void store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(
+void store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[16][256],
     data_t output[2048][4096],
     int row_base,
@@ -535,7 +535,7 @@ void store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(
+void load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[32][1024][4096],
     data_t output[256][128],
     int layer_idx,
@@ -556,7 +556,7 @@ void load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(
     }
 }
 
-void store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(
+void store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[16][256],
     data_t output[2048][1024],
     int row_base,
@@ -572,7 +572,7 @@ void store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(
+void load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[2048][4096],
     data_t output[16][512],
     int row_base,
@@ -592,7 +592,7 @@ void load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(
     }
 }
 
-void apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(
+void apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[16][512],
     data_t output[16][512],
     int pos_base,
@@ -619,7 +619,7 @@ void apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(
     }
 }
 
-void store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(
+void store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[16][512],
     data_t output[2048][4096],
     int row_base,
@@ -635,7 +635,7 @@ void store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(
     }
 }
 
-void load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(
+void load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[2048][1024],
     data_t output[16][128],
     int row_base,
@@ -655,7 +655,7 @@ void load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(
+void apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[16][128],
     data_t output[16][128],
     int pos_base,
@@ -682,7 +682,7 @@ void apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(
     }
 }
 
-void store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(
+void store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[16][128],
     data_t output[2048][1024],
     int row_base,
@@ -698,7 +698,7 @@ void store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(
+void kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[2048][1024],
     data_t cache[32][2048][8][128],
     int layer_idx,
@@ -716,7 +716,7 @@ void kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(
     }
 }
 
-void init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(acc_t tile[16][4])
+void init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t tile[16][4])
 {
     for (int r = 0; r < 16; ++r) {
         for (int c = 0; c < 4; ++c) {
@@ -725,7 +725,7 @@ void init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(acc_t tile[16][4])
     }
 }
 
-void clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(acc_t tile[16][4])
+void clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t tile[16][4])
 {
     for (int r = 0; r < 16; ++r) {
         for (int c = 0; c < 4; ++c) {
@@ -734,7 +734,7 @@ void clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(acc_t tile[16][4])
     }
 }
 
-void clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(acc_t tile[16][512])
+void clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t tile[16][512])
 {
     for (int r = 0; r < 16; ++r) {
         for (int c = 0; c < 512; ++c) {
@@ -743,7 +743,7 @@ void clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(acc_t tile[16][512])
     }
 }
 
-void kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(
+void kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t cache[32][2048][8][128],
     data_t output[128][128],
     int layer_idx,
@@ -762,7 +762,7 @@ void kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(
     }
 }
 
-void attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(
+void attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(
     data_t q_tile[16][512],
     data_t k_tile[128][128],
     acc_t score[16][4][128],
@@ -791,7 +791,7 @@ void attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_
     }
 }
 
-void attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(
+void attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(
     acc_t score[16][4][128],
     acc_t rowmax[16][4],
     int valid_q,
@@ -809,7 +809,7 @@ void attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(
     }
 }
 
-void attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(
+void attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(
     acc_t score[16][4][128],
     data_t v_tile[128][128],
     acc_t rowmax[16][4],
@@ -836,7 +836,7 @@ void attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_da
     }
 }
 
-void attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(
+void attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(
     acc_t ctx[16][512],
     acc_t rowsum[16][4],
     int valid_q
@@ -853,7 +853,7 @@ void attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(
     }
 }
 
-void store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(
+void store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[16][512],
     data_t output[2048][4096],
     int row_base,
@@ -869,7 +869,7 @@ void store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(
+void matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t lhs[16][128],
     data_t rhs[16][128],
     data_t output[16][128],
@@ -884,7 +884,7 @@ void matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(
+void load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[32][14336][4096],
     data_t output[256][128],
     int layer_idx,
@@ -905,7 +905,7 @@ void load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(
     }
 }
 
-void store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(
+void store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[16][256],
     data_t output[2048][14336],
     int row_base,
@@ -921,7 +921,7 @@ void store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(
+void load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[2048][14336],
     data_t output[16][128],
     int row_base,
@@ -941,7 +941,7 @@ void load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void silu_tile_2d_16_128_1_ap_fixed_32_10_(
+void silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[16][128],
     data_t output[16][128],
     int valid_rows,
@@ -957,7 +957,7 @@ void silu_tile_2d_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(
+void elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t lhs[16][128],
     data_t rhs[16][128],
     data_t output[16][128],
@@ -972,7 +972,7 @@ void elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(
+void store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[16][128],
     data_t output[2048][14336],
     int row_base,
@@ -988,7 +988,7 @@ void store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(
+void load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[32][4096][14336],
     data_t output[256][128],
     int layer_idx,
@@ -1009,7 +1009,7 @@ void load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(
     }
 }
 
-void load_vector_tile_4096_128_1_ap_fixed_32_10_(
+void load_vector_tile_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[4096],
     data_t output[128],
     int col_base
@@ -1025,7 +1025,7 @@ void load_vector_tile_4096_128_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_2d_128256_4096_256_128_1_1_ap_fixed_32_10_(
+void load_weight_tile_2d_128256_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128256][4096],
     data_t output[256][128],
     int out_base,
@@ -1045,7 +1045,7 @@ void load_weight_tile_2d_128256_4096_256_128_1_1_ap_fixed_32_10_(
     }
 }
 
-void store_matrix_tile_2048_128256_16_256_1_ap_fixed_32_10___acc_t_data_t(
+void store_matrix_tile_2048_128256_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[16][256],
     data_t output[2048][128256],
     int row_base,
@@ -1094,6796 +1094,6796 @@ void top(int32_t DRAM_token_ids[2048], int32_t DRAM_prefill_len[1], data_t DRAM_
     #pragma HLS interface m_axi port=DRAM_v_cache offset=slave bundle=mem_v_cache
     #pragma HLS interface m_axi port=DRAM_logits offset=slave bundle=mem_logits
 
-    load_1_ap_fixed_32_10___int32_t_int32_t(DRAM_prefill_len, BRAM_prefill_len);
+    load_1_ap_fixed_32_10_AP_RND_AP_SAT___int32_t_int32_t(DRAM_prefill_len, BRAM_prefill_len);
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            embedding_lookup_chunk_2048_128256_4096_16_128_1_ap_fixed_32_10___int32_t_data_t_data_t(DRAM_token_ids, DRAM_embedding, BRAM_hidden_a, t_base, h_base, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            embedding_lookup_chunk_2048_128256_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___int32_t_data_t_data_t(DRAM_token_ids, DRAM_embedding, BRAM_hidden_a, t_base, h_base, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 0, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 0, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 0, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 0, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 0, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 0, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 0, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 0, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int kh_base = 0; kh_base < 8; kh_base += 1) {
-            int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 0, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 0, t_base, t_base, valid_t);
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int qh_base = 0; qh_base < 32; qh_base += 4) {
-            int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
-                int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 0, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
-            }
-            for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
-                int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 0, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 0, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
-            }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int o_base = 0; o_base < 4096; o_base += 256) {
-            int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
-            for (int i_base = 0; i_base < 4096; i_base += 128) {
-                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 0, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
-            }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int h_base = 0; h_base < 4096; h_base += 128) {
-            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
-        for (int h_base = 0; h_base < 4096; h_base += 128) {
-            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
-        }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
-        for (int h_base = 0; h_base < 4096; h_base += 128) {
-            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 0, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int o_base = 0; o_base < 14336; o_base += 128) {
-            int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
-            for (int i_base = 0; i_base < 4096; i_base += 128) {
-                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 0, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
-            }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int o_base = 0; o_base < 14336; o_base += 128) {
-            int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
-            for (int i_base = 0; i_base < 4096; i_base += 128) {
-                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 0, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
-            }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int c_base = 0; c_base < 14336; c_base += 128) {
-            int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int o_base = 0; o_base < 4096; o_base += 256) {
-            int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
-            for (int i_base = 0; i_base < 14336; i_base += 128) {
-                int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 0, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
-            }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int h_base = 0; h_base < 4096; h_base += 128) {
-            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
-        for (int h_base = 0; h_base < 4096; h_base += 128) {
-            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
-        }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
-        for (int h_base = 0; h_base < 4096; h_base += 128) {
-            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 1, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int o_base = 0; o_base < 4096; o_base += 256) {
-            int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
-            for (int i_base = 0; i_base < 4096; i_base += 128) {
-                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 1, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
-            }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int o_base = 0; o_base < 1024; o_base += 256) {
-            int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
-            for (int i_base = 0; i_base < 4096; i_base += 128) {
-                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 1, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
-            }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int o_base = 0; o_base < 1024; o_base += 256) {
-            int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
-            for (int i_base = 0; i_base < 4096; i_base += 128) {
-                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 1, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
-            }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
-        }
-    }
-    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
-        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        for (int qh_base = 0; qh_base < 32; qh_base += 4) {
-            int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 1, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 1, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 0, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 0, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 1, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 0, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 1, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 1, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 0, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 0, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 1, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 0, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 1, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 0, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 1, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 0, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 1, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 0, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 1, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 0, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 2, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 1, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 2, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 1, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 2, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 1, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 2, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 1, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 2, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 2, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 1, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 1, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 2, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 1, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 2, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 2, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 1, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 1, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 2, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 1, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 2, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 1, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 2, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 1, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 2, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 1, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 2, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 1, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 3, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 2, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 3, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 2, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 3, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 2, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 3, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 2, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 3, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 3, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 2, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 2, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 3, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 2, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 3, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 3, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 2, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 2, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 3, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 2, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 3, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 2, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 3, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 2, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 3, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 2, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 3, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 2, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 4, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 3, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 4, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 3, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 4, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 3, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 4, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 3, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 4, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 4, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 3, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 3, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 4, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 3, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 4, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 4, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 3, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 3, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 4, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 3, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 4, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 3, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 4, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 3, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 4, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 3, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 4, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 3, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 5, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 4, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 5, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 4, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 5, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 4, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 5, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 4, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 5, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 5, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 4, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 4, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 5, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 4, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 5, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 5, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 4, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 4, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 5, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 4, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 5, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 4, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 5, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 4, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 5, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 4, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 5, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 4, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 6, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 5, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 6, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 5, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 6, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 5, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 6, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 5, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 6, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 6, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 5, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 5, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 6, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 5, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 6, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 6, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 5, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 5, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 6, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 5, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 6, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 5, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 6, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 5, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 6, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 5, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 6, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 5, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 7, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 6, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 7, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 6, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 7, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 6, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 7, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 6, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 7, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 7, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 6, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 6, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 7, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 6, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 7, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 7, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 6, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 6, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 7, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 6, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 7, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 6, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 7, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 6, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 7, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 6, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 7, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 6, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 8, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 7, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 8, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 7, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 8, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 7, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 8, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 7, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 8, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 8, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 7, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 7, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 8, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 7, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 8, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 8, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 7, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 7, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 8, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 7, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 8, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 7, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 8, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 7, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 8, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 7, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 8, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 7, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 9, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 8, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 9, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 8, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 9, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 8, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 9, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 8, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 9, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 9, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 8, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 8, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 9, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 8, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 9, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 9, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 8, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 8, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 9, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 8, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 9, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 8, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 9, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 8, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 9, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 8, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 9, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 8, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 10, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 9, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 10, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 9, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 10, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 9, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 10, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 9, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 10, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 10, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 9, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 9, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 10, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 9, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 10, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 10, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 9, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 9, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 10, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 9, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 10, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 9, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 10, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 9, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 10, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 9, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 10, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 9, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 11, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 10, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 11, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 10, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 11, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 10, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 11, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 10, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 11, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 11, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 10, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 10, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 11, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 10, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 11, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 11, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 10, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 10, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 11, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 10, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 11, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 10, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 11, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 10, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 11, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 10, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 11, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 10, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 12, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 11, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 12, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 11, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 12, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 11, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 12, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 11, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 12, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 12, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 11, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 11, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 12, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 11, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 12, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 12, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 11, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 11, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 12, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 11, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 12, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 11, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 12, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 11, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 12, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 11, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 12, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 11, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 13, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 12, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 13, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 12, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 13, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 12, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 13, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 12, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 13, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 13, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 12, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 12, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 13, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 12, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 13, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 13, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 12, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 12, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 13, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 12, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 13, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 12, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 13, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 12, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 13, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 12, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 13, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 12, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 14, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 13, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 14, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 13, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 14, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 13, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 14, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 13, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 14, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 14, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 13, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 13, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 14, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 13, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 14, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 14, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 13, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 13, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 14, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 13, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 14, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 13, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 14, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 13, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 14, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 13, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 14, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 13, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 15, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 14, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 15, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 14, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 15, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 14, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 15, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 14, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 15, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 15, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 14, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 14, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 15, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 14, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 15, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 15, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 14, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 14, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 15, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 14, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 15, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 14, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 15, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 14, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 15, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 14, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 15, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 14, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 16, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 15, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 16, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 15, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 16, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 15, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 16, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 15, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 16, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 16, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 15, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 15, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 16, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 15, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 16, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 16, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 15, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 15, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 16, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 15, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 16, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 15, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 16, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 15, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 16, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 15, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 16, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 15, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 17, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 16, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 17, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 16, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 17, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 16, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 17, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 16, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 17, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 17, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 16, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 16, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 17, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 16, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 17, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 17, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 16, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 16, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 17, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 16, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 17, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 16, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 17, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 16, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 17, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 16, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 17, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 16, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 18, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 17, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 18, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 17, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 18, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 17, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 18, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 17, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 18, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 18, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 17, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 17, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 18, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 17, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 18, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 18, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 17, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 17, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 18, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 17, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 18, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 17, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 18, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 17, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 18, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 17, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 18, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 17, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 19, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 18, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 19, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 18, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 19, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 18, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 19, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 18, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 19, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 19, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 18, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 18, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 19, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 18, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 19, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 19, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 18, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 18, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 19, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 18, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 19, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 18, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 19, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 18, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 19, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 18, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 19, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 18, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 20, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 19, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 20, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 19, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 20, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 19, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 20, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 19, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 20, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 20, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 19, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 19, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 20, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 19, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 20, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 20, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 19, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 19, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 20, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 19, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 20, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 19, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 20, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 19, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 20, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 19, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 20, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 19, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 21, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 20, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 21, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 20, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 21, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 20, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 21, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 20, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 21, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 21, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 20, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 20, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 21, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 20, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 21, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 21, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 20, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 20, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 21, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 20, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 21, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 20, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 21, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 20, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 21, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 20, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 21, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 20, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 22, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 21, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 22, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 21, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 22, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 21, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 22, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 21, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 22, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 22, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 21, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 21, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 22, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 21, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 22, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 22, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 21, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 21, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 22, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 21, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 22, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 21, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 22, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 21, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 22, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 21, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 22, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 21, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 23, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 22, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 23, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 22, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 23, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 22, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 23, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 22, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 23, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 23, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 22, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 22, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 23, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 22, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 23, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 23, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 22, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 22, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 23, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 22, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 23, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 22, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 23, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 22, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 23, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 22, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 23, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 22, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 24, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 23, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 24, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 23, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 24, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 23, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 24, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 23, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 24, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 24, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 23, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 23, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 24, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 23, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 24, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 24, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 23, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 23, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 24, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 23, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 24, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 23, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 24, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 23, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 24, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 23, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 24, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 23, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 25, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 24, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 25, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 24, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 25, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 24, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 25, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 24, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 25, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 25, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 24, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 24, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 25, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 24, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 25, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 25, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 24, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 24, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 25, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 24, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 25, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 24, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 25, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 24, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 25, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 24, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 25, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 24, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 26, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 25, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 26, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 25, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 26, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 25, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 26, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 25, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 26, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 26, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 25, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 25, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 26, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 25, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 26, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 26, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 25, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 25, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 26, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 25, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 26, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 25, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 26, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 25, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 26, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 25, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 26, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 25, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 27, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 26, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 27, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 26, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 27, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 26, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 27, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 26, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 27, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 27, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 26, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 26, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 27, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 26, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 27, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 27, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 26, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 26, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 27, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 26, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 27, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 26, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 27, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 26, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 27, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 26, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 27, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 26, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 28, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 27, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 28, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 27, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 28, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 27, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 28, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 27, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 28, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 28, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 27, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 27, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 28, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 27, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 28, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 28, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 27, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 27, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 28, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 27, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 28, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 27, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 28, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 27, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 28, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 27, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 28, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 27, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 29, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 28, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 29, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 28, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 29, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 28, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 29, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 28, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 29, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 29, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 28, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 28, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 29, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 28, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 29, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 29, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 28, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 28, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 29, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 28, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 29, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 28, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 29, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 28, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 29, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 28, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 29, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 28, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 30, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 29, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 30, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 29, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 30, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 29, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 30, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 29, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 30, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 30, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 29, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 29, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 30, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 29, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 30, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 30, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 29, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 29, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 30, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 29, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 30, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 29, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 30, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 29, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 30, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 29, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 30, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 29, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_attn_norm, BRAM_gamma_chunk, 31, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 30, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_q_proj, BRAM_weight_tile, 31, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 30, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_k_proj, BRAM_weight_tile, 31, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 30, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 1024; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_(DRAM_v_proj, BRAM_weight_tile, 31, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 30, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
-            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int kh_base = 0; kh_base < 8; kh_base += 1) {
             int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
-            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
-            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
-            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_k, DRAM_k_cache, 31, t_base, t_base, valid_t);
-        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_(DRAM_v, DRAM_v_cache, 31, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 30, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 30, t_base, t_base, valid_t);
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int qh_base = 0; qh_base < 32; qh_base += 4) {
             int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
-            init_rowmax_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowmax);
-            clear_matrix_tile_16_4_1_ap_fixed_32_10___acc_t(BRAM_rowsum);
-            clear_matrix_tile_16_512_1_ap_fixed_32_10___acc_t(BRAM_ctx_tile);
-            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 31, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 30, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
             }
             for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
                 int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_k_cache, BRAM_k_tile, 31, (qh_base / 4), k_base, valid_k);
-                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_(DRAM_v_cache, BRAM_v_tile, 31, (qh_base / 4), k_base, valid_k);
-                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
-                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 30, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 30, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
             }
-            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
-            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_(DRAM_o_proj, BRAM_weight_tile, 31, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 30, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_(DRAM_ffn_norm, BRAM_gamma_chunk, 31, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 30, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_gate_proj, BRAM_weight_tile, 31, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 30, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 14336; o_base += 128) {
             int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_(DRAM_up_proj, BRAM_weight_tile, 31, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 30, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int c_base = 0; c_base < 14336; c_base += 128) {
             int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
-            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_up, BRAM_up_chunk, t_base, c_base);
-            silu_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
-            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
-            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 4096; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 14336; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
-                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_(DRAM_down_proj, BRAM_weight_tile, 31, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 30, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
-            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_pong, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
-        clear_vector_tile_16_ap_fixed_32_10___acc_t(BRAM_rms_sumsq);
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
         }
-        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
         for (int h_base = 0; h_base < 4096; h_base += 128) {
             int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
-            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
-            load_vector_tile_4096_128_1_ap_fixed_32_10_(DRAM_final_norm, BRAM_gamma_chunk, h_base);
-            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
-            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn_norm, BRAM_gamma_chunk, 31, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int o_base = 0; o_base < 4096; o_base += 256) {
+            int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
+            for (int i_base = 0; i_base < 4096; i_base += 128) {
+                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q_proj, BRAM_weight_tile, 31, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+            }
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_q, t_base, o_base, valid_t, valid_o);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int o_base = 0; o_base < 1024; o_base += 256) {
+            int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
+            for (int i_base = 0; i_base < 4096; i_base += 128) {
+                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_proj, BRAM_weight_tile, 31, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+            }
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_k, t_base, o_base, valid_t, valid_o);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int o_base = 0; o_base < 1024; o_base += 256) {
+            int valid_o = (((o_base) + (256)) <= (1024) ? (256) : ((1024) - (o_base)));
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
+            for (int i_base = 0; i_base < 4096; i_base += 128) {
+                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_1024_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_proj, BRAM_weight_tile, 31, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+            }
+            store_matrix_tile_2048_1024_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_v, t_base, o_base, valid_t, valid_o);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int qh_base = 0; qh_base < 32; qh_base += 4) {
+            int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            apply_rope_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, BRAM_q_tile, t_base, qh_base, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_q_tile, DRAM_q, t_base, (qh_base * 128), valid_t, 512);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int kh_base = 0; kh_base < 8; kh_base += 1) {
+            int valid_kh = (((kh_base) + (1)) <= (8) ? (1) : ((8) - (kh_base)));
+            load_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, BRAM_k_rope, t_base, (kh_base * 128));
+            apply_rope_tile_16_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, BRAM_k_rope, t_base, kh_base, valid_t);
+            store_matrix_tile_2048_1024_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_k_rope, DRAM_k, t_base, (kh_base * 128), valid_t, 128);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k, DRAM_k_cache, 31, t_base, t_base, valid_t);
+        kv_cache_store_tile_2048_2048_8_128_16_1024_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v, DRAM_v_cache, 31, t_base, t_base, valid_t);
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int qh_base = 0; qh_base < 32; qh_base += 4) {
+            int valid_qh = (((qh_base) + (4)) <= (32) ? (4) : ((32) - (qh_base)));
+            init_rowmax_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowmax);
+            clear_matrix_tile_16_4_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rowsum);
+            clear_matrix_tile_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_ctx_tile);
+            load_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_q, BRAM_q_tile, t_base, (qh_base * 128));
+            for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
+                int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 31, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_rowmax_tile_16_4_128_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_score_tile, BRAM_rowmax, valid_t, valid_k);
+            }
+            for (int k_base = 0; k_base < (int)BRAM_prefill_len[0]; k_base += 128) {
+                int valid_k = (((k_base) + (128)) <= ((int)BRAM_prefill_len[0]) ? (128) : (((int)BRAM_prefill_len[0]) - (k_base)));
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_k_cache, BRAM_k_tile, 31, (qh_base / 4), k_base, valid_k);
+                kv_cache_load_group_tile_2048_8_128_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_v_cache, BRAM_v_tile, 31, (qh_base / 4), k_base, valid_k);
+                attention_score_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_q_tile, BRAM_k_tile, BRAM_score_tile, valid_t, valid_k, t_base, k_base);
+                attention_softmax_context_tile_16_4_128_128_1_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t_acc_t_acc_t(BRAM_score_tile, BRAM_v_tile, BRAM_rowmax, BRAM_rowsum, BRAM_ctx_tile, valid_t, valid_k, t_base, k_base);
+            }
+            attention_finalize_tile_16_4_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_ctx_tile, BRAM_rowsum, valid_t);
+            store_matrix_tile_2048_4096_16_512_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_ctx_tile, DRAM_attn, t_base, (qh_base * 128), valid_t, 512);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int o_base = 0; o_base < 4096; o_base += 256) {
+            int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
+            for (int i_base = 0; i_base < 4096; i_base += 128) {
+                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_attn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_o_proj, BRAM_weight_tile, 31, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+            }
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_norm1, t_base, o_base, valid_t, valid_o);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int h_base = 0; h_base < 4096; h_base += 128) {
+            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_pong, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_mid, t_base, h_base, valid_t, valid_h);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
+        for (int h_base = 0; h_base < 4096; h_base += 128) {
+            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+        }
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        for (int h_base = 0; h_base < 4096; h_base += 128) {
+            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_layer_vector_tile_32_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_norm, BRAM_gamma_chunk, 31, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm2, t_base, h_base, valid_t, valid_h);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int o_base = 0; o_base < 14336; o_base += 128) {
+            int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
+            for (int i_base = 0; i_base < 4096; i_base += 128) {
+                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate_proj, BRAM_weight_tile, 31, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+            }
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_gate, t_base, o_base, valid_t, valid_o);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int o_base = 0; o_base < 14336; o_base += 128) {
+            int valid_o = (((o_base) + (128)) <= (14336) ? (128) : ((14336) - (o_base)));
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
+            for (int i_base = 0; i_base < 4096; i_base += 128) {
+                int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm2, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_14336_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up_proj, BRAM_weight_tile, 31, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+            }
+            store_matrix_tile_2048_14336_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_up, t_base, o_base, valid_t, valid_o);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int c_base = 0; c_base < 14336; c_base += 128) {
+            int valid_c = (((c_base) + (128)) <= (14336) ? (128) : ((14336) - (c_base)));
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gate, BRAM_gate_chunk, t_base, c_base);
+            load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_up, BRAM_up_chunk, t_base, c_base);
+            silu_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_gate_chunk, valid_t, valid_c);
+            elementwise_mult_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_gate_chunk, BRAM_up_chunk, BRAM_ffn_chunk, valid_t, valid_c);
+            store_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_ffn_chunk, DRAM_ffn, t_base, c_base, valid_t, valid_c);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int o_base = 0; o_base < 4096; o_base += 256) {
+            int valid_o = (((o_base) + (256)) <= (4096) ? (256) : ((4096) - (o_base)));
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
+            for (int i_base = 0; i_base < 14336; i_base += 128) {
+                int valid_i = (((i_base) + (128)) <= (14336) ? (128) : ((14336) - (i_base)));
+                load_matrix_tile_2048_14336_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_layered_32_4096_14336_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_down_proj, BRAM_weight_tile, 31, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+            }
+            store_matrix_tile_2048_4096_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_ffn_out, t_base, o_base, valid_t, valid_o);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        for (int h_base = 0; h_base < 4096; h_base += 128) {
+            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_mid, BRAM_hidden_a, t_base, h_base);
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_ffn_out, BRAM_hidden_b, t_base, h_base);
+            matrix_add_tile_2d_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, BRAM_hidden_b, BRAM_hidden_a, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_a, DRAM_hidden_ping, t_base, h_base, valid_t, valid_h);
+        }
+    }
+    for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
+        int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
+        clear_vector_tile_16_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_rms_sumsq);
+        for (int h_base = 0; h_base < 4096; h_base += 128) {
+            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            rmsnorm_accumulate_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_hidden_a, BRAM_rms_sumsq, valid_t, valid_h);
+        }
+        rmsnorm_finalize_rows_16_4096_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_rms_sumsq, BRAM_rms_inv, valid_t);
+        for (int h_base = 0; h_base < 4096; h_base += 128) {
+            int valid_h = (((h_base) + (128)) <= (4096) ? (128) : ((4096) - (h_base)));
+            load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_hidden_ping, BRAM_hidden_a, t_base, h_base);
+            load_vector_tile_4096_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_final_norm, BRAM_gamma_chunk, h_base);
+            rmsnorm_apply_tile_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t_data_t(BRAM_hidden_a, BRAM_gamma_chunk, BRAM_rms_inv, BRAM_hidden_b, valid_t, valid_h);
+            store_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_hidden_b, DRAM_norm1, t_base, h_base, valid_t, valid_h);
         }
     }
     for (int t_base = 0; t_base < (int)BRAM_prefill_len[0]; t_base += 16) {
         int valid_t = (((t_base) + (16)) <= ((int)BRAM_prefill_len[0]) ? (16) : (((int)BRAM_prefill_len[0]) - (t_base)));
         for (int o_base = 0; o_base < 128256; o_base += 256) {
             int valid_o = (((o_base) + (256)) <= (128256) ? (256) : ((128256) - (o_base)));
-            clear_matrix_tile_16_256_1_ap_fixed_32_10___acc_t(BRAM_matrix_out);
+            clear_matrix_tile_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_matrix_out);
             for (int i_base = 0; i_base < 4096; i_base += 128) {
                 int valid_i = (((i_base) + (128)) <= (4096) ? (128) : ((4096) - (i_base)));
-                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
-                load_weight_tile_2d_128256_4096_256_128_1_1_ap_fixed_32_10_(DRAM_lm_head, BRAM_weight_tile, o_base, i_base);
-                linear_tile_16_128_256_1_1_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
+                load_matrix_tile_2048_4096_16_128_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_norm1, BRAM_matrix_in, t_base, i_base);
+                load_weight_tile_2d_128256_4096_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_lm_head, BRAM_weight_tile, o_base, i_base);
+                linear_tile_16_128_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_matrix_in, BRAM_weight_tile, BRAM_matrix_out, valid_t, valid_o, valid_i);
             }
-            store_matrix_tile_2048_128256_16_256_1_ap_fixed_32_10___acc_t_data_t(BRAM_matrix_out, DRAM_logits, t_base, o_base, valid_t, valid_o);
+            store_matrix_tile_2048_128256_16_256_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_matrix_out, DRAM_logits, t_base, o_base, valid_t, valid_o);
         }
     }
 }

@@ -11,7 +11,7 @@
 #include <hls_math.h>
 using namespace std;
 
-typedef ap_fixed<32,10> data_t;
+typedef ap_fixed<32, 10, AP_RND, AP_SAT> data_t;
 // Production arithmetic revision 2: persistent wide sums.
 typedef ap_fixed<80,36,AP_TRN,AP_WRAP> acc_t;
 static const int FB_ACC_BITS = 80;
@@ -421,7 +421,7 @@ data_t BRAM_pool[512][1][1];
 data_t BRAM_out[1000][1][1];
 data_t BRAM_fc[1000][512][1][1];
 
-void load_64_3_7_7_ap_fixed_32_10_(data_t input[64][3][7][7], data_t output[64][3][7][7])
+void load_64_3_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[64][3][7][7], data_t output[64][3][7][7])
 {
     for (int idx0 = 0; idx0 < 64; idx0++) {
         for (int idx1 = 0; idx1 < 3; idx1++) {
@@ -434,7 +434,7 @@ void load_64_3_7_7_ap_fixed_32_10_(data_t input[64][3][7][7], data_t output[64][
     }
 }
 
-void load_4_64_ap_fixed_32_10_(data_t input[4][64], data_t output[4][64])
+void load_4_64_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[4][64], data_t output[4][64])
 {
     for (int idx0 = 0; idx0 < 4; idx0++) {
         for (int idx1 = 0; idx1 < 64; idx1++) {
@@ -443,7 +443,7 @@ void load_4_64_ap_fixed_32_10_(data_t input[4][64], data_t output[4][64])
     }
 }
 
-void load_64_64_3_3_ap_fixed_32_10_(data_t input[64][64][3][3], data_t output[64][64][3][3])
+void load_64_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[64][64][3][3], data_t output[64][64][3][3])
 {
     for (int idx0 = 0; idx0 < 64; idx0++) {
         for (int idx1 = 0; idx1 < 64; idx1++) {
@@ -456,7 +456,7 @@ void load_64_64_3_3_ap_fixed_32_10_(data_t input[64][64][3][3], data_t output[64
     }
 }
 
-void load_128_64_3_3_ap_fixed_32_10_(data_t input[128][64][3][3], data_t output[128][64][3][3])
+void load_128_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[128][64][3][3], data_t output[128][64][3][3])
 {
     for (int idx0 = 0; idx0 < 128; idx0++) {
         for (int idx1 = 0; idx1 < 64; idx1++) {
@@ -469,7 +469,7 @@ void load_128_64_3_3_ap_fixed_32_10_(data_t input[128][64][3][3], data_t output[
     }
 }
 
-void load_4_128_ap_fixed_32_10_(data_t input[4][128], data_t output[4][128])
+void load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[4][128], data_t output[4][128])
 {
     for (int idx0 = 0; idx0 < 4; idx0++) {
         for (int idx1 = 0; idx1 < 128; idx1++) {
@@ -478,7 +478,7 @@ void load_4_128_ap_fixed_32_10_(data_t input[4][128], data_t output[4][128])
     }
 }
 
-void load_128_128_3_3_ap_fixed_32_10_(data_t input[128][128][3][3], data_t output[128][128][3][3])
+void load_128_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[128][128][3][3], data_t output[128][128][3][3])
 {
     for (int idx0 = 0; idx0 < 128; idx0++) {
         for (int idx1 = 0; idx1 < 128; idx1++) {
@@ -491,7 +491,7 @@ void load_128_128_3_3_ap_fixed_32_10_(data_t input[128][128][3][3], data_t outpu
     }
 }
 
-void load_128_64_1_1_ap_fixed_32_10_(data_t input[128][64][1][1], data_t output[128][64][1][1])
+void load_128_64_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[128][64][1][1], data_t output[128][64][1][1])
 {
     for (int idx0 = 0; idx0 < 128; idx0++) {
         for (int idx1 = 0; idx1 < 64; idx1++) {
@@ -504,7 +504,7 @@ void load_128_64_1_1_ap_fixed_32_10_(data_t input[128][64][1][1], data_t output[
     }
 }
 
-void load_256_128_3_3_ap_fixed_32_10_(data_t input[256][128][3][3], data_t output[256][128][3][3])
+void load_256_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[256][128][3][3], data_t output[256][128][3][3])
 {
     for (int idx0 = 0; idx0 < 256; idx0++) {
         for (int idx1 = 0; idx1 < 128; idx1++) {
@@ -517,7 +517,7 @@ void load_256_128_3_3_ap_fixed_32_10_(data_t input[256][128][3][3], data_t outpu
     }
 }
 
-void load_4_256_ap_fixed_32_10_(data_t input[4][256], data_t output[4][256])
+void load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[4][256], data_t output[4][256])
 {
     for (int idx0 = 0; idx0 < 4; idx0++) {
         for (int idx1 = 0; idx1 < 256; idx1++) {
@@ -526,7 +526,7 @@ void load_4_256_ap_fixed_32_10_(data_t input[4][256], data_t output[4][256])
     }
 }
 
-void load_256_256_3_3_ap_fixed_32_10_(data_t input[256][256][3][3], data_t output[256][256][3][3])
+void load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[256][256][3][3], data_t output[256][256][3][3])
 {
     for (int idx0 = 0; idx0 < 256; idx0++) {
         for (int idx1 = 0; idx1 < 256; idx1++) {
@@ -539,7 +539,7 @@ void load_256_256_3_3_ap_fixed_32_10_(data_t input[256][256][3][3], data_t outpu
     }
 }
 
-void load_256_128_1_1_ap_fixed_32_10_(data_t input[256][128][1][1], data_t output[256][128][1][1])
+void load_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[256][128][1][1], data_t output[256][128][1][1])
 {
     for (int idx0 = 0; idx0 < 256; idx0++) {
         for (int idx1 = 0; idx1 < 128; idx1++) {
@@ -552,7 +552,7 @@ void load_256_128_1_1_ap_fixed_32_10_(data_t input[256][128][1][1], data_t outpu
     }
 }
 
-void load_512_256_3_3_ap_fixed_32_10_(data_t input[512][256][3][3], data_t output[512][256][3][3])
+void load_512_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[512][256][3][3], data_t output[512][256][3][3])
 {
     for (int idx0 = 0; idx0 < 512; idx0++) {
         for (int idx1 = 0; idx1 < 256; idx1++) {
@@ -565,7 +565,7 @@ void load_512_256_3_3_ap_fixed_32_10_(data_t input[512][256][3][3], data_t outpu
     }
 }
 
-void load_4_512_ap_fixed_32_10_(data_t input[4][512], data_t output[4][512])
+void load_4_512_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[4][512], data_t output[4][512])
 {
     for (int idx0 = 0; idx0 < 4; idx0++) {
         for (int idx1 = 0; idx1 < 512; idx1++) {
@@ -574,7 +574,7 @@ void load_4_512_ap_fixed_32_10_(data_t input[4][512], data_t output[4][512])
     }
 }
 
-void load_512_512_3_3_ap_fixed_32_10_(data_t input[512][512][3][3], data_t output[512][512][3][3])
+void load_512_512_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[512][512][3][3], data_t output[512][512][3][3])
 {
     for (int idx0 = 0; idx0 < 512; idx0++) {
         for (int idx1 = 0; idx1 < 512; idx1++) {
@@ -587,7 +587,7 @@ void load_512_512_3_3_ap_fixed_32_10_(data_t input[512][512][3][3], data_t outpu
     }
 }
 
-void load_512_256_1_1_ap_fixed_32_10_(data_t input[512][256][1][1], data_t output[512][256][1][1])
+void load_512_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[512][256][1][1], data_t output[512][256][1][1])
 {
     for (int idx0 = 0; idx0 < 512; idx0++) {
         for (int idx1 = 0; idx1 < 256; idx1++) {
@@ -600,7 +600,7 @@ void load_512_256_1_1_ap_fixed_32_10_(data_t input[512][256][1][1], data_t outpu
     }
 }
 
-void load_1000_512_1_1_ap_fixed_32_10_(data_t input[1000][512][1][1], data_t output[1000][512][1][1])
+void load_1000_512_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[1000][512][1][1], data_t output[1000][512][1][1])
 {
     for (int idx0 = 0; idx0 < 1000; idx0++) {
         for (int idx1 = 0; idx1 < 512; idx1++) {
@@ -613,7 +613,7 @@ void load_1000_512_1_1_ap_fixed_32_10_(data_t input[1000][512][1][1], data_t out
     }
 }
 
-void load_3_224_224_ap_fixed_32_10_(data_t input[3][224][224], data_t output[3][224][224])
+void load_3_224_224_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[3][224][224], data_t output[3][224][224])
 {
     for (int idx0 = 0; idx0 < 3; idx0++) {
         for (int idx1 = 0; idx1 < 224; idx1++) {
@@ -632,7 +632,7 @@ void load_3_224_224_ap_fixed_32_10_(data_t input[3][224][224], data_t output[3][
  *   Kernel : [64][3][7][7]
  *   Output : [64][112][112]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [64] is expected.
  * For group convolution, we assume:
@@ -646,7 +646,7 @@ void load_3_224_224_ap_fixed_32_10_(data_t input[3][224][224], data_t output[3][
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_3_64_224_224_112_112_7_3_2_ap_fixed_32_10_(
+void conv2d_3_64_224_224_112_112_7_3_2_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[3][224][224],
     data_t kernel[64][3][7][7],
     data_t output[64][112][112]
@@ -689,7 +689,7 @@ void conv2d_3_64_224_224_112_112_7_3_2_ap_fixed_32_10_(
  *
  * Dimensions:
  *   Input/Output: [64][112][112]
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Epsilon: 0
  *
  * The batch normalization is computed as:
@@ -698,7 +698,7 @@ void conv2d_3_64_224_224_112_112_7_3_2_ap_fixed_32_10_(
 
 // Use a typedef for the data type
 // weights[4][C_OUT], 0: gamma, 1: beta, 2: mean, 3: variance
-void batch_norm_64_112_112_ap_fixed_32_10_(
+void batch_norm_64_112_112_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][112][112],
     data_t weights[4][64],
     data_t output[64][112][112]
@@ -718,7 +718,7 @@ void batch_norm_64_112_112_ap_fixed_32_10_(
 /*
  * Auto-generated Activation Functions for CNNs (3D version)
  * 
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Tensor dimensions: [64][112][112]
  *
  * Available functions:
@@ -737,7 +737,7 @@ void batch_norm_64_112_112_ap_fixed_32_10_(
  *   - softmax
  */
 
-void relu_64_112_112_ap_fixed_32_10_(
+void relu_64_112_112_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][112][112],
     data_t output[64][112][112]
 )
@@ -761,10 +761,10 @@ void relu_64_112_112_ap_fixed_32_10_(
  *   Stride: [2][2]
  *   Padding: [1][1]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  */
 
-void maxpool_pad_64_112_112_56_56_3_3_2_2_1_1_ap_fixed_32_10_(
+void maxpool_pad_64_112_112_56_56_3_3_2_2_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][112][112],
     data_t output[64][56][56]
 )
@@ -801,7 +801,7 @@ void maxpool_pad_64_112_112_56_56_3_3_2_2_1_1_ap_fixed_32_10_(
  *   Kernel : [64][64][3][3]
  *   Output : [64][56][56]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [64] is expected.
  * For group convolution, we assume:
@@ -815,7 +815,7 @@ void maxpool_pad_64_112_112_56_56_3_3_2_2_1_1_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(
+void conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t kernel[64][64][3][3],
     data_t output[64][56][56]
@@ -858,7 +858,7 @@ void conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(
  *
  * Dimensions:
  *   Input/Output: [64][56][56]
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Epsilon: 0
  *
  * The batch normalization is computed as:
@@ -867,7 +867,7 @@ void conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(
 
 // Use a typedef for the data type
 // weights[4][C_OUT], 0: gamma, 1: beta, 2: mean, 3: variance
-void batch_norm_64_56_56_ap_fixed_32_10_(
+void batch_norm_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t weights[4][64],
     data_t output[64][56][56]
@@ -887,7 +887,7 @@ void batch_norm_64_56_56_ap_fixed_32_10_(
 /*
  * Auto-generated Activation Functions for CNNs (3D version)
  * 
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Tensor dimensions: [64][56][56]
  *
  * Available functions:
@@ -906,7 +906,7 @@ void batch_norm_64_56_56_ap_fixed_32_10_(
  *   - softmax
  */
 
-void relu_64_56_56_ap_fixed_32_10_(
+void relu_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t output[64][56][56]
 )
@@ -921,7 +921,7 @@ void relu_64_56_56_ap_fixed_32_10_(
 }
 
 
-void matrix_add_64_56_56_ap_fixed_32_10_(
+void matrix_add_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t in1[64][56][56],
     data_t in2[64][56][56],
     data_t out[64][56][56]
@@ -950,7 +950,7 @@ void matrix_add_64_56_56_ap_fixed_32_10_(
  *   Kernel : [128][64][3][3]
  *   Output : [128][28][28]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [128] is expected.
  * For group convolution, we assume:
@@ -964,7 +964,7 @@ void matrix_add_64_56_56_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_64_128_56_56_28_28_3_1_2_ap_fixed_32_10_(
+void conv2d_64_128_56_56_28_28_3_1_2_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t kernel[128][64][3][3],
     data_t output[128][28][28]
@@ -1007,7 +1007,7 @@ void conv2d_64_128_56_56_28_28_3_1_2_ap_fixed_32_10_(
  *
  * Dimensions:
  *   Input/Output: [128][28][28]
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Epsilon: 0
  *
  * The batch normalization is computed as:
@@ -1016,7 +1016,7 @@ void conv2d_64_128_56_56_28_28_3_1_2_ap_fixed_32_10_(
 
 // Use a typedef for the data type
 // weights[4][C_OUT], 0: gamma, 1: beta, 2: mean, 3: variance
-void batch_norm_128_28_28_ap_fixed_32_10_(
+void batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t weights[4][128],
     data_t output[128][28][28]
@@ -1036,7 +1036,7 @@ void batch_norm_128_28_28_ap_fixed_32_10_(
 /*
  * Auto-generated Activation Functions for CNNs (3D version)
  * 
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Tensor dimensions: [128][28][28]
  *
  * Available functions:
@@ -1055,7 +1055,7 @@ void batch_norm_128_28_28_ap_fixed_32_10_(
  *   - softmax
  */
 
-void relu_128_28_28_ap_fixed_32_10_(
+void relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t output[128][28][28]
 )
@@ -1077,7 +1077,7 @@ void relu_128_28_28_ap_fixed_32_10_(
  *   Kernel : [128][128][3][3]
  *   Output : [128][28][28]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [128] is expected.
  * For group convolution, we assume:
@@ -1091,7 +1091,7 @@ void relu_128_28_28_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(
+void conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t kernel[128][128][3][3],
     data_t output[128][28][28]
@@ -1136,7 +1136,7 @@ void conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(
  *   Kernel : [128][64][1][1]
  *   Output : [128][28][28]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [128] is expected.
  * For group convolution, we assume:
@@ -1150,7 +1150,7 @@ void conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_64_128_56_56_28_28_1_0_2_ap_fixed_32_10_(
+void conv2d_64_128_56_56_28_28_1_0_2_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t kernel[128][64][1][1],
     data_t output[128][28][28]
@@ -1188,7 +1188,7 @@ void conv2d_64_128_56_56_28_28_1_0_2_ap_fixed_32_10_(
 }
 
 
-void matrix_add_128_28_28_ap_fixed_32_10_(
+void matrix_add_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t in1[128][28][28],
     data_t in2[128][28][28],
     data_t out[128][28][28]
@@ -1217,7 +1217,7 @@ void matrix_add_128_28_28_ap_fixed_32_10_(
  *   Kernel : [256][128][3][3]
  *   Output : [256][14][14]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [256] is expected.
  * For group convolution, we assume:
@@ -1231,7 +1231,7 @@ void matrix_add_128_28_28_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_128_256_28_28_14_14_3_1_2_ap_fixed_32_10_(
+void conv2d_128_256_28_28_14_14_3_1_2_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t kernel[256][128][3][3],
     data_t output[256][14][14]
@@ -1274,7 +1274,7 @@ void conv2d_128_256_28_28_14_14_3_1_2_ap_fixed_32_10_(
  *
  * Dimensions:
  *   Input/Output: [256][14][14]
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Epsilon: 0
  *
  * The batch normalization is computed as:
@@ -1283,7 +1283,7 @@ void conv2d_128_256_28_28_14_14_3_1_2_ap_fixed_32_10_(
 
 // Use a typedef for the data type
 // weights[4][C_OUT], 0: gamma, 1: beta, 2: mean, 3: variance
-void batch_norm_256_14_14_ap_fixed_32_10_(
+void batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t weights[4][256],
     data_t output[256][14][14]
@@ -1303,7 +1303,7 @@ void batch_norm_256_14_14_ap_fixed_32_10_(
 /*
  * Auto-generated Activation Functions for CNNs (3D version)
  * 
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Tensor dimensions: [256][14][14]
  *
  * Available functions:
@@ -1322,7 +1322,7 @@ void batch_norm_256_14_14_ap_fixed_32_10_(
  *   - softmax
  */
 
-void relu_256_14_14_ap_fixed_32_10_(
+void relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t output[256][14][14]
 )
@@ -1344,7 +1344,7 @@ void relu_256_14_14_ap_fixed_32_10_(
  *   Kernel : [256][256][3][3]
  *   Output : [256][14][14]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [256] is expected.
  * For group convolution, we assume:
@@ -1358,7 +1358,7 @@ void relu_256_14_14_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(
+void conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t kernel[256][256][3][3],
     data_t output[256][14][14]
@@ -1403,7 +1403,7 @@ void conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(
  *   Kernel : [256][128][1][1]
  *   Output : [256][14][14]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [256] is expected.
  * For group convolution, we assume:
@@ -1417,7 +1417,7 @@ void conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_128_256_28_28_14_14_1_0_2_ap_fixed_32_10_(
+void conv2d_128_256_28_28_14_14_1_0_2_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t kernel[256][128][1][1],
     data_t output[256][14][14]
@@ -1455,7 +1455,7 @@ void conv2d_128_256_28_28_14_14_1_0_2_ap_fixed_32_10_(
 }
 
 
-void matrix_add_256_14_14_ap_fixed_32_10_(
+void matrix_add_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t in1[256][14][14],
     data_t in2[256][14][14],
     data_t out[256][14][14]
@@ -1484,7 +1484,7 @@ void matrix_add_256_14_14_ap_fixed_32_10_(
  *   Kernel : [512][256][3][3]
  *   Output : [512][7][7]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [512] is expected.
  * For group convolution, we assume:
@@ -1498,7 +1498,7 @@ void matrix_add_256_14_14_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_256_512_14_14_7_7_3_1_2_ap_fixed_32_10_(
+void conv2d_256_512_14_14_7_7_3_1_2_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t kernel[512][256][3][3],
     data_t output[512][7][7]
@@ -1541,7 +1541,7 @@ void conv2d_256_512_14_14_7_7_3_1_2_ap_fixed_32_10_(
  *
  * Dimensions:
  *   Input/Output: [512][7][7]
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Epsilon: 0
  *
  * The batch normalization is computed as:
@@ -1550,7 +1550,7 @@ void conv2d_256_512_14_14_7_7_3_1_2_ap_fixed_32_10_(
 
 // Use a typedef for the data type
 // weights[4][C_OUT], 0: gamma, 1: beta, 2: mean, 3: variance
-void batch_norm_512_7_7_ap_fixed_32_10_(
+void batch_norm_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][7][7],
     data_t weights[4][512],
     data_t output[512][7][7]
@@ -1570,7 +1570,7 @@ void batch_norm_512_7_7_ap_fixed_32_10_(
 /*
  * Auto-generated Activation Functions for CNNs (3D version)
  * 
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  * Tensor dimensions: [512][7][7]
  *
  * Available functions:
@@ -1589,7 +1589,7 @@ void batch_norm_512_7_7_ap_fixed_32_10_(
  *   - softmax
  */
 
-void relu_512_7_7_ap_fixed_32_10_(
+void relu_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][7][7],
     data_t output[512][7][7]
 )
@@ -1611,7 +1611,7 @@ void relu_512_7_7_ap_fixed_32_10_(
  *   Kernel : [512][512][3][3]
  *   Output : [512][7][7]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [512] is expected.
  * For group convolution, we assume:
@@ -1625,7 +1625,7 @@ void relu_512_7_7_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_(
+void conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][7][7],
     data_t kernel[512][512][3][3],
     data_t output[512][7][7]
@@ -1670,7 +1670,7 @@ void conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_(
  *   Kernel : [512][256][1][1]
  *   Output : [512][7][7]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [512] is expected.
  * For group convolution, we assume:
@@ -1684,7 +1684,7 @@ void conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_256_512_14_14_7_7_1_0_2_ap_fixed_32_10_(
+void conv2d_256_512_14_14_7_7_1_0_2_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t kernel[512][256][1][1],
     data_t output[512][7][7]
@@ -1722,7 +1722,7 @@ void conv2d_256_512_14_14_7_7_1_0_2_ap_fixed_32_10_(
 }
 
 
-void matrix_add_512_7_7_ap_fixed_32_10_(
+void matrix_add_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t in1[512][7][7],
     data_t in2[512][7][7],
     data_t out[512][7][7]
@@ -1743,7 +1743,7 @@ void matrix_add_512_7_7_ap_fixed_32_10_(
 
 
 
-void adaptive_avgpool_512_7_7_1_1_ap_fixed_32_10_(
+void adaptive_avgpool_512_7_7_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][7][7],
     data_t output[512][1][1]
 )
@@ -1791,7 +1791,7 @@ void adaptive_avgpool_512_7_7_1_1_ap_fixed_32_10_(
  *   Kernel : [1000][512][1][1]
  *   Output : [1000][1][1]
  *
- * Data type: ap_fixed<32,10>
+ * Data type: ap_fixed<32, 10, AP_RND, AP_SAT>
  *
  * If bias is included, a 1D bias array of size [1000] is expected.
  * For group convolution, we assume:
@@ -1805,7 +1805,7 @@ void adaptive_avgpool_512_7_7_1_1_ap_fixed_32_10_(
 // Begin: CONV2D FUNCTION (co in the innermost loop)
 //////////////////////////////////////////
 
-void conv2d_512_1000_1_1_1_1_1_0_1_ap_fixed_32_10_(
+void conv2d_512_1000_1_1_1_1_1_0_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][1][1],
     data_t kernel[1000][512][1][1],
     data_t output[1000][1][1]
@@ -1842,7 +1842,7 @@ void conv2d_512_1000_1_1_1_1_1_0_1_ap_fixed_32_10_(
     }
 }
 
-void store_1000_1_1_ap_fixed_32_10_(data_t input[1000][1][1], data_t output[1000][1][1])
+void store_1000_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(data_t input[1000][1][1], data_t output[1000][1][1])
 {
     for (int idx0 = 0; idx0 < 1000; idx0++) {
         for (int idx1 = 0; idx1 < 1; idx1++) {
@@ -1928,197 +1928,197 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
     #pragma HLS interface m_axi port=DRAM_out offset=slave bundle=mem_out
     #pragma HLS interface m_axi port=DRAM_fc offset=slave bundle=mem_fc
 
-    load_64_3_7_7_ap_fixed_32_10_(DRAM_w_stem, BRAM_w_stem);
-    load_4_64_ap_fixed_32_10_(DRAM_bn_stem, BRAM_bn_stem);
-    load_64_64_3_3_ap_fixed_32_10_(DRAM_w_s1_b0_1, BRAM_w_s1_b0_1);
-    load_4_64_ap_fixed_32_10_(DRAM_bn_s1_b0_1, BRAM_bn_s1_b0_1);
-    load_64_64_3_3_ap_fixed_32_10_(DRAM_w_s1_b0_2, BRAM_w_s1_b0_2);
-    load_4_64_ap_fixed_32_10_(DRAM_bn_s1_b0_2, BRAM_bn_s1_b0_2);
-    load_64_64_3_3_ap_fixed_32_10_(DRAM_w_s1_b1_1, BRAM_w_s1_b1_1);
-    load_4_64_ap_fixed_32_10_(DRAM_bn_s1_b1_1, BRAM_bn_s1_b1_1);
-    load_64_64_3_3_ap_fixed_32_10_(DRAM_w_s1_b1_2, BRAM_w_s1_b1_2);
-    load_4_64_ap_fixed_32_10_(DRAM_bn_s1_b1_2, BRAM_bn_s1_b1_2);
-    load_64_64_3_3_ap_fixed_32_10_(DRAM_w_s1_b2_1, BRAM_w_s1_b2_1);
-    load_4_64_ap_fixed_32_10_(DRAM_bn_s1_b2_1, BRAM_bn_s1_b2_1);
-    load_64_64_3_3_ap_fixed_32_10_(DRAM_w_s1_b2_2, BRAM_w_s1_b2_2);
-    load_4_64_ap_fixed_32_10_(DRAM_bn_s1_b2_2, BRAM_bn_s1_b2_2);
-    load_128_64_3_3_ap_fixed_32_10_(DRAM_w_s2_b0_1, BRAM_w_s2_b0_1);
-    load_4_128_ap_fixed_32_10_(DRAM_bn_s2_b0_1, BRAM_bn_s2_b0_1);
-    load_128_128_3_3_ap_fixed_32_10_(DRAM_w_s2_b0_2, BRAM_w_s2_b0_2);
-    load_4_128_ap_fixed_32_10_(DRAM_bn_s2_b0_2, BRAM_bn_s2_b0_2);
-    load_128_64_1_1_ap_fixed_32_10_(DRAM_w_s2_b0_down, BRAM_w_s2_b0_down);
-    load_128_128_3_3_ap_fixed_32_10_(DRAM_w_s2_b1_1, BRAM_w_s2_b1_1);
-    load_4_128_ap_fixed_32_10_(DRAM_bn_s2_b1_1, BRAM_bn_s2_b1_1);
-    load_128_128_3_3_ap_fixed_32_10_(DRAM_w_s2_b1_2, BRAM_w_s2_b1_2);
-    load_4_128_ap_fixed_32_10_(DRAM_bn_s2_b1_2, BRAM_bn_s2_b1_2);
-    load_128_128_3_3_ap_fixed_32_10_(DRAM_w_s2_b2_1, BRAM_w_s2_b2_1);
-    load_4_128_ap_fixed_32_10_(DRAM_bn_s2_b2_1, BRAM_bn_s2_b2_1);
-    load_128_128_3_3_ap_fixed_32_10_(DRAM_w_s2_b2_2, BRAM_w_s2_b2_2);
-    load_4_128_ap_fixed_32_10_(DRAM_bn_s2_b2_2, BRAM_bn_s2_b2_2);
-    load_128_128_3_3_ap_fixed_32_10_(DRAM_w_s2_b3_1, BRAM_w_s2_b3_1);
-    load_4_128_ap_fixed_32_10_(DRAM_bn_s2_b3_1, BRAM_bn_s2_b3_1);
-    load_128_128_3_3_ap_fixed_32_10_(DRAM_w_s2_b3_2, BRAM_w_s2_b3_2);
-    load_4_128_ap_fixed_32_10_(DRAM_bn_s2_b3_2, BRAM_bn_s2_b3_2);
-    load_256_128_3_3_ap_fixed_32_10_(DRAM_w_s3_b0_1, BRAM_w_s3_b0_1);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b0_1, BRAM_bn_s3_b0_1);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b0_2, BRAM_w_s3_b0_2);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b0_2, BRAM_bn_s3_b0_2);
-    load_256_128_1_1_ap_fixed_32_10_(DRAM_w_s3_b0_down, BRAM_w_s3_b0_down);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b1_1, BRAM_w_s3_b1_1);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b1_1, BRAM_bn_s3_b1_1);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b1_2, BRAM_w_s3_b1_2);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b1_2, BRAM_bn_s3_b1_2);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b2_1, BRAM_w_s3_b2_1);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b2_1, BRAM_bn_s3_b2_1);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b2_2, BRAM_w_s3_b2_2);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b2_2, BRAM_bn_s3_b2_2);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b3_1, BRAM_w_s3_b3_1);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b3_1, BRAM_bn_s3_b3_1);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b3_2, BRAM_w_s3_b3_2);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b3_2, BRAM_bn_s3_b3_2);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b4_1, BRAM_w_s3_b4_1);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b4_1, BRAM_bn_s3_b4_1);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b4_2, BRAM_w_s3_b4_2);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b4_2, BRAM_bn_s3_b4_2);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b5_1, BRAM_w_s3_b5_1);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b5_1, BRAM_bn_s3_b5_1);
-    load_256_256_3_3_ap_fixed_32_10_(DRAM_w_s3_b5_2, BRAM_w_s3_b5_2);
-    load_4_256_ap_fixed_32_10_(DRAM_bn_s3_b5_2, BRAM_bn_s3_b5_2);
-    load_512_256_3_3_ap_fixed_32_10_(DRAM_w_s4_b0_1, BRAM_w_s4_b0_1);
-    load_4_512_ap_fixed_32_10_(DRAM_bn_s4_b0_1, BRAM_bn_s4_b0_1);
-    load_512_512_3_3_ap_fixed_32_10_(DRAM_w_s4_b0_2, BRAM_w_s4_b0_2);
-    load_4_512_ap_fixed_32_10_(DRAM_bn_s4_b0_2, BRAM_bn_s4_b0_2);
-    load_512_256_1_1_ap_fixed_32_10_(DRAM_w_s4_b0_down, BRAM_w_s4_b0_down);
-    load_512_512_3_3_ap_fixed_32_10_(DRAM_w_s4_b1_1, BRAM_w_s4_b1_1);
-    load_4_512_ap_fixed_32_10_(DRAM_bn_s4_b1_1, BRAM_bn_s4_b1_1);
-    load_512_512_3_3_ap_fixed_32_10_(DRAM_w_s4_b1_2, BRAM_w_s4_b1_2);
-    load_4_512_ap_fixed_32_10_(DRAM_bn_s4_b1_2, BRAM_bn_s4_b1_2);
-    load_512_512_3_3_ap_fixed_32_10_(DRAM_w_s4_b2_1, BRAM_w_s4_b2_1);
-    load_4_512_ap_fixed_32_10_(DRAM_bn_s4_b2_1, BRAM_bn_s4_b2_1);
-    load_512_512_3_3_ap_fixed_32_10_(DRAM_w_s4_b2_2, BRAM_w_s4_b2_2);
-    load_4_512_ap_fixed_32_10_(DRAM_bn_s4_b2_2, BRAM_bn_s4_b2_2);
-    load_1000_512_1_1_ap_fixed_32_10_(DRAM_fc, BRAM_fc);
-    load_3_224_224_ap_fixed_32_10_(DRAM_input, BRAM_feat_input);
-    conv2d_3_64_224_224_112_112_7_3_2_ap_fixed_32_10_(BRAM_feat_input, BRAM_w_stem, BRAM_feat_stem);
-    batch_norm_64_112_112_ap_fixed_32_10_(BRAM_feat_stem, BRAM_bn_stem, BRAM_feat_stem);
-    relu_64_112_112_ap_fixed_32_10_(BRAM_feat_stem, BRAM_feat_stem);
-    maxpool_pad_64_112_112_56_56_3_3_2_2_1_1_ap_fixed_32_10_(BRAM_feat_stem, BRAM_feat_pool);
-    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(BRAM_feat_pool, BRAM_w_s1_b0_1, BRAM_feat_s1_tmp1);
-    batch_norm_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_bn_s1_b0_1, BRAM_feat_s1_tmp1);
-    relu_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_feat_s1_tmp1);
-    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_w_s1_b0_2, BRAM_feat_s1_tmp2);
-    batch_norm_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp2, BRAM_bn_s1_b0_2, BRAM_feat_s1_tmp2);
-    matrix_add_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp2, BRAM_feat_pool, BRAM_feat_s1_b0);
-    relu_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_b0, BRAM_feat_s1_b0);
-    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(BRAM_feat_s1_b0, BRAM_w_s1_b1_1, BRAM_feat_s1_tmp1);
-    batch_norm_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_bn_s1_b1_1, BRAM_feat_s1_tmp1);
-    relu_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_feat_s1_tmp1);
-    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_w_s1_b1_2, BRAM_feat_s1_tmp2);
-    batch_norm_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp2, BRAM_bn_s1_b1_2, BRAM_feat_s1_tmp2);
-    matrix_add_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp2, BRAM_feat_s1_b0, BRAM_feat_s1_b1);
-    relu_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_b1, BRAM_feat_s1_b1);
-    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(BRAM_feat_s1_b1, BRAM_w_s1_b2_1, BRAM_feat_s1_tmp1);
-    batch_norm_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_bn_s1_b2_1, BRAM_feat_s1_tmp1);
-    relu_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_feat_s1_tmp1);
-    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_(BRAM_feat_s1_tmp1, BRAM_w_s1_b2_2, BRAM_feat_s1_tmp2);
-    batch_norm_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp2, BRAM_bn_s1_b2_2, BRAM_feat_s1_tmp2);
-    matrix_add_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_tmp2, BRAM_feat_s1_b1, BRAM_feat_s1_b2);
-    relu_64_56_56_ap_fixed_32_10_(BRAM_feat_s1_b2, BRAM_feat_s1_b2);
-    conv2d_64_128_56_56_28_28_3_1_2_ap_fixed_32_10_(BRAM_feat_s1_b2, BRAM_w_s2_b0_1, BRAM_feat_s2_tmp1);
-    batch_norm_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_bn_s2_b0_1, BRAM_feat_s2_tmp1);
-    relu_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_feat_s2_tmp1);
-    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_w_s2_b0_2, BRAM_feat_s2_tmp2);
-    batch_norm_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp2, BRAM_bn_s2_b0_2, BRAM_feat_s2_tmp2);
-    conv2d_64_128_56_56_28_28_1_0_2_ap_fixed_32_10_(BRAM_feat_s1_b2, BRAM_w_s2_b0_down, BRAM_feat_s2_skip);
-    matrix_add_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp2, BRAM_feat_s2_skip, BRAM_feat_s2_b0);
-    relu_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_b0, BRAM_feat_s2_b0);
-    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(BRAM_feat_s2_b0, BRAM_w_s2_b1_1, BRAM_feat_s2_tmp1);
-    batch_norm_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_bn_s2_b1_1, BRAM_feat_s2_tmp1);
-    relu_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_feat_s2_tmp1);
-    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_w_s2_b1_2, BRAM_feat_s2_tmp2);
-    batch_norm_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp2, BRAM_bn_s2_b1_2, BRAM_feat_s2_tmp2);
-    matrix_add_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp2, BRAM_feat_s2_b0, BRAM_feat_s2_b1);
-    relu_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_b1, BRAM_feat_s2_b1);
-    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(BRAM_feat_s2_b1, BRAM_w_s2_b2_1, BRAM_feat_s2_tmp1);
-    batch_norm_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_bn_s2_b2_1, BRAM_feat_s2_tmp1);
-    relu_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_feat_s2_tmp1);
-    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_w_s2_b2_2, BRAM_feat_s2_tmp2);
-    batch_norm_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp2, BRAM_bn_s2_b2_2, BRAM_feat_s2_tmp2);
-    matrix_add_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp2, BRAM_feat_s2_b1, BRAM_feat_s2_b2);
-    relu_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_b2, BRAM_feat_s2_b2);
-    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(BRAM_feat_s2_b2, BRAM_w_s2_b3_1, BRAM_feat_s2_tmp1);
-    batch_norm_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_bn_s2_b3_1, BRAM_feat_s2_tmp1);
-    relu_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_feat_s2_tmp1);
-    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_(BRAM_feat_s2_tmp1, BRAM_w_s2_b3_2, BRAM_feat_s2_tmp2);
-    batch_norm_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp2, BRAM_bn_s2_b3_2, BRAM_feat_s2_tmp2);
-    matrix_add_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_tmp2, BRAM_feat_s2_b2, BRAM_feat_s2_b3);
-    relu_128_28_28_ap_fixed_32_10_(BRAM_feat_s2_b3, BRAM_feat_s2_b3);
-    conv2d_128_256_28_28_14_14_3_1_2_ap_fixed_32_10_(BRAM_feat_s2_b3, BRAM_w_s3_b0_1, BRAM_feat_s3_tmp1);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b0_1, BRAM_feat_s3_tmp1);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_w_s3_b0_2, BRAM_feat_s3_tmp2);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b0_2, BRAM_feat_s3_tmp2);
-    conv2d_128_256_28_28_14_14_1_0_2_ap_fixed_32_10_(BRAM_feat_s2_b3, BRAM_w_s3_b0_down, BRAM_feat_s3_skip);
-    matrix_add_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_feat_s3_skip, BRAM_feat_s3_b0);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_b0, BRAM_feat_s3_b0);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_b0, BRAM_w_s3_b1_1, BRAM_feat_s3_tmp1);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b1_1, BRAM_feat_s3_tmp1);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_w_s3_b1_2, BRAM_feat_s3_tmp2);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b1_2, BRAM_feat_s3_tmp2);
-    matrix_add_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b0, BRAM_feat_s3_b1);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_b1, BRAM_feat_s3_b1);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_b1, BRAM_w_s3_b2_1, BRAM_feat_s3_tmp1);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b2_1, BRAM_feat_s3_tmp1);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_w_s3_b2_2, BRAM_feat_s3_tmp2);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b2_2, BRAM_feat_s3_tmp2);
-    matrix_add_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b1, BRAM_feat_s3_b2);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_b2, BRAM_feat_s3_b2);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_b2, BRAM_w_s3_b3_1, BRAM_feat_s3_tmp1);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b3_1, BRAM_feat_s3_tmp1);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_w_s3_b3_2, BRAM_feat_s3_tmp2);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b3_2, BRAM_feat_s3_tmp2);
-    matrix_add_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b2, BRAM_feat_s3_b3);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_b3, BRAM_feat_s3_b3);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_b3, BRAM_w_s3_b4_1, BRAM_feat_s3_tmp1);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b4_1, BRAM_feat_s3_tmp1);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_w_s3_b4_2, BRAM_feat_s3_tmp2);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b4_2, BRAM_feat_s3_tmp2);
-    matrix_add_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b3, BRAM_feat_s3_b4);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_b4, BRAM_feat_s3_b4);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_b4, BRAM_w_s3_b5_1, BRAM_feat_s3_tmp1);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b5_1, BRAM_feat_s3_tmp1);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
-    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_(BRAM_feat_s3_tmp1, BRAM_w_s3_b5_2, BRAM_feat_s3_tmp2);
-    batch_norm_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b5_2, BRAM_feat_s3_tmp2);
-    matrix_add_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b4, BRAM_feat_s3_b5);
-    relu_256_14_14_ap_fixed_32_10_(BRAM_feat_s3_b5, BRAM_feat_s3_b5);
-    conv2d_256_512_14_14_7_7_3_1_2_ap_fixed_32_10_(BRAM_feat_s3_b5, BRAM_w_s4_b0_1, BRAM_feat_s4_tmp1);
-    batch_norm_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_bn_s4_b0_1, BRAM_feat_s4_tmp1);
-    relu_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_feat_s4_tmp1);
-    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_w_s4_b0_2, BRAM_feat_s4_tmp2);
-    batch_norm_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp2, BRAM_bn_s4_b0_2, BRAM_feat_s4_tmp2);
-    conv2d_256_512_14_14_7_7_1_0_2_ap_fixed_32_10_(BRAM_feat_s3_b5, BRAM_w_s4_b0_down, BRAM_feat_s4_skip);
-    matrix_add_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp2, BRAM_feat_s4_skip, BRAM_feat_s4_b0);
-    relu_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_b0, BRAM_feat_s4_b0);
-    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_(BRAM_feat_s4_b0, BRAM_w_s4_b1_1, BRAM_feat_s4_tmp1);
-    batch_norm_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_bn_s4_b1_1, BRAM_feat_s4_tmp1);
-    relu_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_feat_s4_tmp1);
-    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_w_s4_b1_2, BRAM_feat_s4_tmp2);
-    batch_norm_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp2, BRAM_bn_s4_b1_2, BRAM_feat_s4_tmp2);
-    matrix_add_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp2, BRAM_feat_s4_b0, BRAM_feat_s4_b1);
-    relu_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_b1, BRAM_feat_s4_b1);
-    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_(BRAM_feat_s4_b1, BRAM_w_s4_b2_1, BRAM_feat_s4_tmp1);
-    batch_norm_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_bn_s4_b2_1, BRAM_feat_s4_tmp1);
-    relu_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_feat_s4_tmp1);
-    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_(BRAM_feat_s4_tmp1, BRAM_w_s4_b2_2, BRAM_feat_s4_tmp2);
-    batch_norm_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp2, BRAM_bn_s4_b2_2, BRAM_feat_s4_tmp2);
-    matrix_add_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_tmp2, BRAM_feat_s4_b1, BRAM_feat_s4_b2);
-    relu_512_7_7_ap_fixed_32_10_(BRAM_feat_s4_b2, BRAM_feat_s4_b2);
-    adaptive_avgpool_512_7_7_1_1_ap_fixed_32_10_(BRAM_feat_s4_b2, BRAM_pool);
-    conv2d_512_1000_1_1_1_1_1_0_1_ap_fixed_32_10_(BRAM_pool, BRAM_fc, BRAM_out);
-    store_1000_1_1_ap_fixed_32_10_(BRAM_out, DRAM_out);
+    load_64_3_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_stem, BRAM_w_stem);
+    load_4_64_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_stem, BRAM_bn_stem);
+    load_64_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b0_1, BRAM_w_s1_b0_1);
+    load_4_64_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b0_1, BRAM_bn_s1_b0_1);
+    load_64_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b0_2, BRAM_w_s1_b0_2);
+    load_4_64_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b0_2, BRAM_bn_s1_b0_2);
+    load_64_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b1_1, BRAM_w_s1_b1_1);
+    load_4_64_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b1_1, BRAM_bn_s1_b1_1);
+    load_64_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b1_2, BRAM_w_s1_b1_2);
+    load_4_64_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b1_2, BRAM_bn_s1_b1_2);
+    load_64_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b2_1, BRAM_w_s1_b2_1);
+    load_4_64_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b2_1, BRAM_bn_s1_b2_1);
+    load_64_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b2_2, BRAM_w_s1_b2_2);
+    load_4_64_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b2_2, BRAM_bn_s1_b2_2);
+    load_128_64_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b0_1, BRAM_w_s2_b0_1);
+    load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b0_1, BRAM_bn_s2_b0_1);
+    load_128_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b0_2, BRAM_w_s2_b0_2);
+    load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b0_2, BRAM_bn_s2_b0_2);
+    load_128_64_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b0_down, BRAM_w_s2_b0_down);
+    load_128_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b1_1, BRAM_w_s2_b1_1);
+    load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b1_1, BRAM_bn_s2_b1_1);
+    load_128_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b1_2, BRAM_w_s2_b1_2);
+    load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b1_2, BRAM_bn_s2_b1_2);
+    load_128_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b2_1, BRAM_w_s2_b2_1);
+    load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b2_1, BRAM_bn_s2_b2_1);
+    load_128_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b2_2, BRAM_w_s2_b2_2);
+    load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b2_2, BRAM_bn_s2_b2_2);
+    load_128_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b3_1, BRAM_w_s2_b3_1);
+    load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b3_1, BRAM_bn_s2_b3_1);
+    load_128_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b3_2, BRAM_w_s2_b3_2);
+    load_4_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b3_2, BRAM_bn_s2_b3_2);
+    load_256_128_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b0_1, BRAM_w_s3_b0_1);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b0_1, BRAM_bn_s3_b0_1);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b0_2, BRAM_w_s3_b0_2);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b0_2, BRAM_bn_s3_b0_2);
+    load_256_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b0_down, BRAM_w_s3_b0_down);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b1_1, BRAM_w_s3_b1_1);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b1_1, BRAM_bn_s3_b1_1);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b1_2, BRAM_w_s3_b1_2);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b1_2, BRAM_bn_s3_b1_2);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b2_1, BRAM_w_s3_b2_1);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b2_1, BRAM_bn_s3_b2_1);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b2_2, BRAM_w_s3_b2_2);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b2_2, BRAM_bn_s3_b2_2);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b3_1, BRAM_w_s3_b3_1);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b3_1, BRAM_bn_s3_b3_1);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b3_2, BRAM_w_s3_b3_2);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b3_2, BRAM_bn_s3_b3_2);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b4_1, BRAM_w_s3_b4_1);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b4_1, BRAM_bn_s3_b4_1);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b4_2, BRAM_w_s3_b4_2);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b4_2, BRAM_bn_s3_b4_2);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b5_1, BRAM_w_s3_b5_1);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b5_1, BRAM_bn_s3_b5_1);
+    load_256_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b5_2, BRAM_w_s3_b5_2);
+    load_4_256_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b5_2, BRAM_bn_s3_b5_2);
+    load_512_256_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b0_1, BRAM_w_s4_b0_1);
+    load_4_512_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b0_1, BRAM_bn_s4_b0_1);
+    load_512_512_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b0_2, BRAM_w_s4_b0_2);
+    load_4_512_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b0_2, BRAM_bn_s4_b0_2);
+    load_512_256_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b0_down, BRAM_w_s4_b0_down);
+    load_512_512_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b1_1, BRAM_w_s4_b1_1);
+    load_4_512_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b1_1, BRAM_bn_s4_b1_1);
+    load_512_512_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b1_2, BRAM_w_s4_b1_2);
+    load_4_512_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b1_2, BRAM_bn_s4_b1_2);
+    load_512_512_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b2_1, BRAM_w_s4_b2_1);
+    load_4_512_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b2_1, BRAM_bn_s4_b2_1);
+    load_512_512_3_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b2_2, BRAM_w_s4_b2_2);
+    load_4_512_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b2_2, BRAM_bn_s4_b2_2);
+    load_1000_512_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_fc, BRAM_fc);
+    load_3_224_224_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_input, BRAM_feat_input);
+    conv2d_3_64_224_224_112_112_7_3_2_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_input, BRAM_w_stem, BRAM_feat_stem);
+    batch_norm_64_112_112_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_stem, BRAM_bn_stem, BRAM_feat_stem);
+    relu_64_112_112_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_stem, BRAM_feat_stem);
+    maxpool_pad_64_112_112_56_56_3_3_2_2_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_stem, BRAM_feat_pool);
+    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_pool, BRAM_w_s1_b0_1, BRAM_feat_s1_tmp1);
+    batch_norm_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_bn_s1_b0_1, BRAM_feat_s1_tmp1);
+    relu_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_feat_s1_tmp1);
+    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_w_s1_b0_2, BRAM_feat_s1_tmp2);
+    batch_norm_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp2, BRAM_bn_s1_b0_2, BRAM_feat_s1_tmp2);
+    matrix_add_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp2, BRAM_feat_pool, BRAM_feat_s1_b0);
+    relu_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_b0, BRAM_feat_s1_b0);
+    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_b0, BRAM_w_s1_b1_1, BRAM_feat_s1_tmp1);
+    batch_norm_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_bn_s1_b1_1, BRAM_feat_s1_tmp1);
+    relu_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_feat_s1_tmp1);
+    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_w_s1_b1_2, BRAM_feat_s1_tmp2);
+    batch_norm_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp2, BRAM_bn_s1_b1_2, BRAM_feat_s1_tmp2);
+    matrix_add_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp2, BRAM_feat_s1_b0, BRAM_feat_s1_b1);
+    relu_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_b1, BRAM_feat_s1_b1);
+    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_b1, BRAM_w_s1_b2_1, BRAM_feat_s1_tmp1);
+    batch_norm_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_bn_s1_b2_1, BRAM_feat_s1_tmp1);
+    relu_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_feat_s1_tmp1);
+    conv2d_64_64_56_56_56_56_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp1, BRAM_w_s1_b2_2, BRAM_feat_s1_tmp2);
+    batch_norm_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp2, BRAM_bn_s1_b2_2, BRAM_feat_s1_tmp2);
+    matrix_add_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_tmp2, BRAM_feat_s1_b1, BRAM_feat_s1_b2);
+    relu_64_56_56_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_b2, BRAM_feat_s1_b2);
+    conv2d_64_128_56_56_28_28_3_1_2_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_b2, BRAM_w_s2_b0_1, BRAM_feat_s2_tmp1);
+    batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_bn_s2_b0_1, BRAM_feat_s2_tmp1);
+    relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_feat_s2_tmp1);
+    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_w_s2_b0_2, BRAM_feat_s2_tmp2);
+    batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp2, BRAM_bn_s2_b0_2, BRAM_feat_s2_tmp2);
+    conv2d_64_128_56_56_28_28_1_0_2_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s1_b2, BRAM_w_s2_b0_down, BRAM_feat_s2_skip);
+    matrix_add_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp2, BRAM_feat_s2_skip, BRAM_feat_s2_b0);
+    relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b0, BRAM_feat_s2_b0);
+    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b0, BRAM_w_s2_b1_1, BRAM_feat_s2_tmp1);
+    batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_bn_s2_b1_1, BRAM_feat_s2_tmp1);
+    relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_feat_s2_tmp1);
+    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_w_s2_b1_2, BRAM_feat_s2_tmp2);
+    batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp2, BRAM_bn_s2_b1_2, BRAM_feat_s2_tmp2);
+    matrix_add_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp2, BRAM_feat_s2_b0, BRAM_feat_s2_b1);
+    relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b1, BRAM_feat_s2_b1);
+    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b1, BRAM_w_s2_b2_1, BRAM_feat_s2_tmp1);
+    batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_bn_s2_b2_1, BRAM_feat_s2_tmp1);
+    relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_feat_s2_tmp1);
+    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_w_s2_b2_2, BRAM_feat_s2_tmp2);
+    batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp2, BRAM_bn_s2_b2_2, BRAM_feat_s2_tmp2);
+    matrix_add_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp2, BRAM_feat_s2_b1, BRAM_feat_s2_b2);
+    relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b2, BRAM_feat_s2_b2);
+    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b2, BRAM_w_s2_b3_1, BRAM_feat_s2_tmp1);
+    batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_bn_s2_b3_1, BRAM_feat_s2_tmp1);
+    relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_feat_s2_tmp1);
+    conv2d_128_128_28_28_28_28_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp1, BRAM_w_s2_b3_2, BRAM_feat_s2_tmp2);
+    batch_norm_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp2, BRAM_bn_s2_b3_2, BRAM_feat_s2_tmp2);
+    matrix_add_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_tmp2, BRAM_feat_s2_b2, BRAM_feat_s2_b3);
+    relu_128_28_28_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b3, BRAM_feat_s2_b3);
+    conv2d_128_256_28_28_14_14_3_1_2_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b3, BRAM_w_s3_b0_1, BRAM_feat_s3_tmp1);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b0_1, BRAM_feat_s3_tmp1);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_w_s3_b0_2, BRAM_feat_s3_tmp2);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b0_2, BRAM_feat_s3_tmp2);
+    conv2d_128_256_28_28_14_14_1_0_2_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s2_b3, BRAM_w_s3_b0_down, BRAM_feat_s3_skip);
+    matrix_add_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_feat_s3_skip, BRAM_feat_s3_b0);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b0, BRAM_feat_s3_b0);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b0, BRAM_w_s3_b1_1, BRAM_feat_s3_tmp1);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b1_1, BRAM_feat_s3_tmp1);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_w_s3_b1_2, BRAM_feat_s3_tmp2);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b1_2, BRAM_feat_s3_tmp2);
+    matrix_add_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b0, BRAM_feat_s3_b1);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b1, BRAM_feat_s3_b1);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b1, BRAM_w_s3_b2_1, BRAM_feat_s3_tmp1);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b2_1, BRAM_feat_s3_tmp1);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_w_s3_b2_2, BRAM_feat_s3_tmp2);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b2_2, BRAM_feat_s3_tmp2);
+    matrix_add_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b1, BRAM_feat_s3_b2);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b2, BRAM_feat_s3_b2);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b2, BRAM_w_s3_b3_1, BRAM_feat_s3_tmp1);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b3_1, BRAM_feat_s3_tmp1);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_w_s3_b3_2, BRAM_feat_s3_tmp2);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b3_2, BRAM_feat_s3_tmp2);
+    matrix_add_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b2, BRAM_feat_s3_b3);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b3, BRAM_feat_s3_b3);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b3, BRAM_w_s3_b4_1, BRAM_feat_s3_tmp1);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b4_1, BRAM_feat_s3_tmp1);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_w_s3_b4_2, BRAM_feat_s3_tmp2);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b4_2, BRAM_feat_s3_tmp2);
+    matrix_add_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b3, BRAM_feat_s3_b4);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b4, BRAM_feat_s3_b4);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b4, BRAM_w_s3_b5_1, BRAM_feat_s3_tmp1);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_bn_s3_b5_1, BRAM_feat_s3_tmp1);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_feat_s3_tmp1);
+    conv2d_256_256_14_14_14_14_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp1, BRAM_w_s3_b5_2, BRAM_feat_s3_tmp2);
+    batch_norm_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_bn_s3_b5_2, BRAM_feat_s3_tmp2);
+    matrix_add_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_tmp2, BRAM_feat_s3_b4, BRAM_feat_s3_b5);
+    relu_256_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b5, BRAM_feat_s3_b5);
+    conv2d_256_512_14_14_7_7_3_1_2_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b5, BRAM_w_s4_b0_1, BRAM_feat_s4_tmp1);
+    batch_norm_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_bn_s4_b0_1, BRAM_feat_s4_tmp1);
+    relu_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_feat_s4_tmp1);
+    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_w_s4_b0_2, BRAM_feat_s4_tmp2);
+    batch_norm_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp2, BRAM_bn_s4_b0_2, BRAM_feat_s4_tmp2);
+    conv2d_256_512_14_14_7_7_1_0_2_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s3_b5, BRAM_w_s4_b0_down, BRAM_feat_s4_skip);
+    matrix_add_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp2, BRAM_feat_s4_skip, BRAM_feat_s4_b0);
+    relu_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_b0, BRAM_feat_s4_b0);
+    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_b0, BRAM_w_s4_b1_1, BRAM_feat_s4_tmp1);
+    batch_norm_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_bn_s4_b1_1, BRAM_feat_s4_tmp1);
+    relu_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_feat_s4_tmp1);
+    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_w_s4_b1_2, BRAM_feat_s4_tmp2);
+    batch_norm_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp2, BRAM_bn_s4_b1_2, BRAM_feat_s4_tmp2);
+    matrix_add_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp2, BRAM_feat_s4_b0, BRAM_feat_s4_b1);
+    relu_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_b1, BRAM_feat_s4_b1);
+    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_b1, BRAM_w_s4_b2_1, BRAM_feat_s4_tmp1);
+    batch_norm_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_bn_s4_b2_1, BRAM_feat_s4_tmp1);
+    relu_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_feat_s4_tmp1);
+    conv2d_512_512_7_7_7_7_3_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp1, BRAM_w_s4_b2_2, BRAM_feat_s4_tmp2);
+    batch_norm_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp2, BRAM_bn_s4_b2_2, BRAM_feat_s4_tmp2);
+    matrix_add_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_tmp2, BRAM_feat_s4_b1, BRAM_feat_s4_b2);
+    relu_512_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_b2, BRAM_feat_s4_b2);
+    adaptive_avgpool_512_7_7_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_feat_s4_b2, BRAM_pool);
+    conv2d_512_1000_1_1_1_1_1_0_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_pool, BRAM_fc, BRAM_out);
+    store_1000_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(BRAM_out, DRAM_out);
 }

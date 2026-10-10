@@ -3,7 +3,7 @@
 #include <ap_fixed.h>
 #include "top.h"  // Include the top function declaration
 
-typedef ap_fixed<32,10> data_t;
+typedef ap_fixed<32, 10, AP_RND, AP_SAT> data_t;
 
 int32_t DRAM_token_id[1];
 int32_t DRAM_decode_pos[1];

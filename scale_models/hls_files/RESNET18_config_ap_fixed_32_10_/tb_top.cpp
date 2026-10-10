@@ -3,7 +3,7 @@
 #include <ap_fixed.h>
 #include "top.h"  // Include the top function declaration
 
-typedef ap_fixed<32,10> data_t;
+typedef ap_fixed<32, 10, AP_RND, AP_SAT> data_t;
 
 data_t DRAM_input[3][224][224];
 data_t DRAM_w_stem[64][3][7][7];

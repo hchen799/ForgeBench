@@ -23,11 +23,9 @@ fixed-point only; recommended skip, not yet confirmed by the user). Full-model r
 (34 GB, summaries copied to `paper_results/fullmodel/`).
 
 **Pending**
-1. **Commit the `<32,10>` round/saturate full-model sources** (user approved 2026-10-09). Copy `top.cpp`, `top.h`, `tb_top.cpp`,
-   `resolved_config.json`, `run_hls.tcl` of the 12 `*_32_10_` projects from `/usr/scratch/awanna3/fb_fullmodel_verif/sources_rndsat/` over
-   `scale_models/hls_files/` (same folders, no layout change). `contracts.json` (hash entries for the RND/SAT `<32,10>` and `<16,5>` sources) is
-   already committed (5f74260); its `<16,5>` entries cover sources that are not committed and were not run through `verify.py`.
-   The agent's copy was blocked by the auto-mode permission check; the user runs it or allows it. Full-model synthesis must use these sources.
+1. ~~Commit the `<32,10>` round/saturate full-model sources~~ **done 2026-10-10**: the 12 `*_32_10_` ctx2048/ResNet projects in
+   `scale_models/hls_files/` are now the verified RND/SAT sources (`top.cpp`, `top.h`, `tb_top.cpp`, `resolved_config.json`; hashes registered in
+   `contracts.json`, 5f74260). Full-model synthesis must be re-run from them. Llama ctx8192 `<32,10>` is still the old truncate/wrap source.
 2. **CO-SIM**: `run_cosim.sh` prepared (C and D, all 57 ops, ±1, 10 looped trials), not started; needs an idle server. Float conv ~8 h.
 3. **Catapult GEMM C-sim**: next (§0b).
 4. Open questions: modular `_module` equivalence check (each merged design reproduces every P program) not done; Llama ctx8192 not verified;

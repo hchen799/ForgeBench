@@ -11,7 +11,7 @@
 #include <hls_math.h>
 using namespace std;
 
-typedef ap_fixed<32,10> data_t;
+typedef ap_fixed<32, 10, AP_RND, AP_SAT> data_t;
 // Production arithmetic revision 2: persistent wide sums.
 typedef ap_fixed<80,36,AP_TRN,AP_WRAP> acc_t;
 static const int FB_ACC_BITS = 80;
@@ -334,7 +334,7 @@ data_t BRAM_gap_tile[128][7][7];
 acc_t BRAM_gap_out[128][1][1];
 acc_t BRAM_fc_out[128][1][1];
 
-void clear_tile_128_14_14_ap_fixed_32_10___acc_t(acc_t tile[128][14][14])
+void clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t tile[128][14][14])
 {
     for (int c = 0; c < 128; ++c) {
         for (int h = 0; h < 14; ++h) {
@@ -345,7 +345,7 @@ void clear_tile_128_14_14_ap_fixed_32_10___acc_t(acc_t tile[128][14][14])
     }
 }
 
-void load_fmap_patch_3_224_224_32_33_33_2_3_ap_fixed_32_10_(
+void load_fmap_patch_3_224_224_32_33_33_2_3_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[3][224][224],
     data_t output[32][33][33],
     int c_base,
@@ -369,7 +369,7 @@ void load_fmap_patch_3_224_224_32_33_33_2_3_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_64_3_7_128_32_ap_fixed_32_10_(
+void load_weight_tile_64_3_7_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][3][7][7],
     data_t output[128][32][7][7],
     int co_base,
@@ -393,7 +393,7 @@ void load_weight_tile_64_3_7_128_32_ap_fixed_32_10_(
     }
 }
 
-void conv_tile_32_33_33_128_32_7_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(
+void conv_tile_32_33_33_128_32_7_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(
     data_t input[32][33][33],
     data_t weight[128][32][7][7],
     acc_t output[128][14][14],
@@ -424,12 +424,12 @@ void conv_tile_32_33_33_128_32_7_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t
     }
 }
 
-void quantize_tile_128_14_14_ap_fixed_32_10___acc_t(acc_t tile[128][14][14], int vc, int vh, int vw) {
+void quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t tile[128][14][14], int vc, int vh, int vw) {
     for (int c=0; c<vc; ++c) for (int h=0; h<vh; ++h) for (int w=0; w<vw; ++w)
         tile[c][h][w] = (data_t)tile[c][h][w];
 }
 
-void load_bn_tile_64_128_ap_fixed_32_10_(
+void load_bn_tile_64_128_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[4][64],
     data_t output[4][128],
     int co_base
@@ -447,7 +447,7 @@ void load_bn_tile_64_128_ap_fixed_32_10_(
     }
 }
 
-void batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(
+void batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(
     acc_t input[128][14][14],
     data_t weights[4][128],
     acc_t output[128][14][14],
@@ -466,7 +466,7 @@ void batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(
     }
 }
 
-void relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(
+void relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(
     acc_t input[128][14][14],
     acc_t output[128][14][14],
     int valid_c,
@@ -483,7 +483,7 @@ void relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(
     }
 }
 
-void store_fmap_tile_64_112_112_128_14_14_ap_fixed_32_10___acc_t_data_t(
+void store_fmap_tile_64_112_112_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[128][14][14],
     data_t output[64][112][112],
     int c_base,
@@ -503,7 +503,7 @@ void store_fmap_tile_64_112_112_128_14_14_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_fmap_patch_64_112_112_128_29_29_2_1_ap_fixed_32_10_(
+void load_fmap_patch_64_112_112_128_29_29_2_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][112][112],
     data_t output[128][29][29],
     int c_base,
@@ -527,7 +527,7 @@ void load_fmap_patch_64_112_112_128_29_29_2_1_ap_fixed_32_10_(
     }
 }
 
-void maxpool_tile_128_29_29_128_14_14_3_3_2_2_ap_fixed_32_10___data_t_acc_t(
+void maxpool_tile_128_29_29_128_14_14_3_3_2_2_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(
     data_t input[128][29][29],
     acc_t output[128][14][14],
     int valid_c,
@@ -553,7 +553,7 @@ void maxpool_tile_128_29_29_128_14_14_3_3_2_2_ap_fixed_32_10___data_t_acc_t(
     }
 }
 
-void store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(
+void store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[128][14][14],
     data_t output[64][56][56],
     int c_base,
@@ -573,7 +573,7 @@ void store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_(
+void load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t output[32][16][16],
     int c_base,
@@ -597,7 +597,7 @@ void load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_64_64_3_128_32_ap_fixed_32_10_(
+void load_weight_tile_64_64_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][64][3][3],
     data_t output[128][32][3][3],
     int co_base,
@@ -621,7 +621,7 @@ void load_weight_tile_64_64_3_128_32_ap_fixed_32_10_(
     }
 }
 
-void conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(
+void conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(
     data_t input[32][16][16],
     data_t weight[128][32][3][3],
     acc_t output[128][14][14],
@@ -652,7 +652,7 @@ void conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t
     }
 }
 
-void load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___data_t_acc_t(
+void load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(
     data_t input[64][56][56],
     acc_t output[128][14][14],
     int c_base,
@@ -676,7 +676,7 @@ void load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___data_t_acc_t(
     }
 }
 
-void load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_(
+void load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t output[128][14][14],
     int c_base,
@@ -700,7 +700,7 @@ void load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_(
     }
 }
 
-void matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(
+void matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(
     acc_t lhs[128][14][14],
     data_t rhs[128][14][14],
     acc_t output[128][14][14],
@@ -718,7 +718,7 @@ void matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(
     }
 }
 
-void load_fmap_patch_64_56_56_32_29_29_2_1_ap_fixed_32_10_(
+void load_fmap_patch_64_56_56_32_29_29_2_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t output[32][29][29],
     int c_base,
@@ -742,7 +742,7 @@ void load_fmap_patch_64_56_56_32_29_29_2_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_128_64_3_128_32_ap_fixed_32_10_(
+void load_weight_tile_128_64_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][64][3][3],
     data_t output[128][32][3][3],
     int co_base,
@@ -766,7 +766,7 @@ void load_weight_tile_128_64_3_128_32_ap_fixed_32_10_(
     }
 }
 
-void conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(
+void conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(
     data_t input[32][29][29],
     data_t weight[128][32][3][3],
     acc_t output[128][14][14],
@@ -797,7 +797,7 @@ void conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t
     }
 }
 
-void load_bn_tile_128_128_ap_fixed_32_10_(
+void load_bn_tile_128_128_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[4][128],
     data_t output[4][128],
     int co_base
@@ -815,7 +815,7 @@ void load_bn_tile_128_128_ap_fixed_32_10_(
     }
 }
 
-void store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(
+void store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[128][14][14],
     data_t output[128][28][28],
     int c_base,
@@ -835,7 +835,7 @@ void store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_(
+void load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t output[32][16][16],
     int c_base,
@@ -859,7 +859,7 @@ void load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_128_128_3_128_32_ap_fixed_32_10_(
+void load_weight_tile_128_128_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][128][3][3],
     data_t output[128][32][3][3],
     int co_base,
@@ -883,7 +883,7 @@ void load_weight_tile_128_128_3_128_32_ap_fixed_32_10_(
     }
 }
 
-void load_fmap_patch_64_56_56_32_27_27_2_0_ap_fixed_32_10_(
+void load_fmap_patch_64_56_56_32_27_27_2_0_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[64][56][56],
     data_t output[32][27][27],
     int c_base,
@@ -907,7 +907,7 @@ void load_fmap_patch_64_56_56_32_27_27_2_0_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_128_64_1_128_32_ap_fixed_32_10_(
+void load_weight_tile_128_64_1_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][64][1][1],
     data_t output[128][32][1][1],
     int co_base,
@@ -931,7 +931,7 @@ void load_weight_tile_128_64_1_128_32_ap_fixed_32_10_(
     }
 }
 
-void conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(
+void conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(
     data_t input[32][27][27],
     data_t weight[128][32][1][1],
     acc_t output[128][14][14],
@@ -962,7 +962,7 @@ void conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t
     }
 }
 
-void load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___data_t_acc_t(
+void load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(
     data_t input[128][28][28],
     acc_t output[128][14][14],
     int c_base,
@@ -986,7 +986,7 @@ void load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___data_t_acc_t(
     }
 }
 
-void load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_(
+void load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t output[128][14][14],
     int c_base,
@@ -1010,7 +1010,7 @@ void load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_(
     }
 }
 
-void load_fmap_patch_128_28_28_32_29_29_2_1_ap_fixed_32_10_(
+void load_fmap_patch_128_28_28_32_29_29_2_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t output[32][29][29],
     int c_base,
@@ -1034,7 +1034,7 @@ void load_fmap_patch_128_28_28_32_29_29_2_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_256_128_3_128_32_ap_fixed_32_10_(
+void load_weight_tile_256_128_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][128][3][3],
     data_t output[128][32][3][3],
     int co_base,
@@ -1058,7 +1058,7 @@ void load_weight_tile_256_128_3_128_32_ap_fixed_32_10_(
     }
 }
 
-void load_bn_tile_256_128_ap_fixed_32_10_(
+void load_bn_tile_256_128_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[4][256],
     data_t output[4][128],
     int co_base
@@ -1076,7 +1076,7 @@ void load_bn_tile_256_128_ap_fixed_32_10_(
     }
 }
 
-void store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(
+void store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[128][14][14],
     data_t output[256][14][14],
     int c_base,
@@ -1096,7 +1096,7 @@ void store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_(
+void load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t output[32][16][16],
     int c_base,
@@ -1120,7 +1120,7 @@ void load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_256_256_3_128_32_ap_fixed_32_10_(
+void load_weight_tile_256_256_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][256][3][3],
     data_t output[128][32][3][3],
     int co_base,
@@ -1144,7 +1144,7 @@ void load_weight_tile_256_256_3_128_32_ap_fixed_32_10_(
     }
 }
 
-void load_fmap_patch_128_28_28_32_27_27_2_0_ap_fixed_32_10_(
+void load_fmap_patch_128_28_28_32_27_27_2_0_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[128][28][28],
     data_t output[32][27][27],
     int c_base,
@@ -1168,7 +1168,7 @@ void load_fmap_patch_128_28_28_32_27_27_2_0_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_256_128_1_128_32_ap_fixed_32_10_(
+void load_weight_tile_256_128_1_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][128][1][1],
     data_t output[128][32][1][1],
     int co_base,
@@ -1192,7 +1192,7 @@ void load_weight_tile_256_128_1_128_32_ap_fixed_32_10_(
     }
 }
 
-void load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___data_t_acc_t(
+void load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(
     data_t input[256][14][14],
     acc_t output[128][14][14],
     int c_base,
@@ -1216,7 +1216,7 @@ void load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___data_t_acc_t(
     }
 }
 
-void load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_(
+void load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t output[128][14][14],
     int c_base,
@@ -1240,7 +1240,7 @@ void load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_(
     }
 }
 
-void load_fmap_patch_256_14_14_32_29_29_2_1_ap_fixed_32_10_(
+void load_fmap_patch_256_14_14_32_29_29_2_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t output[32][29][29],
     int c_base,
@@ -1264,7 +1264,7 @@ void load_fmap_patch_256_14_14_32_29_29_2_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_512_256_3_128_32_ap_fixed_32_10_(
+void load_weight_tile_512_256_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][256][3][3],
     data_t output[128][32][3][3],
     int co_base,
@@ -1288,7 +1288,7 @@ void load_weight_tile_512_256_3_128_32_ap_fixed_32_10_(
     }
 }
 
-void load_bn_tile_512_128_ap_fixed_32_10_(
+void load_bn_tile_512_128_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[4][512],
     data_t output[4][128],
     int co_base
@@ -1306,7 +1306,7 @@ void load_bn_tile_512_128_ap_fixed_32_10_(
     }
 }
 
-void store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(
+void store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[128][14][14],
     data_t output[512][7][7],
     int c_base,
@@ -1326,7 +1326,7 @@ void store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_(
+void load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][7][7],
     data_t output[32][16][16],
     int c_base,
@@ -1350,7 +1350,7 @@ void load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_512_512_3_128_32_ap_fixed_32_10_(
+void load_weight_tile_512_512_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][512][3][3],
     data_t output[128][32][3][3],
     int co_base,
@@ -1374,7 +1374,7 @@ void load_weight_tile_512_512_3_128_32_ap_fixed_32_10_(
     }
 }
 
-void load_fmap_patch_256_14_14_32_27_27_2_0_ap_fixed_32_10_(
+void load_fmap_patch_256_14_14_32_27_27_2_0_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[256][14][14],
     data_t output[32][27][27],
     int c_base,
@@ -1398,7 +1398,7 @@ void load_fmap_patch_256_14_14_32_27_27_2_0_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_512_256_1_128_32_ap_fixed_32_10_(
+void load_weight_tile_512_256_1_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][256][1][1],
     data_t output[128][32][1][1],
     int co_base,
@@ -1422,7 +1422,7 @@ void load_weight_tile_512_256_1_128_32_ap_fixed_32_10_(
     }
 }
 
-void load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___data_t_acc_t(
+void load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(
     data_t input[512][7][7],
     acc_t output[128][14][14],
     int c_base,
@@ -1446,7 +1446,7 @@ void load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___data_t_acc_t(
     }
 }
 
-void load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_(
+void load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][7][7],
     data_t output[128][14][14],
     int c_base,
@@ -1470,7 +1470,7 @@ void load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_(
     }
 }
 
-void clear_tile_128_1_1_ap_fixed_32_10___acc_t(acc_t tile[128][1][1])
+void clear_tile_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t tile[128][1][1])
 {
     for (int c = 0; c < 128; ++c) {
         for (int h = 0; h < 1; ++h) {
@@ -1481,7 +1481,7 @@ void clear_tile_128_1_1_ap_fixed_32_10___acc_t(acc_t tile[128][1][1])
     }
 }
 
-void load_fmap_tile_512_7_7_128_7_7_ap_fixed_32_10_(
+void load_fmap_tile_512_7_7_128_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][7][7],
     data_t output[128][7][7],
     int c_base,
@@ -1505,7 +1505,7 @@ void load_fmap_tile_512_7_7_128_7_7_ap_fixed_32_10_(
     }
 }
 
-void avgpool_accumulate_tile_128_7_7_ap_fixed_32_10___data_t_acc_t(
+void avgpool_accumulate_tile_128_7_7_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(
     data_t input[128][7][7],
     acc_t output[128][1][1],
     int valid_c,
@@ -1522,7 +1522,7 @@ void avgpool_accumulate_tile_128_7_7_ap_fixed_32_10___data_t_acc_t(
     }
 }
 
-void avgpool_finalize_tile_128_49_ap_fixed_32_10___acc_t_acc_t(
+void avgpool_finalize_tile_128_49_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(
     acc_t input[128][1][1],
     acc_t output[128][1][1],
     int valid_c
@@ -1533,7 +1533,7 @@ void avgpool_finalize_tile_128_49_ap_fixed_32_10___acc_t_acc_t(
     }
 }
 
-void store_fmap_tile_512_1_1_128_1_1_ap_fixed_32_10___acc_t_data_t(
+void store_fmap_tile_512_1_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[128][1][1],
     data_t output[512][1][1],
     int c_base,
@@ -1553,7 +1553,7 @@ void store_fmap_tile_512_1_1_128_1_1_ap_fixed_32_10___acc_t_data_t(
     }
 }
 
-void load_fmap_patch_512_1_1_32_1_1_1_0_ap_fixed_32_10_(
+void load_fmap_patch_512_1_1_32_1_1_1_0_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[512][1][1],
     data_t output[32][1][1],
     int c_base,
@@ -1577,7 +1577,7 @@ void load_fmap_patch_512_1_1_32_1_1_1_0_ap_fixed_32_10_(
     }
 }
 
-void load_weight_tile_1000_512_1_128_32_ap_fixed_32_10_(
+void load_weight_tile_1000_512_1_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(
     data_t input[1000][512][1][1],
     data_t output[128][32][1][1],
     int co_base,
@@ -1601,7 +1601,7 @@ void load_weight_tile_1000_512_1_128_32_ap_fixed_32_10_(
     }
 }
 
-void conv_tile_32_1_1_128_32_1_128_1_1_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(
+void conv_tile_32_1_1_128_32_1_128_1_1_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(
     data_t input[32][1][1],
     data_t weight[128][32][1][1],
     acc_t output[128][1][1],
@@ -1632,12 +1632,12 @@ void conv_tile_32_1_1_128_32_1_128_1_1_1_8_64_ap_fixed_32_10___data_t_data_t_acc
     }
 }
 
-void quantize_tile_128_1_1_ap_fixed_32_10___acc_t(acc_t tile[128][1][1], int vc, int vh, int vw) {
+void quantize_tile_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(acc_t tile[128][1][1], int vc, int vh, int vw) {
     for (int c=0; c<vc; ++c) for (int h=0; h<vh; ++h) for (int w=0; w<vw; ++w)
         tile[c][h][w] = (data_t)tile[c][h][w];
 }
 
-void store_fmap_tile_1000_1_1_128_1_1_ap_fixed_32_10___acc_t_data_t(
+void store_fmap_tile_1000_1_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(
     acc_t input[128][1][1],
     data_t output[1000][1][1],
     int c_base,
@@ -1724,18 +1724,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (112) ? (14) : ((112) - (oh_base)));
             for (int ow_base = 0; ow_base < 112; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (112) ? (14) : ((112) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 3; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (3) ? (32) : ((3) - (ci_base)));
-                    load_fmap_patch_3_224_224_32_33_33_2_3_ap_fixed_32_10_(DRAM_input, BRAM_in_patch_stem, ci_base, oh_base, ow_base);
-                    load_weight_tile_64_3_7_128_32_ap_fixed_32_10_(DRAM_w_stem, BRAM_weight_tile_7, co_base, ci_base);
-                    conv_tile_32_33_33_128_32_7_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stem, BRAM_weight_tile_7, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_3_224_224_32_33_33_2_3_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_input, BRAM_in_patch_stem, ci_base, oh_base, ow_base);
+                    load_weight_tile_64_3_7_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_stem, BRAM_weight_tile_7, co_base, ci_base);
+                    conv_tile_32_33_33_128_32_7_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stem, BRAM_weight_tile_7, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_64_128_ap_fixed_32_10_(DRAM_bn_stem, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_64_112_112_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_stem_feat, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_64_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_stem, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_64_112_112_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_stem_feat, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1745,9 +1745,9 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (56) ? (14) : ((56) - (oh_base)));
             for (int ow_base = 0; ow_base < 56; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (56) ? (14) : ((56) - (ow_base)));
-                load_fmap_patch_64_112_112_128_29_29_2_1_ap_fixed_32_10_(DRAM_stem_feat, BRAM_pool_patch, co_base, oh_base, ow_base);
-                maxpool_tile_128_29_29_128_14_14_3_3_2_2_ap_fixed_32_10___data_t_acc_t(BRAM_pool_patch, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_stem_pool, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_patch_64_112_112_128_29_29_2_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_stem_feat, BRAM_pool_patch, co_base, oh_base, ow_base);
+                maxpool_tile_128_29_29_128_14_14_3_3_2_2_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_pool_patch, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_stem_pool, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1757,18 +1757,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (56) ? (14) : ((56) - (oh_base)));
             for (int ow_base = 0; ow_base < 56; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (56) ? (14) : ((56) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 64; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (64) ? (32) : ((64) - (ci_base)));
-                    load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_(DRAM_stem_pool, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_64_64_3_128_32_ap_fixed_32_10_(DRAM_w_s1_b0_1, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_stem_pool, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_64_64_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b0_1, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_64_128_ap_fixed_32_10_(DRAM_bn_s1_b0_1, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s1_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_64_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b0_1, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s1_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1778,17 +1778,17 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (56) ? (14) : ((56) - (oh_base)));
             for (int ow_base = 0; ow_base < 56; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (56) ? (14) : ((56) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 64; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (64) ? (32) : ((64) - (ci_base)));
-                    load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_(DRAM_s1_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_64_64_3_128_32_ap_fixed_32_10_(DRAM_w_s1_b0_2, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s1_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_64_64_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b0_2, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_64_128_ap_fixed_32_10_(DRAM_bn_s1_b0_2, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s1_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_64_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b0_2, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s1_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1798,11 +1798,11 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (56) ? (14) : ((56) - (oh_base)));
             for (int ow_base = 0; ow_base < 56; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (56) ? (14) : ((56) - (ow_base)));
-                load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___data_t_acc_t(DRAM_s1_b0, BRAM_out_tile, co_base, oh_base, ow_base);
-                load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_(DRAM_stem_pool, BRAM_skip_tile, co_base, oh_base, ow_base);
-                matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s1_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(DRAM_s1_b0, BRAM_out_tile, co_base, oh_base, ow_base);
+                load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_stem_pool, BRAM_skip_tile, co_base, oh_base, ow_base);
+                matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s1_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1812,18 +1812,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (56) ? (14) : ((56) - (oh_base)));
             for (int ow_base = 0; ow_base < 56; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (56) ? (14) : ((56) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 64; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (64) ? (32) : ((64) - (ci_base)));
-                    load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_(DRAM_s1_b0, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_64_64_3_128_32_ap_fixed_32_10_(DRAM_w_s1_b1_1, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s1_b0, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_64_64_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b1_1, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_64_128_ap_fixed_32_10_(DRAM_bn_s1_b1_1, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s1_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_64_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b1_1, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s1_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1833,17 +1833,17 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (56) ? (14) : ((56) - (oh_base)));
             for (int ow_base = 0; ow_base < 56; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (56) ? (14) : ((56) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 64; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (64) ? (32) : ((64) - (ci_base)));
-                    load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_(DRAM_s1_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_64_64_3_128_32_ap_fixed_32_10_(DRAM_w_s1_b1_2, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_64_56_56_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s1_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_64_64_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s1_b1_2, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_64_128_ap_fixed_32_10_(DRAM_bn_s1_b1_2, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s1_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_64_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s1_b1_2, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s1_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1853,11 +1853,11 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (56) ? (14) : ((56) - (oh_base)));
             for (int ow_base = 0; ow_base < 56; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (56) ? (14) : ((56) - (ow_base)));
-                load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___data_t_acc_t(DRAM_s1_b1, BRAM_out_tile, co_base, oh_base, ow_base);
-                load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_(DRAM_s1_b0, BRAM_skip_tile, co_base, oh_base, ow_base);
-                matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s1_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(DRAM_s1_b1, BRAM_out_tile, co_base, oh_base, ow_base);
+                load_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s1_b0, BRAM_skip_tile, co_base, oh_base, ow_base);
+                matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_64_56_56_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s1_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1867,18 +1867,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (28) ? (14) : ((28) - (oh_base)));
             for (int ow_base = 0; ow_base < 28; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (28) ? (14) : ((28) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 64; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (64) ? (32) : ((64) - (ci_base)));
-                    load_fmap_patch_64_56_56_32_29_29_2_1_ap_fixed_32_10_(DRAM_s1_b1, BRAM_in_patch_stride2_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_128_64_3_128_32_ap_fixed_32_10_(DRAM_w_s2_b0_1, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride2_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_64_56_56_32_29_29_2_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s1_b1, BRAM_in_patch_stride2_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_128_64_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b0_1, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride2_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_128_128_ap_fixed_32_10_(DRAM_bn_s2_b0_1, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s2_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_128_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b0_1, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s2_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1888,17 +1888,17 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (28) ? (14) : ((28) - (oh_base)));
             for (int ow_base = 0; ow_base < 28; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (28) ? (14) : ((28) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 128; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (128) ? (32) : ((128) - (ci_base)));
-                    load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_(DRAM_s2_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_128_128_3_128_32_ap_fixed_32_10_(DRAM_w_s2_b0_2, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s2_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_128_128_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b0_2, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_128_128_ap_fixed_32_10_(DRAM_bn_s2_b0_2, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s2_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_128_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b0_2, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s2_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1908,15 +1908,15 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (28) ? (14) : ((28) - (oh_base)));
             for (int ow_base = 0; ow_base < 28; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (28) ? (14) : ((28) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 64; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (64) ? (32) : ((64) - (ci_base)));
-                    load_fmap_patch_64_56_56_32_27_27_2_0_ap_fixed_32_10_(DRAM_s1_b1, BRAM_in_patch_stride2_k1, ci_base, oh_base, ow_base);
-                    load_weight_tile_128_64_1_128_32_ap_fixed_32_10_(DRAM_w_s2_b0_down, BRAM_weight_tile_1, co_base, ci_base);
-                    conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride2_k1, BRAM_weight_tile_1, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_64_56_56_32_27_27_2_0_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s1_b1, BRAM_in_patch_stride2_k1, ci_base, oh_base, ow_base);
+                    load_weight_tile_128_64_1_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b0_down, BRAM_weight_tile_1, co_base, ci_base);
+                    conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride2_k1, BRAM_weight_tile_1, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s2_skip, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s2_skip, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1926,11 +1926,11 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (28) ? (14) : ((28) - (oh_base)));
             for (int ow_base = 0; ow_base < 28; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (28) ? (14) : ((28) - (ow_base)));
-                load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___data_t_acc_t(DRAM_s2_b0, BRAM_out_tile, co_base, oh_base, ow_base);
-                load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_(DRAM_s2_skip, BRAM_skip_tile, co_base, oh_base, ow_base);
-                matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s2_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(DRAM_s2_b0, BRAM_out_tile, co_base, oh_base, ow_base);
+                load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s2_skip, BRAM_skip_tile, co_base, oh_base, ow_base);
+                matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s2_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1940,18 +1940,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (28) ? (14) : ((28) - (oh_base)));
             for (int ow_base = 0; ow_base < 28; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (28) ? (14) : ((28) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 128; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (128) ? (32) : ((128) - (ci_base)));
-                    load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_(DRAM_s2_b0, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_128_128_3_128_32_ap_fixed_32_10_(DRAM_w_s2_b1_1, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s2_b0, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_128_128_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b1_1, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_128_128_ap_fixed_32_10_(DRAM_bn_s2_b1_1, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s2_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_128_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b1_1, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s2_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1961,17 +1961,17 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (28) ? (14) : ((28) - (oh_base)));
             for (int ow_base = 0; ow_base < 28; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (28) ? (14) : ((28) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 128; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (128) ? (32) : ((128) - (ci_base)));
-                    load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_(DRAM_s2_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_128_128_3_128_32_ap_fixed_32_10_(DRAM_w_s2_b1_2, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_128_28_28_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s2_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_128_128_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s2_b1_2, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_128_128_ap_fixed_32_10_(DRAM_bn_s2_b1_2, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s2_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_128_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s2_b1_2, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s2_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1981,11 +1981,11 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (28) ? (14) : ((28) - (oh_base)));
             for (int ow_base = 0; ow_base < 28; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (28) ? (14) : ((28) - (ow_base)));
-                load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___data_t_acc_t(DRAM_s2_b1, BRAM_out_tile, co_base, oh_base, ow_base);
-                load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_(DRAM_s2_b0, BRAM_skip_tile, co_base, oh_base, ow_base);
-                matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s2_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(DRAM_s2_b1, BRAM_out_tile, co_base, oh_base, ow_base);
+                load_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s2_b0, BRAM_skip_tile, co_base, oh_base, ow_base);
+                matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_128_28_28_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s2_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -1995,18 +1995,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (14) ? (14) : ((14) - (oh_base)));
             for (int ow_base = 0; ow_base < 14; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (14) ? (14) : ((14) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 128; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (128) ? (32) : ((128) - (ci_base)));
-                    load_fmap_patch_128_28_28_32_29_29_2_1_ap_fixed_32_10_(DRAM_s2_b1, BRAM_in_patch_stride2_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_256_128_3_128_32_ap_fixed_32_10_(DRAM_w_s3_b0_1, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride2_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_128_28_28_32_29_29_2_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s2_b1, BRAM_in_patch_stride2_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_256_128_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b0_1, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride2_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_256_128_ap_fixed_32_10_(DRAM_bn_s3_b0_1, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s3_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_256_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b0_1, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s3_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2016,17 +2016,17 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (14) ? (14) : ((14) - (oh_base)));
             for (int ow_base = 0; ow_base < 14; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (14) ? (14) : ((14) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 256; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (256) ? (32) : ((256) - (ci_base)));
-                    load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_(DRAM_s3_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_256_256_3_128_32_ap_fixed_32_10_(DRAM_w_s3_b0_2, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s3_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_256_256_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b0_2, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_256_128_ap_fixed_32_10_(DRAM_bn_s3_b0_2, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s3_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_256_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b0_2, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s3_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2036,15 +2036,15 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (14) ? (14) : ((14) - (oh_base)));
             for (int ow_base = 0; ow_base < 14; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (14) ? (14) : ((14) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 128; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (128) ? (32) : ((128) - (ci_base)));
-                    load_fmap_patch_128_28_28_32_27_27_2_0_ap_fixed_32_10_(DRAM_s2_b1, BRAM_in_patch_stride2_k1, ci_base, oh_base, ow_base);
-                    load_weight_tile_256_128_1_128_32_ap_fixed_32_10_(DRAM_w_s3_b0_down, BRAM_weight_tile_1, co_base, ci_base);
-                    conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride2_k1, BRAM_weight_tile_1, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_128_28_28_32_27_27_2_0_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s2_b1, BRAM_in_patch_stride2_k1, ci_base, oh_base, ow_base);
+                    load_weight_tile_256_128_1_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b0_down, BRAM_weight_tile_1, co_base, ci_base);
+                    conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride2_k1, BRAM_weight_tile_1, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s3_skip, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s3_skip, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2054,11 +2054,11 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (14) ? (14) : ((14) - (oh_base)));
             for (int ow_base = 0; ow_base < 14; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (14) ? (14) : ((14) - (ow_base)));
-                load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___data_t_acc_t(DRAM_s3_b0, BRAM_out_tile, co_base, oh_base, ow_base);
-                load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_(DRAM_s3_skip, BRAM_skip_tile, co_base, oh_base, ow_base);
-                matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s3_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(DRAM_s3_b0, BRAM_out_tile, co_base, oh_base, ow_base);
+                load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s3_skip, BRAM_skip_tile, co_base, oh_base, ow_base);
+                matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s3_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2068,18 +2068,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (14) ? (14) : ((14) - (oh_base)));
             for (int ow_base = 0; ow_base < 14; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (14) ? (14) : ((14) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 256; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (256) ? (32) : ((256) - (ci_base)));
-                    load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_(DRAM_s3_b0, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_256_256_3_128_32_ap_fixed_32_10_(DRAM_w_s3_b1_1, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s3_b0, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_256_256_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b1_1, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_256_128_ap_fixed_32_10_(DRAM_bn_s3_b1_1, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s3_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_256_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b1_1, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s3_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2089,17 +2089,17 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (14) ? (14) : ((14) - (oh_base)));
             for (int ow_base = 0; ow_base < 14; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (14) ? (14) : ((14) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 256; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (256) ? (32) : ((256) - (ci_base)));
-                    load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_(DRAM_s3_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_256_256_3_128_32_ap_fixed_32_10_(DRAM_w_s3_b1_2, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_256_14_14_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s3_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_256_256_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s3_b1_2, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_256_128_ap_fixed_32_10_(DRAM_bn_s3_b1_2, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s3_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_256_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s3_b1_2, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s3_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2109,11 +2109,11 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (14) ? (14) : ((14) - (oh_base)));
             for (int ow_base = 0; ow_base < 14; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (14) ? (14) : ((14) - (ow_base)));
-                load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___data_t_acc_t(DRAM_s3_b1, BRAM_out_tile, co_base, oh_base, ow_base);
-                load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_(DRAM_s3_b0, BRAM_skip_tile, co_base, oh_base, ow_base);
-                matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s3_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(DRAM_s3_b1, BRAM_out_tile, co_base, oh_base, ow_base);
+                load_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s3_b0, BRAM_skip_tile, co_base, oh_base, ow_base);
+                matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_256_14_14_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s3_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2123,18 +2123,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (7) ? (14) : ((7) - (oh_base)));
             for (int ow_base = 0; ow_base < 7; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (7) ? (14) : ((7) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 256; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (256) ? (32) : ((256) - (ci_base)));
-                    load_fmap_patch_256_14_14_32_29_29_2_1_ap_fixed_32_10_(DRAM_s3_b1, BRAM_in_patch_stride2_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_512_256_3_128_32_ap_fixed_32_10_(DRAM_w_s4_b0_1, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride2_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_256_14_14_32_29_29_2_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s3_b1, BRAM_in_patch_stride2_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_512_256_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b0_1, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride2_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_512_128_ap_fixed_32_10_(DRAM_bn_s4_b0_1, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s4_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_512_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b0_1, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s4_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2144,17 +2144,17 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (7) ? (14) : ((7) - (oh_base)));
             for (int ow_base = 0; ow_base < 7; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (7) ? (14) : ((7) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 512; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (512) ? (32) : ((512) - (ci_base)));
-                    load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_(DRAM_s4_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_512_512_3_128_32_ap_fixed_32_10_(DRAM_w_s4_b0_2, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s4_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_512_512_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b0_2, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_512_128_ap_fixed_32_10_(DRAM_bn_s4_b0_2, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s4_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_512_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b0_2, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s4_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2164,15 +2164,15 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (7) ? (14) : ((7) - (oh_base)));
             for (int ow_base = 0; ow_base < 7; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (7) ? (14) : ((7) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 256; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (256) ? (32) : ((256) - (ci_base)));
-                    load_fmap_patch_256_14_14_32_27_27_2_0_ap_fixed_32_10_(DRAM_s3_b1, BRAM_in_patch_stride2_k1, ci_base, oh_base, ow_base);
-                    load_weight_tile_512_256_1_128_32_ap_fixed_32_10_(DRAM_w_s4_b0_down, BRAM_weight_tile_1, co_base, ci_base);
-                    conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride2_k1, BRAM_weight_tile_1, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_256_14_14_32_27_27_2_0_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s3_b1, BRAM_in_patch_stride2_k1, ci_base, oh_base, ow_base);
+                    load_weight_tile_512_256_1_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b0_down, BRAM_weight_tile_1, co_base, ci_base);
+                    conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride2_k1, BRAM_weight_tile_1, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s4_skip, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s4_skip, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2182,11 +2182,11 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (7) ? (14) : ((7) - (oh_base)));
             for (int ow_base = 0; ow_base < 7; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (7) ? (14) : ((7) - (ow_base)));
-                load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___data_t_acc_t(DRAM_s4_b0, BRAM_out_tile, co_base, oh_base, ow_base);
-                load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_(DRAM_s4_skip, BRAM_skip_tile, co_base, oh_base, ow_base);
-                matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s4_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(DRAM_s4_b0, BRAM_out_tile, co_base, oh_base, ow_base);
+                load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s4_skip, BRAM_skip_tile, co_base, oh_base, ow_base);
+                matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s4_b0, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2196,18 +2196,18 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (7) ? (14) : ((7) - (oh_base)));
             for (int ow_base = 0; ow_base < 7; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (7) ? (14) : ((7) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 512; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (512) ? (32) : ((512) - (ci_base)));
-                    load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_(DRAM_s4_b0, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_512_512_3_128_32_ap_fixed_32_10_(DRAM_w_s4_b1_1, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s4_b0, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_512_512_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b1_1, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_512_128_ap_fixed_32_10_(DRAM_bn_s4_b1_1, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s4_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_512_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b1_1, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s4_mid1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2217,17 +2217,17 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (7) ? (14) : ((7) - (oh_base)));
             for (int ow_base = 0; ow_base < 7; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (7) ? (14) : ((7) - (ow_base)));
-                clear_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile);
+                clear_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile);
                 for (int ci_base = 0; ci_base < 512; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (512) ? (32) : ((512) - (ci_base)));
-                    load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_(DRAM_s4_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
-                    load_weight_tile_512_512_3_128_32_ap_fixed_32_10_(DRAM_w_s4_b1_2, BRAM_weight_tile_3, co_base, ci_base);
-                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_512_7_7_32_16_16_1_1_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s4_mid1, BRAM_in_patch_stride1_k3, ci_base, oh_base, ow_base);
+                    load_weight_tile_512_512_3_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_w_s4_b1_2, BRAM_weight_tile_3, co_base, ci_base);
+                    conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_stride1_k3, BRAM_weight_tile_3, BRAM_out_tile, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_14_14_ap_fixed_32_10___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                load_bn_tile_512_128_ap_fixed_32_10_(DRAM_bn_s4_b1_2, BRAM_bn_tile, co_base);
-                batchnorm_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s4_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                load_bn_tile_512_128_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_bn_s4_b1_2, BRAM_bn_tile, co_base);
+                batchnorm_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_bn_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s4_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
@@ -2237,27 +2237,27 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (14)) <= (7) ? (14) : ((7) - (oh_base)));
             for (int ow_base = 0; ow_base < 7; ow_base += 14) {
                 int valid_ow = (((ow_base) + (14)) <= (7) ? (14) : ((7) - (ow_base)));
-                load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___data_t_acc_t(DRAM_s4_b1, BRAM_out_tile, co_base, oh_base, ow_base);
-                load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_(DRAM_s4_b0, BRAM_skip_tile, co_base, oh_base, ow_base);
-                matrix_add_tile_128_14_14_ap_fixed_32_10___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                relu_tile_128_14_14_ap_fixed_32_10___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10___acc_t_data_t(BRAM_out_tile, DRAM_s4_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(DRAM_s4_b1, BRAM_out_tile, co_base, oh_base, ow_base);
+                load_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s4_b0, BRAM_skip_tile, co_base, oh_base, ow_base);
+                matrix_add_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t_acc_t(BRAM_out_tile, BRAM_skip_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                relu_tile_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_out_tile, BRAM_out_tile, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_512_7_7_128_14_14_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_out_tile, DRAM_s4_b1, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
     for (int co_base = 0; co_base < 512; co_base += 128) {
         int valid_co = (((co_base) + (128)) <= (512) ? (128) : ((512) - (co_base)));
-        clear_tile_128_1_1_ap_fixed_32_10___acc_t(BRAM_gap_out);
+        clear_tile_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_gap_out);
         for (int gh_base = 0; gh_base < 7; gh_base += 7) {
             int valid_gh = (((gh_base) + (7)) <= (7) ? (7) : ((7) - (gh_base)));
             for (int gw_base = 0; gw_base < 7; gw_base += 7) {
                 int valid_gw = (((gw_base) + (7)) <= (7) ? (7) : ((7) - (gw_base)));
-                load_fmap_tile_512_7_7_128_7_7_ap_fixed_32_10_(DRAM_s4_b1, BRAM_gap_tile, co_base, gh_base, gw_base);
-                avgpool_accumulate_tile_128_7_7_ap_fixed_32_10___data_t_acc_t(BRAM_gap_tile, BRAM_gap_out, valid_co, valid_gh, valid_gw);
+                load_fmap_tile_512_7_7_128_7_7_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_s4_b1, BRAM_gap_tile, co_base, gh_base, gw_base);
+                avgpool_accumulate_tile_128_7_7_ap_fixed_32_10_AP_RND_AP_SAT___data_t_acc_t(BRAM_gap_tile, BRAM_gap_out, valid_co, valid_gh, valid_gw);
             }
         }
-        avgpool_finalize_tile_128_49_ap_fixed_32_10___acc_t_acc_t(BRAM_gap_out, BRAM_gap_out, valid_co);
-        store_fmap_tile_512_1_1_128_1_1_ap_fixed_32_10___acc_t_data_t(BRAM_gap_out, DRAM_gap, co_base, 0, 0, valid_co, 1, 1);
+        avgpool_finalize_tile_128_49_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_acc_t(BRAM_gap_out, BRAM_gap_out, valid_co);
+        store_fmap_tile_512_1_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_gap_out, DRAM_gap, co_base, 0, 0, valid_co, 1, 1);
     }
     for (int co_base = 0; co_base < 1000; co_base += 128) {
         int valid_co = (((co_base) + (128)) <= (1000) ? (128) : ((1000) - (co_base)));
@@ -2265,15 +2265,15 @@ void top(data_t DRAM_input[3][224][224], data_t DRAM_w_stem[64][3][7][7], data_t
             int valid_oh = (((oh_base) + (1)) <= (1) ? (1) : ((1) - (oh_base)));
             for (int ow_base = 0; ow_base < 1; ow_base += 1) {
                 int valid_ow = (((ow_base) + (1)) <= (1) ? (1) : ((1) - (ow_base)));
-                clear_tile_128_1_1_ap_fixed_32_10___acc_t(BRAM_fc_out);
+                clear_tile_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_fc_out);
                 for (int ci_base = 0; ci_base < 512; ci_base += 32) {
                     int valid_ci = (((ci_base) + (32)) <= (512) ? (32) : ((512) - (ci_base)));
-                    load_fmap_patch_512_1_1_32_1_1_1_0_ap_fixed_32_10_(DRAM_gap, BRAM_in_patch_1, ci_base, oh_base, ow_base);
-                    load_weight_tile_1000_512_1_128_32_ap_fixed_32_10_(DRAM_fc, BRAM_weight_tile_1, co_base, ci_base);
-                    conv_tile_32_1_1_128_32_1_128_1_1_1_8_64_ap_fixed_32_10___data_t_data_t_acc_t(BRAM_in_patch_1, BRAM_weight_tile_1, BRAM_fc_out, valid_co, valid_ci, valid_oh, valid_ow);
+                    load_fmap_patch_512_1_1_32_1_1_1_0_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_gap, BRAM_in_patch_1, ci_base, oh_base, ow_base);
+                    load_weight_tile_1000_512_1_128_32_ap_fixed_32_10_AP_RND_AP_SAT_(DRAM_fc, BRAM_weight_tile_1, co_base, ci_base);
+                    conv_tile_32_1_1_128_32_1_128_1_1_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___data_t_data_t_acc_t(BRAM_in_patch_1, BRAM_weight_tile_1, BRAM_fc_out, valid_co, valid_ci, valid_oh, valid_ow);
                 }
-                quantize_tile_128_1_1_ap_fixed_32_10___acc_t(BRAM_fc_out, valid_co, valid_oh, valid_ow);
-                store_fmap_tile_1000_1_1_128_1_1_ap_fixed_32_10___acc_t_data_t(BRAM_fc_out, DRAM_out, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
+                quantize_tile_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t(BRAM_fc_out, valid_co, valid_oh, valid_ow);
+                store_fmap_tile_1000_1_1_128_1_1_ap_fixed_32_10_AP_RND_AP_SAT___acc_t_data_t(BRAM_fc_out, DRAM_out, co_base, oh_base, ow_base, valid_co, valid_oh, valid_ow);
             }
         }
     }
