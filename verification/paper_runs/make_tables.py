@@ -9,9 +9,10 @@ Outputs (in --out):
   verif_ops_paper.tex  tab:verification     the paper's operator table: one row per operator, max abs + relative L2 error at +-1, columns A-D
   verif_ops_paper_range.tex  tab:verification-range  per format the largest range r and the relative L2 error at r
   verif_ops_paper_both.tex   tab:verification-both   both: +-1 max abs + relative L2, and range r + relative L2 at r
-  verif_catapult.tex   tab:verif-catapult   Catapult backend: Table-2 GEMM variants, C sim (vs Vitis per seed), synthesis + RTL sim
+  verif_cosim.tex      tab:verif-cosim      Vitis C/RTL co-simulation, one row per operator, columns C and D: variants passing, RTL != C elements, latency
+  verif_catapult.tex   tab:verif-catapult   Catapult backend: Table-2 GEMM variants, C sim (vs Vitis per seed)
   verif_fullmodel.tex  tab:verif-fullmodel  full-scale models at <32,10>: seeds, fixed-reference code mismatches, FP64 logit errors
-  verif_ops.csv, verif_modular.csv, verif_catapult.csv, verif_fullmodel.csv   every number above, one row per (design, column, experiment)
+  verif_ops.csv, verif_modular.csv, verif_cosim.csv, verif_catapult.csv, verif_fullmodel.csv   every number above, one row per (design, column, experiment)
 
 Aggregation over an operator's variants: range = minimum (conservative), errors = maximum. Relative L2 = ||out - golden|| / ||golden||
 over all N trials. Float is characterised, not bounded: its range is the span over which it stays within the float tolerance (search
@@ -317,6 +318,66 @@ def ops_paper(res, out, mode="pm1"):
     return total
 
 
+# ----------------------------------------------------------------------------- co-simulation
+COSIM_COLS = ["C_32_10", "D_float"]
+
+
+def _cyc(x):
+    x = int(x)
+    return f"{x / 1e6:.1f}M" if x >= 1e6 else (f"{x / 1e3:.0f}k" if x >= 1e4 else str(x))
+
+
+def cosim(res, out):
+    """Vitis C/RTL co-simulation of every operator variant (__cosim runs): 10 looped input sets at +-1 per variant, RTL outputs compared
+    with the C simulation element by element; latency from the RTL simulation. One row per operator (as the paper's operator table)."""
+    data, recs = {}, []
+    for c in COSIM_COLS:
+        for r in rows_of(res, f"{c}__cosim"):
+            data.setdefault(c, {}).setdefault(r["operator"], []).append(r)
+            recs.append({"design": r["design"], "column": c, **{f: r.get(f) for f in (
+                "operator", "datatype", "cosim_status", "cosim_trials", "cosim_c_vs_rtl_mismatches", "cosim_latency_min", "cosim_latency_avg",
+                "cosim_latency_max", "notes")}})
+    if not data:
+        return 0
+
+    def cells(rows):
+        if not rows:
+            return ["--"] * 3
+        ok = sum(r.get("cosim_status") == "ok" for r in rows)
+        mm = sum(int(num(r.get("cosim_c_vs_rtl_mismatches")) or 0) for r in rows)
+        lo = [num(r.get("cosim_latency_min")) for r in rows if num(r.get("cosim_latency_min")) is not None]
+        hi = [num(r.get("cosim_latency_max")) for r in rows if num(r.get("cosim_latency_max")) is not None]
+        lat = "--" if not lo else (_cyc(min(lo)) if _cyc(min(lo)) == _cyc(max(hi)) else f"{_cyc(min(lo))}--{_cyc(max(hi))}")
+        return [f"{ok}/{len(rows)}", str(mm), lat]
+
+    body, n_all = [], 0
+    for dom, ops_ in PAPER_OPS:
+        body.append(r"\midrule")
+        for i, (op, _, _) in enumerate(ops_):
+            n = max(len(data.get(c, {}).get(op, [])) for c in COSIM_COLS)
+            n_all += n
+            first = rf"\multirow{{{len(ops_)}}}{{*}}{{{dom}}}" if i == 0 else ""
+            row = [x for c in COSIM_COLS for x in cells(data.get(c, {}).get(op, []))]
+            body.append(f" {first} & {SHORT[op]} & " + " & ".join(row) + r" \\")
+    tot = [x for c in COSIM_COLS for x in cells([r for rows in data.get(c, {}).values() for r in rows])]
+    body += [r"\midrule", r"\textbf{Total} & & " + " & ".join(rf"\textbf{{{x}}}" for x in tot) + r" \\"]
+    trials = sorted({r.get("cosim_trials") for c in data for rows in data[c].values() for r in rows})
+    cap = (r"Vitis C/RTL co-simulation of every operator variant: the synthesized RTL simulated on " + "/".join(map(str, trials)) +
+           r" input sets per variant (every input uniform in $[-1,1]$, the same designs and inputs as the $\pm1$ C simulation), outputs "
+           r"compared element by element with the C simulation. \emph{Pass}: variants whose co-simulation completed with identical outputs; "
+           r"\emph{$\neq$C}: mismatching output elements over all variants and input sets; \emph{Latency}: RTL-simulation latency in clock "
+           r"cycles (10\,ns), range over the operator's variants.")
+    T = [r"\begin{table}[t]", r"\centering", rf"\caption{{{cap}}}", r"\label{tab:verif-cosim}", r"\scriptsize", r"\setlength{\tabcolsep}{3pt}",
+         r"\begin{tabular}{ll" + "rrr" * len(COSIM_COLS) + "}", r"\toprule",
+         r"\textbf{Domain} & \textbf{Operator} & " + " & ".join(rf"\multicolumn{{3}}{{c}}{{{COLS[c]}}}" for c in COSIM_COLS) + r" \\",
+         "".join(rf"\cmidrule(lr){{{3 + 3 * i}-{5 + 3 * i}}}" for i in range(len(COSIM_COLS))),
+         " & & " + " & ".join(r"\textbf{Pass} & $\boldsymbol{\neq}$\textbf{C} & \textbf{Latency}" for _ in COSIM_COLS) + r" \\"] + body + \
+        [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    open(os.path.join(out, "verif_cosim.tex"), "w").write(PRE.replace("booktabs.", "booktabs, multirow.") + "\n".join(T) + "\n")
+    write_csv(os.path.join(out, "verif_cosim.csv"), recs)
+    return n_all
+
+
 # ----------------------------------------------------------------------------- modular (Table 7) designs
 def modular(res, out):
     cols = ["B_16_5_op24_8_acc32_10", "C_32_10", "D_float"]
@@ -436,6 +497,7 @@ def main():
     for mode in OPS_PAPER_MODES:
         print(f"operator table (paper format, {mode}), variants:", ops_paper(a.results, a.out, mode))
     print("modular designs:", modular(a.results, a.out))
+    print("co-simulation variants:", cosim(a.results, a.out))
     print("catapult:", catapult(a.results, a.out))
     if a.fullmodel:
         print("full-scale models:", fullmodel(a.fullmodel, a.out))

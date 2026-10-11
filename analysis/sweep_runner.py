@@ -10,6 +10,8 @@ not the whole sweep. Resumable: designs already recorded as ok in <lean-out>/sta
   python -m analysis.sweep_runner --domain llm --flow impl --jobs 32 --timeout 14400 \
       --configs-dir llm/auto_generated_configs --select manifest/llm_impl_selection.csv \
       --lean-out _sweeps/lean/llm_impl
+  python -m analysis.sweep_runner --domain gemm --flow csynth --tool catapult --jobs 32 --timeout 3600 \
+      --configs-dir <configs> --lean-out <lean>      # Catapult synthesis (go extract) instead of Vitis csynth
 
 Lean layout (what the release bundle / analysis.collect expect):
   <lean-out>/<design>/{top.cpp,top.h,tb_top.cpp,run_hls.tcl}
@@ -17,6 +19,7 @@ Lean layout (what the release bundle / analysis.collect expect):
   <lean-out>/<design>/project_1/solution1/impl/report/verilog/export_impl.xml        (impl)
   <lean-out>/<design>/project_1/solution1/impl/verilog/project.runs/impl_1/*_power_routed.rpt  (impl)
   <lean-out>/<design>/vitis_tail.log                                                 (failures only)
+  --tool catapult: <lean-out>/<design>/{top.cpp,top.h,run_hls.tcl,rtl.rpt}, catapult_tail.log (failures only)
 """
 import argparse
 import csv
@@ -38,6 +41,7 @@ IMPL_XML = os.path.join(SOL, "impl", "report", "verilog", "export_impl.xml")
 IMPL_RPT_GLOB = os.path.join(SOL, "impl", "verilog", "project.runs", "impl_1", "*_power_routed.rpt")
 SOURCES = ["top.cpp", "top.h", "tb_top.cpp", "run_hls.tcl"]
 TASKS = {"csynth": ["csynth"], "impl": ["csynth", "export_ip"]}
+CATAPULT_RPT = os.path.join("catapult_top", "top.v1", "rtl.rpt")
 STATUS_COLS = ["design", "status", "rc", "seconds", "finished_at"]
 
 
@@ -57,6 +61,8 @@ def run_one(design, cfg_path, a, tmpl_q):
     with open(cfg_path) as f:
         cfg = json.load(f)
     cfg["task"] = TASKS[a.flow]
+    if a.tool != "vitis":
+        cfg["tool"] = a.tool
     cfg_dir = os.path.join(a.work_dir, "_cfg")
     os.makedirs(cfg_dir, exist_ok=True)
     run_cfg = os.path.join(cfg_dir, design + ".json")
@@ -75,6 +81,8 @@ def run_one(design, cfg_path, a, tmpl_q):
         if os.path.exists(run_cfg):
             os.remove(run_cfg)
 
+    if a.tool == "catapult":
+        return _run_catapult(design, work, lean, t0, a)
     logp = os.path.join(work, "vitis_hls.log")
     status, rc = "ok", 0
     try:
@@ -107,6 +115,35 @@ def run_one(design, cfg_path, a, tmpl_q):
     return status, rc, time.time() - t0
 
 
+def _run_catapult(design, work, lean, t0, a):
+    """`catapult -shell -f run_hls.tcl` in its own process group (a timeout kills Catapult and its children), lean copy, prune."""
+    import signal
+    logp = os.path.join(work, "catapult_run.log")
+    status, rc = "ok", 0
+    with open(logp, "wb") as lf:
+        p = subprocess.Popen(["catapult", "-shell", "-f", "run_hls.tcl"], cwd=work, stdout=lf, stderr=subprocess.STDOUT,
+                             start_new_session=True)
+        try:
+            rc = p.wait(timeout=a.timeout)
+        except subprocess.TimeoutExpired:
+            status, rc = "timeout", -9
+            os.killpg(p.pid, signal.SIGKILL)
+            p.wait()
+    if status == "ok" and (rc != 0 or not os.path.isfile(os.path.join(work, CATAPULT_RPT))):
+        status = "fail" if rc != 0 else "invalid_report"
+    os.makedirs(lean, exist_ok=True)
+    for f in ["top.cpp", "top.h", "run_hls.tcl", CATAPULT_RPT]:
+        if os.path.isfile(os.path.join(work, f)):
+            _copy(os.path.join(work, f), os.path.join(lean, os.path.basename(f)))
+    if status != "ok" and os.path.isfile(logp):
+        with open(logp, "rb") as lf:
+            tail = lf.read().splitlines()[-100:]
+        with open(os.path.join(lean, "catapult_tail.log"), "wb") as o:
+            o.write(b"\n".join(tail) + b"\n")
+    shutil.rmtree(work, ignore_errors=True)
+    return status, rc, time.time() - t0
+
+
 def load_done(status_csv):
     if not os.path.isfile(status_csv):
         return set()
@@ -118,6 +155,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--domain", required=True, choices=["gemm", "conv", "llm"])
     ap.add_argument("--flow", required=True, choices=["csynth", "impl"])
+    ap.add_argument("--tool", default="vitis", choices=["vitis", "catapult"], help="catapult: csynth flow only (synthesis to RTL)")
     ap.add_argument("--configs-dir", required=True)
     ap.add_argument("--select", help="CSV with a `design` column (config stems); default = all configs")
     ap.add_argument("--lean-out", required=True)
@@ -126,6 +164,8 @@ def main():
     ap.add_argument("--timeout", type=int, default=7200, help="per-design seconds")
     ap.add_argument("--limit", type=int, help="only the first N designs (smoke test)")
     a = ap.parse_args()
+    if a.tool == "catapult" and a.flow != "csynth":
+        sys.exit("--tool catapult supports --flow csynth only")
     a.lean_out = os.path.abspath(a.lean_out)
     a.work_dir = os.path.abspath(a.work_dir or os.path.join(os.path.dirname(a.lean_out), "_work_" + os.path.basename(a.lean_out)))
     os.makedirs(a.lean_out, exist_ok=True)
