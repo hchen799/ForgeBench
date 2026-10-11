@@ -52,7 +52,7 @@ def sci(x, digits=1):
 
 
 def sci_e(x, digits=1):
-    """Compact scientific notation for wide tables: 1.5e$-$3."""
+    """Compact scientific notation for wide tables: 1.5e--3 (en dash: shorter than the math minus)."""
     if x is None:
         return "--"
     if x != x or x in (float("inf"), float("-inf")):
@@ -60,7 +60,7 @@ def sci_e(x, digits=1):
     if x == 0:
         return "0"
     m, e = f"{x:.{digits}e}".split("e")
-    return m if int(e) == 0 else f"{m}e" + (f"$-${-int(e)}" if int(e) < 0 else str(int(e)))
+    return m if int(e) == 0 else f"{m}e" + (f"--{-int(e)}" if int(e) < 0 else str(int(e)))
 
 
 def rng_text(r):
