@@ -1,0 +1,10 @@
+\begin{table}[t]\centering\small
+\caption{Catapult backend (Catapult 2026.2): the Table-2 GEMM variants generated with the Catapult backend, C simulation (SCVerify) with every input in $[-1,1]$, N trials checked against the float64 golden with the same bound as Table~\ref{tab:verif-ops-pm1}. ``= Vitis'': trials whose max abs error and RMSE equal the Vitis run on the same seed. Float designs use \texttt{ac\_ieee\_float<binary32>}.}
+\label{tab:verif-catapult}
+\begin{tabular}{llrrrr}\toprule
+Design & Format & within & max abs & rel.\ L2 & = Vitis \\ \midrule
+\texttt{gemm\_\_bias0} & \texttt{<32,10>} & 100/100 & $1.0\!\times\!10^{-5}$ & $2.9\!\times\!10^{-6}$ & 100/100 \\
+\texttt{gemm\_\_bias1} & \texttt{<32,10>} & 100/100 & $1.0\!\times\!10^{-5}$ & $2.8\!\times\!10^{-6}$ & 100/100 \\
+\texttt{gemm\_\_bias0} & float & 100/100 & $3.2\!\times\!10^{-6}$ & $1.5\!\times\!10^{-7}$ & 100/100 \\
+\texttt{gemm\_\_bias1} & float & 100/100 & $3.3\!\times\!10^{-6}$ & $1.5\!\times\!10^{-7}$ & 100/100 \\
+\bottomrule\end{tabular}\end{table}

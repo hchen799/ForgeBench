@@ -1,0 +1,5 @@
+column,design,csim_n,csim_status,csim_within,max_abs_err,rel_l2,same_as_vitis_per_seed
+C_32_10,ops/gemm/gemm__bias0,100,ok,100,1.0052459685994108e-05,2.891463228009044e-06,100
+C_32_10,ops/gemm/gemm__bias1,100,ok,100,1.0052459685994108e-05,2.8292681419855327e-06,100
+D_float,ops/gemm/gemm__bias0,100,ok,100,3.182701863835291e-06,1.4922016732012724e-07,100
+D_float,ops/gemm/gemm__bias1,100,ok,100,3.340400997586812e-06,1.521317580763848e-07,100
