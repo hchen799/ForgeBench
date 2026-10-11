@@ -146,8 +146,9 @@ def catapult_rtl_status(log):
 
 
 def catapult_qor(run_dir):
-    """Synthesis results from the solution's rtl.rpt: latency / throughput (cycles, design total), area score (post-assignment, Nangate
-    45nm library units), critical-path slack (ns). -> dict (missing fields absent)."""
+    """Synthesis results from the solution's rtl.rpt: latency / throughput (cycles, design total), area score (post-assignment, library
+    units), critical-path slack (ns); with an FPGA library also DSP / LUT / MUX_CARRY and register bits (Catapult estimates, before
+    Vivado). -> dict (missing fields absent)."""
     q = {}
     hits = sorted(glob.glob(os.path.join(run_dir, "*", "*", "rtl.rpt")))
     if not hits:
@@ -159,6 +160,12 @@ def catapult_qor(run_dir):
     m = re.search(r"Total Area Score:\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)", txt)
     if m:
         q["area_score"] = float(m.group(3))
+    m = re.search(r"TOTAL AREA \(After Assignment\):\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)", txt)
+    if m:                                             # FPGA library only: Catapult's own pre-Vivado estimates
+        q["dsp"], q["lut"], q["mux_carry"] = (int(round(float(x))) for x in m.groups()[1:])
+    m = re.search(r"Register-to-Variable Mappings.*?\n\s+Total:\s+(\d+)", txt, re.S)
+    if m:
+        q["reg_bits"] = int(m.group(1))
     m = re.search(r"Slack:\s+(-?[\d.]+)", txt)
     if m:
         q["slack_ns"] = float(m.group(1))

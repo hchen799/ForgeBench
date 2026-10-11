@@ -29,10 +29,17 @@ from backends.base import (
 
 QUESTA_BIN = "/tools/software/siemens/questa/2026.1_2/questasim/bin"   # SCVerify RTL simulation (cosim task)
 
-DEFAULT_LIBS = (
+# Default target: the FPGA part of the Vitis flow (xczu9eg-ffvb1156-2-e, Zynq UltraScale+ speed -2), so both tools synthesize for the
+# same device; resources are then reported in LUT/FF/DSP/BRAM. A config's `target_library` (list of library specs) overrides it.
+ZU9EG_LIBS = (
+    "mgc_Xilinx-ZYNQ-uplus-2_beh -- -rtlsyntool Vivado -manufacturer Xilinx -family ZYNQ-uplus -speed -2 -part xczu9eg-ffvb1156-2-e",
+    "Xilinx_RAMS",
+)
+NANGATE45_LIBS = (
     "nangate-45nm_beh -- -rtlsyntool DesignCompiler -vendor Nangate -technology 045nm",
     "ram_nangate-45nm-singleport_beh",
 )
+DEFAULT_LIBS = ZU9EG_LIBS
 
 # ac_math PWL approximations are NOT bit-identical to Vitis hls_math. Designs run
 # through the verification harness on this backend need a looser tolerance.

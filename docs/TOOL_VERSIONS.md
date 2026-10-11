@@ -17,7 +17,7 @@ Versions of the tools behind the R2 results, as reported by the tools themselves
 | `ac_fixed` / `ac_std_float` / `ac_math` headers | shipped with Catapult 2026.2 (`Mgc_home/shared/include`) | header banner |
 | C simulation | SCVerify `Verify_orig_cxx_osci.mk`, Catapult-bundled g++ (Calypto) 13.4.0 (`Mgc_home/pkgs/dcs_gcc`) | Catapult transcript |
 | RTL simulation | Questa Sim-64 2026.1_2 (`/tools/software/siemens/questa/2026.1_2`), SCVerify `Verify_rtl_v_msim.mk` | `vsim -version` |
-| Target library | `nangate-45nm_beh` (DesignCompiler flow, Nangate 045nm) + `ram_nangate-45nm-singleport_beh`; clock 10 ns | `backends/catapult.py` (`DEFAULT_LIBS`) |
+| Target library | `mgc_Xilinx-ZYNQ-uplus-2_beh` (Vivado flow, part `xczu9eg-ffvb1156-2-e`, the Vitis part) + `Xilinx_RAMS`; clock 10 ns. The earlier C-sim runs and a first synthesis pass used `nangate-45nm_beh` (C-sim results do not depend on the library) | `backends/catapult.py` (`DEFAULT_LIBS = ZU9EG_LIBS`) |
 
 Licenses: the Siemens license server named in `/tools/software/siemens/setup.csh` (`SALT_LICENSE_SERVER`, `MGLS_LICENSE_FILE`).
 `run_catapult.sh` exports those two variables; with the `MGLS_LICENSE_FILE` set in `~/.bashrc` alone, Catapult 2026.2 waits indefinitely

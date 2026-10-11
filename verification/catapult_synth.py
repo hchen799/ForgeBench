@@ -2,7 +2,7 @@
 
 The Table-2 GEMM rows use a full unroll [8,16,16]; Catapult 2026.2 had not finished scheduling them after ~19 h, so synthesis runs
 on the same designs (16x64x32, loop order ijk, same formats) with smaller unroll factors. One Catapult run per design x format x unroll:
-`go analyze` .. `go extract` (Nangate 45nm, 10 ns), QoR from rtl.rpt.
+`go analyze` .. `go extract` for the Vitis part xczu9eg-ffvb1156-2-e (backends/catapult.py ZU9EG_LIBS), 10 ns, QoR from rtl.rpt.
 
   python3 -m verification.catapult_synth --out verification/results_paper/catapult_synth [--unrolls 1,1,1 1,1,4 1,1,16] [--jobs 4]
 
@@ -26,7 +26,7 @@ from verification.prepare_designs import generate_design
 DATATYPES = ["fixed<32,10>", "float"]
 UNROLLS = [[1, 1, 1], [1, 1, 4], [1, 1, 16]]
 FIELDS = ["design", "datatype", "unroll", "table2_unroll", "status", "synth_s", "latency_cycles", "throughput_cycles", "area_score",
-          "slack_ns", "clock_ns", "notes"]
+          "dsp", "lut", "reg_bits", "slack_ns", "clock_ns", "notes"]
 
 
 def gemm_op(cfg):
@@ -52,7 +52,7 @@ def synth_one(v, dt_text, unroll, out_dir, keep):
     rc, log = run_catapult(run_dir)
     row["synth_s"] = round(time.time() - t0, 1)
     q = catapult_qor(run_dir)
-    row.update({k: q.get(k, "") for k in ("latency_cycles", "throughput_cycles", "area_score", "slack_ns")})
+    row.update({k: q.get(k, "") for k in ("latency_cycles", "throughput_cycles", "area_score", "dsp", "lut", "reg_bits", "slack_ns")})
     errors = [l for l in log.splitlines() if l.startswith("# Error")]
     row["status"] = "ok" if rc == 0 and q.get("latency_cycles") is not None and not errors else "synth_failed"
     if row["status"] != "ok":
