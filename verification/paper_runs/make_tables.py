@@ -371,35 +371,36 @@ def cosim(res, out):
     def cells(rows):
         if not rows:
             return ["--"] * 3
-        ok = sum(r.get("cosim_status") == "ok" for r in rows)
-        mm = sum(int(num(r.get("cosim_c_vs_rtl_mismatches")) or 0) for r in rows)
+        # Pass = completed with no C-vs-RTL mismatching element, so the mismatch count needs no column of its own
+        ok = sum(r.get("cosim_status") == "ok" and not int(num(r.get("cosim_c_vs_rtl_mismatches")) or 0) for r in rows)
         lo = [num(r.get("cosim_latency_min")) for r in rows if num(r.get("cosim_latency_min")) is not None]
         hi = [num(r.get("cosim_latency_max")) for r in rows if num(r.get("cosim_latency_max")) is not None]
-        lat = "--" if not lo else (_cyc(min(lo)) if _cyc(min(lo)) == _cyc(max(hi)) else f"{_cyc(min(lo))}--{_cyc(max(hi))}")
-        return [f"{ok}/{len(rows)}", str(mm), lat]
+        return [f"{ok}/{len(rows)}", _cyc(min(lo)) if lo else "--", _cyc(max(hi)) if hi else "--"]
 
     body, n_all = [], 0
     for dom, ops_ in PAPER_OPS:
         body.append(r"\midrule")
-        for i, (op, _, _) in enumerate(ops_):
+        for i, (op, lab, params) in enumerate(ops_):
             n = max(len(data.get(c, {}).get(op, [])) for c in COSIM_COLS)
             n_all += n
             first = rf"\multirow{{{len(ops_)}}}{{*}}{{{dom}}}" if i == 0 else ""
             row = [x for c in COSIM_COLS for x in cells(data.get(c, {}).get(op, []))]
-            body.append(f" {first} & {SHORT[op]} & " + " & ".join(row) + r" \\")
+            body.append(f" {first} & {lab} & {params} & " + " & ".join(row) + r" \\")
     tot = [x for c in COSIM_COLS for x in cells([r for rows in data.get(c, {}).values() for r in rows])]
-    body += [r"\midrule", r"\textbf{Total} & & " + " & ".join(rf"\textbf{{{x}}}" for x in tot) + r" \\"]
+    body += [r"\midrule", r"\textbf{Total} & & & " + " & ".join(rf"\textbf{{{x}}}" for x in tot) + r" \\"]
     trials = sorted({r.get("cosim_trials") for c in data for rows in data[c].values() for r in rows})
     cap = (r"Vitis C/RTL co-simulation of every operator variant: the synthesized RTL simulated on " + "/".join(map(str, trials)) +
            r" input sets per variant (every input uniform in $[-1,1]$, the same designs and inputs as the $\pm1$ C simulation), outputs "
-           r"compared element by element with the C simulation. \emph{Pass}: variants whose co-simulation completed with identical outputs; "
-           r"\emph{$\neq$C}: mismatching output elements over all variants and input sets; \emph{Latency}: RTL-simulation latency in clock "
-           r"cycles (10\,ns), range over the operator's variants.")
+           r"compared element by element with the C simulation. \emph{Pass}: variants whose co-simulation completed with every output "
+           r"element identical to the C simulation; \emph{Latency}: RTL-simulation latency in clock cycles (10\,ns), minimum and maximum over "
+           r"the operator's variants and input sets.")
     T = [r"\begin{table}[t]", r"\centering", rf"\caption{{{cap}}}", r"\label{tab:verif-cosim}", r"\scriptsize", r"\setlength{\tabcolsep}{3pt}",
-         r"\begin{tabular}{ll" + "rrr" * len(COSIM_COLS) + "}", r"\toprule",
-         r"\textbf{Domain} & \textbf{Operator} & " + " & ".join(rf"\multicolumn{{3}}{{c}}{{{COLS[c]}}}" for c in COSIM_COLS) + r" \\",
-         "".join(rf"\cmidrule(lr){{{3 + 3 * i}-{5 + 3 * i}}}" for i in range(len(COSIM_COLS))),
-         " & & " + " & ".join(r"\textbf{Pass} & $\boldsymbol{\neq}$\textbf{C} & \textbf{Latency}" for _ in COSIM_COLS) + r" \\"] + body + \
+         r"\begin{tabular}{lll" + "rrr" * len(COSIM_COLS) + "}", r"\toprule",
+         r"\textbf{Domain} & \textbf{Operator} & \textbf{Parameters} & " + " & ".join(rf"\multicolumn{{3}}{{c}}{{{COLS[c]}}}" for c in COSIM_COLS) + r" \\",
+         "".join(rf"\cmidrule(lr){{{4 + 3 * i}-{6 + 3 * i}}}" for i in range(len(COSIM_COLS))),
+         " & & & " + " & ".join(r"& \multicolumn{2}{c}{\textbf{Latency}}" for _ in COSIM_COLS) + r" \\",
+         "".join(rf"\cmidrule(lr){{{5 + 3 * i}-{6 + 3 * i}}}" for i in range(len(COSIM_COLS))),
+         " & & & " + " & ".join(r"\textbf{Pass} & \textbf{Min} & \textbf{Max}" for _ in COSIM_COLS) + r" \\"] + body + \
         [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
     open(os.path.join(out, "verif_cosim.tex"), "w").write(PRE.replace("booktabs.", "booktabs, multirow.") + "\n".join(T) + "\n")
     write_csv(os.path.join(out, "verif_cosim.csv"), recs)
