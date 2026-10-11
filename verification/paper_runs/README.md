@@ -29,9 +29,11 @@ the tracked `verification/paper_results/` (per run: `summary.csv`, `resolved_con
 | Full-scale models | ResNet-18/34/50/101/152 (full, tiled), Llama-3-8B ctx2048, `<32,10>` RND/SAT | — (verify.py) | `run_fullmodel.sh` |
 | CO-SIM | 57 operator variants, +-1, 10 looped trials | `{C,D}_*__cosim.json` | `run_cosim.sh` |
 | Catapult backend, C sim | 2 Table-2 GEMM variants (`gemm__bias0`, `gemm__bias1`), Catapult backend, +-1, N=100 | `{C,D}_*__catapult_pm1.json` | `run_catapult.sh` |
-| Catapult backend, synthesis + RTL sim | same, one Catapult run each, 10 looped trials | `{C,D}_*__catapult_cosim.json` | `run_catapult.sh` |
+| Catapult backend, synthesis | same 2 variants at reduced unroll (1x1x1, 1x1x4, 1x1x16), `<32,10>` and float, ZU9EG | — | `python3 -m verification.catapult_synth` |
+| Catapult vs Vitis synthesis | 1,000 GEMM sweep designs, `ap_fixed<32,10>`, both tools | `analysis/catapult_vs_vitis.py sample` | `analysis/run_catapult_vs_vitis.sh` |
 
-Tables: `make_tables.py` -> `verif_ops.tex`, `verif_modular.tex`, `verif_catapult.tex`, `verif_fullmodel.tex` + one CSV each.
+Tables: `make_tables.py` -> `verif_ops.tex`, `verif_modular.tex`, `verif_cosim.tex`, `verif_catapult.tex`, `verif_fullmodel.tex` + one CSV each.
+(`{C,D}_*__catapult_cosim.json`, synthesis + RTL sim of the full-unroll Table-2 GEMM in one Catapult run, exists but was stopped: see below.)
 
 ### Per-experiment design JSON
 
@@ -76,12 +78,22 @@ JOBS=8 bash verification/paper_runs/run_all.sh            # operators, A-D (~1.5
 JOBS=6 bash verification/paper_runs/run_table7.sh          # Table 7, B-D (conv_block_op1 dominates: ~6 h)
 SOURCES=<full-model projects> OUT=<dir> PY=<python with torch> bash verification/paper_runs/run_fullmodel.sh
 JOBS=16 bash verification/paper_runs/run_cosim.sh          # CO-SIM, C and D (idle server; float: conv ~8 h, mha ~16.5 h for 10 trials)
-bash verification/paper_runs/run_catapult.sh                # Catapult 2026.2: C sim N=100, then synthesis + RTL sim (sets the Siemens licenses)
+bash verification/paper_runs/run_catapult.sh pm1            # Catapult 2026.2 C sim, N=100 (sets the Siemens licenses)
+python3 -m verification.catapult_synth --out verification/results_paper/catapult_synth --jobs 4   # Catapult synthesis, reduced unroll (needs the license env of run_catapult.sh)
+bash analysis/run_catapult_vs_vitis.sh 32 32                # Catapult vs Vitis, 1,000 GEMM sweep designs (39 min at 32 + 32 jobs)
 FULLMODEL=<dir> bash verification/paper_runs/collect_results.sh
 ```
 
 One design / one format: `python3 -m verification.functional_verification --config verification/paper_runs/C_32_10__pm1.json
 --operators ops/gemm/gemm__bias1 --out /tmp/x` (`--n`, `--range`, `--dtypes`, `--sim` override the config).
+
+## CO-SIM results (`run_cosim.sh`)
+
+Vitis C/RTL co-simulation (Vitis HLS 2024.1, `cosim_design`, Verilog) of all 57 operator variants in C (`<32,10>`) and D (float):
+the design and inputs of the +-1 run, 10 input sets per variant in one looped testbench, RTL outputs compared element by element with
+the C simulation. Result (2026-10-10/11, `verif_cosim.tex`, `tab:verif-cosim`; runs `paper_results/{C_32_10,D_float}__cosim/`):
+**57/57 pass, 0 mismatching elements in both formats**. RTL latency 184-789k cycles (`<32,10>`), 431-2.3M (float); per operator in the
+table. Run time 47 min (`<32,10>`), 17 h (float; mha and conv dominate).
 
 ## Catapult backend check (`run_catapult.sh`)
 
@@ -103,4 +115,36 @@ Generator changes this needed (Catapult backend only; Vitis output byte-identica
 testbench conversions through `fb_to_double()` (`ac_fixed` has no conversion operator), SCVerify's `CCS_MAIN` / `CCS_DESIGN(top)` /
 `CCS_RETURN`, float as `ac_ieee_float<binary32>`, `data_t(0)` for the GEMM accumulator initialisation, and a script that runs C sim
 (`csim`), synthesis (`csynth`) and RTL sim (`cosim`) per task. No generated source was edited by hand.
+
+Results (2026-10-11; tables in `verification/paper_results/`):
+
+- **C sim** (`verif_catapult.tex`, `tab:verif-catapult`): 100/100 trials within bound for both variants in both formats; in all 100
+  trials of each, max abs error and RMSE are identical to the Vitis run on the same seed. Max abs error `<32,10>` 1.0e-5 (rel. L2
+  2.9e-6 / 2.8e-6), float 3.2e-6 / 3.3e-6 (rel. L2 1.5e-7).
+- **Synthesis + RTL sim of the Table-2 variants (full unroll 8x16x16): not completed.** After ~19 h Catapult was still in `schedule`
+  (`<32,10>`) and `loops` (float); stopped 2026-10-11. The same flow on a 1x1x1 copy (bias1, `<32,10>`) synthesized and passed the
+  Questa RTL sim with 0 C/RTL mismatches (2 trials) in 62 s -- a flow test, not a paper result. Catapult RTL co-sim was then dropped
+  (user decision 2026-10-11: synthesis results first).
+- **Synthesis at reduced unroll** (`verification/catapult_synth.py` -> `paper_results/catapult_synth/summary.csv`): the same two
+  variants with unroll 1x1x1 / 1x1x4 / 1x1x16, `<32,10>` and float, `go extract` for the Vitis part (`xczu9eg-ffvb1156-2-e`,
+  `mgc_Xilinx-ZYNQ-uplus-2_beh`), 10 ns: 12/12 ok (30-150 s each). Latency e.g. bias0 `<32,10>` 144k / 70k / 51k cycles; float
+  177k / 127k / 115k; float 1x1x16 misses 10 ns (estimated slack -3.2 ns). Resources are Catapult's pre-Vivado estimates
+  (DSP, LUT, register bits). A first pass against Nangate 45 nm is kept in `results_paper/catapult_synth_nangate45/` (not used).
+
+## Catapult vs Vitis synthesis (`analysis/catapult_vs_vitis.py`)
+
+Population: the GEMM sweep (`gemm/auto_generate_json.py`, 3,072 designs) restricted to designs with at most two of the three loops
+unrolled (unroll_M/K/N = 8 on at most two): 2,688; a seeded sample (seed 20261011) of 1,000 (124-163 per unroll pattern). Each config
+is re-typed to `ap_fixed<32,10>` (Catapult: `ac_fixed<32,10,true,AC_TRN,AC_WRAP>`) and synthesized by Vitis HLS 2024.1 (csynth) and by
+Catapult 2026.2 (`go extract`, ZU9EG library), same part, 10 ns, 1 h limit per design, both through `analysis/sweep_runner.py`
+(`--tool vitis|catapult`). Neither went through Vivado: latency, LUT, DSP, FF are each tool's own estimate; Catapult reports no BRAM.
+
+Result (2026-10-11, `verification/paper_results/catapult_vs_vitis/`: `metrics.csv`, `sample.csv`, `status_*.csv`,
+`catapult_vs_vitis.{png,pdf}` = Fig-8-style densities of latency, LUT, DSP): 1000/1000 ok in both tools, 39 min. Medians over the 1,000:
+latency Catapult 380k vs Vitis 73k cycles (Catapult higher in every design, ratio median 3.9, 10-90 % 1.6-8.6); LUT 2.5k vs 8.3k
+(Catapult lower in every design, ratio 0.25); DSP 4 vs 68 (Catapult = 4 in 966 designs, 8 in 34); Catapult estimated clock > 10 ns in
+148 designs, Vitis in none. Reading: both tools ran with their defaults. Vitis pipelines inner loops by default; the Catapult backend
+emits no pipeline directive, so Catapult schedules unrolled iterations sequentially on one shared multiplier (4 DSPs = one 32x32
+multiply) -- unrolling lowers its latency but adds no DSPs. A Catapult re-run with an II=1 pipeline directive would make the two
+comparable (not done; user to decide).
 

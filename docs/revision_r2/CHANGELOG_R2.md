@@ -1,5 +1,18 @@
 # CHANGELOG_R2 — generator changes and the committed results they make stale
 
+## 2026-10-11 — Catapult backend: SCVerify testbench, ac_ieee_float, FPGA target (Vitis output unchanged)
+Files: `backends/base.py`, `backends/catapult.py`, `gemm/generate_code.py`; commits 8d69820, 9a2d9c5.
+* New backend hooks `tb_cast`, `zero`, `tb_main`, `tb_call`, `tb_return` (Vitis defaults reproduce the old text: `verification/regression_check.py`,
+  0 of 273 designs / testbenches changed).
+* Catapult: float -> `ac_ieee_float<binary32>`; testbench via SCVerify macros and `fb_to_double`; GEMM accumulator init `data_t(0)`; script
+  runs SCVerify C sim / `go extract` / SCVerify RTL sim per task; default library `mgc_Xilinx-ZYNQ-uplus-2_beh` for `xczu9eg-ffvb1156-2-e`
+  (was Nangate 45 nm).
+* Stale: nothing (no committed result used the Catapult backend before).
+
+## 2026-10-11 — LLM sweep re-run started
+csynth 3,888 + impl 1,000 (`analysis/run_llm_r2b.sh`, lean dirs `_sweeps/lean/llm_{csynth,impl}_r2b`); replaces the results marked stale on
+2026-10-05 once collected. The stale lean trees `_sweeps/lean/llm_{csynth,impl}` are kept.
+
 ## 2026-10-01 — LLM sweep: dropout replaced by head-dim unroll knob; weight-shape fix; naming
 
 Files: `llm/auto_generate_json.py`, `llm/generate_code.py`, `llm/grouped_mha_rope_template.cpp`.

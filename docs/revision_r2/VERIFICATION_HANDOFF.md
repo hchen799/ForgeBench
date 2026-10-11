@@ -1,7 +1,7 @@
-# Verification: status and plan (hand-off, updated 2026-10-09)
+# Verification: status and plan (hand-off, updated 2026-10-11)
 
 Branch `FPT_TRETS_2026`. Deadlines: code/results freeze 2026-10-21, resubmission 2026-10-30.
-Standing rules: do not touch `scale_models/` layout until the consolidation is agreed; the LLM sweep re-run waits until verification is finished;
+Standing rules: do not touch `scale_models/` layout until the consolidation is agreed; the LLM sweep re-run was started 2026-10-11 on the user's request (§0, Pending 5);
 the user pushes (the agent only commits locally).
 
 ## 0. Status 2026-10-09 (read first; supersedes §1–§2 where they differ)
@@ -16,6 +16,10 @@ seeds, ranges), `sweep_curves/`, `rows/`, `summary.csv`. How each experiment is 
 | Operators: 57 Table-2 variants | A `<16,5>`, B mixed, C `<32,10>`, D float | largest passing range; max abs + relative L2 error there and at ±1; N=100 | 57/57 pass in every column |
 | Table 7: 18 generated programs | B, C, D | same | 18/18 pass. Weights ±√(3/fan_in), conv bias ±0.1, norm parameters [0.25, 1] |
 | Table 7: 8 hand-written designs (`verification/manual_designs.py`) | B, C, D | same; conv_block_op1 ±1 only, N=10 (35–60 min per fixed-point sample) | 8/8 pass. Designs now use `acc_t`/`math_t`; softmax subtracts the max; sigmoid/tanh only take `exp` of a negative number |
+| CO-SIM: 57 operator variants (Vitis C/RTL) | C, D | 10 input sets per variant at ±1, RTL vs C element by element, RTL latency | 57/57 pass, 0 mismatches in both formats (`verif_cosim.tex`) |
+| Catapult backend: 2 Table-2 GEMM variants, C sim (SCVerify) | C, D | ±1, N=100, same seeds/golden/bound as Vitis | 100/100 within bound; per-seed errors identical to Vitis (`verif_catapult.tex`) |
+| Catapult synthesis: same 2 variants, unroll 1x1x1/1x1x4/1x1x16 | C, D | Catapult 2026.2 `go extract`, ZU9EG, 10 ns | 12/12 ok (`paper_results/catapult_synth/`); full unroll 8x16x16 did not finish in ~19 h |
+| Catapult vs Vitis synthesis: 1,000 GEMM sweep designs | `ap_fixed<32,10>` | both tools, same part, 10 ns, estimates only | 1000/1000 ok in both (`paper_results/catapult_vs_vitis/`, density plot) |
 | Full models, `<32,10>` round/saturate (`verify.py`) | C | exact match with the integer-code fixed reference + FP64 relative L2 | ResNet-18/34/50/101/152, full + tiled, 10 seeds each: 100/100 pass; Llama-3-8B ctx2048, 3 seeds: pass. Zero code mismatches; logits relative L2 ≤ ~1e-6 |
 
 Full-model inputs: input uniform ±1, weights ±√(3/fan_in), one seed = new parameter set + input. Float full models were not run (`verify.py` is
@@ -26,33 +30,34 @@ fixed-point only; recommended skip, not yet confirmed by the user). Full-model r
 1. ~~Commit the `<32,10>` round/saturate full-model sources~~ **done 2026-10-10**: the 12 `*_32_10_` ctx2048/ResNet projects in
    `scale_models/hls_files/` are now the verified RND/SAT sources (`top.cpp`, `top.h`, `tb_top.cpp`, `resolved_config.json`; hashes registered in
    `contracts.json`, 5f74260). Full-model synthesis must be re-run from them. Llama ctx8192 `<32,10>` is still the old truncate/wrap source.
-2. **CO-SIM**: `run_cosim.sh` prepared (C and D, all 57 ops, ±1, 10 looped trials), not started; needs an idle server. Float conv ~8 h.
-3. **Catapult GEMM C-sim**: next (§0b).
+2. ~~**CO-SIM**~~ **done 2026-10-11**: 57/57 pass, 0 mismatches, C and D (`verif_cosim.tex`; 47 min / 17 h).
+3. ~~**Catapult GEMM**~~ **done 2026-10-11** (§0b): C sim, reduced-unroll synthesis, 1,000-design Catapult vs Vitis comparison. Open: whether to
+   re-run Catapult with an II=1 pipeline directive (user deciding); Catapult RTL co-sim dropped for now (user).
 4. Open questions: modular `_module` equivalence check (each merged design reproduces every P program) not done; Llama ctx8192 not verified;
    gpt/llama transformer programs stop at the same range in B and C (±9.3, ±4.5), probably the shared `<32,10>` accumulator in the norm, unconfirmed;
    hand-written conv blocks in C use a truncate/wrap `acc_t` (~1e-3 error), round/saturate would likely reduce it (re-run ~10 h).
-5. After that: LLM sweep re-run (csynth 3,888 + impl 1,000), then the §2 item 5 open items.
+5. **LLM sweep re-run running** (started 2026-10-11 16:40, `analysis/run_llm_r2b.sh`): csynth 3,888 at 64 jobs -> `_sweeps/lean/llm_csynth_r2b`,
+   then impl of the 1,000 in `manifest/llm_impl_selection.csv` at 32 jobs -> `_sweeps/lean/llm_impl_r2b`; logs `_sweeps/logs/llm_*_r2b.log`.
+   Configs regenerated first: byte-identical to `llm/auto_generated_configs`. Previous run: csynth 212 min at 48 jobs, impl 477 min at 32.
+   Afterwards: re-key / collect into `analysis/results_{csynth,impl}/metrics_llm.csv`, Table 5 LLM column, Figs 6-8; then the §2 item 5 open items.
 
-## 0b. Starting the Catapult work
+## 0b. Catapult (done 2026-10-11)
 
-Scope (user, 2026-10-08): "a couple csim tests for the catapult generated gemm ops". The larger plan (96-design subset + synthesis, metrics table) is
-`REVISION_R2_AGENT_BRIEF.md` §F; its fallback is `docs/CATAPULT_STATUS.md` describing exactly what exists.
+Scope (user): Catapult-generated GEMM ops checked against the same golden and bound as Vitis; then synthesis evidence (user, 2026-10-11:
+"I would rather have synthesis results", "evidence of synthesis ... Fig 8 style distribution plot of catapult vs vitis"; "target the same
+FPGA as vitis"). Methods, numbers and caveats: `verification/paper_runs/README.md` (sections "Catapult backend check" and "Catapult vs
+Vitis synthesis"); tool versions and license setup: `docs/TOOL_VERSIONS.md`.
 
-What exists:
-- `backends/catapult.py`: Catapult backend, wired into **gemm only**. `ap_fixed<W,I>` -> `ac_fixed<W,I,true,AC_TRN,AC_WRAP>` (modes follow the
-  generic `fixed<W,I,rnd,sat>` spelling); its math header binds `exp/sqrt/tanh` to `ac_math` for `ac_fixed` and to `<cmath>` for float;
-  `pow/sin/cos` are float-only.
-- Selected per design by the config key `"tool": "catapult"` (`gemm/gen_configs.py::run_hls_flow`, `backends.set_current`).
-- `verification/catapult_syntax_check.py`: generates designs with the Catapult backend and runs `g++ -fsyntax-only` against the `ac_*` headers.
-  No Catapult run, no testbench run, no golden compare yet. `analysis/extractors/catapult.py` is a stub.
-- Toolchain: `/tools/software/siemens/catapult/{2025.2.1,2026.2}`, `latest -> 2026.2` (`MGC_HOME` default
-  `/tools/software/siemens/catapult/latest/Mgc_home`, headers in `shared/include`).
-- The verification engine has no backend switch yet: `functional_verification.py` / `csim_runner.py` build Vitis projects only.
-
-Suggested path: (1) generate a few gemm ops (e.g. `ops/gemm/gemm__bias1` and one unrolled variant) with `"tool": "catapult"` in float and
-`<32,10>`; (2) compile the generated `top.cpp` + testbench with g++ against the `ac_*` headers (Catapult C-sim is plain C++, no license) and compare
-with the same float64 golden and `format_bound` as the Vitis runs, ideally by adding a backend option to the engine so inputs, seeds and tables
-are shared; (3) then, if time allows, `catapult -shell -f run_hls.tcl` for the same designs and record the version in `docs/TOOL_VERSIONS.md`.
+- Everything runs in Catapult 2026.2 (user: no g++). Licenses: export `SALT_LICENSE_SERVER` / `MGLS_LICENSE_FILE` from
+  `/tools/software/siemens/setup.csh` (the `~/.bashrc` value makes Catapult hang after its banner; `~/.my-bashrc` sources a missing file).
+- Backend (`backends/catapult.py`): float -> `ac_ieee_float<binary32>` (Catapult cannot synthesize C `float`); SCVerify testbench
+  (`CCS_MAIN`/`CCS_DESIGN`/`CCS_RETURN`, `fb_to_double`); default target now the Vitis part (`ZU9EG_LIBS`; Nangate kept as `NANGATE45_LIBS`).
+  Vitis output byte-identical (regression check, 273 designs). Known limits: only the GEMM kernel's `= 0` became `data_t(0)` (float vmm/mmv
+  etc. would need the same); array-partition requests on function parameters are dropped; no pipeline directive is emitted.
+- Results: C sim 100/100 per variant and format, identical to Vitis per seed. Full-unroll (8x16x16) synthesis did not finish in ~19 h
+  (stopped). Reduced unroll 12/12 ok. Catapult vs Vitis on 1,000 GEMM sweep designs: 1000/1000 ok in both; Catapult ~3.9x latency,
+  ~0.25x LUT, 4 DSPs (no pipelining by default -- see README before using the comparison in the paper).
+- `verification/catapult_syntax_check.py` (g++ `-fsyntax-only`) still exists, superseded by the above.
 
 ## 1. Operator-level verification (our side) — done / in place
 
