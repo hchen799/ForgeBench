@@ -7,6 +7,7 @@ Outputs (in --out):
                        tab:verif-ops-pm1    operators, columns A-D: max abs and relative L2 error with every input in [-1, 1] (N=100)
   verif_modular.tex    tab:verif-mod-range / tab:verif-mod-pm1: the same for the Table 7 designs (18 generated, 8 hand-written), columns B-D
   verif_ops_paper.tex  tab:verification     the paper's operator table: one row per operator, max abs + relative L2 error at +-1, columns A-D
+  verif_ops_paper_range.tex  tab:verification-range  the same with, per format, the largest range r and the errors at r
   verif_catapult.tex   tab:verif-catapult   Catapult backend: Table-2 GEMM variants, C sim (vs Vitis per seed), synthesis + RTL sim
   verif_fullmodel.tex  tab:verif-fullmodel  full-scale models at <32,10>: seeds, fixed-reference code mismatches, FP64 logit errors
   verif_ops.csv, verif_modular.csv, verif_catapult.csv, verif_fullmodel.csv   every number above, one row per (design, column, experiment)
@@ -188,30 +189,40 @@ PAPER_OPS = [   # (domain, [(operator key, label, parameters)]) in the order of 
 ]
 
 
-def ops_paper(res, out):
-    """verif_ops_paper.tex (tab:verification): the paper's operator table -- one row per operator, every format's max abs and relative L2
-    error with all inputs in [-1, 1] (the __pm1 runs), maximum over the operator's variants; Total row = maximum over all operators."""
+def ops_paper(res, out, with_range=False):
+    """The paper's operator table (tab:verification), one row per operator, maximum over its variants; Total = over all operators.
+    with_range=False -> verif_ops_paper.tex: per format max abs + relative L2 error with all inputs in [-1, 1] (the __pm1 runs).
+    with_range=True  -> verif_ops_paper_range.tex: per format the largest faithful range +-r (minimum over variants) and the max abs +
+    relative L2 error at r (the __max_range runs; float errors at +-1). 16 columns, so the tabular is scaled to the text width."""
     cols = list(COLS)
+    exp = "max_range" if with_range else "pm1"
     data = {c: {} for c in cols}
     for c in cols:
-        for r in rows_of(res, f"{c}__pm1"):
+        for r in rows_of(res, f"{c}__{exp}"):
             data[c].setdefault(r["operator"], []).append(r)
     known = {k for _, ops_ in PAPER_OPS for k, _, _ in ops_}
     missing = sorted({op for d in data.values() for op in d} - known)
     if missing:
         raise SystemExit(f"operators without a row in PAPER_OPS: {missing}")
+    k = 3 if with_range else 2
+    lo_hits = []
 
-    def cells(rows):
+    def cells(rows, op=None):
         a = agg(rows) if rows else None
         if a is None:
-            return ["--", "--"], None
-        return [sci(a["max_abs"]) + ("" if a["all_within"] else r"$^{\dagger}$"), sci(a["rel_l2"])], a
+            return ["--"] * k, None
+        cs = [sci(a["max_abs"]) + ("" if a["all_within"] else r"$^{\dagger}$"), sci(a["rel_l2"])]
+        if with_range:
+            if op and a.get("lo"):
+                lo_hits.append((op, a["lo"]))
+            cs = [rng_text(a["range"]) + (r"$^{\S}$" if op and a.get("lo") else "")] + cs
+        return cs, a
 
     def nvar(op):
         n = {len(data[c].get(op, [])) for c in cols}
         return n.pop() if len(n) == 1 else "/".join(str(len(data[c].get(op, []))) for c in cols)
 
-    body, total, flagged = [], 0, False
+    body, total, flagged, lo_by_col = [], 0, False, {}
     for dom, ops_ in PAPER_OPS:
         body.append(r"\midrule")
         for i, (op, label, params) in enumerate(ops_):
@@ -219,8 +230,10 @@ def ops_paper(res, out):
             total += n if isinstance(n, int) else 0
             row = []
             for c in cols:
-                cs, a = cells(data[c].get(op, []))
+                cs, a = cells(data[c].get(op, []), op)
                 flagged |= bool(a and not a["all_within"])
+                if with_range and a and a.get("lo"):
+                    lo_by_col.setdefault(c, []).extend(a["lo"])
                 row += cs
             n_txt = r"$2\times15$" if op == "activation" and n == 30 else str(n)
             first = rf"\multirow{{{len(ops_)}}}{{*}}{{{dom}}}" if i == 0 else ""
@@ -232,24 +245,43 @@ def ops_paper(res, out):
     n_ops = sum(len(o) for _, o in PAPER_OPS)
     body += [r"\midrule", rf"\textbf{{Total}} & \textbf{{{n_ops} operators}} & & \textbf{{{total}}} & " + " & ".join(tot) + r" \\"]
 
-    cap = (r"\new{3}{1}{Per-operator Vitis C-simulation verification against a NumPy float64 golden computed on the same (quantized) inputs. "
-           r"Every variant of each operator is run on $N{=}100$ random input sets with every input uniform in $[-1,1]$ (non-negative inputs: "
-           r"$[0,1]$; weights of GEMM-type, attention and convolution operators $\pm0.1$, batchnorm parameters in $[0.25,1]$). "
-           r"\emph{Max Abs.\ Error}: worst elementwise absolute error over all samples and variants; \emph{Rel.\ L2 Error}: "
-           r"$\lVert\hat{y}-y\rVert_2/\lVert y\rVert_2$ over all samples, worst variant. Float outputs are within $r_\text{tol}=10^{-3}$, "
-           r"$a_\text{tol}=10^{-5}$ of the golden; fixed-point outputs within the format's rounding-error bound"
-           + (r" ($^{\dagger}$: some samples outside it)" if flagged else "") + ". " + MIXED_NOTE + "}")
-    head = [r"\begin{table*}[t]", r"\centering", rf"\caption{{{cap}}}", r"\label{tab:verification}", r"\scriptsize", r"\setlength{\tabcolsep}{3pt}",
-            r"\revfloat{", r"\begin{tabular}{L{1.1cm}L{2.6cm}lc" + "cc" * len(cols) + "}", r"\toprule",
+    defs = (r"\emph{Max Abs.\ Error}: worst elementwise absolute error over all samples and variants; \emph{Rel.\ L2 Error}: "
+            r"$\lVert\hat{y}-y\rVert_2/\lVert y\rVert_2$ over all samples, worst variant. ")
+    consts = r"weights of GEMM-type, attention and convolution operators $\pm0.1$, batchnorm parameters in $[0.25,1]$"
+    bound = (r"Float outputs are within $r_\text{tol}=10^{-3}$, $a_\text{tol}=10^{-5}$ of the golden; fixed-point outputs within the format's "
+             r"rounding-error bound" + (r" ($^{\dagger}$: some samples outside it)" if flagged else "") + ". ")
+    if with_range:
+        lo_txt = ""
+        if lo_by_col:
+            lo_txt = (r" $^{\S}$: faithful only above a lower edge too: " + "; ".join(
+                f"\\texttt{{{esc(d.split('/', 1)[1])}}} ({COLS[c]}: $\\pm{lo:.3g}$--$\\pm{hi:.3g}$)"
+                for c, hits in lo_by_col.items() for d, lo, hi in hits) + ".")
+        cap = (r"\new{3}{1}{Per-operator Vitis C-simulation verification against a NumPy float64 golden computed on the same (quantized) inputs. "
+               r"\emph{Range} $\pm r$: the largest input range (every input uniform in $[-r,r]$; " + consts + r") over which every output stays "
+               r"within the format's error bound, found by a geometric search and confirmed on $N{=}100$ samples (minimum over the operator's "
+               r"variants; ``cap'': the search ceiling, 741); the errors are measured on $N{=}100$ fresh samples at that range (float: at "
+               r"$\pm1$). " + defs + bound + MIXED_NOTE + lo_txt + "}")
+        sub = r"\textbf{Range} & \textbf{Max Abs.\ Error} & \textbf{Rel.\ L2 Error}"
+        label, fname = "tab:verification-range", "verif_ops_paper_range.tex"
+    else:
+        cap = (r"\new{3}{1}{Per-operator Vitis C-simulation verification against a NumPy float64 golden computed on the same (quantized) inputs. "
+               r"Every variant of each operator is run on $N{=}100$ random input sets with every input uniform in $[-1,1]$ (non-negative inputs: "
+               r"$[0,1]$; " + consts + r"). " + defs + bound + MIXED_NOTE + "}")
+        sub = r"\textbf{Max Abs.\ Error} & \textbf{Rel.\ L2 Error}"
+        label, fname = "tab:verification", "verif_ops_paper.tex"
+    first = 5
+    head = [r"\begin{table*}[t]", r"\centering", rf"\caption{{{cap}}}", rf"\label{{{label}}}", r"\scriptsize", r"\setlength{\tabcolsep}{3pt}",
+            r"\revfloat{"] + ([r"\resizebox{\textwidth}{!}{%"] if with_range else []) + [
+            r"\begin{tabular}{L{1.1cm}L{2.6cm}lc" + "c" * k * len(cols) + "}", r"\toprule",
             r"\textbf{Domain} & \textbf{Operator} & \textbf{Parameters} & \textbf{Variants} & "
-            + " & ".join(rf"\multicolumn{{2}}{{c}}{{{COLS[c]}}}" for c in cols) + r" \\",
-            "".join(rf"\cmidrule(lr){{{5 + 2 * i}-{6 + 2 * i}}}" for i in range(len(cols))),
-            " & & & & " + " & ".join(r"\textbf{Max Abs.\ Error} & \textbf{Rel.\ L2 Error}" for _ in cols) + r" \\"]
-    foot = [r"\bottomrule", r"\end{tabular}", "}",
+            + " & ".join(rf"\multicolumn{{{k}}}{{c}}{{{COLS[c]}}}" for c in cols) + r" \\",
+            "".join(rf"\cmidrule(lr){{{first + k * i}-{first + k * i + k - 1}}}" for i in range(len(cols))),
+            " & & & & " + " & ".join(sub for _ in cols) + r" \\"]
+    foot = [r"\bottomrule", r"\end{tabular}"] + (["}"] if with_range else []) + ["}",
             r"\footnotesize{\raggedright \emph{Activation} covers 15 supported functions (ReLU family, sigmoid, tanh, GELU, SiLU/Swish, softmax, "
             r"hard-sigmoid, hard-swish) across 2 primary tensor dimension variants in GEMM/DNN/LLM.}", r"\end{table*}"]
-    open(os.path.join(out, "verif_ops_paper.tex"), "w").write(
-        PRE.replace("Needs: booktabs.", r"Needs: booktabs, multirow, the paper's \new, \revfloat and L{} column type.")
+    open(os.path.join(out, fname), "w").write(
+        PRE.replace("Needs: booktabs.", r"Needs: booktabs, multirow, graphicx, the paper's \new, \revfloat and L{} column type.")
         + "\n".join(head + body + foot) + "\n")
     return total
 
@@ -385,6 +417,7 @@ def main():
     a = ap.parse_args()
     print("operators:", ops(a.results, a.out))
     print("operator table (paper format), variants:", ops_paper(a.results, a.out))
+    print("operator table with range (paper format), variants:", ops_paper(a.results, a.out, with_range=True))
     print("modular designs:", modular(a.results, a.out))
     print("catapult:", catapult(a.results, a.out))
     if a.fullmodel:
