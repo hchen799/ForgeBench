@@ -51,6 +51,18 @@ def sci(x, digits=1):
     return f"${m}$" if int(e) == 0 else rf"${m}\!\times\!10^{{{int(e)}}}$"
 
 
+def sci_e(x, digits=1):
+    """Compact scientific notation for wide tables: 1.5e$-$3."""
+    if x is None:
+        return "--"
+    if x != x or x in (float("inf"), float("-inf")):
+        return r"$\infty$"
+    if x == 0:
+        return "0"
+    m, e = f"{x:.{digits}e}".split("e")
+    return m if int(e) == 0 else f"{m}e" + (f"$-${-int(e)}" if int(e) < 0 else str(int(e)))
+
+
 def rng_text(r):
     if r is None:
         return "--"
@@ -236,9 +248,9 @@ def ops_paper(res, out, mode="pm1"):
                 continue
             if f == "abs":
                 state["flag"] |= not a["all_within"] and mark_lo
-                out_.append(sci(a["max_abs"]) + ("" if a["all_within"] else r"$^{\dagger}$"))
+                out_.append(sci_e(a["max_abs"]) + ("" if a["all_within"] else r"$^{\dagger}$"))
             elif f == "rel":
-                out_.append(sci(a["rel_l2"]))
+                out_.append(sci_e(a["rel_l2"]))
             else:
                 lo = bool(a.get("lo")) and mark_lo
                 if lo:
