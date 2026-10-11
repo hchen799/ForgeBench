@@ -211,6 +211,13 @@ OPS_PAPER_MODES = {   # mode -> (file, label, per-format sub-columns as (experim
 SHORT = {"gemm": "GEMM", "vmm": "Vec-Mtx", "mmv": "Mtx-Vec", "dot_product": "Dot Prod.", "conv": "Conv", "batchnorm": "BatchNorm",
          "mha": "MH Attn.", "swa": "SW Attn.", "matmul": "MatMul", "layernorm": "LayerNorm", "rmsnorm": "RMSNorm", "activation": "Act.",
          "matrix_add": "Mtx Add", "elementwise_mult": "Elem. Mult.", "dropout": "Dropout", "maxpool": "Max Pool", "adaptive_avgpool": "Avg Pool"}
+ACT_FNS = {"relu": "ReLU", "relu6": "ReLU6", "leaky_relu": "Leaky ReLU", "prelu": "PReLU", "rrelu": "RReLU", "elu": "ELU", "selu": "SELU",
+           "thresholded_relu": "Thresh.\\ ReLU", "gelu": "GELU", "swish": "Swish", "sigmoid": "Sigmoid", "hardsigmoid": "Hard sigmoid",
+           "hardswish": "Hard swish", "tanh": "Tanh", "softmax": "Softmax"}   # compact table: one row per function, in this order
+CAPTION_BOTH = (r"\newclaude{M1}{1}{C-simulation verification of the 57 operator variants in four data types (Sec.~\ref{sec:verification}). "
+                r"$\pm1$: inputs uniform in $[-1,1]$. \emph{Max range}: largest faithful input range $\pm r$ (``cap'': search ceiling) and the "
+                r"error at $r$. \emph{Abs.}: worst element-wise absolute error. \emph{Rel.}: worst relative L2 error "
+                r"$\lVert\hat{y}-y\rVert_2/\lVert y\rVert_2$. $N$: variants per operator.")   # closing brace of \newclaude added in ops_paper
 SUBHEAD = {("pm1", "abs"): r"\textbf{Max Abs.\ Error}", ("pm1", "rel"): r"\textbf{Rel.\ L2 Error}",
            ("max_range", "range"): r"\textbf{Range}", ("max_range", "rel"): r"\textbf{Rel.\ L2 Error}"}
 SUBHEAD_BOTH = {("pm1", "abs"): r"\textbf{Abs.}", ("pm1", "rel"): r"\textbf{Rel.}",          # under a "+-1" / "Max range" header row
@@ -263,16 +270,35 @@ def ops_paper(res, out, mode="pm1"):
         n = {len(data[(c, e)].get(op, [])) for c in cols for e in exps}
         return n.pop() if len(n) == 1 else "/".join(str(len(data[(c, exps[0])].get(op, []))) for c in cols)
 
+    def act_fn(r):
+        return r["design"].rsplit("__", 1)[1]
+
+    def lines(op, lab):
+        """-> [(row label, N, pick)]; compact: one row per activation function (its tensor-rank variants)."""
+        if compact and op == "activation":
+            fns = {act_fn(r) for c in cols for e in exps for r in data[(c, e)].get(op, [])}
+            unknown = sorted(fns - set(ACT_FNS))
+            if unknown:
+                raise SystemExit(f"activation functions without a row in ACT_FNS: {unknown}")
+            out_ = []
+            for fn in (f for f in ACT_FNS if f in fns):
+                pick = lambda d, fn=fn: [r for r in d.get(op, []) if act_fn(r) == fn]
+                ns = {len(pick(data[(c, e)])) for c in cols for e in exps}
+                out_.append((rf"Act.: {ACT_FNS[fn]}", ns.pop() if len(ns) == 1 else "/".join(str(len(pick(data[(c, exps[0])]))) for c in cols), pick))
+            return out_
+        n = nvar(op)
+        n_txt = (r"$2{\times}15$" if compact else r"$2\times15$") if op == "activation" and n == 30 else n
+        return [(SHORT[op] if compact else lab, n_txt if isinstance(n_txt, str) else n, lambda d, op=op: d.get(op, []))]
+
     body, total = [], 0
     for dom, ops_ in PAPER_OPS:
         body.append(r"\midrule")
-        for i, (op, lab, params) in enumerate(ops_):
-            n = nvar(op)
-            total += n if isinstance(n, int) else 0
-            row = [x for c in cols for x in cells(c, lambda d, op=op: d.get(op, []))]
-            n_txt = (r"$2{\times}15$" if compact else r"$2\times15$") if op == "activation" and n == 30 else str(n)
-            first = rf"\multirow{{{len(ops_)}}}{{*}}{{{dom}}}" if i == 0 else ""
-            body.append(f" {first} & {SHORT[op] if compact else lab} & " + ("" if compact else f"{params} & ") + f"{n_txt} & " + " & ".join(row) + r" \\")
+        dom_lines = [(op, params, ln) for op, lab, params in ops_ for ln in lines(op, lab)]
+        for i, (op, params, (lab, n, pick)) in enumerate(dom_lines):
+            total += n if isinstance(n, int) else (nvar(op) if op == "activation" and not compact else 0)
+            row = [x for c in cols for x in cells(c, pick)]
+            first = rf"\multirow{{{len(dom_lines)}}}{{*}}{{{dom}}}" if i == 0 else ""
+            body.append(f" {first} & {lab} & " + ("" if compact else f"{params} & ") + f"{n} & " + " & ".join(row) + r" \\")
     tot = [x for c in cols for x in cells(c, lambda d: [r for rows in d.values() for r in rows], mark_lo=False)]
     tot = [rf"\textbf{{{x}}}" if x != "--" else x for x in tot]
     n_ops = sum(len(o) for _, o in PAPER_OPS)
@@ -296,6 +322,8 @@ def ops_paper(res, out, mode="pm1"):
         lo_txt = (r" $^{\S}$: faithful only above a lower edge too: " + "; ".join(
             f"\\texttt{{{esc(d.split('/', 1)[1])}}} ({COLS[c]}: $\\pm{lo:.3g}$--$\\pm{hi:.3g}$)" for c, d, lo, hi in state["lo"]) + ".")
     cap = golden + ("" if mode == "range" else pm1) + ("" if mode == "pm1" else rng) + ("" if mode == "range" else absd) + rel + bound + MIXED_NOTE + lo_txt + (r" $N$: variants per operator." if compact else "") + "}"
+    if compact:   # the paper's caption (tab:verification-both), as given by the authors
+        cap = CAPTION_BOTH + " " + MIXED_NOTE + "".join(x for x in (r" $^{\dagger}$: some samples outside the format's error bound." if state["flag"] else "", lo_txt) if x) + "}"
     sub = SUBHEAD_BOTH if mode == "both" else SUBHEAD
     c0 = 4 if compact else 5
     wide = True   # 12+ columns overflow a two-column page's \textwidth (measured: +-1 table 285 pt, range table 131 pt over)
@@ -313,7 +341,7 @@ def ops_paper(res, out, mode="pm1"):
     foot = [r"\bottomrule", r"\end{tabular}"] + (["}"] if wide else []) + ["}",
             r"\footnotesize{\raggedright \emph{Activation} covers 15 supported functions (ReLU family, sigmoid, tanh, GELU, SiLU/Swish, softmax, "
             r"hard-sigmoid, hard-swish) across 2 primary tensor dimension variants in GEMM/DNN/LLM.}", r"\end{table*}"]
-    needs = r"booktabs, multirow" + (", graphicx" if wide else "") + r", the paper's \new, \revfloat and L{} column type."
+    needs = r"booktabs, multirow" + (", graphicx" if wide else "") + r", the paper's " + (r"\newclaude" if compact else r"\new") + r", \revfloat and L{} column type."
     open(os.path.join(out, fname), "w").write(PRE.replace("booktabs.", needs) + "\n".join(head + body + foot) + "\n")
     return total
 
