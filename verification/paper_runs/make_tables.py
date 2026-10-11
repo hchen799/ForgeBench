@@ -200,8 +200,8 @@ SHORT = {"gemm": "GEMM", "vmm": "Vec-Mtx", "mmv": "Mtx-Vec", "dot_product": "Dot
          "matrix_add": "Mtx Add", "elementwise_mult": "Elem. Mult.", "dropout": "Dropout", "maxpool": "Max Pool", "adaptive_avgpool": "Avg Pool"}
 SUBHEAD = {("pm1", "abs"): r"\textbf{Max Abs.\ Error}", ("pm1", "rel"): r"\textbf{Rel.\ L2 Error}",
            ("max_range", "range"): r"\textbf{Range}", ("max_range", "rel"): r"\textbf{Rel.\ L2 Error}"}
-SUBHEAD_BOTH = {("pm1", "abs"): r"\textbf{Max Abs.\ Err.\ $\pm1$}", ("pm1", "rel"): r"\textbf{Rel.\ L2 $\pm1$}",
-                ("max_range", "range"): r"\textbf{Range $\pm r$}", ("max_range", "rel"): r"\textbf{Rel.\ L2 at $r$}"}
+SUBHEAD_BOTH = {("pm1", "abs"): r"\textbf{Abs.}", ("pm1", "rel"): r"\textbf{Rel.}",          # under a "+-1" / "Max range" header row
+                ("max_range", "range"): r"$\boldsymbol{\pm r}$", ("max_range", "rel"): r"\textbf{Rel.}"}
 
 
 def ops_paper(res, out, mode="pm1"):
@@ -263,14 +263,14 @@ def ops_paper(res, out, mode="pm1"):
     tot = [x for c in cols for x in cells(c, lambda d: [r for rows in d.values() for r in rows], mark_lo=False)]
     tot = [rf"\textbf{{{x}}}" if x != "--" else x for x in tot]
     n_ops = sum(len(o) for _, o in PAPER_OPS)
-    body += [r"\midrule", rf"\textbf{{Total}} & \textbf{{{n_ops} " + ("ops" if compact else "operators") + "}} & " + ("" if compact else "& ") + rf"\textbf{{{total}}} & " + " & ".join(tot) + r" \\"]
+    body += [r"\midrule", rf"\textbf{{Total}} & \textbf{{{n_ops} " + ("ops" if compact else "operators") + "} & " + ("" if compact else "& ") + rf"\textbf{{{total}}} & " + " & ".join(tot) + r" \\"]
 
     consts = r"weights of GEMM-type, attention and convolution operators $\pm0.1$, batchnorm parameters in $[0.25,1]$"
     golden = (r"\new{3}{1}{Per-operator Vitis C-simulation verification against a NumPy float64 golden computed on the same inputs, "
               r"quantized to the design's format, so the error is the design's internal arithmetic only. ")
     ns = "100" if compact else "$N{=}100$"   # compact: N is the variant-count column
-    rel = r"\emph{Rel.\ L2}: $\lVert\hat{y}-y\rVert_2/\lVert y\rVert_2$ over all " + ns + " samples, worst variant. "
-    absd = r"\emph{Max Abs.\ Error}: worst elementwise absolute error over all samples and variants. "
+    rel = (r"\emph{Rel.}: relative L2 error " if compact else r"\emph{Rel.\ L2}: ") + r"$\lVert\hat{y}-y\rVert_2/\lVert y\rVert_2$ over all " + ns + " samples, worst variant. "
+    absd = (r"\emph{Abs.}" if compact else r"\emph{Max Abs.\ Error}") + r": worst elementwise absolute error over all samples and variants. "
     pm1 = (r"$\pm1$: every input uniform in $[-1,1]$ (non-negative inputs: $[0,1]$; " + consts + r"), " + ns + " samples per variant. ")
     rng = (r"\emph{Range} $\pm r$: the largest input range (every input uniform in $[-r,r]$" + ("" if "pm1" in exps else "; " + consts) +
            r") over which every output stays within the format's error bound, found by a geometric search and confirmed on " + ns + " "
@@ -285,15 +285,18 @@ def ops_paper(res, out, mode="pm1"):
     cap = golden + ("" if mode == "range" else pm1) + ("" if mode == "pm1" else rng) + ("" if mode == "range" else absd) + rel + bound + MIXED_NOTE + lo_txt + (r" $N$: variants per operator." if compact else "") + "}"
     sub = SUBHEAD_BOTH if mode == "both" else SUBHEAD
     c0 = 4 if compact else 5
-    wide = k > 2
+    wide = True   # 12+ columns overflow a two-column page's \textwidth (measured: +-1 table 285 pt, range table 131 pt over)
     head = [r"\begin{table*}[t]", r"\centering", rf"\caption{{{cap}}}", rf"\label{{{label}}}", r"\scriptsize", r"\setlength{\tabcolsep}{3pt}",
             r"\revfloat{"] + ([r"\resizebox{\textwidth}{!}{%"] if wide else []) + [
             (r"\begin{tabular}{llc" if compact else r"\begin{tabular}{L{1.1cm}L{2.6cm}lc") + "c" * k * len(cols) + "}", r"\toprule",
             (r"\textbf{Domain} & \textbf{Operator} & $\mathbf{N}$ & " if compact else
              r"\textbf{Domain} & \textbf{Operator} & \textbf{Parameters} & \textbf{Variants} & ")
             + " & ".join(rf"\multicolumn{{{k}}}{{c}}{{{COLS[c]}}}" for c in cols) + r" \\",
-            "".join(rf"\cmidrule(lr){{{c0 + k * i}-{c0 - 1 + k * (i + 1)}}}" for i in range(len(cols))),
-            (" & & & " if compact else " & & & & ") + " & ".join(" & ".join(sub[x] for x in spec) for _ in cols) + r" \\"]
+            "".join(rf"\cmidrule(lr){{{c0 + k * i}-{c0 - 1 + k * (i + 1)}}}" for i in range(len(cols)))]
+    if compact:   # +-1 (abs, rel) | max range (r, rel) under every format
+        head += [" & & & " + " & ".join(r"\multicolumn{2}{c}{$\pm1$} & \multicolumn{2}{c}{max range}" for _ in cols) + r" \\",
+                 "".join(rf"\cmidrule(lr){{{c0 + 2 * i}-{c0 + 2 * i + 1}}}" for i in range(2 * len(cols)))]
+    head += [(" & & & " if compact else " & & & & ") + " & ".join(" & ".join(sub[x] for x in spec) for _ in cols) + r" \\"]
     foot = [r"\bottomrule", r"\end{tabular}"] + (["}"] if wide else []) + ["}",
             r"\footnotesize{\raggedright \emph{Activation} covers 15 supported functions (ReLU family, sigmoid, tanh, GELU, SiLU/Swish, softmax, "
             r"hard-sigmoid, hard-swish) across 2 primary tensor dimension variants in GEMM/DNN/LLM.}", r"\end{table*}"]
