@@ -2,7 +2,8 @@
 
 ## 2026-10-12 — Table 7 merged designs verified against their programs; bugs fixed (manual source edits)
 Files: `verification/merged_designs.py` (new), `modular_data/{gemm,conv,llm}/hls_files/*_module*/top.{cpp,h}`,
-`gemm/test_case_configs/vec_mtx_p2.json`, `verification/paper_runs/{C_32_10__table7r2_vecmtx_fix.json,prepare_table7_synth.py}`.
+`gemm/test_case_configs/vec_mtx_p2.json`, `conv/test_case_configs/conv_block_op3.json`,
+`verification/paper_runs/{C_32_10__table7r2_vecmtx_fix.json,C_32_10__table7r2_convblock3_fix.json,prepare_table7_synth.py}`.
 * New check: one testbench per merged design drives the synthesized `top` with every program's inputs (each program's verified
   `<32,10>` design JSON and report seeds) and checks each program's outputs against that program's golden and bound.
 * The first run found that most merged designs did not reproduce their programs. Manual edits (each restores the program's semantics):
@@ -18,10 +19,18 @@ Files: `verification/merged_designs.py` (new), `modular_data/{gemm,conv,llm}/hls
     relu, changed by Hanqiu 2025-03-17); `top`'s second LLaMA rms_norm used the first norm's weights; GPT `gelu` called
     `hls::tanh` on negative arguments (Vitis bug) -> the generator's odd-symmetry form.
   - `activation_module`: shared `compute_exp` now uses the lookup-table exp (`backends/exp_table.py`), as its programs do.
+  - `conv_block_module`: the fixes of 9477692 (made then only in the standalone `conv_block_op1-3`) were missing: `MAX_LOCAL_SIZE` 9 -> 16
+    (14-row tiles), program C's 64->64 3x3 conv loaded its weights with K=1 (first tap only); plus the same `acc_t`/`math_t`
+    accumulator and batchnorm types.
 * Program config bug: `vec_mtx_p2.json` loaded 16 of the 64 vector elements (`load_2` dims [16]); the program and its golden both
   followed the config, so it passed while computing a truncated product. Fixed ([64]) and re-verified (100/100,
   `results_paper/C_32_10__table7r2_vecmtx_fix`). No other Table 7 config has a partial load/store.
-* Stale: Table 7 synthesis of `vec_mtx_p2` and of every merged design (re-run from the fixed sources).
+* Program config bug: `conv_block_op3.json` (copied from `conv/test_case_configs/resnet50_block1.json`) gave both 1x1 convs
+  PAD=1 with H_OUT=W_OUT=56, i.e. the output shifted by one pixel (cropped from 58x58). Program and golden both followed the config;
+  the merged design (unpadded, as ResNet-50) did not match it. Fixed (PAD 0) and re-verified (`results_paper/C_32_10__table7r2_convblock3_fix`).
+  The same PAD=1 1x1 convs are in all ten `resnet50_block*.json`; `resnet18_block{2,3}_downsample.json` declare an H_OUT that does
+  not match K/PAD/STRIDE. None of these is used by a paper run; left unchanged.
+* Stale: Table 7 synthesis of `vec_mtx_p2`, `conv_block_op3` and of every merged design (re-run from the fixed sources).
 
 ## 2026-10-12 — Catapult backend check extended to vmm, mmv, dot product
 Files: `gemm/generate_code.py`, `verification/paper_runs/{C_32_10,D_float}__catapult_pm1.json`, `make_tables.py`.

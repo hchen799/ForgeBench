@@ -1,0 +1,7 @@
+{
+  "extends": "C_32_10__table7r2_pm1.json",
+  "operators": [
+    "designs/conv/conv_block_op3"
+  ],
+  "_comment": "re-run of conv_block_op3 after its config fix (the two 1x1 convs had PAD=1 with H_OUT=56, i.e. a one-pixel shift; ResNet-50 bottleneck 1x1 convs are unpadded); results merged into C_32_10__table7r2_pm1"
+}

@@ -31,7 +31,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 DTYPE = "fixed<32,10>"
 # verified program configs; a later dir overrides an earlier one (vec_mtx_p2 re-verified after its config fix)
 GEN_CONFIGS = [os.path.join(REPO, "verification", "results_paper", r, "configs")
-               for r in ("C_32_10__table7r2_pm1", "C_32_10__table7r2_vecmtx_fix")]
+               for r in ("C_32_10__table7r2_pm1", "C_32_10__table7r2_vecmtx_fix",
+                         "C_32_10__table7r2_convblock3_fix")]
 KEEP = ("top.cpp", "top.h", "tb_top.cpp", "run_hls.tcl")
 OLD_TYPE = re.compile(r"ap_fixed\s*<\s*16\s*,\s*5\s*>")
 
