@@ -166,7 +166,7 @@ Stale: all LLM sweep results (unchanged from the earlier note).
 * **Bug found by verification: Vitis HLS 2024.1 `hls::tanh(ap_fixed)` returns tanh(|x|) for negative inputs** (reproduced with a bare call,
   `ap_fixed<32,10>`/`<16,5>`/`<32,8>`). The generated tanh and gelu (tanh inside) now use odd symmetry
   `x<0 ? -tanh(-x) : tanh(x)`. Positive-side library accuracy is 1-4 LSB; for `<32,10>` it breaks beyond |x|~24 (error up to 2.0 at 27.6).
-  **27 conv sweep designs (tanh/gelu, all `ap_fixed_16_5`) change; their synthesis results are stale.** The committed modular/full-model
+  **27 conv sweep designs (tanh/gelu, all `ap_fixed_16_5`) change; their synthesis results are stale.** *(Correction 2026-10-12: 27 was the count in the 279-design regression sample. Every conv sweep design with `activation=tanh` changes: 1,728 of 5,184 csynth results and 256 of the 896 implemented conv designs are stale; checked against an archived July `top.cpp`, which calls `hls::tanh` directly.)* The committed modular/full-model
   designs that contain gelu (`llm/hls_files/*`, conv `hls_files`, `scale_models/`) carry the same defect for negative gelu arguments; not
   touched (scale_models waits on Hanqiu).
 * Inline operators were missing the accumulator spec (`_set_acc` is now also called when generating calls). The earlier mmv/vmm error

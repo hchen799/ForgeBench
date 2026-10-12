@@ -41,6 +41,8 @@ fixed-point only; recommended skip, not yet confirmed by the user). Full-model r
    Configs regenerated first: byte-identical to `llm/auto_generated_configs`. Previous run: csynth 212 min at 48 jobs, impl 477 min at 32.
    Afterwards: re-key / collect into `analysis/results_{csynth,impl}/metrics_llm.csv`, Table 5 LLM column, Figs 6-8; then the §2 item 5 open items.
 
+6. **Regeneration + synthesis still to do (user, 2026-10-12): conv, full models, Table 7.** Conv: the 1,728 `activation=tanh` sweep designs (csynth) and the 256 of them in the conv impl subset (tanh odd-symmetry fix). Full models: from the verified `<32,10>` RND/SAT sources (Llama ctx8192 to be regenerated first). Table 7: the modular designs after the verification edits.
+
 ## 0b. Catapult (done 2026-10-11)
 
 Scope (user): Catapult-generated GEMM ops checked against the same golden and bound as Vitis; then synthesis evidence (user, 2026-10-11:
