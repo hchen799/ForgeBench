@@ -67730,7 +67730,8 @@
   "task": [
     "csynth"
   ],
-  "data_type": "ap_fixed<32,10>",
+  "data_type": "ap_fixed<32, 10, AP_RND, AP_SAT>",
   "production_revision": 2,
-  "top_func_name": "top"
+  "top_func_name": "top",
+  "data_type_spec": "fixed<32,10,rnd,sat>"
 }

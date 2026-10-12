@@ -1,0 +1,15 @@
+design_id,domain,name,hls_dir,role,has_testbench,verified
+RESNET18_config_ap_fixed_32_10_,scale,RESNET18_config_ap_fixed_32_10_,scale_models/hls_files/RESNET18_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET18_TILED_config_ap_fixed_32_10_,scale,RESNET18_TILED_config_ap_fixed_32_10_,scale_models/hls_files/RESNET18_TILED_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET34_config_ap_fixed_32_10_,scale,RESNET34_config_ap_fixed_32_10_,scale_models/hls_files/RESNET34_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET34_TILED_config_ap_fixed_32_10_,scale,RESNET34_TILED_config_ap_fixed_32_10_,scale_models/hls_files/RESNET34_TILED_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET50_config_ap_fixed_32_10_,scale,RESNET50_config_ap_fixed_32_10_,scale_models/hls_files/RESNET50_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET50_TILED_config_ap_fixed_32_10_,scale,RESNET50_TILED_config_ap_fixed_32_10_,scale_models/hls_files/RESNET50_TILED_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET101_config_ap_fixed_32_10_,scale,RESNET101_config_ap_fixed_32_10_,scale_models/hls_files/RESNET101_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET101_TILED_config_ap_fixed_32_10_,scale,RESNET101_TILED_config_ap_fixed_32_10_,scale_models/hls_files/RESNET101_TILED_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET152_config_ap_fixed_32_10_,scale,RESNET152_config_ap_fixed_32_10_,scale_models/hls_files/RESNET152_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+RESNET152_TILED_config_ap_fixed_32_10_,scale,RESNET152_TILED_config_ap_fixed_32_10_,scale_models/hls_files/RESNET152_TILED_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_32_10_,scale,LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_32_10_,scale_models/hls_files/LLAMA3_8B_PREFILL_ctx2048_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_32_10_,scale,LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_32_10_,scale_models/hls_files/LLAMA3_8B_DECODE_ctx2048_config_ap_fixed_32_10_,full_model,True,"yes (verify.py, <32,10> RND/SAT)"
+LLAMA3_8B_PREFILL_ctx8192_config_ap_fixed_32_10_,scale,LLAMA3_8B_PREFILL_ctx8192_config_ap_fixed_32_10_,scale_models/hls_files/LLAMA3_8B_PREFILL_ctx8192_config_ap_fixed_32_10_,full_model,True,no (ctx8192)
+LLAMA3_8B_DECODE_ctx8192_config_ap_fixed_32_10_,scale,LLAMA3_8B_DECODE_ctx8192_config_ap_fixed_32_10_,scale_models/hls_files/LLAMA3_8B_DECODE_ctx8192_config_ap_fixed_32_10_,full_model,True,no (ctx8192)
