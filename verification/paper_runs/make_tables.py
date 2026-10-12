@@ -10,7 +10,7 @@ Outputs (in --out):
   verif_ops_paper_range.tex  tab:verification-range  per format the largest range r and the relative L2 error at r
   verif_ops_paper_both.tex   tab:verification-both   both: +-1 max abs + relative L2, and range r + relative L2 at r
   verif_cosim.tex      tab:verif-cosim      Vitis C/RTL co-simulation, one row per operator, columns C and D: variants passing, RTL != C elements, latency
-  verif_catapult.tex   tab:verif-catapult   Catapult backend: Table-2 GEMM variants, C sim (vs Vitis per seed)
+  verif_catapult.tex   tab:verif-catapult   Catapult backend: gemm, vmm, mmv, dot (one row per operator), C sim (vs Vitis per seed)
   verif_fullmodel.tex  tab:verif-fullmodel  full-scale models at <32,10>: seeds, fixed-reference code mismatches, FP64 logit errors
   verif_ops.csv, verif_modular.csv, verif_cosim.csv, verif_catapult.csv, verif_fullmodel.csv   every number above, one row per (design, column, experiment)
 
@@ -504,14 +504,31 @@ def catapult(res, out):
     if not recs:
         return 0
     write_csv(os.path.join(out, "verif_catapult.csv"), recs)
-    tex = (r"\begin{table}[t]\centering\small" "\n"
-           r"\caption{Catapult backend (Catapult 2026.2): the Table-2 GEMM, Vec-Mtx Mult., Mtx-Vec Mult. and Dot Product variants generated with the Catapult backend, C simulation "
-           r"(SCVerify) with every input in $[-1,1]$, N trials checked against the float64 golden with the same bound as "
-           r"Table~\ref{tab:verif-ops-pm1}. ``= Vitis'': trials whose max abs error and RMSE equal the Vitis run on the same seed. "
-           r"Float designs use \texttt{ac\_ieee\_float<binary32>}.}" "\n"
-           r"\label{tab:verif-catapult}" "\n" r"\begin{tabular}{llrrrr}\toprule" "\n"
-           r"Design & Format & within & max abs & rel.\ L2 & = Vitis \\ \midrule" "\n"
-           + "\n".join(body) + "\n" r"\bottomrule\end{tabular}\end{table}" "\n")
+    # one row per operator (bias0 and bias1 together): worst Abs./Rel. over both variants; Eq. = every trial of both equals Vitis per seed
+    body = []
+    for op, label in (("gemm", "GEMM"), ("vmm", "Vec-Mtx Mult."), ("mmv", "Mtx-Vec Mult."), ("dot_product", "Dot Product")):
+        cells = [label, r"\{With Bias\}"]
+        for c in ("C_32_10", "D_float"):
+            rs = [r for r in recs if r["column"] == c and r["design"].split("/")[2].rsplit("__", 1)[0] == op]
+            if not rs:
+                cells += ["--"] * 3
+                continue
+            eq = all(r["same_as_vitis_per_seed"] != "" and int(r["same_as_vitis_per_seed"]) == int(r["csim_n"]) for r in rs)
+            ok = all(int(r["csim_within"]) == int(r["csim_n"]) for r in rs)
+            cells += [sci_e(max(num(r["max_abs_err"]) for r in rs)) + ("" if ok else r"$^{\dagger}$"),
+                      sci_e(max(num(r["rel_l2"]) for r in rs)), r"\cmark" if eq else r"\xmark"]
+        body.append(" & ".join(cells) + r" \\")
+    tex = ("% Generated from verification/paper_results/verif_catapult.csv (branch FPT_TRETS_2026, Catapult 2026.2). "
+           "Needs: booktabs, \\cmark/\\xmark (e.g. pifont \\ding{51}/\\ding{55}).\n"
+           r"\begin{table}[t]" "\n" r"\centering" "\n"
+           r"\caption{Catapult C-SIM of GEMM operators. \emph{Abs.}: worst element-wise absolute error. \emph{Rel.}: worst relative L2 "
+           r"error $\lVert\hat{y}-y\rVert_2/\lVert y\rVert_2$. $N$: variants per operator. \emph{Eq.} outputs are equal to Vitis counterpart.}" "\n"
+           r"\label{tab:verif-catapult}" "\n" r"\footnotesize" "\n" r"\setlength{\tabcolsep}{3pt}" "\n"
+           r"% \resizebox{\textwidth}{!}{%" "\n"
+           r"\begin{tabular}{llrrrrrr}" "\n" r"\toprule" "\n"
+           r"\textbf{Operator} & \textbf{Parameters} & \multicolumn{3}{c}{\texttt{<32,10>}} & \multicolumn{3}{c}{\texttt{float}} \\" "\n"
+           r"& & \textbf{Abs.} & \textbf{Rel.} & \textbf{Eq.} & \textbf{Abs.} & \textbf{Rel.} & \textbf{Eq.} \\" "\n"
+           r"\midrule" "\n" + "\n".join(body) + "\n" r"\bottomrule" "\n" r"\end{tabular}" "\n" r"% }" "\n" r"\end{table}" "\n")
     open(os.path.join(out, "verif_catapult.tex"), "w").write(tex)
     return len(recs)
 
