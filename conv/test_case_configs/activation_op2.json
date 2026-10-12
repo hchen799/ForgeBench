@@ -1,0 +1,94 @@
+{
+    "brams": [
+        {
+            "name": "BRAM_input",
+            "dims": [
+                64,
+                28,
+                28
+            ]
+        },
+        {
+            "name": "BRAM_output",
+            "dims": [
+                64,
+                28,
+                28
+            ]
+        }
+    ],
+    "drams": [
+        {
+            "name": "DRAM_input_tanh",
+            "dims": [
+                64,
+                28,
+                28
+            ],
+            "bundle": "mem1"
+        },
+        {
+            "name": "DRAM_output_tanh",
+            "dims": [
+                64,
+                28,
+                28
+            ],
+            "bundle": "mem2"
+        }
+    ],
+    "ops": {
+        "load_1": {
+            "func_name": "load",
+            "dims": [
+                64,
+                28,
+                28
+            ],
+            "args": [
+                "DRAM_input_tanh",
+                "BRAM_input"
+            ]
+        },
+        "activation_1": {
+            "func_name": "activation",
+            "dims": [
+                64,
+                28,
+                28
+            ],
+            "func_info": [
+                "activations_template.cpp",
+                "tanh"
+            ],
+            "exp_impl": "table",
+            "args": [
+                "BRAM_input",
+                "BRAM_output"
+            ]
+        },
+        "store": {
+            "func_name": "store",
+            "dims": [
+                64,
+                28,
+                28
+            ],
+            "args": [
+                "BRAM_output",
+                "DRAM_output_tanh"
+            ]
+        }
+    },
+    "output_dram_names": [
+        "DRAM_output_tanh"
+    ],
+    "FPGA_name": "xczu9eg-ffvb1156-2-e",
+    "clock_period": 10,
+    "task": [
+        "csim",
+        "csynth"
+    ],
+    "data_type": "ap_fixed<32, 10>",
+    "top_func_name": "top"
+}

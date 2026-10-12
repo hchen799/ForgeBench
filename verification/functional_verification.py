@@ -121,13 +121,16 @@ def resolve_config(path, overrides):
 def select_variants(spec):
     """'table2' | 'table7' | list of operator names | list of ids -> layout variants."""
     from verification import manual_designs
-    allv = layout.variants() + layout.design_variants() + manual_designs.variants()
+    gen = layout.design_variants()
+    # a hand-written design that now has a JSON config is verified as the generated design (same id); the manual harness covers the rest
+    manual = [v for v in manual_designs.variants() if v["id"] not in {g["id"] for g in gen}]
+    allv = layout.variants() + gen + manual
     if isinstance(spec, list) and len(spec) == 1 and spec[0] in ("all", "table2", "table7"):
         spec = spec[0]
     if spec == "all":
         return allv
     if spec == "table7":
-        return layout.design_variants() + manual_designs.variants()
+        return gen + manual
     if spec == "table2":
         import csv as _csv
         with open(os.path.join(REPO_ROOT, "manifest", "designs", "ops.csv"), newline="") as f:

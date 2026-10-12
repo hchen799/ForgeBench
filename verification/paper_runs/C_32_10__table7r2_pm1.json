@@ -1,0 +1,82 @@
+{
+  "extends": "C_32_10__table7_pm1.json",
+  "_comment": "Table 7 R2: all 26 programs generated from JSON configs (the 8 formerly hand-written ones now have configs), <32,10>, +-1, N=100 (conv_block_op1: N=10, ~26 G MAC per C-sim trial). Weights +-sqrt(3/fan_in), norm parameters [0.25, 1].",
+  "operators": [
+    "designs/gemm/diff_dims_p1",
+    "designs/gemm/diff_dims_p2",
+    "designs/gemm/diff_dims_p3",
+    "designs/gemm/diff_orders_p1",
+    "designs/gemm/diff_orders_p2",
+    "designs/gemm/diff_orders_p3",
+    "designs/gemm/mult_op_p1",
+    "designs/gemm/mult_op_p2",
+    "designs/gemm/mult_op_p3",
+    "designs/gemm/vec_mtx_p1",
+    "designs/gemm/vec_mtx_p2",
+    "designs/conv/activation_op1",
+    "designs/conv/activation_op2",
+    "designs/conv/activation_op3",
+    "designs/conv/conv_A",
+    "designs/conv/conv_B",
+    "designs/conv/conv_C",
+    "designs/conv/conv_block_op1",
+    "designs/conv/conv_block_op2",
+    "designs/conv/conv_block_op3",
+    "designs/llm/attn_breakdown_op1",
+    "designs/llm/attn_breakdown_op2",
+    "designs/llm/gpt_transformer_p1",
+    "designs/llm/llama_transformer_p2",
+    "designs/llm/tiled_attn_p1",
+    "designs/llm/tiled_attn_p2"
+  ],
+  "n_trials_by_design": {
+    "conv_block_op1": 10
+  },
+  "fixed_ranges_by_design": {
+    "conv_block_op1": {
+      "DRAM_conv_weight_1": 0.051,
+      "DRAM_conv_weight_2": 0.0361,
+      "DRAM_conv_weight_3": 0.0361,
+      "DRAM_conv_weight_4": 0.0361
+    },
+    "conv_block_op2": {
+      "DRAM_conv_weight_1": 0.0361,
+      "DRAM_conv_weight_2": 0.0361,
+      "DRAM_bn_weight_1": [
+        0.25,
+        1.0
+      ],
+      "DRAM_bn_weight_2": [
+        0.25,
+        1.0
+      ]
+    },
+    "conv_block_op3": {
+      "DRAM_conv_weight_1": 0.1083,
+      "DRAM_conv_weight_2": 0.0722,
+      "DRAM_conv_weight_3": 0.2165,
+      "DRAM_bn_weight_1": [
+        0.25,
+        1.0
+      ],
+      "DRAM_bn_weight_2": [
+        0.25,
+        1.0
+      ],
+      "DRAM_bn_weight_3": [
+        0.25,
+        1.0
+      ]
+    },
+    "attn_breakdown_op1": {
+      "DRAM_weights_q": 0.3062,
+      "DRAM_weights_k": 0.3062,
+      "DRAM_weights_v": 0.3062
+    },
+    "attn_breakdown_op2": {
+      "DRAM_weights_q": 0.3062,
+      "DRAM_weights_k": 0.3062,
+      "DRAM_weights_v": 0.3062
+    }
+  }
+}
