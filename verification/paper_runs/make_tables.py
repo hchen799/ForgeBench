@@ -522,7 +522,7 @@ def catapult(res, out):
            "Needs: booktabs, \\cmark/\\xmark (e.g. pifont \\ding{51}/\\ding{55}).\n"
            r"\begin{table}[t]" "\n" r"\centering" "\n"
            r"\caption{Catapult C-SIM of GEMM operators. \emph{Abs.}: worst element-wise absolute error. \emph{Rel.}: worst relative L2 "
-           r"error $\lVert\hat{y}-y\rVert_2/\lVert y\rVert_2$. $N$: variants per operator. \emph{Eq.} outputs are equal to Vitis counterpart.}" "\n"
+           r"error $\lVert\hat{y}-y\rVert_2/\lVert y\rVert_2$. \emph{Eq.} outputs are equal to Vitis counterpart.}" "\n"
            r"\label{tab:verif-catapult}" "\n" r"\footnotesize" "\n" r"\setlength{\tabcolsep}{3pt}" "\n"
            r"% \resizebox{\textwidth}{!}{%" "\n"
            r"\begin{tabular}{llrrrrrr}" "\n" r"\toprule" "\n"
