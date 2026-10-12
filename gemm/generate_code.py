@@ -8,6 +8,7 @@ import sys
 # repo root has to go on sys.path before `backends` resolves.
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import backends
+from backends import exp_table
 from backends import op_types
 
 
@@ -1378,6 +1379,7 @@ def generate_func_def(op_info, data_type):
     else:
         print("the operator we do not support!")
         
+    code_line, full_func_name = exp_table.apply(code_line, full_func_name, op_info)   # exp_impl "table" (default: unchanged)
     return code_line, full_func_name
 
 def generate_operator_call(op_info, data_type):
@@ -1406,7 +1408,7 @@ def generate_operator_call(op_info, data_type):
     elif op_info['func_name'] == 'activation':
         code_line, full_func_name = generate_activation_function(op_info["func_info"][0], op_info["func_info"][1], data_type,  op_info["dims"][0], op_info["dims"][1])
         args_str = ", ".join(list(op_info["args"]) + activation_extra_args(op_info["func_info"]))
-        call_str =  f"{full_func_name}({args_str});"
+        call_str =  f"{exp_table.func_name(full_func_name, op_info)}({args_str});"
     elif op_info['func_name'] == 'gemm':
         if op_info["func_info"][-1]: # inline
             call_str = call_gemm_inline(func_type="gemm", M=op_info["dims"][0], N=op_info["dims"][1], K=op_info["dims"][2], 

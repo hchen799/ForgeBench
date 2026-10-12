@@ -3,6 +3,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import backends
+from backends import exp_table
 from backends import op_types
 import math
 import re
@@ -875,6 +876,7 @@ def generate_func_def(op_info, data_type):
     else:
         print("the operator we do not support!")
         
+    code_line, full_func_name = exp_table.apply(code_line, full_func_name, op_info)   # exp_impl "table" (default: unchanged)
     return code_line, full_func_name
 
 
@@ -921,7 +923,7 @@ def generate_operator_call(op_info, data_type):
     extra_args = (activation_extra_args(op_info["func_info"], full_func_name)
                   if op_info['func_name'] == 'activation' else [])
     args_str = ", ".join(list(op_info["args"]) + extra_args)
-    return f"{full_func_name}({args_str});"
+    return f"{exp_table.func_name(full_func_name, op_info)}({args_str});"
     
     
 def generate_top_function(brams, drams, ops, data_type="float", top_func_name="top"):

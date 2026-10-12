@@ -1,0 +1,29 @@
+{
+  "extends": "D_float__max_range.json",
+  "operators": [
+    "ops/conv/activation__elu",
+    "ops/conv/activation__gelu",
+    "ops/conv/activation__selu",
+    "ops/conv/activation__sigmoid",
+    "ops/conv/activation__softmax",
+    "ops/conv/activation__swish",
+    "ops/conv/activation__tanh",
+    "ops/gemm/activation__elu",
+    "ops/gemm/activation__gelu",
+    "ops/gemm/activation__selu",
+    "ops/gemm/activation__sigmoid",
+    "ops/gemm/activation__softmax",
+    "ops/gemm/activation__swish",
+    "ops/gemm/activation__tanh",
+    "ops/llm/mha__rope0_dense",
+    "ops/llm/mha__rope0_grouped",
+    "ops/llm/mha__rope1_dense",
+    "ops/llm/mha__rope1_grouped",
+    "ops/llm/swa__rope0",
+    "ops/llm/swa__rope1"
+  ],
+  "op_params": {
+    "exp_impl": "table"
+  },
+  "_comment": "D_float max_range with the lookup-table exp (op option exp_impl=table) on the 20 Table-2 variants that call exp/tanh"
+}

@@ -1,0 +1,32 @@
+{
+  "extends": "B_16_5_op24_8_acc32_10__pm1.json",
+  "operators": [
+    "ops/conv/activation__elu",
+    "ops/conv/activation__gelu",
+    "ops/conv/activation__selu",
+    "ops/conv/activation__sigmoid",
+    "ops/conv/activation__softmax",
+    "ops/conv/activation__swish",
+    "ops/conv/activation__tanh",
+    "ops/gemm/activation__elu",
+    "ops/gemm/activation__gelu",
+    "ops/gemm/activation__selu",
+    "ops/gemm/activation__sigmoid",
+    "ops/gemm/activation__softmax",
+    "ops/gemm/activation__swish",
+    "ops/gemm/activation__tanh",
+    "ops/llm/mha__rope0_dense",
+    "ops/llm/mha__rope0_grouped",
+    "ops/llm/mha__rope1_dense",
+    "ops/llm/mha__rope1_grouped",
+    "ops/llm/swa__rope0",
+    "ops/llm/swa__rope1"
+  ],
+  "op_params": {
+    "data_type": "fixed<24,8>",
+    "acc_type": "fixed<32,10>",
+    "acc_rounding": "rnd",
+    "exp_impl": "table"
+  },
+  "_comment": "B_16_5_op24_8_acc32_10 pm1 with the lookup-table exp (op option exp_impl=table) on the 20 Table-2 variants that call exp/tanh"
+}

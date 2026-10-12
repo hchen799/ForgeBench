@@ -1,5 +1,15 @@
 # CHANGELOG_R2 — generator changes and the committed results they make stale
 
+## 2026-10-12 — lookup-table exp option (`exp_impl`)
+Files: `backends/exp_table.py` (new), `{gemm,conv,llm}/generate_code.py` (hook in `generate_func_def` / call sites).
+* An op may carry `"exp_impl": "table"` (default `"hls"`). The op's function is renamed `<name>_exptable` and its `hls::exp` / `hls::tanh`
+  calls go through a 4,097-entry ROM of exp(-t), t in [0,16), 1/256 grid with linear interpolation (the `fb_exp_negative` scheme of
+  `scale_models/production_types.py`); exp(x>0) = 1/exp(-x); tanh from exp(-2|x|). Ops: activation (sigmoid, tanh, elu, selu, gelu,
+  swish, softmax), mha, swa; any other op with the option is an error. Generic user-defined tables: future work.
+* Default designs are byte-identical (regression check: 0 of 273 sampled designs changed).
+* Verification: `verification/paper_runs/run_exptable.sh` (the 20 Table-2 variants that use exp/tanh, columns A-D, +-1 and max range, N=100).
+* Stale: nothing.
+
 ## 2026-10-11 — Catapult backend: SCVerify testbench, ac_ieee_float, FPGA target (Vitis output unchanged)
 Files: `backends/base.py`, `backends/catapult.py`, `gemm/generate_code.py`; commits 8d69820, 9a2d9c5.
 * New backend hooks `tb_cast`, `zero`, `tb_main`, `tb_call`, `tb_return` (Vitis defaults reproduce the old text: `verification/regression_check.py`,
