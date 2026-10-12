@@ -145,8 +145,8 @@ void transpose(
 {
     #pragma HLS inline off
 for (int i = 0; i < 64; i++) {
-for (int j = 0; j < 64; j++) {
-    input[i][j] = input[j][i];
+for (int j = i + 1; j < 64; j++) {
+    ap_fixed<16, 5> t = input[i][j]; input[i][j] = input[j][i]; input[j][i] = t;
 }
 }
 }
@@ -347,7 +347,7 @@ void top(
     load_16_ap_fixed_16_5_(DRAM_B3, BRAM_B3);
     data_t dot_out_B[1];
     for (int i = 0; i < 16; i++) {
-        dot_product(BRAM_B1[i], BRAM_B2[0], dot_out);
+        dot_product(BRAM_B1[i], BRAM_B2[0], dot_out_B);
         BRAM_B4[i] = dot_out_B[0];
     }
     store_16_ap_fixed_16_5_(BRAM_B4, DRAM_B4);

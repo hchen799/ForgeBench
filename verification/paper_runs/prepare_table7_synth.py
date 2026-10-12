@@ -3,13 +3,12 @@
 Table 7's designs were verified at mixed, <32,10> and float, and all pass at <32,10> (not all at <16,5>), so each P program and its
 modularized ("Overall") design is synthesized at <32,10>, built the same way verification built them:
 
-  generated programs (18)   gen_configs.run_hls_flow on the verified design JSON (verification/paper_results/C_32_10__table7_pm1/configs),
-                            data_type fixed<32,10>, task csynth                      (verification.prepare_designs.generate_design)
-  hand-written programs (8) modular_data/<domain>/hls_files/<name> with data_t/acc_t/math_t rebound to <32,10>, the verification testbench
-                            and run_hls.tcl                                          (verification.manual_designs.prepare)
-  modularized designs (12)  modular_data/<domain>/hls_files/<name> with the same typedef rebinding plus every spelled-out
-                            ap_fixed<16,5> (copied generator code), own run_hls.tcl (not verified: the
-                            equivalence check of each merged design against its programs is still open)
+  programs (26)             gen_configs.run_hls_flow on the verified design JSON (verification/results_paper/C_32_10__table7r2_pm1/configs,
+                            vec_mtx_p2 from C_32_10__table7r2_vecmtx_fix after its config fix), data_type fixed<32,10>, task csynth
+                            (verification.prepare_designs.generate_design)
+  modularized designs (12)  modular_data/<domain>/hls_files/<name> with data_t/acc_t/math_t rebound plus every spelled-out
+                            ap_fixed<16,5> (copied generator code) replaced, own run_hls.tcl; the same sources
+                            verification.merged_designs checks against every program of the row (C_32_10__table7r2_merged)
 
 Writes <out>/<domain>/<name>/{top.cpp,top.h,tb_top.cpp,run_hls.tcl} and <out>/registry.csv (manifest/designs/modular.csv rows with hls_dir
 pointing at <out>), the input of analysis.run_prebuilt:
@@ -30,7 +29,9 @@ from verification.prepare_designs import generate_design
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DTYPE = "fixed<32,10>"
-GEN_CONFIGS = os.path.join(REPO, "verification", "paper_results", "C_32_10__table7_pm1", "configs")
+# verified program configs; a later dir overrides an earlier one (vec_mtx_p2 re-verified after its config fix)
+GEN_CONFIGS = [os.path.join(REPO, "verification", "results_paper", r, "configs")
+               for r in ("C_32_10__table7r2_pm1", "C_32_10__table7r2_vecmtx_fix")]
 KEEP = ("top.cpp", "top.h", "tb_top.cpp", "run_hls.tcl")
 OLD_TYPE = re.compile(r"ap_fixed\s*<\s*16\s*,\s*5\s*>")
 
@@ -62,7 +63,6 @@ def main(argv=None):
     out = os.path.abspath(a.out)
     shutil.rmtree(out, ignore_errors=True)
     os.makedirs(out)
-    manual = {v["id"].split("/", 1)[1]: M.SPECS[v["id"].split("/", 1)[1]] for v in M.variants()}   # "<domain>/<name>" -> spec
     rows, how = [], {}
     with open(os.path.join(REPO, "manifest", "designs", "modular.csv"), newline="") as f:
         reg = list(csv.DictReader(f))
@@ -70,13 +70,12 @@ def main(argv=None):
         dom, name = r["domain"], os.path.basename(r["design_path"])
         dst = os.path.join(out, dom, name)
         key = f"{dom}/{name}"
-        if r["role"] == "program" and key in manual:
-            M.prepare(manual[key], DTYPE, dst, tasks=("csynth",))
-            how[key] = "hand-written program, verification sources"
-        elif r["role"] == "program":
-            cfg = os.path.join(GEN_CONFIGS, f"designs__{dom}__{name}__fixed_32_10_trn_wrap.json")
-            if not os.path.isfile(cfg):
-                sys.exit(f"no verified config for {key}: {cfg}")
+        if r["role"] == "program":
+            cands = [os.path.join(d, f"designs__{dom}__{name}__fixed_32_10_trn_wrap.json") for d in GEN_CONFIGS]
+            cands = [c for c in cands if os.path.isfile(c)]
+            if not cands:
+                sys.exit(f"no verified config for {key} in {GEN_CONFIGS}")
+            cfg = cands[-1]
             work = os.path.join(out, "_gen", dom)
             os.makedirs(work, exist_ok=True)
             run_dir, _ = generate_design(dom, cfg, work, ["csynth"], data_type=DTYPE)
@@ -87,7 +86,7 @@ def main(argv=None):
             how[key] = "generated from the verified design JSON"
         else:
             rebind(os.path.join(REPO, r["design_path"]), dst)
-            how[key] = "modularized design, typedefs rebound (not verified)"
+            how[key] = "modularized design, typedefs rebound (verified against its programs: verification.merged_designs)"
         rows.append({**r, "hls_dir": os.path.relpath(dst, REPO), "name": name, "source": how[key]})
     shutil.rmtree(os.path.join(out, "_gen"), ignore_errors=True)
     with open(os.path.join(out, "registry.csv"), "w", newline="") as f:

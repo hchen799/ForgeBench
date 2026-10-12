@@ -13,7 +13,7 @@
     ],
     "ops": {
         "load_1": {"func_name": "load", "dims": [64, 16], "args": ["DRAM_1", "BRAM_1"]},
-        "load_2": {"func_name": "load", "dims": [16], "args": ["DRAM_2", "BRAM_2"]},
+        "load_2": {"func_name": "load", "dims": [64], "args": ["DRAM_2", "BRAM_2"]},
         "load_3": {"func_name": "load", "dims": [16], "args": ["DRAM_3", "BRAM_3"]},
         "vmm_1": {
             "func_name": "vmm",

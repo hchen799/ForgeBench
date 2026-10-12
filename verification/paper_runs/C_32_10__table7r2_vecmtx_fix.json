@@ -1,0 +1,7 @@
+{
+  "extends": "C_32_10__table7r2_pm1.json",
+  "operators": [
+    "designs/gemm/vec_mtx_p2"
+  ],
+  "_comment": "re-run of vec_mtx_p2 after its config fix (load_2 covered 16 of the 64 vector elements); results merged into C_32_10__table7r2_pm1"
+}

@@ -1,5 +1,28 @@
 # CHANGELOG_R2 — generator changes and the committed results they make stale
 
+## 2026-10-12 — Table 7 merged designs verified against their programs; bugs fixed (manual source edits)
+Files: `verification/merged_designs.py` (new), `modular_data/{gemm,conv,llm}/hls_files/*_module*/top.{cpp,h}`,
+`gemm/test_case_configs/vec_mtx_p2.json`, `verification/paper_runs/{C_32_10__table7r2_vecmtx_fix.json,prepare_table7_synth.py}`.
+* New check: one testbench per merged design drives the synthesized `top` with every program's inputs (each program's verified
+  `<32,10>` design JSON and report seeds) and checks each program's outputs against that program's golden and bound.
+* The first run found that most merged designs did not reproduce their programs. Manual edits (each restores the program's semantics):
+  - `mult_op_module_dot`, `mult_op_module_mmv`, `vec_mtx_module`: in-place `transpose` / `transpose_32` overwrote half the matrix
+    (`input[i][j] = input[j][i]` over the full square) -> swap across the diagonal.
+  - `mult_op_module_dot`: program B stored `dot_out_B`, never written (the dot product wrote `dot_out`).
+  - `mult_op_module_mm`, `mult_op_module_mmv`: program C copied 16 of the 64 vector elements into the matrix row.
+  - `diff_dims_module_small`: `tiled_gemm` re-initialised the output tile with the bias for every reduction (j) tile, so only the last
+    j tile was kept (P3 has one j tile and passed) -> initialise on `j_offset == 0`; `top.h` declared `top(` without `void`.
+  - `tiled_attn_module`: head-chunk output copied with row/column swapped (`[c][i*64+r]` for r<8, c<64) -> `[r][i*64+c]`.
+  - `attn_breakdown_module`: softmax looped `j < DIM` (32) over an 8x8 score row -> `j < SEQ_LENGTH`.
+  - `Llama_GPT_module`: stochastic dropout -> identity (as the generator); LLaMA `swish` -> `relu` (llama_transformer_p2.json says
+    relu, changed by Hanqiu 2025-03-17); `top`'s second LLaMA rms_norm used the first norm's weights; GPT `gelu` called
+    `hls::tanh` on negative arguments (Vitis bug) -> the generator's odd-symmetry form.
+  - `activation_module`: shared `compute_exp` now uses the lookup-table exp (`backends/exp_table.py`), as its programs do.
+* Program config bug: `vec_mtx_p2.json` loaded 16 of the 64 vector elements (`load_2` dims [16]); the program and its golden both
+  followed the config, so it passed while computing a truncated product. Fixed ([64]) and re-verified (100/100,
+  `results_paper/C_32_10__table7r2_vecmtx_fix`). No other Table 7 config has a partial load/store.
+* Stale: Table 7 synthesis of `vec_mtx_p2` and of every merged design (re-run from the fixed sources).
+
 ## 2026-10-12 — Catapult backend check extended to vmm, mmv, dot product
 Files: `gemm/generate_code.py`, `verification/paper_runs/{C_32_10,D_float}__catapult_pm1.json`, `make_tables.py`.
 * The accumulator initialisation of vmm, mmv, dot (and the inline gemm/mmv/vmm/dot call variants) now goes through the backend's `zero()`

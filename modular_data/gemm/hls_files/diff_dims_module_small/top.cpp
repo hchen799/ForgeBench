@@ -162,12 +162,14 @@ void tiled_gemm(
 
     #pragma HLS inline off
     
+    if (j_offset == 0) {    // initialise with the bias on the first reduction tile only (partial sums of later j tiles accumulate)
     for (int i = 0; i < 32; i++) {
     #pragma HLS unroll factor=2
         for (int k = 0; k < 64; k++) {
         #pragma HLS unroll factor=2
             output[i+i_offset][k+k_offset] = bias[i+i_offset][k+k_offset];
         }
+    }
     }
     
     

@@ -142,8 +142,8 @@ void transpose(
 {
     #pragma HLS inline off
 for (int i = 0; i < 64; i++) {
-for (int j = 0; j < 64; j++) {
-    input[i][j] = input[j][i];
+for (int j = i + 1; j < 64; j++) {
+    ap_fixed<16, 5> t = input[i][j]; input[i][j] = input[j][i]; input[j][i] = t;
 }
 }
 }
@@ -154,8 +154,8 @@ void transpose_32(
 {
     #pragma HLS inline off
 for (int i = 0; i < 32; i++) {
-for (int j = 0; j < 32; j++) {
-    input[i][j] = input[j][i];
+for (int j = i + 1; j < 32; j++) {
+    ap_fixed<16, 5> t = input[i][j]; input[i][j] = input[j][i]; input[j][i] = t;
 }
 }
 }
@@ -397,7 +397,7 @@ void top(
     data_t mat_in[16][64];
     data_t out_C[16];
     // mat_in[0] = input_A;
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 64; i++) {
         mat_in[0][i] = BRAM_C1[i];
     }
     

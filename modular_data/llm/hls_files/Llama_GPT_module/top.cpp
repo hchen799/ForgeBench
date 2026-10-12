@@ -262,18 +262,12 @@ void dropout_8_32_ap_fixed_16_5_(
 )
 {
     #pragma HLS inline off
+    // inference: dropout is the identity (as the generator's dropout_template.cpp; the stochastic version was training-time)
+    (void)dropout_prob;
+    (void)seed;
     for (int i = 0; i < SEQ_LENGTH; i++) {
         for (int j = 0; j < DIM; j++) {
-            // Generate a random value between 0 and 1.
-            unsigned int r = lcg_rand(&seed);
-            data_t rand_val = (data_t)r / (data_t)2147483647;
-            // Apply dropout: if random value is below dropout_prob, output is 0;
-            // otherwise, scale the input.
-            if (rand_val < dropout_prob) {
-                output[i][j] = (data_t)0;
-            } else {
-                output[i][j] = input[i][j] / (1 - dropout_prob);
-            }
+            output[i][j] = input[i][j];
         }
     }
 }
@@ -314,7 +308,8 @@ void gelu_8_128_ap_fixed_16_5_(
             data_t x = input[i][j];
             data_t x_cube = x * x * x;
             data_t tanh_arg = sqrt_2_over_pi * (x + (data_t)0.044715 * x_cube);
-            output[i][j] = (data_t)0.5 * x * (1 + hls::tanh(tanh_arg));
+            // odd symmetry: Vitis hls::tanh(ap_fixed) is wrong for negative arguments (as the generator's gelu template)
+            output[i][j] = (data_t)0.5 * x * (1 + ((tanh_arg < 0) ? (data_t)(-hls::tanh((data_t)(-tanh_arg))) : (data_t)hls::tanh(tanh_arg)));
         }
     }
 }
@@ -404,17 +399,16 @@ void rms_norm_8_32_ap_fixed_16_5_(
 }
 
 
-void swish_8_128_ap_fixed_16_5_(
+void relu_8_128_ap_fixed_16_5_(
     data_t input[SEQ_LENGTH][4 * DIM],
     data_t output[SEQ_LENGTH][4 * DIM]
 )
 {
     #pragma HLS inline off
-    // Swish: x * sigmoid(x)
+    // relu, as llama_transformer_p2.json (activation "relu"; was swish here)
     for (int i = 0; i < SEQ_LENGTH; i++) {
         for (int j = 0; j < 4 * DIM; j++) {
-            data_t sig = (data_t)1 / ((data_t)1 + hls::exp(-input[i][j]));
-            output[i][j] = input[i][j] * sig;
+            output[i][j] = (input[i][j] > 0) ? input[i][j] : (data_t)0;
         }
     }
 }
@@ -505,7 +499,7 @@ void llama(data_t DRAM_attn_input[SEQ_LENGTH][DIM], data_t DRAM_weights_q[DIM][D
     matrix_add_8_32_ap_fixed_16_5_(BRAM_attn_input, BRAM_2, BRAM_1);
     rms_norm_8_32_ap_fixed_16_5_(BRAM_1, BRAM_layer_norm_weights_2[0], BRAM_2);
     matmul_8_32_128_ap_fixed_16_5_(BRAM_2, FF_weights_1, BRAM_MLP_1);
-    swish_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
+    relu_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
     elementwise_mult_8_128_ap_fixed_16_5_(BRAM_SWISH, BRAM_MLP_1, BRAM_MLP_2);
     matmul_8_128_32_ap_fixed_16_5_(BRAM_MLP_2, FF_weights_2, BRAM_1);
     dropout_8_32_ap_fixed_16_5_(BRAM_1, BRAM_2, 0.5, 47);
@@ -552,7 +546,7 @@ void top(data_t DRAM_attn_input_gpt[SEQ_LENGTH][DIM], data_t DRAM_weights_q_gpt[
 
 
     #pragma HLS allocation function instances= rms_norm_8_32_ap_fixed_16_5_ limit=1
-    #pragma HLS allocation function instances= swish_8_128_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances= relu_8_128_ap_fixed_16_5_ limit=1
     #pragma HLS allocation function instances= elementwise_mult_8_128_ap_fixed_16_5_ limit=1
 
 
@@ -590,9 +584,9 @@ void top(data_t DRAM_attn_input_gpt[SEQ_LENGTH][DIM], data_t DRAM_weights_q_gpt[
     grouped_multihead_attention_8_32_8_4_rope_ap_fixed_16_5_(BRAM_2, BRAM_weights_q, BRAM_weights_k, BRAM_weights_v, BRAM_1, 4, 1);
     dropout_8_32_ap_fixed_16_5_(BRAM_1, BRAM_2, 0.5, 47);
     matrix_add_8_32_ap_fixed_16_5_(BRAM_attn_input, BRAM_2, BRAM_1);
-    rms_norm_8_32_ap_fixed_16_5_(BRAM_1, BRAM_layer_norm_weights_1[0], BRAM_2);
+    rms_norm_8_32_ap_fixed_16_5_(BRAM_1, BRAM_layer_norm_weights_2[0], BRAM_2);   // second norm: its own weights (was weights_1)
     matmul_8_32_128_ap_fixed_16_5_(BRAM_2, FF_weights_1, BRAM_MLP_1);
-    swish_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
+    relu_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
     elementwise_mult_8_128_ap_fixed_16_5_(BRAM_SWISH, BRAM_MLP_1, BRAM_MLP_2);
     matmul_8_128_32_ap_fixed_16_5_(BRAM_MLP_2, FF_weights_2, BRAM_1);
     dropout_8_32_ap_fixed_16_5_(BRAM_1, BRAM_2, 0.5, 47);

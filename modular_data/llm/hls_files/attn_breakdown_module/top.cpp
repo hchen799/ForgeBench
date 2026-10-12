@@ -124,11 +124,11 @@ void softmax(
     #pragma HLS inline off
     for (int i = 0; i < SEQ_LENGTH; i++) {
         data_t sum = 0;
-        for (int j = 0; j < DIM; j++) {
+        for (int j = 0; j < SEQ_LENGTH; j++) {
             output[i][j] = hls::exp(input[i][j]);
             sum += output[i][j];
         }
-        for (int j = 0; j < DIM; j++) {
+        for (int j = 0; j < SEQ_LENGTH; j++) {
             output[i][j] /= sum;
         }
     }

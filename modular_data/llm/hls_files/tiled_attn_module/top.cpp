@@ -290,7 +290,7 @@ void grouped_mha_8_256_16_16_with_mha_4(
         
         for (int r=0; r<8; r++){
             for (int c=0; c<64; c++){
-                output[c][i * 64 + r] = split_out[c][r];
+                output[r][i * 64 + c] = split_out[r][c];   // r < 8 rows, c < 64 columns of head chunk i
             }
         }
     }
@@ -414,7 +414,7 @@ void top( data_t DRAM_A1[8][256], data_t DRAM_A2[256][256], data_t DRAM_A3[256][
         
         for (int r=0; r<8; r++){
             for (int c=0; c<64; c++){
-                BRAM_A5[c][i * 64 + r] = split_out[c][r];
+                BRAM_A5[r][i * 64 + c] = split_out[r][c];   // r < 8 rows, c < 64 columns of head chunk i
             }
         }
     }
