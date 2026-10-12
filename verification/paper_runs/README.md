@@ -122,7 +122,8 @@ Results (2026-10-11; tables in `verification/paper_results/`):
 - **C sim** (`verif_catapult.tex`, `tab:verif-catapult`): 100/100 trials within bound for all 8 variants in both formats; in all 100
   trials of each, max abs error and RMSE are identical to the Vitis run on the same seed. (vmm/mmv/dot: 2026-10-12, after routing their
   accumulator `= 0` through the backend's `zero()` -> `data_t(0)`; the GEMM-only run of 2026-10-11 is kept as
-  `results_paper/*__catapult_pm1_gemmonly_20261011`, its numbers are unchanged.) Max abs error `<32,10>` 1.0e-5 (rel. L2
+  `results_paper/*__catapult_pm1_gemmonly_20261011`, its numbers are unchanged.)
+  vmm/mmv/dot are C-sim only: synthesis evidence is the GEMM runs below and the 1,000-design comparison (user decision 2026-10-12). Max abs error `<32,10>` 1.0e-5 (rel. L2
   2.9e-6 / 2.8e-6), float 3.2e-6 / 3.3e-6 (rel. L2 1.5e-7).
 - **Synthesis + RTL sim of the Table-2 variants (full unroll 8x16x16): not completed.** After ~19 h Catapult was still in `schedule`
   (`<32,10>`) and `loops` (float); stopped 2026-10-11. The same flow on a 1x1x1 copy (bias1, `<32,10>`) synthesized and passed the
