@@ -17,7 +17,7 @@ seeds, ranges), `sweep_curves/`, `rows/`, `summary.csv`. How each experiment is 
 | Table 7: 18 generated programs | B, C, D | same | 18/18 pass. Weights ±√(3/fan_in), conv bias ±0.1, norm parameters [0.25, 1] |
 | Table 7: 8 hand-written designs (`verification/manual_designs.py`) | B, C, D | same; conv_block_op1 ±1 only, N=10 (35–60 min per fixed-point sample) | 8/8 pass. Designs now use `acc_t`/`math_t`; softmax subtracts the max; sigmoid/tanh only take `exp` of a negative number |
 | CO-SIM: 57 operator variants (Vitis C/RTL) | C, D | 10 input sets per variant at ±1, RTL vs C element by element, RTL latency | 57/57 pass, 0 mismatches in both formats (`verif_cosim.tex`) |
-| Catapult backend: 2 Table-2 GEMM variants, C sim (SCVerify) | C, D | ±1, N=100, same seeds/golden/bound as Vitis | 100/100 within bound; per-seed errors identical to Vitis (`verif_catapult.tex`) |
+| Catapult backend: 8 Table-2 variants (gemm, vmm, mmv, dot × bias0/1), C sim (SCVerify) | C, D | ±1, N=100, same seeds/golden/bound as Vitis | 100/100 within bound for all 16; per-seed errors identical to Vitis (`verif_catapult.tex`; vmm/mmv/dot added 2026-10-12) |
 | Catapult synthesis: same 2 variants, unroll 1x1x1/1x1x4/1x1x16 | C, D | Catapult 2026.2 `go extract`, ZU9EG, 10 ns | 12/12 ok (`paper_results/catapult_synth/`); full unroll 8x16x16 did not finish in ~19 h |
 | Catapult vs Vitis synthesis: 1,000 GEMM sweep designs | `ap_fixed<32,10>` | both tools, same part, 10 ns, estimates only | 1000/1000 ok in both (`paper_results/catapult_vs_vitis/`, density plot) |
 | Full models, `<32,10>` round/saturate (`verify.py`) | C | exact match with the integer-code fixed reference + FP64 relative L2 | ResNet-18/34/50/101/152, full + tiled, 10 seeds each: 100/100 pass; Llama-3-8B ctx2048, 3 seeds: pass. Zero code mismatches; logits relative L2 ≤ ~1e-6 |
@@ -65,8 +65,7 @@ Vitis synthesis"); tool versions and license setup: `docs/TOOL_VERSIONS.md`.
   `/tools/software/siemens/setup.csh` (the `~/.bashrc` value makes Catapult hang after its banner; `~/.my-bashrc` sources a missing file).
 - Backend (`backends/catapult.py`): float -> `ac_ieee_float<binary32>` (Catapult cannot synthesize C `float`); SCVerify testbench
   (`CCS_MAIN`/`CCS_DESIGN`/`CCS_RETURN`, `fb_to_double`); default target now the Vitis part (`ZU9EG_LIBS`; Nangate kept as `NANGATE45_LIBS`).
-  Vitis output byte-identical (regression check, 273 designs). Known limits: only the GEMM kernel's `= 0` became `data_t(0)` (float vmm/mmv
-  etc. would need the same); array-partition requests on function parameters are dropped; no pipeline directive is emitted.
+  Vitis output byte-identical (regression check, 273 designs). Known limits: (accumulator `= 0` -> `data_t(0)` now in every gemm-domain kernel, 2026-10-12); array-partition requests on function parameters are dropped; no pipeline directive is emitted.
 - Results: C sim 100/100 per variant and format, identical to Vitis per seed. Full-unroll (8x16x16) synthesis did not finish in ~19 h
   (stopped). Reduced unroll 12/12 ok. Catapult vs Vitis on 1,000 GEMM sweep designs: 1000/1000 ok in both; Catapult ~3.9x latency,
   ~0.25x LUT, 4 DSPs (no pipelining by default -- see README before using the comparison in the paper).

@@ -486,7 +486,7 @@ def _trials(res, name, design, dt_tag):
 
 
 def catapult(res, out):
-    """Catapult backend check (Table-2 GEMM variants): SCVerify C sim at +-1 (N trials), compared per seed with the Vitis run of the
+    """Catapult backend check (Table-2 gemm, vmm, mmv, dot_product variants): SCVerify C sim at +-1 (N trials), compared per seed with the Vitis run of the
     same column. Synthesis results (reduced unroll) come from verification/catapult_synth.py, not this table."""
     recs, body = [], []
     for c in ("C_32_10", "D_float"):
@@ -505,7 +505,7 @@ def catapult(res, out):
         return 0
     write_csv(os.path.join(out, "verif_catapult.csv"), recs)
     tex = (r"\begin{table}[t]\centering\small" "\n"
-           r"\caption{Catapult backend (Catapult 2026.2): the Table-2 GEMM variants generated with the Catapult backend, C simulation "
+           r"\caption{Catapult backend (Catapult 2026.2): the Table-2 GEMM, Vec-Mtx Mult., Mtx-Vec Mult. and Dot Product variants generated with the Catapult backend, C simulation "
            r"(SCVerify) with every input in $[-1,1]$, N trials checked against the float64 golden with the same bound as "
            r"Table~\ref{tab:verif-ops-pm1}. ``= Vitis'': trials whose max abs error and RMSE equal the Vitis run on the same seed. "
            r"Float designs use \texttt{ac\_ieee\_float<binary32>}.}" "\n"

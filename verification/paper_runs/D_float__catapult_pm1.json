@@ -1,6 +1,6 @@
 {
   "extends": "D_float__pm1.json",
-  "operators": ["gemm"],
+  "operators": ["gemm", "vmm", "mmv", "dot_product"],
   "backend": "catapult",
-  "_comment": "Catapult backend check: the Table-2 GEMM variants generated with backends/catapult.py (ac_fixed / float), C-sim = Catapult's g++ + ac_* headers; same inputs, seeds, golden and bound as D_float__pm1 (Vitis)"
+  "_comment": "Catapult backend check: the Table-2 GEMM, Vec-Mtx, Mtx-Vec and Dot-Product variants generated with backends/catapult.py (ac_fixed / float), C-sim = Catapult's g++ + ac_* headers; same inputs, seeds, golden and bound as D_float__pm1 (Vitis)"
 }

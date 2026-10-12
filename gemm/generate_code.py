@@ -380,7 +380,7 @@ def call_gemm_inline(
         init_out = f"{output_var}[i][k] = {bias_var}[i][k];"
     else:
         function_name = f"{func_type}_{''.join(order)}"
-        init_out = f"{output_var}[i][k] = 0;"
+        init_out = f"{output_var}[i][k] = {_backend().zero()};"
     
     computation = f"{output_var}[i][k] += {input_A_var}[i][j] * {input_B_var}[j][k];"
     
@@ -506,7 +506,7 @@ def generate_mmv_function(
     {data_type} input_B[{N}],
     {data_type} output[{M}]
 )"""
-        init_out = "output[i] = 0;"
+        init_out = f"output[i] = {_backend().zero()};"
     
     
     partitioning = ""
@@ -662,7 +662,7 @@ def call_mmv_inline(
         init_out = f"{output_var}[i] = {bias_var}[i];"
     else:
         function_name = f"{func_type}_{''.join(order)}"
-        init_out = f"{output_var}[i] = 0;"
+        init_out = f"{output_var}[i] = {_backend().zero()};"
     
     partitioning = ""
     for idx, v in enumerate(unroll):
@@ -785,7 +785,7 @@ def generate_vmm_function(
     {data_type} input_B[{M}],
     {data_type} output[{N}]
 )"""
-        init_out = "output[j] = 0;"
+        init_out = f"output[j] = {_backend().zero()};"
 
     partitioning = ""
     for idx, v in enumerate(unroll):
@@ -945,7 +945,7 @@ def call_vmm_inline(
         init_out = f"{output_var}[j] = {bias_var}[j];"
     else:
         function_name = f"{func_type}_{''.join(order)}"
-        init_out = f"{output_var}[j] = 0;"
+        init_out = f"{output_var}[j] = {_backend().zero()};"
 
     partitioning = ""
     for idx, v in enumerate(unroll):
@@ -1057,7 +1057,7 @@ def generate_dot_function(
     {data_type} input_B[{M}],
     {data_type} output[1]
 )"""
-        init_out = "output[0] = 0;"
+        init_out = f"output[0] = {_backend().zero()};"
     
     partitioning = ""
     unroll = int(unroll)
@@ -1175,7 +1175,7 @@ def call_dot_inline(
         init_out = f"{output_var}[0] = {bias_var}[0];"
     else:
         function_name = f"{func_type}"
-        init_out = f"{output_var}[0] = 0;"
+        init_out = f"{output_var}[0] = {_backend().zero()};"
 
     partitioning = ""
     unroll = int(unroll)

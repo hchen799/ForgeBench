@@ -1,5 +1,12 @@
 # CHANGELOG_R2 — generator changes and the committed results they make stale
 
+## 2026-10-12 — Catapult backend check extended to vmm, mmv, dot product
+Files: `gemm/generate_code.py`, `verification/paper_runs/{C_32_10,D_float}__catapult_pm1.json`, `make_tables.py`.
+* The accumulator initialisation of vmm, mmv, dot (and the inline gemm/mmv/vmm/dot call variants) now goes through the backend's `zero()`
+  (Vitis `0`, Catapult `data_t(0)`; `ac_ieee_float` has no assignment from int). Vitis: `verification/regression_check.py`, 0 of 281 changed.
+* Catapult SCVerify C sim, ±1, N=100, C and D: 16/16 variant×format pass, every trial identical to Vitis per seed (`verif_catapult.tex`).
+* Stale: nothing.
+
 ## 2026-10-12 — lookup-table exp option (`exp_impl`)
 Files: `backends/exp_table.py` (new), `{gemm,conv,llm}/generate_code.py` (hook in `generate_func_def` / call sites).
 * An op may carry `"exp_impl": "table"` (default `"hls"`). The op's function is renamed `<name>_exptable` and its `hls::exp` / `hls::tanh`
