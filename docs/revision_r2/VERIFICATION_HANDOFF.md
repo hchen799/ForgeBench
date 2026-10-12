@@ -41,7 +41,18 @@ fixed-point only; recommended skip, not yet confirmed by the user). Full-model r
    Configs regenerated first: byte-identical to `llm/auto_generated_configs`. Previous run: csynth 212 min at 48 jobs, impl 477 min at 32.
    Afterwards: re-key / collect into `analysis/results_{csynth,impl}/metrics_llm.csv`, Table 5 LLM column, Figs 6-8; then the §2 item 5 open items.
 
-6. **Regeneration + synthesis still to do (user, 2026-10-12): conv, full models, Table 7.** Conv: the 1,728 `activation=tanh` sweep designs (csynth) and the 256 of them in the conv impl subset (tanh odd-symmetry fix). Full models: from the verified `<32,10>` RND/SAT sources (Llama ctx8192 to be regenerated first). Table 7: the modular designs after the verification edits.
+6. **Regeneration + synthesis (user decisions 2026-10-12), running:**
+   - Conv: csynth of the 1,728 `activation=tanh` sweep designs, then impl of the 256 of them in the conv impl subset (tanh fix);
+     `analysis/run_conv_r2b.sh` -> `_sweeps/lean/conv_{csynth,impl}_r2b`, log `_sweeps/logs/conv_r2b.log`.
+   - Full models (Table 3): only the `<32,10>` round/saturate sources (what is verified; the paper and results follow this). The 12
+     verified projects + Llama ctx8192 prefill/decode, regenerated 2026-10-12 with the same recipe (88a7617; not verified). csynth only,
+     `manifest/fullmodel_csynth_r2.csv` via `analysis.run_prebuilt`, 14 jobs, 48 h limit -> `_sweeps/lean/fullmodel_csynth_r2`.
+     They replace Hanqiu's `<16,5>` truncate/wrap results.
+   - Table 7: all 38 designs at `<32,10>` truncate/wrap (the format every Table 7 design passes in; each P program and its merged
+     design in the same format). `verification/paper_runs/prepare_table7_synth.py` builds the sources (generated programs from the
+     verified design JSON, hand-written programs as verified, merged designs with types rebound) -> `_sweeps/table7_32_10`;
+     csynth `_sweeps/lean/modular_csynth_32_10`. The `conv_block_op2` P2 discrepancy and the merged-design equivalence check are
+     deferred (user).
 
 ## 0b. Catapult (done 2026-10-11)
 
