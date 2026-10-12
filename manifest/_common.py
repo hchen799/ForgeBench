@@ -31,9 +31,9 @@ SOURCES = [
     dict(kind="csynth", domain="conv", local="checkpoints/20260720/csynth_conv_lean.tar.gz"),
     dict(kind="csynth", domain="conv", local="checkpoints/r2/csynth_conv_rerun_lean.tar.gz"),
     dict(kind="csynth", domain="gemm", local="checkpoints/r2/csynth_gemm_new_lean.tar.gz"),
-    dict(kind="csynth", domain="llm", local="checkpoints/r2/csynth_llm_lean.tar.gz"),
+    dict(kind="csynth", domain="llm", local="checkpoints/r2/csynth_llm_r2b_lean.tar.gz"),   # LLM re-run 2026-10-11 (the 2026-10-01 archive is stale)
     dict(kind="impl", domain=None, local="checkpoints/20260720/impl1000_reports_lean.tar.gz"),   # conv is valid; gemm/llm members are stale
-    dict(kind="impl", domain=None, local="checkpoints/r2/impl_llm_lean.tar.gz"),
+    dict(kind="impl", domain=None, local="checkpoints/r2/impl_llm_r2b_lean.tar.gz"),      # LLM re-run 2026-10-12
     dict(kind="impl", domain=None, local="checkpoints/r2/impl_gemm_lean.tar.gz"),                  # R2 GEMM impl (when collected)
 ]
 # Domains whose July impl results are still valid (gemm was re-sampled and re-run in R2; llm was redone).
