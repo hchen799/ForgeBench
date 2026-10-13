@@ -16,20 +16,20 @@
     & & P1 & P2 & P3 & \textbf{Total} & Shared & \textbf{\% Reuse} & \textbf{Total} & \\ 
 
     \midrule
-    \multirow{6}{*}{\centering \textbf{GEMM}} & Tiled GEMM $\dagger$ & 13.66 & 5.72 & 19.25 & 38.62 & 2.33 & \textbf{50.71} & 4.60 & \textbf{-88.08} \\
-        & Vec/Mtx Mult - Dot $\dagger$ $\ast$ & 63.31 & 8.45 & 1.01 & 72.77 & 0.35 & \textbf{12.36} & 2.83 & \textbf{-96.11} \\
-        & Vec/Mtx Mult - MMV $\dagger$ $\ast$ & 63.31 & 8.45 & 1.01 & 72.77 & 3.33 & \textbf{30.19} & 11.03 & \textbf{-84.84} \\
-        & Vec/Mtx Mult - GEMM $\dagger$ $\ast$ & 63.31 & 8.45 & 1.01 & 72.77 & 58.86 & \textbf{84.51} & 69.65 & \textbf{-4.29} \\
-        & i-j-k Orders $\ast$ & 61.96 & 62.81 & 62.45 & 187.22 & 56.99 & \textbf{79.88} & 71.34 & \textbf{-61.89} \\
-        & Vector Transpose $\ast$ & 8.41 & 7.54 & - & 15.95 & 6.07 & \textbf{43.73} & 13.89 & \textbf{-12.91} \\
+    \multirow{6}{*}{\centering \textbf{GEMM}} & Tiled GEMM $\dagger$ & 42.15 & 15.21 & 57.26 & 114.62 & 3.38 & \textbf{59.95} & 5.65 & \textbf{-95.07} \\
+        & Vec/Mtx Mult - Dot $\dagger$ $\ast$ & 215.60 & 14.63 & 1.37 & 231.60 & 0.74 & \textbf{19.55} & 3.76 & \textbf{-98.38} \\
+        & Vec/Mtx Mult - MMV $\dagger$ $\ast$ & 215.60 & 14.63 & 1.37 & 231.60 & 6.42 & \textbf{36.63} & 17.53 & \textbf{-92.43} \\
+        & Vec/Mtx Mult - GEMM $\dagger$ $\ast$ & 215.60 & 14.63 & 1.37 & 231.60 & 211.03 & \textbf{94.92} & 222.33 & \textbf{-4.01} \\
+        & i-j-k Orders $\ast$ & 213.53 & 214.99 & 214.58 & 643.10 & 106.47 & \textbf{88.14} & 120.79 & \textbf{-81.22} \\
+        & Vector Transpose $\ast$ & 14.59 & 13.05 & - & 27.64 & 12.24 & \textbf{55.46} & 22.07 & \textbf{-20.15} \\
     \midrule
-    \multirow{3}{*}{\centering \textbf{DNN}} & Activation Functions $\ddagger$ $\ast$ & 1.24 & 1.31 & 1.11 & 3.66 & 0.18 & \textbf{11.03} & 1.62 & \textbf{-55.74} \\
-        & Tiled Convolution $\dagger$ $\ast$ & 15.64 & 19.36 & 19.38 & 54.38 & 21.19 & \textbf{89.12} & 23.78 & \textbf{-56.27} \\
-        & DNN Blocks $\ddagger$ & 22.49 & 21.83 & 64.17 & 108.49 & 20.99 & \textbf{24.26} & 86.52 & \textbf{-20.25} \\
+    \multirow{3}{*}{\centering \textbf{DNN}} & Activation Functions $\ddagger$ $\ast$ & 2.70 & 3.28 & 0.75 & 6.73 & 1.58 & \textbf{42.78} & 3.69 & \textbf{-45.10} \\
+        & Tiled Convolution $\dagger$ $\ast$ & 53.64 & 57.37 & 57.39 & 168.39 & 59.53 & \textbf{95.89} & 62.09 & \textbf{-63.13} \\
+        & DNN Blocks $\ddagger$ & 123.69 & 119.63 & 171.42 & 414.74 & 61.02 & \textbf{25.18} & 242.30 & \textbf{-41.58} \\
     \midrule
-    \multirow{3}{*}{\centering \textbf{LLM}} & Tiled Attention $\dagger$ $\ast$ & 4.24 & 4.23 & - & 8.46 & 3.59 & \textbf{77.31} & 4.65 & \textbf{-45.07} \\
-        & Functional Attention $\ddagger$ & 12.56 & 13.05 & - & 25.61 & 9.88 & \textbf{66.81} & 14.79 & \textbf{-42.27} \\
-        & LLaMA/GPT Transformers $\ddagger$ & 21.54 & 11.62 & - & 33.15 & 7.50 & \textbf{32.40} & 23.16 & \textbf{-30.15} \\
+    \multirow{3}{*}{\centering \textbf{LLM}} & Tiled Attention $\dagger$ $\ast$ & 15.79 & 15.77 & - & 31.56 & 15.13 & \textbf{93.47} & 16.18 & \textbf{-48.72} \\
+        & Functional Attention $\ddagger$ & 24.06 & 25.75 & - & 49.81 & 10.55 & \textbf{66.91} & 15.76 & \textbf{-68.35} \\
+        & LLaMA/GPT Transformers $\ddagger$ & 63.14 & 109.36 & - & 172.50 & 24.81 & \textbf{23.03} & 107.73 & \textbf{-37.55} \\
     \bottomrule
     \end{tabular}
     \caption{ Resource usage of hardware test cases, annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. }

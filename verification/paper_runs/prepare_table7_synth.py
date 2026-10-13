@@ -14,7 +14,10 @@ Writes <out>/<domain>/<name>/{top.cpp,top.h,tb_top.cpp,run_hls.tcl} and <out>/re
 pointing at <out>), the input of analysis.run_prebuilt:
 
   python3 -m verification.paper_runs.prepare_table7_synth --out _sweeps/table7_32_10
+  python3 -m verification.paper_runs.prepare_table7_synth --out _sweeps/table7_16_5_r2 --dtype "fixed<16,5>" --runs A_16_5__table7r2_pm1
   python3 -m analysis.run_prebuilt --registry _sweeps/table7_32_10/registry.csv --lean-out _sweeps/lean/modular_csynth_32_10 --jobs 38
+
+Other formats: --dtype "fixed<16,5>" --runs A_16_5__table7r2_pm1 (program configs from that verification run).
 """
 import argparse
 import csv
@@ -29,10 +32,9 @@ from verification.prepare_designs import generate_design
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DTYPE = "fixed<32,10>"
-# verified program configs; a later dir overrides an earlier one (vec_mtx_p2 re-verified after its config fix)
-GEN_CONFIGS = [os.path.join(REPO, "verification", "results_paper", r, "configs")
-               for r in ("C_32_10__table7r2_pm1", "C_32_10__table7r2_vecmtx_fix",
-                         "C_32_10__table7r2_convblock3_fix", "C_32_10__table7r2_llamaswish")]
+# verified program runs; a later run overrides an earlier one (vec_mtx_p2, conv_block_op3, llama_transformer_p2 re-verified after fixes)
+RUNS = ("C_32_10__table7r2_pm1", "C_32_10__table7r2_vecmtx_fix", "C_32_10__table7r2_convblock3_fix", "C_32_10__table7r2_llamaswish")
+GEN_CONFIGS = []
 KEEP = ("top.cpp", "top.h", "tb_top.cpp", "run_hls.tcl")
 OLD_TYPE = re.compile(r"ap_fixed\s*<\s*16\s*,\s*5\s*>")
 
@@ -58,9 +60,15 @@ def rebind(src, dst):
 
 
 def main(argv=None):
+    global DTYPE
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--dtype", default=DTYPE, help="data type of the designs, e.g. fixed<16,5> (default %(default)s)")
+    ap.add_argument("--runs", nargs="+", default=RUNS, help="verification runs (results_paper/<run>) holding the program configs; later wins")
     a = ap.parse_args(argv)
+    DTYPE = a.dtype
+    GEN_CONFIGS[:] = [os.path.join(REPO, "verification", "results_paper", r, "configs") for r in a.runs]
+    tag = DTYPE.replace("<", "_").replace(",", "_").replace(">", "").replace(" ", "")
     out = os.path.abspath(a.out)
     shutil.rmtree(out, ignore_errors=True)
     os.makedirs(out)
@@ -72,7 +80,7 @@ def main(argv=None):
         dst = os.path.join(out, dom, name)
         key = f"{dom}/{name}"
         if r["role"] == "program":
-            cands = [os.path.join(d, f"designs__{dom}__{name}__fixed_32_10_trn_wrap.json") for d in GEN_CONFIGS]
+            cands = [os.path.join(d, f"designs__{dom}__{name}__{tag}_trn_wrap.json") for d in GEN_CONFIGS]
             cands = [c for c in cands if os.path.isfile(c)]
             if not cands:
                 sys.exit(f"no verified config for {key} in {GEN_CONFIGS}")

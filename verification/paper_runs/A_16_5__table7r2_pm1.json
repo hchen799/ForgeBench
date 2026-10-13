@@ -1,0 +1,7 @@
+{
+  "extends": "C_32_10__table7r2_pm1.json",
+  "_comment": "Table 7 R2 at <16,5> (truncate/wrap, as the <32,10> Table 7 run): the same 26 programs, inputs, weight ranges and N as C_32_10__table7r2_pm1 (configs now include the vec_mtx_p2, conv_block_op3 and LLaMA swish fixes).",
+  "datatypes": [
+    "fixed<16,5>"
+  ]
+}
