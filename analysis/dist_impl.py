@@ -1,8 +1,7 @@
-"""Domain-grouped distribution plot from impl data (power + cycles).
+"""Domain-grouped distribution plot from impl data (paper Fig 8).
 
-Two panels — Power (W, linear) and Cycles (log) — each an overlapping filled KDE
-per domain (GEMM cyan / CONV yellow / LLM red), matching the reference
-distribution figures.
+Four panels — Power (W), achieved Fmax (MHz), LUT util (linear) and Cycles (log) — each an
+overlapping filled KDE per domain, matching the R1 figure.
 
 By default reads the unified impl metrics in analysis/results_impl/
 (metrics_{gemm,conv,llm}.csv, which carry a populated `power_w` column); pass
@@ -31,6 +30,8 @@ _DEFAULT_DIR = os.path.join(REPO_ROOT, "analysis", "results_impl")
 # (value_col, title, xlabel, log-x)
 _PANELS = [
     ("power_w", "Power", "Total On-Chip Power (W)", False),
+    ("fmax_mhz", "Fmax", "Achieved $F_{max}$ (MHz)", False),
+    ("lut_util", "LUTs", "LUT Utilization (%)", False),
     ("cycles", "Cycles", "Latency (Cycles)", True),
 ]
 
@@ -70,7 +71,7 @@ def dist_impl(df=None, out=None, feasible=False):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="impl domain distribution plot (power + cycles)")
+    ap = argparse.ArgumentParser(description="impl domain distribution plot (power, Fmax, LUT, cycles)")
     ap.add_argument("--metrics", default=None, help="impl metrics.csv with power_w (default: results_impl/*.csv)")
     ap.add_argument("--feasible-only", action="store_true", help="drop designs with util > 100%%")
     ap.add_argument("--out", default=None)

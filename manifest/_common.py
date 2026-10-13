@@ -27,6 +27,9 @@ DEVICE = {"bram": 1824, "dsp": 2520, "lut": 274080, "ff": 548160}
 # `name` is the key used inside the archive: the R1 name for July archives, the current generator name for R2 ones
 # (resolved in design_table: key = legacy_stem if the design existed in R1 else config_stem).
 SOURCES = [
+    # first match wins per design name; conv names did not change since July, so the tanh re-run archives come first
+    dict(kind="csynth", domain="conv", local="checkpoints/r2/csynth_conv_r2b_lean.tar.gz"),   # conv tanh re-run 2026-10-12 (1,728)
+    dict(kind="impl", domain=None, local="checkpoints/r2/impl_conv_r2b_lean.tar.gz"),          # conv tanh re-run 2026-10-12 (256)
     dict(kind="csynth", domain="gemm", local="checkpoints/20260720/csynth_gemm_lean.tar.gz"),
     dict(kind="csynth", domain="conv", local="checkpoints/20260720/csynth_conv_lean.tar.gz"),
     dict(kind="csynth", domain="conv", local="checkpoints/r2/csynth_conv_rerun_lean.tar.gz"),

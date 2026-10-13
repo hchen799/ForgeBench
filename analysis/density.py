@@ -1,17 +1,17 @@
 """Shared KDE + density-panel helpers for domain-grouped distribution plots.
 
 Reproduces the overlapping filled-KDE style of the reference distribution
-figures: one panel per metric, one filled curve per domain (GEMM/CONV/LLM),
-colored cyan/yellow/red. No scipy dependency — Gaussian KDE is implemented in
+figures: one panel per metric, one filled curve per domain, colored as the R1
+figures (GEMM teal / DNN coral / LLM purple). No scipy dependency — Gaussian KDE is implemented in
 numpy (Scott's-rule bandwidth), computed in log-space for log-scaled axes.
 """
 import numpy as np
 
-# Domain colors matched to the reference figure (cyan / yellow / red).
+# Domain colors and labels as in the R1 Figs 6 and 8.
 DOMAIN_STYLE = {
-    "gemm": {"color": "#1CC5D6", "label": "GEMM"},   # cyan
-    "conv": {"color": "#F2C14E", "label": "CONV"},   # yellow
-    "llm":  {"color": "#E8635A", "label": "LLM"},    # red
+    "gemm": {"color": "lightseagreen", "label": "GEMM"},
+    "conv": {"color": "coral", "label": "DNN"},
+    "llm":  {"color": "mediumslateblue", "label": "LLM"},
 }
 
 
