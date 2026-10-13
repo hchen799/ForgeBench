@@ -22,9 +22,11 @@
   run-time block counts, pipelines the block loop (II=1) and sums each block's ci lanes into an `acc_t` before one update of the (acc_t)
   output tile. Accumulation is exact (acc_t), so results are unchanged by the order. Files: `scale_models/generate_code.py`,
   `scale_models/conv_template.cpp`. New sources in `_sweeps/fullmodel_r2_sched/` (not yet in `scale_models/hls_files`; the committed
-  sources and results are untouched). Per-function csynth of every new/changed conv function (31 conv2d, 6 conv_tile): 3-12 min each, conv_tile II=1. Verification and re-synthesis pending.
+  sources and results are untouched). Per-function csynth of every new/changed conv function (31 conv2d, 6 conv_tile): 3-12 min each, conv_tile II=1. Verified (`results_paper/fullmodel_r2_sched`, 10 seeds x 10 ResNets, all PASS, bit-exact; every per-seed summary line identical to the
+  old sources' runs); sources registered in `contracts.json` (reference_version 2). Re-synthesis `_sweeps/lean/fullmodel_csynth_r2_sched` running.
 * `contracts.json`: Llama-3-8B ctx8192 `<32,10>` prefill/decode sources registered (reference_version 2, same recipe as the verified
-  ctx2048 pair) so `verify.py` accepts them; verification `results_paper/fullmodel_ctx8192_r2` (4 prefill + 2 decode, seeds 42-44) running.
+  ctx2048 pair) so `verify.py` accepts them; verification `results_paper/fullmodel_ctx8192_r2` (4 prefill + 2 decode, seeds 42-44): all PASS, 0 code mismatches, logits
+  max abs vs FP64 <= 4.9e-6.
 
 ## 2026-10-12 — Table 7 merged designs verified against their programs; bugs fixed (manual source edits)
 Files: `verification/merged_designs.py` (new), `modular_data/{gemm,conv,llm}/hls_files/*_module*/top.{cpp,h}`,
