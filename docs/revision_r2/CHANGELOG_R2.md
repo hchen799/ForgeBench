@@ -19,10 +19,10 @@
   (plain: 7x7x3x64; tiled: 7x7 x 8x64 over run-time-bounded `valid_ic`/`valid_oc` loops). The 4 Llama designs finished.
   Fix (opt-in per op, `"schedule": "pipeline_inner"`; configs without it regenerate byte-identical, checked on all 10 ResNet projects):
   `conv2d` pipelines the kw loop when ci and co are fully unrolled (only the stem); `conv_tile` walks ci/co in 8 x 64 blocks with
-  run-time block counts, pipelines the block loop and sums each block's ci lanes into an `acc_t` before one update of the (acc_t)
+  run-time block counts, pipelines the block loop (II=1) and sums each block's ci lanes into an `acc_t` before one update of the (acc_t)
   output tile. Accumulation is exact (acc_t), so results are unchanged by the order. Files: `scale_models/generate_code.py`,
   `scale_models/conv_template.cpp`. New sources in `_sweeps/fullmodel_r2_sched/` (not yet in `scale_models/hls_files`; the committed
-  sources and results are untouched). Per-function csynth of the new conv functions: 3-10 min each. Verification and re-synthesis pending.
+  sources and results are untouched). Per-function csynth of every new/changed conv function (31 conv2d, 6 conv_tile): 3-12 min each, conv_tile II=1. Verification and re-synthesis pending.
 * `contracts.json`: Llama-3-8B ctx8192 `<32,10>` prefill/decode sources registered (reference_version 2, same recipe as the verified
   ctx2048 pair) so `verify.py` accepts them; verification `results_paper/fullmodel_ctx8192_r2` (4 prefill + 2 decode, seeds 42-44) running.
 

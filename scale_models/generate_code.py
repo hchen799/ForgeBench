@@ -1900,6 +1900,9 @@ def generate_conv_tile_function(
         "}",
     ]
     if schedule == "pipeline_inner":
+        # whole blocks only, so every lane index is in range and stays a constant bank of the cyclic partitions
+        if weight_ic % ci_unroll_factor or oc_tile % co_unroll_factor or ic_tile < weight_ic or out_c < oc_tile:
+            raise ValueError("conv_tile pipeline_inner needs weight_ic, oc_tile divisible by the unroll factors")
         ci_blocks, co_blocks = -(-weight_ic // ci_unroll_factor), -(-oc_tile // co_unroll_factor)
         code_lines[14:] = [
             "    for (int oh = 0; oh < valid_h; ++oh) {",
@@ -1918,10 +1921,10 @@ def generate_conv_tile_function(
             f"                                for (int u = 0; u < {ci_unroll_factor}; ++u) {{",
             "                                    #pragma HLS unroll",
             f"                                    int ci = cb * {ci_unroll_factor} + u;",
-            f"                                    if (ci < valid_ic && ci < {weight_ic} && co < {oc_tile})",
-            f"                                        part += input[ci][oh * {stride} + kh][ow * {stride} + kw] * weight[co < {oc_tile} ? co : 0][ci][kh][kw];",
+            f"                                    if (ci < valid_ic)",
+            f"                                        part += input[ci][oh * {stride} + kh][ow * {stride} + kw] * weight[co][ci][kh][kw];",
             "                                }",
-            f"                                if (co < valid_oc && co < {oc_tile}) output[co][oh][ow] += part;",
+            "                                if (co < valid_oc) output[co][oh][ow] += part;",
             "                            }",
             "                        }",
             "                    }",
