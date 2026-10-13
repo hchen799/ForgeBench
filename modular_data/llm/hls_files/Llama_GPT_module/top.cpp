@@ -399,16 +399,17 @@ void rms_norm_8_32_ap_fixed_16_5_(
 }
 
 
-void relu_8_128_ap_fixed_16_5_(
+void swish_8_128_ap_fixed_16_5_(
     data_t input[SEQ_LENGTH][4 * DIM],
     data_t output[SEQ_LENGTH][4 * DIM]
 )
 {
     #pragma HLS inline off
-    // relu, as llama_transformer_p2.json (activation "relu"; was swish here)
+    // Swish: x * sigmoid(x)
     for (int i = 0; i < SEQ_LENGTH; i++) {
         for (int j = 0; j < 4 * DIM; j++) {
-            output[i][j] = (input[i][j] > 0) ? input[i][j] : (data_t)0;
+            data_t sig = (data_t)1 / ((data_t)1 + hls::exp(-input[i][j]));
+            output[i][j] = input[i][j] * sig;
         }
     }
 }
@@ -499,7 +500,7 @@ void llama(data_t DRAM_attn_input[SEQ_LENGTH][DIM], data_t DRAM_weights_q[DIM][D
     matrix_add_8_32_ap_fixed_16_5_(BRAM_attn_input, BRAM_2, BRAM_1);
     rms_norm_8_32_ap_fixed_16_5_(BRAM_1, BRAM_layer_norm_weights_2[0], BRAM_2);
     matmul_8_32_128_ap_fixed_16_5_(BRAM_2, FF_weights_1, BRAM_MLP_1);
-    relu_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
+    swish_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
     elementwise_mult_8_128_ap_fixed_16_5_(BRAM_SWISH, BRAM_MLP_1, BRAM_MLP_2);
     matmul_8_128_32_ap_fixed_16_5_(BRAM_MLP_2, FF_weights_2, BRAM_1);
     dropout_8_32_ap_fixed_16_5_(BRAM_1, BRAM_2, 0.5, 47);
@@ -546,7 +547,7 @@ void top(data_t DRAM_attn_input_gpt[SEQ_LENGTH][DIM], data_t DRAM_weights_q_gpt[
 
 
     #pragma HLS allocation function instances= rms_norm_8_32_ap_fixed_16_5_ limit=1
-    #pragma HLS allocation function instances= relu_8_128_ap_fixed_16_5_ limit=1
+    #pragma HLS allocation function instances= swish_8_128_ap_fixed_16_5_ limit=1
     #pragma HLS allocation function instances= elementwise_mult_8_128_ap_fixed_16_5_ limit=1
 
 
@@ -586,7 +587,7 @@ void top(data_t DRAM_attn_input_gpt[SEQ_LENGTH][DIM], data_t DRAM_weights_q_gpt[
     matrix_add_8_32_ap_fixed_16_5_(BRAM_attn_input, BRAM_2, BRAM_1);
     rms_norm_8_32_ap_fixed_16_5_(BRAM_1, BRAM_layer_norm_weights_2[0], BRAM_2);   // second norm: its own weights (was weights_1)
     matmul_8_32_128_ap_fixed_16_5_(BRAM_2, FF_weights_1, BRAM_MLP_1);
-    relu_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
+    swish_8_128_ap_fixed_16_5_(BRAM_MLP_1, BRAM_SWISH);
     elementwise_mult_8_128_ap_fixed_16_5_(BRAM_SWISH, BRAM_MLP_1, BRAM_MLP_2);
     matmul_8_128_32_ap_fixed_16_5_(BRAM_MLP_2, FF_weights_2, BRAM_1);
     dropout_8_32_ap_fixed_16_5_(BRAM_1, BRAM_2, 0.5, 47);

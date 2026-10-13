@@ -1,0 +1,7 @@
+{
+  "extends": "C_32_10__table7r2_pm1.json",
+  "operators": [
+    "designs/llm/llama_transformer_p2"
+  ],
+  "_comment": "re-run of llama_transformer_p2 with its MLP activation back to swish (user decision 2026-10-12; d193924 had set relu); results merged into C_32_10__table7r2_pm1"
+}

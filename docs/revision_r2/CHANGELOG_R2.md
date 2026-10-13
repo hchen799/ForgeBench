@@ -3,7 +3,8 @@
 ## 2026-10-12 — Table 7 merged designs verified against their programs; bugs fixed (manual source edits)
 Files: `verification/merged_designs.py` (new), `modular_data/{gemm,conv,llm}/hls_files/*_module*/top.{cpp,h}`,
 `gemm/test_case_configs/vec_mtx_p2.json`, `conv/test_case_configs/conv_block_op3.json`,
-`verification/paper_runs/{C_32_10__table7r2_vecmtx_fix.json,C_32_10__table7r2_convblock3_fix.json,prepare_table7_synth.py}`.
+`verification/paper_runs/{C_32_10__table7r2_vecmtx_fix.json,C_32_10__table7r2_convblock3_fix.json,
+C_32_10__table7r2_llamaswish.json,prepare_table7_synth.py}`, `llm/test_case_configs/llama_transformer_p2.json`.
 * New check: one testbench per merged design drives the synthesized `top` with every program's inputs (each program's verified
   `<32,10>` design JSON and report seeds) and checks each program's outputs against that program's golden and bound.
 * The first run found that most merged designs did not reproduce their programs. Manual edits (each restores the program's semantics):
@@ -15,9 +16,13 @@ Files: `verification/merged_designs.py` (new), `modular_data/{gemm,conv,llm}/hls
     j tile was kept (P3 has one j tile and passed) -> initialise on `j_offset == 0`; `top.h` declared `top(` without `void`.
   - `tiled_attn_module`: head-chunk output copied with row/column swapped (`[c][i*64+r]` for r<8, c<64) -> `[r][i*64+c]`.
   - `attn_breakdown_module`: softmax looped `j < DIM` (32) over an 8x8 score row -> `j < SEQ_LENGTH`.
-  - `Llama_GPT_module`: stochastic dropout -> identity (as the generator); LLaMA `swish` -> `relu` (llama_transformer_p2.json says
-    relu, changed by Hanqiu 2025-03-17); `top`'s second LLaMA rms_norm used the first norm's weights; GPT `gelu` called
-    `hls::tanh` on negative arguments (Vitis bug) -> the generator's odd-symmetry form.
+  - `Llama_GPT_module`: stochastic dropout -> identity (as the generator); `top`'s second LLaMA rms_norm used the first norm's
+    weights; GPT `gelu` called `hls::tanh` on negative arguments (Vitis bug) -> the generator's odd-symmetry form.
+* LLaMA MLP activation: `llama_transformer_p2.json` had been switched swish -> relu in d193924 (2025-03-17, with the MLP
+  restructured to `(act(x W1) * x W1) W2`); a77dfbb first changed the merged design to relu to match. User decision: swish.
+  The config's activation and the merged design's function are swish again (the generator's swish code; MLP structure kept).
+  Re-verified (`results_paper/C_32_10__table7r2_llamaswish`, merged row replaced; relu row kept as
+  `rows_relu_superseded_Llama_GPT_module.json`).
   - `activation_module`: shared `compute_exp` now uses the lookup-table exp (`backends/exp_table.py`), as its programs do.
   - `conv_block_module`: the fixes of 9477692 (made then only in the standalone `conv_block_op1-3`) were missing: `MAX_LOCAL_SIZE` 9 -> 16
     (14-row tiles), program C's 64->64 3x3 conv loaded its weights with K=1 (first tap only); plus the same `acc_t`/`math_t`
@@ -30,7 +35,7 @@ Files: `verification/merged_designs.py` (new), `modular_data/{gemm,conv,llm}/hls
   the merged design (unpadded, as ResNet-50) did not match it. Fixed (PAD 0) and re-verified (`results_paper/C_32_10__table7r2_convblock3_fix`).
   The same PAD=1 1x1 convs are in all ten `resnet50_block*.json`; `resnet18_block{2,3}_downsample.json` declare an H_OUT that does
   not match K/PAD/STRIDE. None of these is used by a paper run; left unchanged.
-* Stale: Table 7 synthesis of `vec_mtx_p2`, `conv_block_op3` and of every merged design (re-run from the fixed sources).
+* Stale: Table 7 synthesis of `vec_mtx_p2`, `conv_block_op3`, `llama_transformer_p2` and of every merged design (re-run from the fixed sources).
 
 ## 2026-10-12 — Catapult backend check extended to vmm, mmv, dot product
 Files: `gemm/generate_code.py`, `verification/paper_runs/{C_32_10,D_float}__catapult_pm1.json`, `make_tables.py`.
