@@ -1,5 +1,31 @@
 # CHANGELOG_R2 — generator changes and the committed results they make stale
 
+## 2026-10-13 — Table 7 at <32,10>; Section 4.2 regenerated; full-model ResNet conv schedule (opt-in); Table 7 <16,5> run
+* **Table 7** (`modular_data/modularization_{results.csv,table.tex}`): recomputed from all 38 designs synthesized at `<32,10>` TRN/WRAP
+  (`_sweeps/lean/modular_csynth_32_10_r2`, conv_block_op3 with the PAD-0 config, LLaMA with swish). User decision: use `<32,10>` for now.
+  Values are larger than the `<16,5>` R1 table (32-bit multipliers ~4 DSPs); several cells exceed 100% of the ZCU102 (csynth estimates:
+  `mult_op_p1`, `diff_orders_p*`, `mult_op_module_mm` 8,192 DSP; `conv_block_op3`/`conv_block_module` 7,240/7,960 BRAM18K;
+  `llama_transformer_p2`/`Llama_GPT_module` 506-523K LUT).
+* **Table 7 at `<16,5>`** (TRN/WRAP, same programs/inputs/N): `verification/paper_runs/A_16_5__table7r2_pm1.json`; synthesis sources from
+  `prepare_table7_synth.py --dtype "fixed<16,5>" --runs A_16_5__table7r2_pm1` (new options; defaults unchanged) -> `_sweeps/table7_16_5_r2`,
+  lean reports `_sweeps/lean/modular_csynth_16_5_r2`; merged-design check `results_paper/A_16_5__table7r2_merged`.
+* **Section 4.2**: conv tanh re-run collected (`analysis/results_{csynth,impl}/metrics_conv.csv`: 1,728 csynth + 256 impl rows replaced by
+  id; LUT/FF +0.7-0.9%, DSP/BRAM/cycles unchanged); archives `checkpoints/r2/{csynth,impl}_conv_r2b_lean.tar.gz` listed first in
+  `manifest/_common.py` SOURCES (conv names unchanged since July, first match wins); run status in `manifest/evidence/r2_runs/conv_*_r2b_status.csv`.
+  `analysis/section42.py` (new) writes Figs 6-8 and Table 5 from the gemm/conv/llm metrics only; `dist_impl.py` gains the Fmax and LUT
+  panels of R1 Fig. 8; `density.py` uses the R1 colours and the "DNN" label. Impl counts: GEMM 999, DNN 896, LLM 962 (2,857; R1 2,711).
+* **Full-model ResNet csynth at `<32,10>` did not finish**: all 10 ResNets (`_sweeps/lean/fullmodel_csynth_r2`, stopped after ~24 h) sat
+  in scheduling the 7x7 stem conv: Vitis pipelined the output-pixel loop with the K x K x C_IN x C_OUT window unrolled into one stage
+  (plain: 7x7x3x64; tiled: 7x7 x 8x64 over run-time-bounded `valid_ic`/`valid_oc` loops). The 4 Llama designs finished.
+  Fix (opt-in per op, `"schedule": "pipeline_inner"`; configs without it regenerate byte-identical, checked on all 10 ResNet projects):
+  `conv2d` pipelines the kw loop when ci and co are fully unrolled (only the stem); `conv_tile` walks ci/co in 8 x 64 blocks with
+  run-time block counts, pipelines the block loop and sums each block's ci lanes into an `acc_t` before one update of the (acc_t)
+  output tile. Accumulation is exact (acc_t), so results are unchanged by the order. Files: `scale_models/generate_code.py`,
+  `scale_models/conv_template.cpp`. New sources in `_sweeps/fullmodel_r2_sched/` (not yet in `scale_models/hls_files`; the committed
+  sources and results are untouched). Per-function csynth of the new conv functions: 3-10 min each. Verification and re-synthesis pending.
+* `contracts.json`: Llama-3-8B ctx8192 `<32,10>` prefill/decode sources registered (reference_version 2, same recipe as the verified
+  ctx2048 pair) so `verify.py` accepts them; verification `results_paper/fullmodel_ctx8192_r2` (4 prefill + 2 decode, seeds 42-44) running.
+
 ## 2026-10-12 — Table 7 merged designs verified against their programs; bugs fixed (manual source edits)
 Files: `verification/merged_designs.py` (new), `modular_data/{gemm,conv,llm}/hls_files/*_module*/top.{cpp,h}`,
 `gemm/test_case_configs/vec_mtx_p2.json`, `conv/test_case_configs/conv_block_op3.json`,

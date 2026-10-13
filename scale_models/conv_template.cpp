@@ -39,7 +39,7 @@ void conv2d(
             #pragma HLS array_partition variable=sums type=cyclic factor={ARRAY_FACTOR_OUTPUT}
             for (int co=0; co<{C_OUT}; ++co) sums[co] = {BIAS_INIT_EXPR};
             for (int kh = 0; kh < {K}; kh++) {{
-                for (int kw = 0; kw < {K}; kw++) {{
+                for (int kw = 0; kw < {K}; kw++) {{{KW_PRAGMA}
                     int in_row = i * {STRIDE} - {PAD} + kh;
                     int in_col = j * {STRIDE} - {PAD} + kw;
                     if (in_row >= 0 && in_row < {H_IN} && in_col >= 0 && in_col < {W_IN}) {{

@@ -421,13 +421,21 @@ def generate_conv_function(
     bias_partition_factor=64,
     output_partition_factor=64,
     unroll_factor_cin=8,
-    unroll_factor_cout=64
+    unroll_factor_cout=64,
+    schedule=None,
 ):
     """
+    schedule (op key "schedule"): None keeps the original loop nest (Vitis picks the pipeline level). "pipeline_inner" pipelines the
+    kw loop when the ci and co loops are fully unrolled (C_IN <= unroll_factor_cin, C_OUT <= unroll_factor_cout, e.g. the ResNet
+    7x7 stem): otherwise Vitis pipelines the output-pixel loop and unrolls the whole K x K x C_IN x C_OUT window into one stage, which
+    does not finish scheduling at <32,10>. Same arithmetic (acc_t sums), only the schedule changes.
+
     Reads the template file, substitutes placeholders, and extracts only the requested
     function block (either conv2d or group_conv2d), then writes the output to output_path.
     """
 
+    if schedule not in (None, "pipeline_inner"):
+        raise ValueError(f"unknown conv schedule {schedule!r}")
     # 1) Read the full template file
     with open(template_path, "r") as f:
         template_code = f.read()
@@ -472,6 +480,8 @@ def generate_conv_function(
         ARRAY_FACTOR_OUTPUT=output_partition_factor,
         UNROLL_FACTOR_C_IN=unroll_factor_cin,
         UNROLL_FACTOR_C_OUT=unroll_factor_cout,
+        KW_PRAGMA=("\n                    #pragma HLS pipeline II=1"
+                   if schedule == "pipeline_inner" and C_IN <= unroll_factor_cin and C_OUT <= unroll_factor_cout else ""),
     )
 
     # 4) Now extract the requested function block.
@@ -1843,7 +1853,15 @@ def generate_conv_tile_function(
     stride=1,
     ci_unroll_factor=DEFAULT_LEGACY_CONV_CI_FACTOR,
     co_unroll_factor=DEFAULT_LEGACY_CONV_CO_FACTOR,
+    schedule=None,
 ):
+    # schedule (op key "schedule"): None keeps the original nest, whose ci/co loops have run-time bounds (valid_ic, valid_oc) and are
+    # unrolled 8 x 64; Vitis then pipelines the output-pixel loop with the whole window unrolled into one stage, which does not finish
+    # scheduling at <32,10>. "pipeline_inner" walks ci and co in blocks of ci_unroll_factor x co_unroll_factor (run-time block
+    # counts), pipelines the block loop and unrolls each block at its fixed size with a valid_ic/valid_oc guard on every lane.
+    # The output tile is acc_t (exact), so the different summation order gives the same result.
+    if schedule not in (None, "pipeline_inner"):
+        raise ValueError(f"unknown conv_tile schedule {schedule!r}")
     data_type_tag = replace_data_type(data_type)
     func_name = (
         f"conv_tile_{ic_tile}_{patch_h}_{patch_w}_{oc_tile}_{weight_ic}_{kernel}"
@@ -1881,6 +1899,38 @@ def generate_conv_tile_function(
         "    }",
         "}",
     ]
+    if schedule == "pipeline_inner":
+        ci_blocks, co_blocks = -(-weight_ic // ci_unroll_factor), -(-oc_tile // co_unroll_factor)
+        code_lines[14:] = [
+            "    for (int oh = 0; oh < valid_h; ++oh) {",
+            "        for (int ow = 0; ow < valid_w; ++ow) {",
+            f"            for (int kh = 0; kh < {kernel}; ++kh) {{",
+            f"                for (int kw = 0; kw < {kernel}; ++kw) {{",
+            f"                    for (int cb = 0; cb * {ci_unroll_factor} < valid_ic; ++cb) {{",
+            f"                        #pragma HLS loop_tripcount max={ci_blocks}",
+            f"                        for (int ob = 0; ob * {co_unroll_factor} < valid_oc; ++ob) {{",
+            f"                            #pragma HLS loop_tripcount max={co_blocks}",
+            "                            #pragma HLS pipeline II=1",
+            f"                            for (int v = 0; v < {co_unroll_factor}; ++v) {{",
+            "                                #pragma HLS unroll",
+            f"                                int co = ob * {co_unroll_factor} + v;",
+            "                                acc_t part = 0;   // the block's ci lanes summed first: one read-modify-write of output per cycle",
+            f"                                for (int u = 0; u < {ci_unroll_factor}; ++u) {{",
+            "                                    #pragma HLS unroll",
+            f"                                    int ci = cb * {ci_unroll_factor} + u;",
+            f"                                    if (ci < valid_ic && ci < {weight_ic} && co < {oc_tile})",
+            f"                                        part += input[ci][oh * {stride} + kh][ow * {stride} + kw] * weight[co < {oc_tile} ? co : 0][ci][kh][kw];",
+            "                                }",
+            f"                                if (co < valid_oc && co < {oc_tile}) output[co][oh][ow] += part;",
+            "                            }",
+            "                        }",
+            "                    }",
+            "                }",
+            "            }",
+            "        }",
+            "    }",
+            "}",
+        ]
     return "\n".join(code_lines), func_name
 
 
@@ -2849,6 +2899,7 @@ def generate_func_def(op_info, data_type):
             conv_tile_dims[9],
             conv_tile_dims[10],
             conv_tile_dims[11],
+            schedule=op_info.get("schedule"),
         )
     elif op_info['func_name'] == 'batchnorm_tile':
         code_line, full_func_name = generate_batchnorm_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
@@ -2909,6 +2960,7 @@ def generate_func_def(op_info, data_type):
             conv_dims[13],
             conv_dims[14],
             conv_dims[15],
+            schedule=op_info.get("schedule"),
         )
     elif op_info['func_name'] == 'conv_tiled':
         code_line, full_func_name = generate_conv_tiled_function(op_info["func_info"][0], op_info["func_info"][1], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8], op_info["dims"][9], op_info["dims"][10], op_info["dims"][11], op_info["dims"][12], op_info["dims"][13], op_info["dims"][14])
@@ -3080,6 +3132,7 @@ def generate_operator_call(op_info, data_type):
             conv_tile_dims[9],
             conv_tile_dims[10],
             conv_tile_dims[11],
+            schedule=op_info.get("schedule"),
         )
     elif op_info['func_name'] == 'batchnorm_tile':
         code_line, full_func_name = generate_batchnorm_tile_function(data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2])
@@ -3140,6 +3193,7 @@ def generate_operator_call(op_info, data_type):
             conv_dims[13],
             conv_dims[14],
             conv_dims[15],
+            schedule=op_info.get("schedule"),
         )
     elif op_info['func_name'] == 'conv_tiled':
         code_line, full_func_name = generate_conv_tiled_function(op_info["func_info"][0], op_info["func_info"][1], data_type, op_info["dims"][0], op_info["dims"][1], op_info["dims"][2], op_info["dims"][3], op_info["dims"][4], op_info["dims"][5], op_info["dims"][6], op_info["dims"][7], op_info["dims"][8], op_info["dims"][9], op_info["dims"][10], op_info["dims"][11], op_info["dims"][12], op_info["dims"][13], op_info["dims"][14])
