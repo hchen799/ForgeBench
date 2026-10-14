@@ -21,8 +21,13 @@ REPORT_REL = "project_1/solution1/syn/report"
 REPORTS_ROOT = None
 
 
-def parse_average_utilization(xml_path):
-    """Return average of (DSP%, LUT%) from an HLS csynth XML, or None if unavailable."""
+# Table 7 reports each utilization as a (LUT, DSP, BRAM) tuple of device percentages (R1 reported the mean of DSP% and LUT%,
+# which hid BRAM), so a cell over 100% shows which resource exceeds the device.
+RESOURCES = [("LUT", "LUT"), ("DSP", "DSP"), ("BRAM", "BRAM_18K")]
+
+
+def parse_utilization(xml_path):
+    """Return (LUT%, DSP%, BRAM%) of the device from an HLS csynth XML, or None if unavailable."""
     if not os.path.exists(xml_path):
         return None
     try:
@@ -40,17 +45,15 @@ def parse_average_utilization(xml_path):
         return None
 
     try:
-        dsp = int(resources.find("DSP").text)
-        lut = int(resources.find("LUT").text)
-        avail_dsp = int(available.find("DSP").text)
-        avail_lut = int(available.find("LUT").text)
+        used = [int(resources.find(tag).text) for _, tag in RESOURCES]
+        avail = [int(available.find(tag).text) for _, tag in RESOURCES]
     except (AttributeError, ValueError):
         return None
 
-    if not avail_dsp or not avail_lut:
+    if not all(avail):
         return None
 
-    return ((dsp / avail_dsp) * 100 + (lut / avail_lut) * 100) / 2
+    return tuple(u / a * 100 for u, a in zip(used, avail))
 
 
 def _report_dir(category, project):
@@ -157,42 +160,26 @@ ROWS = [
 ]
 
 
+def _sum(parts):
+    """Element-wise sum of (LUT, DSP, BRAM) tuples; None if any part is missing."""
+    if not parts or any(v is None for v in parts):
+        return None
+    return tuple(sum(v[k] for v in parts) for k in range(len(RESOURCES)))
+
+
+def _ratio(num, den, offset=0.0):
+    """Element-wise (num / den - offset) * 100; a resource with den == 0 gives None."""
+    if num is None or den is None:
+        return None
+    return tuple(None if d == 0 else (n / d - offset) * 100 for n, d in zip(num, den))
+
+
 def compute_row(row):
     cat = row["category"]
-    p_utils = []
-    for p in row["programs"]:
-        if p is None:
-            p_utils.append(None)
-        else:
-            p_utils.append(parse_average_utilization(project_xml(cat, p)))
-
-    module_total = parse_average_utilization(project_xml(cat, row["module"]))
-
-    shared_parts = [
-        parse_average_utilization(function_xml(cat, row["module"], f))
-        for f in row["shared"]
-    ]
-    if any(v is None for v in shared_parts):
-        shared_total = None
-    else:
-        shared_total = sum(shared_parts)
-
-    expected_progs = [p for p in row["programs"] if p is not None]
-    available_p = [v for v in p_utils if v is not None]
-    if available_p and len(available_p) == len(expected_progs):
-        program_sum = sum(available_p)
-    else:
-        program_sum = None
-
-    if shared_total is not None and module_total not in (None, 0):
-        pct_reuse = (shared_total / module_total) * 100
-    else:
-        pct_reuse = None
-
-    if program_sum not in (None, 0) and module_total is not None:
-        pct_change = ((module_total - program_sum) / program_sum) * 100
-    else:
-        pct_change = None
+    p_utils = [None if p is None else parse_utilization(project_xml(cat, p)) for p in row["programs"]]
+    module_total = parse_utilization(project_xml(cat, row["module"]))
+    shared_total = _sum([parse_utilization(function_xml(cat, row["module"], f)) for f in row["shared"]])
+    program_sum = _sum([v for p, v in zip(row["programs"], p_utils) if p is not None])
 
     return {
         "Test Suite": row["suite"],
@@ -202,22 +189,29 @@ def compute_row(row):
         "P3": p_utils[2],
         "Total_Before": program_sum,
         "Shared": shared_total,
-        "Pct_Reuse": pct_reuse,
+        "Pct_Reuse": _ratio(shared_total, module_total),
         "Total_After": module_total,
-        "Pct_Change": pct_change,
+        "Pct_Change": _ratio(module_total, program_sum, offset=1.0),
     }
 
 
-def fmt(v, dp=2):
-    if v is None:
-        return "-"
-    return f"{v:.{dp}f}"
+COLUMNS = ["P1", "P2", "P3", "Total_Before", "Shared", "Pct_Reuse", "Total_After", "Pct_Change"]
 
 
-def fmt_int(v):
+def _num(x, pct):
+    if x is None:
+        return "-"
+    if pct or abs(x) >= 10:
+        return f"{x:.0f}"
+    return f"{x:.1f}"
+
+
+def fmt(v, pct=False):
+    """(LUT, DSP, BRAM) tuple as '(l, d, b)': utilization with one decimal below 10%, % reuse / % change as integers;
+    '-' for a missing cell or resource (a resource the denominator does not use)."""
     if v is None:
         return "-"
-    return f"{v:.0f}"
+    return "(" + ", ".join(_num(x, pct) for x in v) + ")"
 
 
 def render_latex(rows):
@@ -228,15 +222,16 @@ def render_latex(rows):
     lines = []
     lines.append(r"\begin{table*}[!tbh]")
     lines.append(r"\centering")
-    lines.append(r"\footnotesize")
-    lines.append(r"\begin{tabular}{L{1.1cm}L{2.9cm}C{0.6cm}C{0.6cm}C{0.6cm}R{0.8cm}C{0.8cm}C{0.9cm}R{0.8cm}C{2.5cm}}")
+    lines.append(r"\scriptsize")
+    lines.append(r"\setlength{\tabcolsep}{3pt}")
+    lines.append(r"\begin{tabular}{L{0.8cm}L{2.6cm}cccccccc}")
     lines.append(r"\toprule")
     lines.append("")
     lines.append(r"    \multirow{2}{*}{\centering \textbf{Test Suite}} & ")
     lines.append(r"    \multirow{2}{*}{\centering \textbf{Test Case}} & ")
-    lines.append(r"    \multicolumn{4}{L{3.3cm}}{\textbf{Resource Utilization Before Modularization}} & ")
-    lines.append(r"    \multicolumn{3}{L{3.2cm}}{\textbf{Resource Utilization After Modularization}} &")
-    lines.append(r"    \multirow{2}{2.5cm}{\textbf{\% Change in Resource Utilization}} \\ ")
+    lines.append(r"    \multicolumn{4}{c}{\textbf{Resource Utilization Before Modularization}} & ")
+    lines.append(r"    \multicolumn{3}{c}{\textbf{Resource Utilization After Modularization}} &")
+    lines.append(r"    \multirow{2}{1.8cm}{\centering\textbf{\% Change}} \\ ")
     lines.append("")
     lines.append(r"    \cmidrule{3-6} ")
     lines.append(r"    \cmidrule{7-9}")
@@ -265,16 +260,16 @@ def render_latex(rows):
             fmt(r["P3"]) + " & " +
             fmt(r["Total_Before"]) + " & " +
             fmt(r["Shared"]) + " & " +
-            r"\textbf{" + fmt(r["Pct_Reuse"]) + "} & " +
+            r"\textbf{" + fmt(r["Pct_Reuse"], pct=True) + "} & " +
             fmt(r["Total_After"]) + " & " +
-            r"\textbf{" + fmt(r["Pct_Change"]) + r"} \\"
+            r"\textbf{" + fmt(r["Pct_Change"], pct=True) + r"} \\"
         )
         lines.append(line)
         prev_suite = suite
 
     lines.append(r"    \bottomrule")
     lines.append(r"    \end{tabular}")
-    lines.append(r"    \caption{ Resource usage of hardware test cases, annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. }")
+    lines.append(r"    \caption{ Resource usage of hardware test cases as (LUT, DSP, BRAM) percentages of the ZCU102 (C-synthesis estimates, \texttt{ap\_fixed<32,10>}), annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. \% Reuse and \% Change are per resource; - marks a resource the design does not use. }")
     lines.append(r"    \label{tab:modularization_results}")
     lines.append(r"\end{table*}")
     return "\n".join(lines)
@@ -294,10 +289,15 @@ def main():
         OUTPUT_TEX = os.path.join(args.out, "modularization_table.tex")
     rows = [compute_row(r) for r in ROWS]
 
-    df = pd.DataFrame(rows)
-    for col in ["P1", "P2", "P3", "Total_Before", "Shared", "Pct_Reuse", "Total_After", "Pct_Change"]:
-        df[col] = df[col].apply(lambda v: round(v, 2) if v is not None else None)
-    df.to_csv(OUTPUT_CSV, index=False)
+    flat = []
+    for r in rows:
+        f = {"Test Suite": r["Test Suite"], "Test Case": r["Test Case"]}
+        for col in COLUMNS:
+            for k, (name, _) in enumerate(RESOURCES):
+                v = r[col]
+                f[f"{col}_{name}"] = None if v is None or v[k] is None else round(v[k], 2)
+        flat.append(f)
+    pd.DataFrame(flat).to_csv(OUTPUT_CSV, index=False)
     print(f"Wrote {OUTPUT_CSV}")
 
     tex = render_latex(rows)

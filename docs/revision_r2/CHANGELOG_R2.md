@@ -1,5 +1,22 @@
 # CHANGELOG_R2 — generator changes and the committed results they make stale
 
+## 2026-10-14 — Table 7 stays at <32,10> (user decision), reported as (LUT, DSP, BRAM) tuples; three merged LLM designs fixed
+* **Format**: Table 7 is `<32,10>` TRN/WRAP for every case, the format in which all 26 programs and all 32 merged-design x program checks
+  pass (every row N/N within bound). `<16,5>` (`results_paper/A_16_5__table7r2_{pm1,merged}`, `_sweeps/lean/modular_csynth_16_5_r2`)
+  is not used: `gpt_transformer_p1` 0/100 and `llama_transformer_p2` 0/100 (layer_norm variance of the residual wraps past 16, sqrt -> 0,
+  divide by zero), `conv_block_op2` 78/100, `conv_block_op3` 63/100. Note: those rows carry status `ok` in summary.csv although trials
+  fail; `trials_within_bound` / `n_trials` is the verdict.
+* **Table 7 metric** (`modular_data/parse_synth_resourc_util.py`): each cell is a (LUT, DSP, BRAM) tuple of ZCU102 percentages instead of
+  the mean of DSP% and LUT%; Total = element-wise sum, % Reuse and % Change per resource (`-` where the denominator resource is 0).
+  R1's mean hid BRAM: DNN Blocks was already 162-259% of BRAM18K in R1 (whole 256x56x56 feature maps on chip; R1 op1 2,960, module 4,729
+  BRAM18K) and is 246-628% at `<32,10>`. CSV columns are now `<column>_{LUT,DSP,BRAM}`.
+* **Merged designs, manual source edits** (`modular_data/llm/hls_files/`), each to match its generated programs; found by the `<16,5>`
+  merged check, all re-verified at `<32,10>` (100/100 per program) and re-synthesized (`_sweeps/lean/modular_csynth_32_10_r2`, old
+  reports kept as `*.pre_castfix`; merged rows replaced in `results_paper/C_32_10__table7r2_merged`, old rows `rows_pre_castfix_*.json`):
+  - `tiled_attn_module`: `1/sqrt((data_t)16)` -> constant 0.25 (16 wraps to -16 at `<16,5>`: divide by zero).
+  - `attn_breakdown_module`: softmax subtracts the row max before `exp` (as the program); scale constant 0.5.
+  - `Llama_GPT_module`: rms_norm `sum_sq / (data_t)DIM` -> `/ DIM` (32 wraps to 0 at `<16,5>`); attention scale constant 0.5.
+
 ## 2026-10-13 — Table 7 at <32,10>; Section 4.2 regenerated; full-model ResNet conv schedule (opt-in); Table 7 <16,5> run
 * **Table 7** (`modular_data/modularization_{results.csv,table.tex}`): recomputed from all 38 designs synthesized at `<32,10>` TRN/WRAP
   (`_sweeps/lean/modular_csynth_32_10_r2`, conv_block_op3 with the PAD-0 config, LLaMA with swish). User decision: use `<32,10>` for now.

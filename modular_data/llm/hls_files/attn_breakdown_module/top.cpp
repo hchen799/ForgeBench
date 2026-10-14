@@ -124,8 +124,13 @@ void softmax(
     #pragma HLS inline off
     for (int i = 0; i < SEQ_LENGTH; i++) {
         data_t sum = 0;
+        data_t max_score = input[i][0];
+        for (int j = 1; j < SEQ_LENGTH; j++) {
+            if (input[i][j] > max_score)
+                max_score = input[i][j];
+        }
         for (int j = 0; j < SEQ_LENGTH; j++) {
-            output[i][j] = hls::exp(input[i][j]);
+            output[i][j] = hls::exp(input[i][j] - max_score);
             sum += output[i][j];
         }
         for (int j = 0; j < SEQ_LENGTH; j++) {
@@ -137,7 +142,7 @@ void softmax(
 void calculate_scale(data_t input[SEQ_LENGTH][SEQ_LENGTH], data_t output [SEQ_LENGTH][SEQ_LENGTH])
 {
     #pragma HLS inline off
-    data_t scale = (data_t)1.0 / hls::sqrt((data_t)HEAD_DIM);
+    data_t scale = (data_t)0.5;   // 1/sqrt(HEAD_DIM), computed at generation time (HEAD_DIM itself may not fit in data_t)
     for (int i = 0; i < SEQ_LENGTH; i++)
     {
         for (int j = 0; j < SEQ_LENGTH; j++)

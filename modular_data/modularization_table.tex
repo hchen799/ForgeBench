@@ -1,14 +1,15 @@
 \begin{table*}[!tbh]
 \centering
-\footnotesize
-\begin{tabular}{L{1.1cm}L{2.9cm}C{0.6cm}C{0.6cm}C{0.6cm}R{0.8cm}C{0.8cm}C{0.9cm}R{0.8cm}C{2.5cm}}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{L{0.8cm}L{2.6cm}cccccccc}
 \toprule
 
     \multirow{2}{*}{\centering \textbf{Test Suite}} & 
     \multirow{2}{*}{\centering \textbf{Test Case}} & 
-    \multicolumn{4}{L{3.3cm}}{\textbf{Resource Utilization Before Modularization}} & 
-    \multicolumn{3}{L{3.2cm}}{\textbf{Resource Utilization After Modularization}} &
-    \multirow{2}{2.5cm}{\textbf{\% Change in Resource Utilization}} \\ 
+    \multicolumn{4}{c}{\textbf{Resource Utilization Before Modularization}} & 
+    \multicolumn{3}{c}{\textbf{Resource Utilization After Modularization}} &
+    \multirow{2}{1.8cm}{\centering\textbf{\% Change}} \\ 
 
     \cmidrule{3-6} 
     \cmidrule{7-9}
@@ -16,22 +17,22 @@
     & & P1 & P2 & P3 & \textbf{Total} & Shared & \textbf{\% Reuse} & \textbf{Total} & \\ 
 
     \midrule
-    \multirow{6}{*}{\centering \textbf{GEMM}} & Tiled GEMM $\dagger$ & 42.15 & 15.21 & 57.26 & 114.62 & 3.38 & \textbf{59.95} & 5.65 & \textbf{-95.07} \\
-        & Vec/Mtx Mult - Dot $\dagger$ $\ast$ & 215.60 & 14.63 & 1.37 & 231.60 & 0.74 & \textbf{19.55} & 3.76 & \textbf{-98.38} \\
-        & Vec/Mtx Mult - MMV $\dagger$ $\ast$ & 215.60 & 14.63 & 1.37 & 231.60 & 6.42 & \textbf{36.63} & 17.53 & \textbf{-92.43} \\
-        & Vec/Mtx Mult - GEMM $\dagger$ $\ast$ & 215.60 & 14.63 & 1.37 & 231.60 & 211.03 & \textbf{94.92} & 222.33 & \textbf{-4.01} \\
-        & i-j-k Orders $\ast$ & 213.53 & 214.99 & 214.58 & 643.10 & 106.47 & \textbf{88.14} & 120.79 & \textbf{-81.22} \\
-        & Vector Transpose $\ast$ & 14.59 & 13.05 & - & 27.64 & 12.24 & \textbf{55.46} & 22.07 & \textbf{-20.15} \\
+    \multirow{6}{*}{\centering \textbf{GEMM}} & Tiled GEMM $\dagger$ & (23, 61, 16) & (10, 20, 8.1) & (33, 81, 28) & (67, 163, 53) & (5.5, 1.3, 0.0) & \textbf{(55, 100, 0)} & (10, 1.3, 103) & \textbf{(-85, -99, 95)} \\
+        & Vec/Mtx Mult - Dot $\dagger$ $\ast$ & (106, 325, 0.2) & (14, 15, 0.2) & (1.8, 1.0, 0.2) & (122, 341, 0.7) & (0.5, 1.0, 0.0) & \textbf{(9, 60, 0)} & (5.9, 1.6, 4.6) & \textbf{(-95, -100, 600)} \\
+        & Vec/Mtx Mult - MMV $\dagger$ $\ast$ & (106, 325, 0.2) & (14, 15, 0.2) & (1.8, 1.0, 0.2) & (122, 341, 0.7) & (5.2, 7.6, 0.0) & \textbf{(26, 50, 0)} & (20, 15, 2.5) & \textbf{(-84, -96, 283)} \\
+        & Vec/Mtx Mult - GEMM $\dagger$ $\ast$ & (106, 325, 0.2) & (14, 15, 0.2) & (1.8, 1.0, 0.2) & (122, 341, 0.7) & (97, 325, 0.0) & \textbf{(81, 100, 0)} & (120, 325, 0.3) & \textbf{(-2, -5, -50)} \\
+        & i-j-k Orders $\ast$ & (102, 325, 35) & (105, 325, 7.2) & (104, 325, 35) & (311, 975, 78) & (91, 122, 0.0) & \textbf{(76, 100, 0)} & (120, 122, 87) & \textbf{(-62, -88, 12)} \\
+        & Vector Transpose $\ast$ & (14, 15, 0.2) & (12, 14, 0.2) & - & (26, 29, 0.4) & (9.2, 15, 0.0) & \textbf{(32, 100, 0)} & (29, 15, 0.2) & \textbf{(10, -47, -50)} \\
     \midrule
-    \multirow{3}{*}{\centering \textbf{DNN}} & Activation Functions $\ddagger$ $\ast$ & 2.70 & 3.28 & 0.75 & 6.73 & 1.58 & \textbf{42.78} & 3.69 & \textbf{-45.10} \\
-        & Tiled Convolution $\dagger$ $\ast$ & 53.64 & 57.37 & 57.39 & 168.39 & 59.53 & \textbf{95.89} & 62.09 & \textbf{-63.13} \\
-        & DNN Blocks $\ddagger$ & 123.69 & 119.63 & 171.42 & 414.74 & 61.02 & \textbf{25.18} & 242.30 & \textbf{-41.58} \\
+    \multirow{3}{*}{\centering \textbf{DNN}} & Activation Functions $\ddagger$ $\ast$ & (5.1, 0.3, 11) & (6.2, 0.3, 10) & (1.2, 0.3, 11) & (12, 1.0, 33) & (2.8, 0.3, 0.8) & \textbf{(42, 57, 4)} & (6.8, 0.6, 22) & \textbf{(-45, -42, -35)} \\
+        & Tiled Convolution $\dagger$ $\ast$ & (26, 81, 34) & (33, 81, 36) & (34, 81, 39) & (93, 244, 109) & (38, 81, 37) & \textbf{(88, 100, 49)} & (43, 82, 75) & \textbf{(-54, -67, -31)} \\
+        & DNN Blocks $\ddagger$ & (85, 163, 628) & (76, 163, 246) & (99, 244, 397) & (260, 570, 1271) & (40, 82, 43) & \textbf{(25, 25, 10)} & (159, 326, 436) & \textbf{(-39, -43, -66)} \\
     \midrule
-    \multirow{3}{*}{\centering \textbf{LLM}} & Tiled Attention $\dagger$ $\ast$ & 15.79 & 15.77 & - & 31.56 & 15.13 & \textbf{93.47} & 16.18 & \textbf{-48.72} \\
-        & Functional Attention $\ddagger$ & 24.06 & 25.75 & - & 49.81 & 10.55 & \textbf{66.91} & 15.76 & \textbf{-68.35} \\
-        & LLaMA/GPT Transformers $\ddagger$ & 63.14 & 109.36 & - & 172.50 & 24.81 & \textbf{23.03} & 107.73 & \textbf{-37.55} \\
+    \multirow{3}{*}{\centering \textbf{LLM}} & Tiled Attention $\dagger$ $\ast$ & (20, 12, 24) & (20, 12, 9.8) & - & (39, 24, 34) & (18, 12, 4.4) & \textbf{(90, 100, 13)} & (20, 12, 34) & \textbf{(-48, -50, 1)} \\
+        & Functional Attention $\ddagger$ & (23, 25, 8.6) & (25, 26, 8.9) & - & (49, 51, 17) & (18, 3.5, 0.5) & \textbf{(66, 76, 7)} & (27, 4.6, 8.2) & \textbf{(-44, -91, -53)} \\
+        & LLaMA/GPT Transformers $\ddagger$ & (99, 28, 10) & (191, 28, 10) & - & (289, 56, 21) & (23, 26, 3.3) & \textbf{(13, 85, 31)} & (183, 31, 11) & \textbf{(-37, -45, -48)} \\
     \bottomrule
     \end{tabular}
-    \caption{ Resource usage of hardware test cases, annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. }
+    \caption{ Resource usage of hardware test cases as (LUT, DSP, BRAM) percentages of the ZCU102 (C-synthesis estimates, \texttt{ap\_fixed<32,10>}), annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. \% Reuse and \% Change are per resource; - marks a resource the design does not use. }
     \label{tab:modularization_results}
 \end{table*}

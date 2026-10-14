@@ -98,7 +98,7 @@ for (int j = 0; j < 256; j++) {
     const int num_heads = 4;   // total number of heads (must equal DIM_OUT / HEAD_DIM)
     const int head_dim = 16;       // dimension per head
     const int heads_per_group = num_heads / groups;
-    const data_t scale = (data_t)1.0 / hls::sqrt((data_t)head_dim);
+    const data_t scale = (data_t)0.25;   // 1/sqrt(head_dim), computed at generation time (head_dim itself may not fit in data_t)
 
     data_t Q[8][64];
     data_t K[8][64];
@@ -184,7 +184,7 @@ void grouped_multihead_attention_8_256_16_16_ap_fixed_16_5_(
     const int num_heads = 16;   // total number of heads (must equal DIM_OUT / HEAD_DIM)
     const int head_dim = 16;       // dimension per head
     const int heads_per_group = num_heads / groups;
-    const data_t scale = (data_t)1.0 / hls::sqrt((data_t)head_dim);
+    const data_t scale = (data_t)0.25;   // 1/sqrt(head_dim), computed at generation time (head_dim itself may not fit in data_t)
 
     data_t Q[8][256];
     data_t K[8][256];

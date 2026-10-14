@@ -145,7 +145,7 @@ void layer_norm_8_32_ap_fixed_16_5_(
     const int num_heads = 8;   // total number of heads (must equal DIM_OUT / HEAD_DIM)
     const int head_dim = 4;       // dimension per head
     const int heads_per_group = num_heads / groups;
-    const data_t scale = (data_t)1.0 / hls::sqrt((data_t)head_dim);
+    const data_t scale = (data_t)0.5;   // 1/sqrt(head_dim), computed at generation time (head_dim itself may not fit in data_t)
 
     data_t Q[SEQ_LENGTH][DIM];
     data_t K[SEQ_LENGTH][DIM];
@@ -391,7 +391,7 @@ void rms_norm_8_32_ap_fixed_16_5_(
         for (int j = 0; j < DIM; j++) {
             sum_sq += input[i][j] * input[i][j];
         }
-        data_t rms = hls::sqrt(sum_sq / (data_t) DIM + (data_t) 0.01);
+        data_t rms = hls::sqrt(sum_sq / DIM + (data_t)0.01);
         for (int j = 0; j < DIM; j++) {
             output[i][j] = gamma[j] * input[i][j] / rms;
         }
