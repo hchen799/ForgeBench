@@ -11,7 +11,13 @@ from each of the 7 unrolled groups (616): 384 + 7 x 88 = 1,000.
 
   python -m analysis.impl_sampler gemm --seed 20261002 --out manifest/gemm_impl_selection.csv
 
-The July gemm/conv selections (tiered by unroll factor, sampler not preserved) are not reproduced here.
+Conv (R2): 1,000 of the 5,184 sweep designs, as gemm. The unroll factors (unroll_cin, unroll_cout) in {1, 4, 8}^2 give 9 groups
+of 576 designs. Every design with no unrolling (1/1) is taken (576), plus 53 chosen at random from each of the 8 unrolled
+groups (424): 576 + 8 x 53 = 1,000. Replaces the July conv selection (896, tiered by unroll factor, sampler not preserved).
+
+  python -m analysis.impl_sampler conv --seed 20261014 --out manifest/conv_impl_selection.csv
+
+The July gemm selection (tiered by unroll factor, sampler not preserved) is not reproduced here.
 """
 import argparse
 import csv
@@ -52,22 +58,41 @@ def select_gemm(configs_dir, seed, per_group=88):
     return rows
 
 
+def select_conv(configs_dir, seed, per_group=53):
+    stems = sorted(os.path.splitext(f)[0] for f in os.listdir(configs_dir) if f.endswith(".json"))
+    groups = {}
+    for s in stems:
+        m = re.search(r"_UFCIN(\d+)_UFCOU(\d+)_", s)
+        groups.setdefault(tuple(int(x) for x in m.groups()), []).append(s)
+    rng = random.Random(seed)
+    rows = []
+    for key in sorted(groups):
+        pop = groups[key]
+        chosen = pop if key == (1, 1) else rng.sample(pop, per_group)       # no unrolling: take all
+        for d in sorted(chosen):
+            rows.append({"design": d, "unroll_cin": key[0], "unroll_cout": key[1], "seed": seed})
+    return rows
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("domain", choices=["llm", "gemm"])
+    ap.add_argument("domain", choices=["llm", "gemm", "conv"])
     ap.add_argument("--configs-dir")
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--per-stratum", type=int, default=250, help="llm: designs per hd_unroll value")
-    ap.add_argument("--per-group", type=int, default=88, help="gemm: designs per unrolled group")
+    ap.add_argument("--per-group", type=int, help="gemm/conv: designs per unrolled group (default gemm 88, conv 53)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     cdir = a.configs_dir or os.path.join(REPO_ROOT, a.domain, "auto_generated_configs")
     if a.domain == "llm":
         rows = select_llm(cdir, a.seed, a.per_stratum)
         cols = ["design", "stratum", "stratum_population", "seed"]
-    else:
-        rows = select_gemm(cdir, a.seed, a.per_group)
+    elif a.domain == "gemm":
+        rows = select_gemm(cdir, a.seed, a.per_group or 88)
         cols = ["design", "unroll_M", "unroll_K", "unroll_N", "seed"]
+    else:
+        rows = select_conv(cdir, a.seed, a.per_group or 53)
+        cols = ["design", "unroll_cin", "unroll_cout", "seed"]
     with open(a.out, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols, lineterminator="\n")
         w.writeheader()
