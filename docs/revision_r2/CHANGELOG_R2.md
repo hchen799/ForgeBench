@@ -7,7 +7,7 @@
   divide by zero), `conv_block_op2` 78/100, `conv_block_op3` 63/100. Note: those rows carry status `ok` in summary.csv although trials
   fail; `trials_within_bound` / `n_trials` is the verdict.
 * **Table 7 metric** (`modular_data/parse_synth_resourc_util.py`): ZCU102 percentages per resource instead of
-  the mean of DSP% and LUT%: P1-P3 and both Totals as (LUT, DSP) and BRAM sub-columns, Shared / % Reuse / % Change as (LUT, DSP);
+  the mean of DSP% and LUT%: every cell one (LUT, DSP, BRAM) column; Shared / % Reuse / % Change print BRAM as a dot (LUT, DSP only);
   Total = element-wise sum, % Reuse and % Change per resource (`-` where the denominator resource is 0).
   R1's mean hid BRAM: DNN Blocks was already 162-259% of BRAM18K in R1 (whole 256x56x56 feature maps on chip; R1 op1 2,960, module 4,729
   BRAM18K) and is 246-628% at `<32,10>`. CSV columns are now `<column>_{LUT,DSP,BRAM}`.

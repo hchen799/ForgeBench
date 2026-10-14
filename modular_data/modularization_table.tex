@@ -1,37 +1,38 @@
 \begin{table*}[!tbh]
 \centering
 \scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{L{0.8cm}L{2.6cm}ccccccccccccc}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{L{0.8cm}L{2.6cm}cccccccc}
 \toprule
 
-    \multirow{3}{*}{\centering \textbf{Test Suite}} & 
-    \multirow{3}{*}{\centering \textbf{Test Case}} & 
-    \multicolumn{8}{c}{\textbf{Resource Utilization Before Modularization}} & 
-    \multicolumn{4}{c}{\textbf{Resource Utilization After Modularization}} &
+    \multirow{2}{*}{\centering \textbf{Test Suite}} & 
+    \multirow{2}{*}{\centering \textbf{Test Case}} & 
+    \multicolumn{4}{c}{\textbf{Resource Utilization Before Modularization (LUT, DSP, BRAM)}} & 
+    \multicolumn{3}{c}{\textbf{Resource Utilization After Modularization (LUT, DSP, BRAM)}} &
     \multirow{2}{*}{\textbf{\% Change}} \\ 
-    \cmidrule(lr){3-10} \cmidrule(lr){11-14}
-    & & \multicolumn{2}{c}{P1} & \multicolumn{2}{c}{P2} & \multicolumn{2}{c}{P3} & \multicolumn{2}{c}{\textbf{Total}} & Shared & \textbf{\% Reuse} & \multicolumn{2}{c}{\textbf{Total}} & \\ 
-    \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){13-14}
-    & & (LUT, DSP) & BRAM & (LUT, DSP) & BRAM & (LUT, DSP) & BRAM & (LUT, DSP) & BRAM & (LUT, DSP) & (LUT, DSP) & (LUT, DSP) & BRAM & (LUT, DSP) \\ 
+
+    \cmidrule(lr){3-6} 
+    \cmidrule(lr){7-9}
+
+    & & P1 & P2 & P3 & \textbf{Total} & Shared & \textbf{\% Reuse} & \textbf{Total} & \\ 
 
     \midrule
-    \multirow{6}{*}{\centering \textbf{GEMM}} & Tiled GEMM $\dagger$ & (23, 61) & 16 & (10, 20) & 8.1 & (33, 81) & 28 & (67, 163) & 53 & (5.5, 1.3) & \textbf{(55, 100)} & (10, 1.3) & 103 & \textbf{(-85, -99)} \\
-        & Vec/Mtx Mult - Dot $\dagger$ $\ast$ & (106, 325) & 0.2 & (14, 15) & 0.2 & (1.8, 1.0) & 0.2 & (122, 341) & 0.7 & (0.5, 1.0) & \textbf{(9, 60)} & (5.9, 1.6) & 4.6 & \textbf{(-95, -100)} \\
-        & Vec/Mtx Mult - MMV $\dagger$ $\ast$ & (106, 325) & 0.2 & (14, 15) & 0.2 & (1.8, 1.0) & 0.2 & (122, 341) & 0.7 & (5.2, 7.6) & \textbf{(26, 50)} & (20, 15) & 2.5 & \textbf{(-84, -96)} \\
-        & Vec/Mtx Mult - GEMM $\dagger$ $\ast$ & (106, 325) & 0.2 & (14, 15) & 0.2 & (1.8, 1.0) & 0.2 & (122, 341) & 0.7 & (97, 325) & \textbf{(81, 100)} & (120, 325) & 0.3 & \textbf{(-2, -5)} \\
-        & i-j-k Orders $\ast$ & (102, 325) & 35 & (105, 325) & 7.2 & (104, 325) & 35 & (311, 975) & 78 & (91, 122) & \textbf{(76, 100)} & (120, 122) & 87 & \textbf{(-62, -88)} \\
-        & Vector Transpose $\ast$ & (14, 15) & 0.2 & (12, 14) & 0.2 & - & - & (26, 29) & 0.4 & (9.2, 15) & \textbf{(32, 100)} & (29, 15) & 0.2 & \textbf{(10, -47)} \\
+    \multirow{6}{*}{\centering \textbf{GEMM}} & Tiled GEMM $\dagger$ & (23, 61, 16) & (10, 20, 8.1) & (33, 81, 28) & (67, 163, 53) & (5.5, 1.3, $\cdot$) & \textbf{(55, 100, $\cdot$)} & (10, 1.3, 103) & \textbf{(-85, -99, $\cdot$)} \\
+        & Vec/Mtx Mult - Dot $\dagger$ $\ast$ & (106, 325, 0.2) & (14, 15, 0.2) & (1.8, 1.0, 0.2) & (122, 341, 0.7) & (0.5, 1.0, $\cdot$) & \textbf{(9, 60, $\cdot$)} & (5.9, 1.6, 4.6) & \textbf{(-95, -100, $\cdot$)} \\
+        & Vec/Mtx Mult - MMV $\dagger$ $\ast$ & (106, 325, 0.2) & (14, 15, 0.2) & (1.8, 1.0, 0.2) & (122, 341, 0.7) & (5.2, 7.6, $\cdot$) & \textbf{(26, 50, $\cdot$)} & (20, 15, 2.5) & \textbf{(-84, -96, $\cdot$)} \\
+        & Vec/Mtx Mult - GEMM $\dagger$ $\ast$ & (106, 325, 0.2) & (14, 15, 0.2) & (1.8, 1.0, 0.2) & (122, 341, 0.7) & (97, 325, $\cdot$) & \textbf{(81, 100, $\cdot$)} & (120, 325, 0.3) & \textbf{(-2, -5, $\cdot$)} \\
+        & i-j-k Orders $\ast$ & (102, 325, 35) & (105, 325, 7.2) & (104, 325, 35) & (311, 975, 78) & (91, 122, $\cdot$) & \textbf{(76, 100, $\cdot$)} & (120, 122, 87) & \textbf{(-62, -88, $\cdot$)} \\
+        & Vector Transpose $\ast$ & (14, 15, 0.2) & (12, 14, 0.2) & - & (26, 29, 0.4) & (9.2, 15, $\cdot$) & \textbf{(32, 100, $\cdot$)} & (29, 15, 0.2) & \textbf{(10, -47, $\cdot$)} \\
     \midrule
-    \multirow{3}{*}{\centering \textbf{DNN}} & Activation Functions $\ddagger$ $\ast$ & (5.1, 0.3) & 11 & (6.2, 0.3) & 10 & (1.2, 0.3) & 11 & (12, 1.0) & 33 & (2.8, 0.3) & \textbf{(42, 57)} & (6.8, 0.6) & 22 & \textbf{(-45, -42)} \\
-        & Tiled Convolution $\dagger$ $\ast$ & (26, 81) & 34 & (33, 81) & 36 & (34, 81) & 39 & (93, 244) & 109 & (38, 81) & \textbf{(88, 100)} & (43, 82) & 75 & \textbf{(-54, -67)} \\
-        & DNN Blocks $\ddagger$ & (85, 163) & 628 & (76, 163) & 246 & (99, 244) & 397 & (260, 570) & 1271 & (40, 82) & \textbf{(25, 25)} & (159, 326) & 436 & \textbf{(-39, -43)} \\
+    \multirow{3}{*}{\centering \textbf{DNN}} & Activation Functions $\ddagger$ $\ast$ & (5.1, 0.3, 11) & (6.2, 0.3, 10) & (1.2, 0.3, 11) & (12, 1.0, 33) & (2.8, 0.3, $\cdot$) & \textbf{(42, 57, $\cdot$)} & (6.8, 0.6, 22) & \textbf{(-45, -42, $\cdot$)} \\
+        & Tiled Convolution $\dagger$ $\ast$ & (26, 81, 34) & (33, 81, 36) & (34, 81, 39) & (93, 244, 109) & (38, 81, $\cdot$) & \textbf{(88, 100, $\cdot$)} & (43, 82, 75) & \textbf{(-54, -67, $\cdot$)} \\
+        & DNN Blocks $\ddagger$ & (85, 163, 628) & (76, 163, 246) & (99, 244, 397) & (260, 570, 1271) & (40, 82, $\cdot$) & \textbf{(25, 25, $\cdot$)} & (159, 326, 436) & \textbf{(-39, -43, $\cdot$)} \\
     \midrule
-    \multirow{3}{*}{\centering \textbf{LLM}} & Tiled Attention $\dagger$ $\ast$ & (20, 12) & 24 & (20, 12) & 9.8 & - & - & (39, 24) & 34 & (18, 12) & \textbf{(90, 100)} & (20, 12) & 34 & \textbf{(-48, -50)} \\
-        & Functional Attention $\ddagger$ & (23, 25) & 8.6 & (25, 26) & 8.9 & - & - & (49, 51) & 17 & (18, 3.5) & \textbf{(66, 76)} & (27, 4.6) & 8.2 & \textbf{(-44, -91)} \\
-        & LLaMA/GPT Transformers $\ddagger$ & (99, 28) & 10 & (191, 28) & 10 & - & - & (289, 56) & 21 & (23, 26) & \textbf{(13, 85)} & (183, 31) & 11 & \textbf{(-37, -45)} \\
+    \multirow{3}{*}{\centering \textbf{LLM}} & Tiled Attention $\dagger$ $\ast$ & (20, 12, 24) & (20, 12, 9.8) & - & (39, 24, 34) & (18, 12, $\cdot$) & \textbf{(90, 100, $\cdot$)} & (20, 12, 34) & \textbf{(-48, -50, $\cdot$)} \\
+        & Functional Attention $\ddagger$ & (23, 25, 8.6) & (25, 26, 8.9) & - & (49, 51, 17) & (18, 3.5, $\cdot$) & \textbf{(66, 76, $\cdot$)} & (27, 4.6, 8.2) & \textbf{(-44, -91, $\cdot$)} \\
+        & LLaMA/GPT Transformers $\ddagger$ & (99, 28, 10) & (191, 28, 10) & - & (289, 56, 21) & (23, 26, $\cdot$) & \textbf{(13, 85, $\cdot$)} & (183, 31, 11) & \textbf{(-37, -45, $\cdot$)} \\
     \bottomrule
     \end{tabular}
-    \caption{ Resource usage of hardware test cases as percentages of the ZCU102 (C-synthesis estimates, \texttt{ap\_fixed<32,10>}): (LUT, DSP) and BRAM; \% Reuse and \% Change per resource over (LUT, DSP). Annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. }
+    \caption{ Resource usage of hardware test cases as (LUT, DSP, BRAM) percentages of the ZCU102 (C-synthesis estimates, \texttt{ap\_fixed<32,10>}), annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. Shared, \% Reuse and \% Change cover LUT and DSP only ($\cdot$): BRAM is dominated by each design's top-level buffers for inputs, weights and intermediate results, which are sized by the data rather than by the shared functions, so a BRAM reuse or change figure would reflect buffer sizing rather than function sharing. }
     \label{tab:modularization_results}
 \end{table*}
