@@ -1,7 +1,7 @@
 """Domain-grouped distribution plot from csynth data (paper distribution figure).
 
 Four panels — BRAM util, LUT util, FF util (linear %) and Cycles (log) — each an
-overlapping filled KDE per domain (GEMM cyan / CONV yellow / LLM red), matching
+overlapping filled KDE per domain (GEMM cyan / DNN yellow / LLM red), matching
 the reference distribution figures.
 
 By default reads the unified csynth metrics in analysis/results_csynth/

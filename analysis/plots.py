@@ -25,7 +25,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DOMAIN_STYLE = {
     "gemm": {"color": "lightseagreen", "marker": "s", "label": "GEMM"},
-    "conv": {"color": "coral", "marker": "s", "label": "CONV"},
+    "conv": {"color": "coral", "marker": "s", "label": "DNN"},
     "llm": {"color": "mediumslateblue", "marker": "s", "label": "LLM"},
 }
 
