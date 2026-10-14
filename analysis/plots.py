@@ -54,8 +54,11 @@ def _filter(df, bram_min=0, bram_max=100, dsp_max=100, lut_max=100, cycles_max=1
     return d[keep.fillna(False)]
 
 
-def fig4_coverage(df=None, out=None):
-    """4-panel design-space coverage figure (paper Fig 4)."""
+def fig4_coverage(df=None, out=None, util_log=False, util_min=0.1):
+    """4-panel design-space coverage figure (paper Fig 4; R2 paper Fig 7).
+
+    util_log: utilization axes log-scaled from util_min to 100% (the R2 sweep's designs sit at 0.1-30% of the device, which a linear
+    0-100% axis squeezes against the origin); values below util_min (e.g. 0 DSP) are drawn on the util_min edge."""
     if df is None:
         df = _load_default_coverage()
     df = _filter(df)
@@ -72,16 +75,30 @@ def fig4_coverage(df=None, out=None):
     for ax, (xc, yc, title, xl, yl, ylog) in zip(axes, panels):
         for domain, style in DOMAIN_STYLE.items():
             sub = df[df["domain"] == domain]
-            ax.scatter(sub[xc], sub[yc], marker=style["marker"], s=30,
+            xs, ys = sub[xc], sub[yc]
+            if util_log:
+                xs = xs.clip(lower=util_min)
+                ys = ys.clip(lower=util_min) if not ylog else ys
+            ax.scatter(xs, ys, marker=style["marker"], s=30,
                        c=style["color"], label=style["label"], alpha=0.7)
         ax.set_title(title, fontsize=32, fontweight="bold", pad=20)
         ax.set_xlabel(xl, fontsize=32, fontweight="bold")
         ax.set_ylabel(yl, fontsize=32, fontweight="bold")
-        ax.set_xticks([0, 20, 40, 60, 80, 100])
         ax.tick_params(axis="both", labelsize=28)
-        ax.set_xlim(left=(15 if "bram" in xc else -5), right=105)
+        util_ticks = [t for t in (0.1, 1, 10, 100) if t >= util_min]
+        if util_log:
+            ax.set_xscale("log")
+            ax.set_xlim(util_min, 100)
+            ax.set_xticks(util_ticks, [f"{t:g}" for t in util_ticks])
+        else:
+            ax.set_xticks([0, 20, 40, 60, 80, 100])
+            ax.set_xlim(left=(15 if "bram" in xc else -5), right=105)
         if ylog:
             ax.set_yscale("log")
+        elif util_log:
+            ax.set_yscale("log")
+            ax.set_ylim(util_min, 100)
+            ax.set_yticks(util_ticks, [f"{t:g}" for t in util_ticks])
         else:
             ax.set_ylim(-5, 105)
 

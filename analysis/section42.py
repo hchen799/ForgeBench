@@ -1,7 +1,7 @@
 """Paper Section 4.2 (sweep results): Figs 6-8 and Table 5 from the collected R2 metrics.
 
   Fig 6  analysis/figures/fig6_dist_csynth.png   csynth marginal distributions (BRAM, LUT, FF util, cycles), designs within ZCU102
-  Fig 7  analysis/figures/fig7_coverage.png      csynth joint coverage (BRAM/DSP/LUT util vs cycles, BRAM vs DSP util)
+  Fig 7  analysis/figures/fig7_coverage.png      csynth joint coverage (BRAM/DSP/LUT util vs cycles, BRAM vs DSP util), log util axes 0.1-100%
   Fig 8  analysis/figures/fig8_dist_impl.png     impl marginal distributions (power, achieved Fmax, LUT util, cycles)
   Tab 5  analysis/tables_out/table5_impl.{csv,tex}  impl min / mean / max per domain
 
@@ -90,7 +90,7 @@ def table5(impl):
 def main():
     csynth, impl = load("csynth"), load("impl")
     dist_csynth(df=csynth, out=os.path.join(FIG, "fig6_dist_csynth.png"), feasible=True)
-    fig4_coverage(df=csynth, out=os.path.join(FIG, "fig7_coverage.png"))
+    fig4_coverage(df=csynth, out=os.path.join(FIG, "fig7_coverage.png"), util_log=True, util_min=0.1)
     dist_impl(df=impl, out=os.path.join(FIG, "fig8_dist_impl.png"))
     table5(impl)
 
