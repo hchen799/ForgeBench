@@ -21,8 +21,8 @@ REPORT_REL = "project_1/solution1/syn/report"
 REPORTS_ROOT = None
 
 
-# Table 7 reports each utilization as a (LUT, DSP, BRAM) tuple of device percentages (R1 reported the mean of DSP% and LUT%,
-# which hid BRAM), so a cell over 100% shows which resource exceeds the device.
+# Table 7 reports utilization per resource as device percentages, (LUT, DSP) and BRAM (R1 reported the mean of DSP% and LUT%,
+# which hid BRAM), so a cell over 100% shows which resource exceeds the device. The CSV keeps all three for every column.
 RESOURCES = [("LUT", "LUT"), ("DSP", "DSP"), ("BRAM", "BRAM_18K")]
 
 
@@ -206,12 +206,16 @@ def _num(x, pct):
     return f"{x:.1f}"
 
 
-def fmt(v, pct=False):
-    """(LUT, DSP, BRAM) tuple as '(l, d, b)': utilization with one decimal below 10%, % reuse / % change as integers;
-    '-' for a missing cell or resource (a resource the denominator does not use)."""
+def fmt(v, pct=False, idx=(0, 1)):
+    """The resources `idx` of a (LUT, DSP, BRAM) tuple: one value bare, several as '(l, d)'; utilization with one decimal
+    below 10%, % reuse / % change as integers; '-' for a missing cell or resource (a resource the denominator does not use)."""
     if v is None:
         return "-"
-    return "(" + ", ".join(_num(x, pct) for x in v) + ")"
+    vals = [_num(v[k], pct) for k in idx]
+    return vals[0] if len(vals) == 1 else "(" + ", ".join(vals) + ")"
+
+
+LD, BRAM = (0, 1), (2,)
 
 
 def render_latex(rows):
@@ -219,24 +223,25 @@ def render_latex(rows):
     for r in rows:
         suite_counts[r["Test Suite"]] = suite_counts.get(r["Test Suite"], 0) + 1
 
+    # P1-P3 and both Totals: (LUT, DSP) and BRAM sub-columns; Shared, % Reuse and % Change: (LUT, DSP) only
     lines = []
     lines.append(r"\begin{table*}[!tbh]")
     lines.append(r"\centering")
     lines.append(r"\scriptsize")
-    lines.append(r"\setlength{\tabcolsep}{3pt}")
-    lines.append(r"\begin{tabular}{L{0.8cm}L{2.6cm}cccccccc}")
+    lines.append(r"\setlength{\tabcolsep}{2.5pt}")
+    lines.append(r"\begin{tabular}{L{0.8cm}L{2.6cm}" + "cc" * 4 + "ccccc}")
     lines.append(r"\toprule")
     lines.append("")
-    lines.append(r"    \multirow{2}{*}{\centering \textbf{Test Suite}} & ")
-    lines.append(r"    \multirow{2}{*}{\centering \textbf{Test Case}} & ")
-    lines.append(r"    \multicolumn{4}{c}{\textbf{Resource Utilization Before Modularization}} & ")
-    lines.append(r"    \multicolumn{3}{c}{\textbf{Resource Utilization After Modularization}} &")
-    lines.append(r"    \multirow{2}{1.8cm}{\centering\textbf{\% Change}} \\ ")
-    lines.append("")
-    lines.append(r"    \cmidrule{3-6} ")
-    lines.append(r"    \cmidrule{7-9}")
-    lines.append("")
-    lines.append(r"    & & P1 & P2 & P3 & \textbf{Total} & Shared & \textbf{\% Reuse} & \textbf{Total} & \\ ")
+    lines.append(r"    \multirow{3}{*}{\centering \textbf{Test Suite}} & ")
+    lines.append(r"    \multirow{3}{*}{\centering \textbf{Test Case}} & ")
+    lines.append(r"    \multicolumn{8}{c}{\textbf{Resource Utilization Before Modularization}} & ")
+    lines.append(r"    \multicolumn{4}{c}{\textbf{Resource Utilization After Modularization}} &")
+    lines.append(r"    \multirow{2}{*}{\textbf{\% Change}} \\ ")
+    lines.append(r"    \cmidrule(lr){3-10} \cmidrule(lr){11-14}")
+    lines.append(r"    & & \multicolumn{2}{c}{P1} & \multicolumn{2}{c}{P2} & \multicolumn{2}{c}{P3} & \multicolumn{2}{c}{\textbf{Total}} & "
+                 r"Shared & \textbf{\% Reuse} & \multicolumn{2}{c}{\textbf{Total}} & \\ ")
+    lines.append(r"    \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){13-14}")
+    lines.append(r"    & & " + " & ".join([r"(LUT, DSP) & BRAM"] * 4) + r" & (LUT, DSP) & (LUT, DSP) & (LUT, DSP) & BRAM & (LUT, DSP) \\ ")
     lines.append("")
     lines.append(r"    \midrule")
 
@@ -253,23 +258,18 @@ def render_latex(rows):
         else:
             suite_cell = "    & "
 
-        line = (
-            "    " + suite_cell + r["Test Case"] + " & " +
-            fmt(r["P1"]) + " & " +
-            fmt(r["P2"]) + " & " +
-            fmt(r["P3"]) + " & " +
-            fmt(r["Total_Before"]) + " & " +
-            fmt(r["Shared"]) + " & " +
-            r"\textbf{" + fmt(r["Pct_Reuse"], pct=True) + "} & " +
-            fmt(r["Total_After"]) + " & " +
-            r"\textbf{" + fmt(r["Pct_Change"], pct=True) + r"} \\"
-        )
-        lines.append(line)
+        cells = []
+        for col in ("P1", "P2", "P3", "Total_Before"):
+            cells += [fmt(r[col], idx=LD), fmt(r[col], idx=BRAM)]
+        cells += [fmt(r["Shared"], idx=LD), r"\textbf{" + fmt(r["Pct_Reuse"], pct=True, idx=LD) + "}",
+                  fmt(r["Total_After"], idx=LD), fmt(r["Total_After"], idx=BRAM),
+                  r"\textbf{" + fmt(r["Pct_Change"], pct=True, idx=LD) + "}"]
+        lines.append("    " + suite_cell + r["Test Case"] + " & " + " & ".join(cells) + r" \\")
         prev_suite = suite
 
     lines.append(r"    \bottomrule")
     lines.append(r"    \end{tabular}")
-    lines.append(r"    \caption{ Resource usage of hardware test cases as (LUT, DSP, BRAM) percentages of the ZCU102 (C-synthesis estimates, \texttt{ap\_fixed<32,10>}), annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. \% Reuse and \% Change are per resource; - marks a resource the design does not use. }")
+    lines.append(r"    \caption{ Resource usage of hardware test cases as percentages of the ZCU102 (C-synthesis estimates, \texttt{ap\_fixed<32,10>}): (LUT, DSP) and BRAM; \% Reuse and \% Change per resource over (LUT, DSP). Annotated according to the available reuse $\dagger$: tiling reuse, $\ddagger$: functional reuse, $\ast$: arithmetic reuse. }")
     lines.append(r"    \label{tab:modularization_results}")
     lines.append(r"\end{table*}")
     return "\n".join(lines)
