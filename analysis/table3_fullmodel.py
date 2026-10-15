@@ -1,7 +1,7 @@
 """Paper Table 3 (full-scale models): one row per synthesized project, C-synthesis resources and C-simulation error.
 
 Designs (round/saturate): ResNet-18/34/50/101/152 full at <32,10> and tiled at <16,5> with an 8 x 32 conv tile; Llama-3-8B prefill and
-decode at KV cache 2048 and 8192, <32,10>. Rows grouped as in the paper (Full / Tiles / Prefill / Decode); errors are the
+decode at KV cache 2048 and 8192, <32,10>. Rows grouped as in the paper (Full / Tiled / Prefill / Decode); errors are the
 maximum over seeds.
 
   Resources  LUT, DSP, BRAM_18K (count and % of the ZCU102) and latency (cycles) from csynth.xml:
@@ -37,7 +37,7 @@ MISMATCH = re.compile(r"mismatches=(\d+)")
 # row groups as in the paper: (variant label, format, projects)
 GROUPS = [
     ("Full", "<32,10>", [f"RESNET{d}_config_ap_fixed_32_10_" for d in (18, 34, 50, 101, 152)]),
-    ("Tiles", "<16,5>", [f"RESNET{d}_TILED_ci8_co32_config_ap_fixed_16_5_" for d in (18, 34, 50, 101, 152)]),
+    ("Tiled", "<16,5>", [f"RESNET{d}_TILED_ci8_co32_config_ap_fixed_16_5_" for d in (18, 34, 50, 101, 152)]),
     ("Prefill", "<32,10>", [f"LLAMA3_8B_PREFILL_ctx{c}_config_ap_fixed_32_10_" for c in (2048, 8192)]),
     ("Decode", "<32,10>", [f"LLAMA3_8B_DECODE_ctx{c}_config_ap_fixed_32_10_" for c in (2048, 8192)]),
 ]
