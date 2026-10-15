@@ -27,8 +27,9 @@ Metrics (LUT, DSP, cycles, power, Fmax, ...) are not repeated here: they are in
 (`python -m analysis.collect`).
 
 ### Which designs were implemented (`impl`)
-- conv (July run): all 576 no-unroll designs plus a random sample of the unrolled tiers (896 total). The original sampler was
-  not preserved; the implemented set is the canonical definition.
+- conv (R2): 1,000 = all 576 designs with no unrolling plus 53 chosen at random from each of the 8 unrolled
+  (unroll_cin, unroll_cout) combinations; seed 20261014 (`analysis/impl_sampler.py`, list in `conv_impl_selection.csv`). Replaces
+  the July set of 896, whose sampler was not preserved.
 - gemm (R2): 1,000 = all 384 designs with no unrolling plus 88 chosen at random from each of the 7 unrolled
   (unroll_M, unroll_K, unroll_N) combinations; seed 20261002 (`analysis/impl_sampler.py`, list in `gemm_impl_selection.csv`).
 - llm (R2): 1,000, 250 at random for each `hd_unroll` value; seed 20261001 (`llm_impl_selection.csv`).

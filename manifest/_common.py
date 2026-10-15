@@ -27,7 +27,8 @@ DEVICE = {"bram": 1824, "dsp": 2520, "lut": 274080, "ff": 548160}
 # `name` is the key used inside the archive: the R1 name for July archives, the current generator name for R2 ones
 # (resolved in design_table: key = legacy_stem if the design existed in R1 else config_stem).
 SOURCES = [
-    # first match wins per design name; conv names did not change since July, so the tanh re-run archives come first
+    # first match wins per design name; conv names did not change since July, so the R2 conv archives come first
+    dict(kind="impl", domain=None, local="checkpoints/r2/impl_conv_r3_lean.tar.gz"),           # conv impl, seeded 1,000 (2026-10-14)
     dict(kind="csynth", domain="conv", local="checkpoints/r2/csynth_conv_r2b_lean.tar.gz"),   # conv tanh re-run 2026-10-12 (1,728)
     dict(kind="impl", domain=None, local="checkpoints/r2/impl_conv_r2b_lean.tar.gz"),          # conv tanh re-run 2026-10-12 (256)
     dict(kind="csynth", domain="gemm", local="checkpoints/20260720/csynth_gemm_lean.tar.gz"),
@@ -39,8 +40,8 @@ SOURCES = [
     dict(kind="impl", domain=None, local="checkpoints/r2/impl_llm_r2b_lean.tar.gz"),      # LLM re-run 2026-10-12
     dict(kind="impl", domain=None, local="checkpoints/r2/impl_gemm_lean.tar.gz"),                  # R2 GEMM impl (when collected)
 ]
-# Domains whose July impl results are still valid (gemm was re-sampled and re-run in R2; llm was redone).
-JULY_IMPL_VALID = {"conv"}
+# Domains whose July impl results are still valid: none (gemm and conv were re-sampled and re-run in R2; llm was redone).
+JULY_IMPL_VALID = set()
 
 CSYNTH_TAIL = "project_1/solution1/syn/report/csynth.xml"
 IMPL_TAIL = "project_1/solution1/impl/report/verilog/export_impl.xml"

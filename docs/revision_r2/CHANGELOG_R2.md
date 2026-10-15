@@ -1,5 +1,20 @@
 # CHANGELOG_R2 — generator changes and the committed results they make stale
 
+## 2026-10-15 — Conv impl re-sampled (seeded 1,000) and re-run; full-model ResNet re-synthesis finished
+* **Conv impl selection** (`analysis/impl_sampler.py conv --seed 20261014`, `manifest/conv_impl_selection.csv`): all 576 designs
+  with no unrolling + 53 at random from each of the 8 unrolled (unroll_cin, unroll_cout) groups = 1,000, as gemm. Replaces the
+  July 896 (sampler not preserved). All 1,000 run fresh (`analysis/run_conv_impl_r3.sh` -> `_sweeps/lean/conv_impl_r3`, 32 jobs,
+  4 h timeout, 248 min): 998 ok + 2 Vivado 2024.1 segfaults in impl, both ok on retry (first-pass status kept in
+  `manifest/evidence/r2_runs/conv_impl_r3_status_first_pass.csv`). All 1,000 meet timing.
+  The 607 designs also in the July set reproduce their July/r2b metrics (DSP/BRAM/cycles/power identical; one design's LUT
+  +0.04% and Fmax +5.5%).
+* `analysis/results_impl/metrics_conv.csv`: replaced by the 1,000 (was 896). Archive `checkpoints/r2/impl_conv_r3_lean.tar.gz`
+  first in `manifest/_common.py` SOURCES (all 1,000 resolve to it); `JULY_IMPL_VALID` now empty. Manifest conv impl: YES 1,000
+  (289 July-only designs now NO). Table 5 / Fig 8: DNN (1,000); impl total GEMM 999 + DNN 1,000 + LLM 962 = 2,961.
+* **Full-model csynth** (`_sweeps/lean/fullmodel_csynth_r2_sched`): all 10 ResNet `<32,10>` new-schedule designs ok (ResNet-152
+  plain 28.9 h, -101 15.5 h, -50 6.7 h; the others 18 min-3.4 h); with the 4 Llama designs (`_sweeps/lean/fullmodel_csynth_r2`)
+  14/14. New-schedule sources still only in `_sweeps/fullmodel_r2_sched/` (not yet copied into `scale_models/hls_files`).
+
 ## 2026-10-14 — Table 7 stays at <32,10> (user decision), reported as (LUT, DSP, BRAM) tuples; three merged LLM designs fixed
 * **Format**: Table 7 is `<32,10>` TRN/WRAP for every case, the format in which all 26 programs and all 32 merged-design x program checks
   pass (every row N/N within bound). `<16,5>` (`results_paper/A_16_5__table7r2_{pm1,merged}`, `_sweeps/lean/modular_csynth_16_5_r2`)
