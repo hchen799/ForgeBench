@@ -66,7 +66,7 @@ Percent of ZCU102 (LUT 274,080; DSP 2,520; BRAM18K 1,824).
 | | ResNet-34 | 459K (168%) | 1,187 (47%) | 926 (51%) | 173M | 1.4e-2 | 8.4e-3 |
 | | ResNet-50 | 725K (265%) | 1,461 (58%) | 977 (54%) | 249M | 2.1e-2 | 1.4e-2 |
 | | ResNet-101 | 844K (308%) | 1,461 (58%) | 1,113 (61%) | 361M | 6.2e-2 | 2.2e-2 |
-| | ResNet-152 | **pending** (synthesis finishing) | | | | 1.3e-1 | 2.4e-2 |
+| | ResNet-152 | 965K (352%) | 1,461 (58%) | 1,249 (68%) | 483M | 1.3e-1 | 2.4e-2 |
 | Prefill `<32,10>` | Llama-3.1-8B (2048) | 286K (104%) | 302 (12%) | 375 (21%) | n/a* | 4.7e-6 | 9.0e-7 |
 | | Llama-3.1-8B (8192) | 286K (104%) | 302 (12%) | 375 (21%) | n/a* | 4.7e-6 | 9.0e-7 |
 | Decode `<32,10>` | Llama-3.1-8B (2048) | 152K (56%) | 296 (12%) | 250 (14%) | n/a* | 4.9e-6 | 1.0e-6 |
@@ -77,10 +77,10 @@ Percent of ZCU102 (LUT 274,080; DSP 2,520; BRAM18K 1,824).
 **Observations the text can use:**
 - **Tiling cuts resources by an order of magnitude:**
   - ResNet-18: LUT 4.5×, DSP 27×, BRAM 53×.
-  - ResNet-152: BRAM ~190×, with the remaining value pending.
+  - ResNet-152: LUT 6.1×, DSP 35×, BRAM 170×, latency 9.2×.
   - It also cuts latency 4.5× for ResNet-18, from fewer and narrower operations per cycle.
 - **What fits on the ZCU102:**
-  - Tiled ResNets: DSP and BRAM fit (47–61%), LUT does not (1.6–3.1×).
+  - Tiled ResNets: DSP and BRAM fit (47–68%), LUT does not (1.6–3.5×).
   - Full ResNets: exceed the device on every resource, by 7–116×. Holding every layer's weights on chip cannot fit: ResNet-18's
     11.7M parameters alone exceed the BRAM capacity at any bit width ≥ 8.
   - Llama: decode fits; prefill is 4% over on LUT.
@@ -113,7 +113,7 @@ Percent of ZCU102 (LUT 274,080; DSP 2,520; BRAM18K 1,824).
 7. **The disclaimer paragraph** (designs over ZCU102 limits are benchmark points, not deployed designs): keep it. It is now more
    precise:
    - every full ResNet exceeds the device;
-   - the tiled ResNets exceed only LUT;
+   - the tiled ResNets exceed only LUT (155–352%);
    - Llama decode fits.
 8. **Old R1 numbers** (Hanqiu's single-seed `<16,5>` results and the `verif_fullmodel.tex` table) are superseded by Table 3. Do not
    cite them.
@@ -141,6 +141,4 @@ Percent of ZCU102 (LUT 274,080; DSP 2,520; BRAM18K 1,824).
 
 ## 7. Pending
 
-- **ResNet-152 tiled synthesis** finishes tonight, 2026-10-15. Its LUT, DSP, BRAM and latency then appear in
-  `analysis/tables_out/table3_fullmodel.tex` (rerun `python3 -m analysis.table3_fullmodel`). Its error values are final.
-- **The tiled-LUT range** in the text (155–308%) may widen when ResNet-152 lands.
+Nothing. All 14 designs are synthesized and verified (ResNet-152 tiled finished 2026-10-15 19:17).
