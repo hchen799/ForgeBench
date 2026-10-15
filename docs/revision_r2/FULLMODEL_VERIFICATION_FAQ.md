@@ -33,7 +33,7 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
 4. **Table 3 has 14 rows, all claimed as verified:**
    - ResNet-18/34/50/101/152 **full** at `<32,10>` RND/SAT (`scale_models/hls_files/RESNET*_config_ap_fixed_32_10_`, new conv
      schedule);
-   - ResNet-18/34/50/101/152 **tiled** at `<16,5>` RND/SAT with an 8×32 conv tile (`_sweeps/fullmodel_r3/hls_files/RESNET*_TILED_ci8_co32_config_ap_fixed_16_5_`,
+   - ResNet-18/34/50/101/152 **tiled** at `<16,5>` **truncate/wrap** with an 8×32 conv tile (`_sweeps/fullmodel_r4_trn/hls_files/RESNET*_TILED_ci8_co32_config_ap_fixed_16_5_`,
      **not yet in `scale_models/`**; see 6 and 17);
    - Llama-3-8B {prefill, decode} × {ctx2048, ctx8192} at `<32,10>` RND/SAT.
 
@@ -52,7 +52,8 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
    |---|---|---|
    | `fullmodel_r2_sched/` | new-schedule `<32,10>` ResNets, 10 × 10 seeds, all PASS (identical to the tracked runs) | 26 GB |
    | `fullmodel_ctx8192_r2/` | Llama ctx8192 × 3 seeds, PASS | 31 GB |
-   | `fullmodel_r3_16_5/` | tiled `<16,5>` 8×32 ResNets, 5 × 10 seeds | 9.1 GB |
+   | `fullmodel_r4_16_5_trn/` | tiled `<16,5>` truncate/wrap 8×32 ResNets, 5 × 10 seeds, all PASS (**the paper's**) | |
+   | `fullmodel_r3_16_5/` | the same at round/saturate (superseded: FP64 failures, see 6) | 9.1 GB |
    | `fullmodel_check_r1src_16_5/` | seed-42 isolation runs for 6 and 17 | |
 
    These need their compact parts (`summary.txt`, `summary.json`, `manifest.json`, `inputs_manifest`) copied into
@@ -72,7 +73,8 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
    | 8×32 schedule, truncate/wrap | 2.046% PASS (identical) |
    | 8×32 schedule, round/saturate (Table 3 row) | 71% FAIL |
 
-   **Decision for the user:** report the tiled ResNets at `<16,5>` truncate/wrap, or keep round/saturate and explain it.
+   **User decision (2026-10-15): truncate/wrap.** Re-run `_sweeps/fullmodel_r4_trn` → `results_paper/fullmodel_r4_16_5_trn`: 50/50 PASS,
+   0 mismatching codes, relative L2 0.44–2.42%. The round/saturate runs (`fullmodel_r3_16_5`) are superseded.
 7. **The 24 variants** (`existing_model_verification/results/validation_summary.json`, README "all 24") are 12 models × 2 formats:
    10 ResNets, plus Llama ctx2048 and ctx8192 (each a prefill+decode pair), at `<16,5>` and `<32,10>`. They are Hanqiu's single
    seed (42), on his earlier sources: truncate/wrap `<16,5>`, and the `<32,10>` revision before R2's round/saturate one. They are
@@ -170,10 +172,9 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
     a single seed on his earlier sources (the 24 variants in 7). It is **not consistent** with Table 3, which computes its own
     error columns from the R2 runs. Drop it, or rebuild it from the R2 run summaries; I don't know whether the current paper draft
     still includes it.
-17. **Running:** only the ResNet-152 tiled `<16,5>` csynth (`_sweeps/lean/fullmodel_csynth_r3_16_5`). It finishes today; Table 3
-    regenerates when it does.
+17. **Running:** csynth of the 5 tiled `<16,5>` truncate/wrap ResNets (`_sweeps/lean/fullmodel_csynth_r4_16_5_trn`); Table 3
+    regenerates when it finishes.
 
-    **Pending a user decision:** 6 (tiled `<16,5>` truncate/wrap vs round/saturate). Switching would need a re-run of the 5 tiled
-    projects: about 15 min to verify, and about 2–4 h of synthesis in parallel.
+    Decided: 6 (truncate/wrap), verified.
 
     No other full-model verification is planned before the freeze.
