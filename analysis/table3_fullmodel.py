@@ -1,14 +1,15 @@
 """Paper Table 3 (full-scale models): one row per synthesized project, C-synthesis resources and C-simulation error.
 
-Designs: the 14 <32,10> round/saturate projects in scale_models/hls_files (ResNet-18/34/50/101/152 full and tiled; Llama-3-8B
-prefill and decode at KV cache 2048 and 8192).
+Designs (round/saturate): ResNet-18/34/50/101/152 full at <32,10> and tiled at <16,5> with an 8 x 32 conv tile; Llama-3-8B prefill and
+decode at KV cache 2048 and 8192, <32,10>. Rows grouped as in the paper (Full / Tiles / Prefill / Decode); errors are the
+maximum over seeds.
 
   Resources  LUT, DSP, BRAM_18K (count and % of the ZCU102) and latency (cycles) from csynth.xml:
              ResNets _sweeps/lean/fullmodel_csynth_r2_sched (new conv schedule), Llama _sweeps/lean/fullmodel_csynth_r2.
   C-sim      Vitis C simulation of the same sources (verify.py via verification/paper_runs/run_fullmodel.sh) against
              (a) the integer-code fixed-point reference: mismatching codes, summed over all seeds and observed tensors, and
              (b) the FP64 PyTorch model: final-logit max abs error and relative L2, min-max over seeds.
-             ResNets: 10 seeds (results_paper/fullmodel_r2_sched). Llama: 3 seeds of 4 prefill + 2 decode tokens with the prefill and
+             ResNets: 10 seeds (full: results_paper/fullmodel_r2_sched; tiled: results_paper/fullmodel_r3_16_5). Llama: 3 seeds of 4 prefill + 2 decode tokens with the prefill and
              decode projects run together (paper_results/fullmodel ctx2048, results_paper/fullmodel_ctx8192_r2); the prefill row
              reports the prefill call, the decode row the two decode calls.
 
@@ -23,20 +24,34 @@ import xml.etree.ElementTree as ET
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(REPO, "analysis", "tables_out")
 LEAN = {"resnet": os.path.join(REPO, "_sweeps", "lean", "fullmodel_csynth_r2_sched", "scale"),
+        "tiled": os.path.join(REPO, "_sweeps", "lean", "fullmodel_csynth_r3_16_5", "scale"),
         "llama": os.path.join(REPO, "_sweeps", "lean", "fullmodel_csynth_r2", "scale")}
 VERIF = {"resnet": os.path.join(REPO, "verification", "results_paper", "fullmodel_r2_sched"),
+         "tiled": os.path.join(REPO, "verification", "results_paper", "fullmodel_r3_16_5"),
          2048: os.path.join(REPO, "verification", "paper_results", "fullmodel"),
          8192: os.path.join(REPO, "verification", "results_paper", "fullmodel_ctx8192_r2")}
 REPORT = "project_1/solution1/syn/report/csynth.xml"
 LOGIT = re.compile(r"^\s*(\S+)/logits: .*mismatches=(\d+) .*max_abs=([0-9.e+-]+) relative_l2=([0-9.e+-]+)")
 MISMATCH = re.compile(r"mismatches=(\d+)")
 
-RESNETS = [f"RESNET{d}{t}_config_ap_fixed_32_10_" for d in (18, 34, 50, 101, 152) for t in ("", "_TILED")]
-LLAMAS = [f"LLAMA3_8B_{p}_ctx{c}_config_ap_fixed_32_10_" for c in (2048, 8192) for p in ("PREFILL", "DECODE")]
+# row groups as in the paper: (variant label, format, projects)
+GROUPS = [
+    ("Full", "<32,10>", [f"RESNET{d}_config_ap_fixed_32_10_" for d in (18, 34, 50, 101, 152)]),
+    ("Tiles", "<16,5>", [f"RESNET{d}_TILED_ci8_co32_config_ap_fixed_16_5_" for d in (18, 34, 50, 101, 152)]),
+    ("Prefill", "<32,10>", [f"LLAMA3_8B_PREFILL_ctx{c}_config_ap_fixed_32_10_" for c in (2048, 8192)]),
+    ("Decode", "<32,10>", [f"LLAMA3_8B_DECODE_ctx{c}_config_ap_fixed_32_10_" for c in (2048, 8192)]),
+]
+
+
+def family(project):
+    return "llama" if project.startswith("LLAMA") else "tiled" if "_TILED" in project else "resnet"
 
 
 def resources(project, family):
-    a = ET.parse(os.path.join(LEAN[family], project, REPORT)).getroot()
+    path = os.path.join(LEAN[family], project, REPORT)
+    if not os.path.isfile(path):
+        return None
+    a = ET.parse(path).getroot()
     area = a.find("AreaEstimates")
     row = {}
     for name, tag in (("lut", "LUT"), ("dsp", "DSP"), ("bram", "BRAM_18K")):
@@ -59,7 +74,7 @@ def summaries(run_dir_glob):
 def csim(project):
     """(seeds, all PASS, mismatching codes, [(max_abs, rel_l2) per seed]) for one project."""
     if project.startswith("RESNET"):
-        texts = summaries(os.path.join(VERIF["resnet"], f"{project}seed*"))
+        texts = summaries(os.path.join(VERIF[family(project)], f"{project}seed*"))
         calls = None
     else:
         ctx = int(re.search(r"ctx(\d+)", project).group(1))
@@ -74,71 +89,81 @@ def csim(project):
     return len(texts), ok, mism, errs
 
 
-def label(project):
-    m = re.match(r"RESNET(\d+)(_TILED)?_", project)
-    if m:
-        return f"ResNet-{m[1]}", "tiled" if m[2] else "full"
-    m = re.match(r"LLAMA3_8B_(PREFILL|DECODE)_ctx(\d+)_", project)
-    return f"Llama-3-8B ({m[2]})", m[1].lower()
+def model(project):
+    m = re.match(r"RESNET(\d+)", project)
+    return f"ResNet-{m[1]}" if m else "Llama-3-8B (" + re.search(r"ctx(\d+)", project)[1] + ")"
 
 
 def sci(x):
     mant, e = f"{x:.1e}".split("e")
-    return rf"{mant}\!\times\!10^{{{int(e)}}}"
+    return rf"${mant}\!\times\!10^{{{int(e)}}}$"
 
 
-def rng(vals, f):
-    lo, hi = min(vals), max(vals)
-    return f"${f(lo)}$" if f(lo) == f(hi) else f"${f(lo)}$--${f(hi)}$"
+def scaled(x, div):
+    """Count in units of div: >= 10 as an integer with thousands separators, 1-10 with one decimal, below 1 with two."""
+    if x is None:
+        return "--"
+    v = x / div
+    return f"{v:,.0f}" if v >= 10 else f"{v:.1f}" if v >= 1 else f"{v:.2f}"
 
 
 def main():
     os.makedirs(OUT, exist_ok=True)
     rows = []
-    for p in RESNETS + LLAMAS:
-        fam = "resnet" if p.startswith("RESNET") else "llama"
-        r = {"project": p, **resources(p, fam)}
-        r["model"], r["variant"] = label(p)
-        n, ok, mism, errs = csim(p)
-        r.update(seeds=n, csim_pass=ok, mismatching_codes=mism,
-                 max_abs_min=min(e[0] for e in errs), max_abs_max=max(e[0] for e in errs),
-                 rel_l2_min=min(e[1] for e in errs), rel_l2_max=max(e[1] for e in errs), errs=errs)
-        rows.append(r)
+    for variant, fmt, projects in GROUPS:
+        for p in projects:
+            r = {"project": p, "model": model(p), "variant": variant, "format": fmt}
+            res = resources(p, family(p))
+            r.update(res or {})
+            n, ok, mism, errs = csim(p) if summaries(os.path.join(VERIF.get(family(p), ""), "*")) or p.startswith("LLAMA") else (0, None, None, [])
+            r.update(seeds=n, csim_pass_all=ok, mismatching_codes=mism, errs=errs,
+                     seeds_fp64_pass=None,
+                     max_abs=max((e[0] for e in errs), default=None), rel_l2=max((e[1] for e in errs), default=None))
+            rows.append(r)
 
-    cols = ["model", "variant", "project", "lut", "lut_pct", "dsp", "dsp_pct", "bram", "bram_pct", "cycles", "seeds", "csim_pass",
-            "mismatching_codes", "max_abs_min", "max_abs_max", "rel_l2_min", "rel_l2_max"]
+    cols = ["model", "variant", "format", "project", "lut", "lut_pct", "dsp", "dsp_pct", "bram", "bram_pct", "cycles", "seeds",
+            "csim_pass_all", "mismatching_codes", "max_abs", "rel_l2"]
     with open(os.path.join(OUT, "table3_fullmodel.csv"), "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore", lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
 
-    pct = lambda n, p: f"{n:,} ({p:.0f}\\%)"
     lines = [
-        "% generated by analysis/table3_fullmodel.py",
-        r"\begin{tabular}{llrrrrccc}",
+        "% generated by analysis/table3_fullmodel.py; errors are the maximum over seeds (final logits vs FP64)",
+        r"\begin{tabular}{ll ccc c cc}",
         r"\toprule",
-        r"\textbf{Model} & \textbf{Variant} & \textbf{LUT} & \textbf{DSP} & \textbf{BRAM} & \textbf{Latency (cycles)} & "
-        r"\textbf{Mism. codes} & \textbf{Max abs. err.} & \textbf{Rel. $L_2$} \\",
+        r"\multirow{2}{*}{\textbf{Model}} & \multirow{2}{*}{\textbf{Variant}} & ",
+        r"\multirow{2}{*}{\textbf{LUT $\times 10^3$}} & \multirow{2}{*}{\textbf{DSP $\times 10^3$}} & \multirow{2}{*}{\textbf{BRAM $\times 10^3$}} & ",
+        r"\textbf{Latency} &",
+        r"\multirow{2}{*}{\textbf{Max abs. err.}} & ",
+        r"\multirow{2}{*}{\textbf{Rel. $L_2$}} \\",
+        r"&  & ",
+        r"&  &  &",
+        r"\textbf{(cycles $\times 10^6$)} & ",
+        r"&  \\ ",
         r"\midrule",
     ]
-    prev = None
-    for r in rows:
-        if prev and prev.split(" ")[0] != r["model"].split(" ")[0]:
+    for gi, (variant, fmt, projects) in enumerate(GROUPS):
+        if gi:
             lines.append(r"\midrule")
-        model = r["model"] if r["model"] != prev else ""
-        prev = r["model"]
-        cyc = f"{r['cycles']:,}" if r["cycles"] is not None else "--"
-        lines.append(" & ".join([model, r["variant"], pct(r["lut"], r["lut_pct"]), pct(r["dsp"], r["dsp_pct"]),
-                                 pct(r["bram"], r["bram_pct"]), cyc, f"{r['mismatching_codes']:,}",
-                                 rng([e[0] for e in r["errs"]], sci), rng([e[1] for e in r["errs"]], sci)]) + r" \\")
+        group = [r for r in rows if r["variant"] == variant]
+        for i, r in enumerate(group):
+            var_cell = (r"\multirow{" + str(len(group)) + r"}{*}{\begin{tabular}[c]{@{}c@{}}" + variant + r"\\\texttt{" + fmt + r"}\end{tabular}}"
+                        if i == 0 else "")
+            cyc = scaled(r.get("cycles"), 1e6)
+            lines.append(" & ".join([r["model"], var_cell, scaled(r.get("lut"), 1e3), scaled(r.get("dsp"), 1e3),
+                                     scaled(r.get("bram"), 1e3), cyc,
+                                     sci(r["max_abs"]) if r["max_abs"] is not None else "--",
+                                     sci(r["rel_l2"]) if r["rel_l2"] is not None else "--"]) + r" \\")
+            lines.append("")
     lines += [r"\bottomrule", r"\end{tabular}"]
     with open(os.path.join(OUT, "table3_fullmodel.tex"), "w") as f:
         f.write("\n".join(lines) + "\n")
     print(f"wrote {OUT}/table3_fullmodel.{{csv,tex}} ({len(rows)} rows)")
     for r in rows:
-        print(f"  {r['model']:20s} {r['variant']:8s} LUT {r['lut']:>9,} ({r['lut_pct']:5.0f}%)  DSP {r['dsp']:>6,} ({r['dsp_pct']:4.0f}%)  "
-              f"BRAM {r['bram']:>7,} ({r['bram_pct']:6.0f}%)  cyc {r['cycles']}  seeds {r['seeds']} pass {r['csim_pass']} "
-              f"mism {r['mismatching_codes']}  maxabs {r['max_abs_min']:.1e}-{r['max_abs_max']:.1e}  relL2 {r['rel_l2_min']:.1e}-{r['rel_l2_max']:.1e}")
+        print(f"  {r['variant']:8s} {r['model']:18s} LUT {scaled(r.get('lut'),1e3):>7}K DSP {scaled(r.get('dsp'),1e3):>6}K "
+              f"BRAM {scaled(r.get('bram'),1e3):>6}K cyc {scaled(r.get('cycles'),1e6):>6}M seeds {r['seeds']} all-pass {r['csim_pass_all']} "
+              f"mism {r['mismatching_codes']} maxabs {r['max_abs']} relL2 {r['rel_l2']}")
 
 
 if __name__ == "__main__":
