@@ -412,11 +412,23 @@ void conv_tile_32_33_33_128_32_7_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT__
         for (int ow = 0; ow < valid_w; ++ow) {
             for (int kh = 0; kh < 7; ++kh) {
                 for (int kw = 0; kw < 7; ++kw) {
-                    for (int ci = 0; ci < valid_ic; ++ci) {
-                        #pragma HLS unroll factor=8
-                        for (int co = 0; co < valid_oc; ++co) {
-                            #pragma HLS unroll factor=64
-                            output[co][oh][ow] += input[ci][oh * 2 + kh][ow * 2 + kw] * weight[co][ci][kh][kw];
+                    for (int cb = 0; cb * 8 < valid_ic; ++cb) {
+                        #pragma HLS loop_tripcount max=4
+                        for (int ob = 0; ob * 64 < valid_oc; ++ob) {
+                            #pragma HLS loop_tripcount max=2
+                            #pragma HLS pipeline II=1
+                            for (int v = 0; v < 64; ++v) {
+                                #pragma HLS unroll
+                                int co = ob * 64 + v;
+                                acc_t part = 0;   // the block's ci lanes summed first: one read-modify-write of output per cycle
+                                for (int u = 0; u < 8; ++u) {
+                                    #pragma HLS unroll
+                                    int ci = cb * 8 + u;
+                                    if (ci < valid_ic)
+                                        part += input[ci][oh * 2 + kh][ow * 2 + kw] * weight[co][ci][kh][kw];
+                                }
+                                if (co < valid_oc) output[co][oh][ow] += part;
+                            }
                         }
                     }
                 }
@@ -640,11 +652,23 @@ void conv_tile_32_14_14_128_32_1_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT__
         for (int ow = 0; ow < valid_w; ++ow) {
             for (int kh = 0; kh < 1; ++kh) {
                 for (int kw = 0; kw < 1; ++kw) {
-                    for (int ci = 0; ci < valid_ic; ++ci) {
-                        #pragma HLS unroll factor=8
-                        for (int co = 0; co < valid_oc; ++co) {
-                            #pragma HLS unroll factor=64
-                            output[co][oh][ow] += input[ci][oh * 1 + kh][ow * 1 + kw] * weight[co][ci][kh][kw];
+                    for (int cb = 0; cb * 8 < valid_ic; ++cb) {
+                        #pragma HLS loop_tripcount max=4
+                        for (int ob = 0; ob * 64 < valid_oc; ++ob) {
+                            #pragma HLS loop_tripcount max=2
+                            #pragma HLS pipeline II=1
+                            for (int v = 0; v < 64; ++v) {
+                                #pragma HLS unroll
+                                int co = ob * 64 + v;
+                                acc_t part = 0;   // the block's ci lanes summed first: one read-modify-write of output per cycle
+                                for (int u = 0; u < 8; ++u) {
+                                    #pragma HLS unroll
+                                    int ci = cb * 8 + u;
+                                    if (ci < valid_ic)
+                                        part += input[ci][oh * 1 + kh][ow * 1 + kw] * weight[co][ci][kh][kw];
+                                }
+                                if (co < valid_oc) output[co][oh][ow] += part;
+                            }
                         }
                     }
                 }
@@ -719,11 +743,23 @@ void conv_tile_32_16_16_128_32_3_128_14_14_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT__
         for (int ow = 0; ow < valid_w; ++ow) {
             for (int kh = 0; kh < 3; ++kh) {
                 for (int kw = 0; kw < 3; ++kw) {
-                    for (int ci = 0; ci < valid_ic; ++ci) {
-                        #pragma HLS unroll factor=8
-                        for (int co = 0; co < valid_oc; ++co) {
-                            #pragma HLS unroll factor=64
-                            output[co][oh][ow] += input[ci][oh * 1 + kh][ow * 1 + kw] * weight[co][ci][kh][kw];
+                    for (int cb = 0; cb * 8 < valid_ic; ++cb) {
+                        #pragma HLS loop_tripcount max=4
+                        for (int ob = 0; ob * 64 < valid_oc; ++ob) {
+                            #pragma HLS loop_tripcount max=2
+                            #pragma HLS pipeline II=1
+                            for (int v = 0; v < 64; ++v) {
+                                #pragma HLS unroll
+                                int co = ob * 64 + v;
+                                acc_t part = 0;   // the block's ci lanes summed first: one read-modify-write of output per cycle
+                                for (int u = 0; u < 8; ++u) {
+                                    #pragma HLS unroll
+                                    int ci = cb * 8 + u;
+                                    if (ci < valid_ic)
+                                        part += input[ci][oh * 1 + kh][ow * 1 + kw] * weight[co][ci][kh][kw];
+                                }
+                                if (co < valid_oc) output[co][oh][ow] += part;
+                            }
                         }
                     }
                 }
@@ -1036,11 +1072,23 @@ void conv_tile_32_29_29_128_32_3_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT__
         for (int ow = 0; ow < valid_w; ++ow) {
             for (int kh = 0; kh < 3; ++kh) {
                 for (int kw = 0; kw < 3; ++kw) {
-                    for (int ci = 0; ci < valid_ic; ++ci) {
-                        #pragma HLS unroll factor=8
-                        for (int co = 0; co < valid_oc; ++co) {
-                            #pragma HLS unroll factor=64
-                            output[co][oh][ow] += input[ci][oh * 2 + kh][ow * 2 + kw] * weight[co][ci][kh][kw];
+                    for (int cb = 0; cb * 8 < valid_ic; ++cb) {
+                        #pragma HLS loop_tripcount max=4
+                        for (int ob = 0; ob * 64 < valid_oc; ++ob) {
+                            #pragma HLS loop_tripcount max=2
+                            #pragma HLS pipeline II=1
+                            for (int v = 0; v < 64; ++v) {
+                                #pragma HLS unroll
+                                int co = ob * 64 + v;
+                                acc_t part = 0;   // the block's ci lanes summed first: one read-modify-write of output per cycle
+                                for (int u = 0; u < 8; ++u) {
+                                    #pragma HLS unroll
+                                    int ci = cb * 8 + u;
+                                    if (ci < valid_ic)
+                                        part += input[ci][oh * 2 + kh][ow * 2 + kw] * weight[co][ci][kh][kw];
+                                }
+                                if (co < valid_oc) output[co][oh][ow] += part;
+                            }
                         }
                     }
                 }
@@ -1221,11 +1269,23 @@ void conv_tile_32_27_27_128_32_1_128_14_14_2_8_64_ap_fixed_32_10_AP_RND_AP_SAT__
         for (int ow = 0; ow < valid_w; ++ow) {
             for (int kh = 0; kh < 1; ++kh) {
                 for (int kw = 0; kw < 1; ++kw) {
-                    for (int ci = 0; ci < valid_ic; ++ci) {
-                        #pragma HLS unroll factor=8
-                        for (int co = 0; co < valid_oc; ++co) {
-                            #pragma HLS unroll factor=64
-                            output[co][oh][ow] += input[ci][oh * 2 + kh][ow * 2 + kw] * weight[co][ci][kh][kw];
+                    for (int cb = 0; cb * 8 < valid_ic; ++cb) {
+                        #pragma HLS loop_tripcount max=4
+                        for (int ob = 0; ob * 64 < valid_oc; ++ob) {
+                            #pragma HLS loop_tripcount max=2
+                            #pragma HLS pipeline II=1
+                            for (int v = 0; v < 64; ++v) {
+                                #pragma HLS unroll
+                                int co = ob * 64 + v;
+                                acc_t part = 0;   // the block's ci lanes summed first: one read-modify-write of output per cycle
+                                for (int u = 0; u < 8; ++u) {
+                                    #pragma HLS unroll
+                                    int ci = cb * 8 + u;
+                                    if (ci < valid_ic)
+                                        part += input[ci][oh * 2 + kh][ow * 2 + kw] * weight[co][ci][kh][kw];
+                                }
+                                if (co < valid_oc) output[co][oh][ow] += part;
+                            }
                         }
                     }
                 }
@@ -2235,11 +2295,23 @@ void conv_tile_32_1_1_128_32_1_128_1_1_1_8_64_ap_fixed_32_10_AP_RND_AP_SAT___dat
         for (int ow = 0; ow < valid_w; ++ow) {
             for (int kh = 0; kh < 1; ++kh) {
                 for (int kw = 0; kw < 1; ++kw) {
-                    for (int ci = 0; ci < valid_ic; ++ci) {
-                        #pragma HLS unroll factor=8
-                        for (int co = 0; co < valid_oc; ++co) {
-                            #pragma HLS unroll factor=64
-                            output[co][oh][ow] += input[ci][oh * 1 + kh][ow * 1 + kw] * weight[co][ci][kh][kw];
+                    for (int cb = 0; cb * 8 < valid_ic; ++cb) {
+                        #pragma HLS loop_tripcount max=4
+                        for (int ob = 0; ob * 64 < valid_oc; ++ob) {
+                            #pragma HLS loop_tripcount max=2
+                            #pragma HLS pipeline II=1
+                            for (int v = 0; v < 64; ++v) {
+                                #pragma HLS unroll
+                                int co = ob * 64 + v;
+                                acc_t part = 0;   // the block's ci lanes summed first: one read-modify-write of output per cycle
+                                for (int u = 0; u < 8; ++u) {
+                                    #pragma HLS unroll
+                                    int ci = cb * 8 + u;
+                                    if (ci < valid_ic)
+                                        part += input[ci][oh * 1 + kh][ow * 1 + kw] * weight[co][ci][kh][kw];
+                                }
+                                if (co < valid_oc) output[co][oh][ow] += part;
+                            }
                         }
                     }
                 }

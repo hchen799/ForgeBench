@@ -774,7 +774,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "stem_conv_ci_loop_end": {
       "func_name": "loop_end",
@@ -1111,7 +1112,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b0_conv1_ci_loop_end": {
       "func_name": "loop_end",
@@ -1334,7 +1336,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b0_conv2_ci_loop_end": {
       "func_name": "loop_end",
@@ -1681,7 +1684,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b1_conv1_ci_loop_end": {
       "func_name": "loop_end",
@@ -1904,7 +1908,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b1_conv2_ci_loop_end": {
       "func_name": "loop_end",
@@ -2251,7 +2256,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b0_conv1_ci_loop_end": {
       "func_name": "loop_end",
@@ -2474,7 +2480,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b0_conv2_ci_loop_end": {
       "func_name": "loop_end",
@@ -2678,7 +2685,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b0_down_ci_loop_end": {
       "func_name": "loop_end",
@@ -2997,7 +3005,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b1_conv1_ci_loop_end": {
       "func_name": "loop_end",
@@ -3220,7 +3229,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b1_conv2_ci_loop_end": {
       "func_name": "loop_end",
@@ -3567,7 +3577,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b0_conv1_ci_loop_end": {
       "func_name": "loop_end",
@@ -3790,7 +3801,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b0_conv2_ci_loop_end": {
       "func_name": "loop_end",
@@ -3994,7 +4006,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b0_down_ci_loop_end": {
       "func_name": "loop_end",
@@ -4313,7 +4326,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b1_conv1_ci_loop_end": {
       "func_name": "loop_end",
@@ -4536,7 +4550,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b1_conv2_ci_loop_end": {
       "func_name": "loop_end",
@@ -4883,7 +4898,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b0_conv1_ci_loop_end": {
       "func_name": "loop_end",
@@ -5106,7 +5122,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b0_conv2_ci_loop_end": {
       "func_name": "loop_end",
@@ -5310,7 +5327,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b0_down_ci_loop_end": {
       "func_name": "loop_end",
@@ -5629,7 +5647,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b1_conv1_ci_loop_end": {
       "func_name": "loop_end",
@@ -5852,7 +5871,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b1_conv2_ci_loop_end": {
       "func_name": "loop_end",
@@ -6327,7 +6347,8 @@
         "valid_ci",
         "valid_oh",
         "valid_ow"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "fc_ci_loop_end": {
       "func_name": "loop_end",
@@ -6394,7 +6415,7 @@
     "csynth"
   ],
   "data_type": "ap_fixed<32, 10, AP_RND, AP_SAT>",
-  "production_revision": 2,
   "top_func_name": "top",
+  "production_revision": 2,
   "data_type_spec": "fixed<32,10,rnd,sat>"
 }

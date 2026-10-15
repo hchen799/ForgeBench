@@ -3385,7 +3385,8 @@
         "BRAM_feat_input",
         "BRAM_w_stem",
         "BRAM_feat_stem"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "stem_bn": {
       "func_name": "batchnorm",
@@ -3472,7 +3473,8 @@
         "BRAM_feat_pool",
         "BRAM_w_s1_b0_1",
         "BRAM_feat_s1_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b0_bn1": {
       "func_name": "batchnorm",
@@ -3536,7 +3538,8 @@
         "BRAM_feat_s1_tmp1",
         "BRAM_w_s1_b0_2",
         "BRAM_feat_s1_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b0_bn2": {
       "func_name": "batchnorm",
@@ -3600,7 +3603,8 @@
         "BRAM_feat_s1_tmp2",
         "BRAM_w_s1_b0_3",
         "BRAM_feat_s1_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b0_bn3": {
       "func_name": "batchnorm",
@@ -3648,7 +3652,8 @@
         "BRAM_feat_pool",
         "BRAM_w_s1_b0_down",
         "BRAM_feat_s1_skip"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b0_residual_add": {
       "func_name": "matrix_add_conv",
@@ -3711,7 +3716,8 @@
         "BRAM_feat_s1_b0",
         "BRAM_w_s1_b1_1",
         "BRAM_feat_s1_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b1_bn1": {
       "func_name": "batchnorm",
@@ -3775,7 +3781,8 @@
         "BRAM_feat_s1_tmp1",
         "BRAM_w_s1_b1_2",
         "BRAM_feat_s1_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b1_bn2": {
       "func_name": "batchnorm",
@@ -3839,7 +3846,8 @@
         "BRAM_feat_s1_tmp2",
         "BRAM_w_s1_b1_3",
         "BRAM_feat_s1_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b1_bn3": {
       "func_name": "batchnorm",
@@ -3919,7 +3927,8 @@
         "BRAM_feat_s1_b1",
         "BRAM_w_s1_b2_1",
         "BRAM_feat_s1_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b2_bn1": {
       "func_name": "batchnorm",
@@ -3983,7 +3992,8 @@
         "BRAM_feat_s1_tmp1",
         "BRAM_w_s1_b2_2",
         "BRAM_feat_s1_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b2_bn2": {
       "func_name": "batchnorm",
@@ -4047,7 +4057,8 @@
         "BRAM_feat_s1_tmp2",
         "BRAM_w_s1_b2_3",
         "BRAM_feat_s1_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s1_b2_bn3": {
       "func_name": "batchnorm",
@@ -4127,7 +4138,8 @@
         "BRAM_feat_s1_b2",
         "BRAM_w_s2_b0_1",
         "BRAM_feat_s2_pre_downsample"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b0_bn1": {
       "func_name": "batchnorm",
@@ -4191,7 +4203,8 @@
         "BRAM_feat_s2_pre_downsample",
         "BRAM_w_s2_b0_2",
         "BRAM_feat_s2_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b0_bn2": {
       "func_name": "batchnorm",
@@ -4255,7 +4268,8 @@
         "BRAM_feat_s2_tmp2",
         "BRAM_w_s2_b0_3",
         "BRAM_feat_s2_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b0_bn3": {
       "func_name": "batchnorm",
@@ -4303,7 +4317,8 @@
         "BRAM_feat_s1_b2",
         "BRAM_w_s2_b0_down",
         "BRAM_feat_s2_skip"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b0_residual_add": {
       "func_name": "matrix_add_conv",
@@ -4366,7 +4381,8 @@
         "BRAM_feat_s2_b0",
         "BRAM_w_s2_b1_1",
         "BRAM_feat_s2_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b1_bn1": {
       "func_name": "batchnorm",
@@ -4430,7 +4446,8 @@
         "BRAM_feat_s2_tmp1",
         "BRAM_w_s2_b1_2",
         "BRAM_feat_s2_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b1_bn2": {
       "func_name": "batchnorm",
@@ -4494,7 +4511,8 @@
         "BRAM_feat_s2_tmp2",
         "BRAM_w_s2_b1_3",
         "BRAM_feat_s2_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b1_bn3": {
       "func_name": "batchnorm",
@@ -4574,7 +4592,8 @@
         "BRAM_feat_s2_b1",
         "BRAM_w_s2_b2_1",
         "BRAM_feat_s2_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b2_bn1": {
       "func_name": "batchnorm",
@@ -4638,7 +4657,8 @@
         "BRAM_feat_s2_tmp1",
         "BRAM_w_s2_b2_2",
         "BRAM_feat_s2_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b2_bn2": {
       "func_name": "batchnorm",
@@ -4702,7 +4722,8 @@
         "BRAM_feat_s2_tmp2",
         "BRAM_w_s2_b2_3",
         "BRAM_feat_s2_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b2_bn3": {
       "func_name": "batchnorm",
@@ -4782,7 +4803,8 @@
         "BRAM_feat_s2_b2",
         "BRAM_w_s2_b3_1",
         "BRAM_feat_s2_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b3_bn1": {
       "func_name": "batchnorm",
@@ -4846,7 +4868,8 @@
         "BRAM_feat_s2_tmp1",
         "BRAM_w_s2_b3_2",
         "BRAM_feat_s2_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b3_bn2": {
       "func_name": "batchnorm",
@@ -4910,7 +4933,8 @@
         "BRAM_feat_s2_tmp2",
         "BRAM_w_s2_b3_3",
         "BRAM_feat_s2_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s2_b3_bn3": {
       "func_name": "batchnorm",
@@ -4990,7 +5014,8 @@
         "BRAM_feat_s2_b3",
         "BRAM_w_s3_b0_1",
         "BRAM_feat_s3_pre_downsample"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b0_bn1": {
       "func_name": "batchnorm",
@@ -5054,7 +5079,8 @@
         "BRAM_feat_s3_pre_downsample",
         "BRAM_w_s3_b0_2",
         "BRAM_feat_s3_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b0_bn2": {
       "func_name": "batchnorm",
@@ -5118,7 +5144,8 @@
         "BRAM_feat_s3_tmp2",
         "BRAM_w_s3_b0_3",
         "BRAM_feat_s3_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b0_bn3": {
       "func_name": "batchnorm",
@@ -5166,7 +5193,8 @@
         "BRAM_feat_s2_b3",
         "BRAM_w_s3_b0_down",
         "BRAM_feat_s3_skip"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b0_residual_add": {
       "func_name": "matrix_add_conv",
@@ -5229,7 +5257,8 @@
         "BRAM_feat_s3_b0",
         "BRAM_w_s3_b1_1",
         "BRAM_feat_s3_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b1_bn1": {
       "func_name": "batchnorm",
@@ -5293,7 +5322,8 @@
         "BRAM_feat_s3_tmp1",
         "BRAM_w_s3_b1_2",
         "BRAM_feat_s3_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b1_bn2": {
       "func_name": "batchnorm",
@@ -5357,7 +5387,8 @@
         "BRAM_feat_s3_tmp2",
         "BRAM_w_s3_b1_3",
         "BRAM_feat_s3_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b1_bn3": {
       "func_name": "batchnorm",
@@ -5437,7 +5468,8 @@
         "BRAM_feat_s3_b1",
         "BRAM_w_s3_b2_1",
         "BRAM_feat_s3_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b2_bn1": {
       "func_name": "batchnorm",
@@ -5501,7 +5533,8 @@
         "BRAM_feat_s3_tmp1",
         "BRAM_w_s3_b2_2",
         "BRAM_feat_s3_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b2_bn2": {
       "func_name": "batchnorm",
@@ -5565,7 +5598,8 @@
         "BRAM_feat_s3_tmp2",
         "BRAM_w_s3_b2_3",
         "BRAM_feat_s3_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b2_bn3": {
       "func_name": "batchnorm",
@@ -5645,7 +5679,8 @@
         "BRAM_feat_s3_b2",
         "BRAM_w_s3_b3_1",
         "BRAM_feat_s3_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b3_bn1": {
       "func_name": "batchnorm",
@@ -5709,7 +5744,8 @@
         "BRAM_feat_s3_tmp1",
         "BRAM_w_s3_b3_2",
         "BRAM_feat_s3_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b3_bn2": {
       "func_name": "batchnorm",
@@ -5773,7 +5809,8 @@
         "BRAM_feat_s3_tmp2",
         "BRAM_w_s3_b3_3",
         "BRAM_feat_s3_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b3_bn3": {
       "func_name": "batchnorm",
@@ -5853,7 +5890,8 @@
         "BRAM_feat_s3_b3",
         "BRAM_w_s3_b4_1",
         "BRAM_feat_s3_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b4_bn1": {
       "func_name": "batchnorm",
@@ -5917,7 +5955,8 @@
         "BRAM_feat_s3_tmp1",
         "BRAM_w_s3_b4_2",
         "BRAM_feat_s3_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b4_bn2": {
       "func_name": "batchnorm",
@@ -5981,7 +6020,8 @@
         "BRAM_feat_s3_tmp2",
         "BRAM_w_s3_b4_3",
         "BRAM_feat_s3_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b4_bn3": {
       "func_name": "batchnorm",
@@ -6061,7 +6101,8 @@
         "BRAM_feat_s3_b4",
         "BRAM_w_s3_b5_1",
         "BRAM_feat_s3_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b5_bn1": {
       "func_name": "batchnorm",
@@ -6125,7 +6166,8 @@
         "BRAM_feat_s3_tmp1",
         "BRAM_w_s3_b5_2",
         "BRAM_feat_s3_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b5_bn2": {
       "func_name": "batchnorm",
@@ -6189,7 +6231,8 @@
         "BRAM_feat_s3_tmp2",
         "BRAM_w_s3_b5_3",
         "BRAM_feat_s3_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s3_b5_bn3": {
       "func_name": "batchnorm",
@@ -6269,7 +6312,8 @@
         "BRAM_feat_s3_b5",
         "BRAM_w_s4_b0_1",
         "BRAM_feat_s4_pre_downsample"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b0_bn1": {
       "func_name": "batchnorm",
@@ -6333,7 +6377,8 @@
         "BRAM_feat_s4_pre_downsample",
         "BRAM_w_s4_b0_2",
         "BRAM_feat_s4_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b0_bn2": {
       "func_name": "batchnorm",
@@ -6397,7 +6442,8 @@
         "BRAM_feat_s4_tmp2",
         "BRAM_w_s4_b0_3",
         "BRAM_feat_s4_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b0_bn3": {
       "func_name": "batchnorm",
@@ -6445,7 +6491,8 @@
         "BRAM_feat_s3_b5",
         "BRAM_w_s4_b0_down",
         "BRAM_feat_s4_skip"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b0_residual_add": {
       "func_name": "matrix_add_conv",
@@ -6508,7 +6555,8 @@
         "BRAM_feat_s4_b0",
         "BRAM_w_s4_b1_1",
         "BRAM_feat_s4_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b1_bn1": {
       "func_name": "batchnorm",
@@ -6572,7 +6620,8 @@
         "BRAM_feat_s4_tmp1",
         "BRAM_w_s4_b1_2",
         "BRAM_feat_s4_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b1_bn2": {
       "func_name": "batchnorm",
@@ -6636,7 +6685,8 @@
         "BRAM_feat_s4_tmp2",
         "BRAM_w_s4_b1_3",
         "BRAM_feat_s4_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b1_bn3": {
       "func_name": "batchnorm",
@@ -6716,7 +6766,8 @@
         "BRAM_feat_s4_b1",
         "BRAM_w_s4_b2_1",
         "BRAM_feat_s4_tmp1"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b2_bn1": {
       "func_name": "batchnorm",
@@ -6780,7 +6831,8 @@
         "BRAM_feat_s4_tmp1",
         "BRAM_w_s4_b2_2",
         "BRAM_feat_s4_tmp2"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b2_bn2": {
       "func_name": "batchnorm",
@@ -6844,7 +6896,8 @@
         "BRAM_feat_s4_tmp2",
         "BRAM_w_s4_b2_3",
         "BRAM_feat_s4_tmp3"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "s4_b2_bn3": {
       "func_name": "batchnorm",
@@ -6941,7 +6994,8 @@
         "BRAM_pool",
         "BRAM_fc",
         "BRAM_out"
-      ]
+      ],
+      "schedule": "pipeline_inner"
     },
     "store_output": {
       "func_name": "store",
@@ -6965,7 +7019,7 @@
     "csynth"
   ],
   "data_type": "ap_fixed<32, 10, AP_RND, AP_SAT>",
-  "production_revision": 2,
   "top_func_name": "top",
+  "production_revision": 2,
   "data_type_spec": "fixed<32,10,rnd,sat>"
 }

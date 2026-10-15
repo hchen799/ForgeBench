@@ -841,6 +841,7 @@ void conv2d_3_64_224_224_112_112_7_3_2_ap_fixed_32_10_AP_RND_AP_SAT_(
             for (int co=0; co<64; ++co) sums[co] = ((data_t)0);
             for (int kh = 0; kh < 7; kh++) {
                 for (int kw = 0; kw < 7; kw++) {
+                    #pragma HLS pipeline II=1
                     int in_row = i * 2 - 3 + kh;
                     int in_col = j * 2 - 3 + kw;
                     if (in_row >= 0 && in_row < 224 && in_col >= 0 && in_col < 224) {

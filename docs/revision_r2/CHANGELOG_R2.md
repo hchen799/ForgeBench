@@ -13,7 +13,15 @@
   (289 July-only designs now NO). Table 5 / Fig 8: DNN (1,000); impl total GEMM 999 + DNN 1,000 + LLM 962 = 2,961.
 * **Full-model csynth** (`_sweeps/lean/fullmodel_csynth_r2_sched`): all 10 ResNet `<32,10>` new-schedule designs ok (ResNet-152
   plain 28.9 h, -101 15.5 h, -50 6.7 h; the others 18 min-3.4 h); with the 4 Llama designs (`_sweeps/lean/fullmodel_csynth_r2`)
-  14/14. New-schedule sources still only in `_sweeps/fullmodel_r2_sched/` (not yet copied into `scale_models/hls_files`).
+  14/14. New-schedule sources (`top.cpp`, `resolved_config.json`: only the `"schedule": "pipeline_inner"` key on the conv ops
+  differs) copied from `_sweeps/fullmodel_r2_sched/` into `scale_models/hls_files` (user decision); `top.h`, `tb_top.cpp`, `run_hls.tcl`
+  unchanged. Their hashes are the ones registered in `contracts.json`.
+* **Table 3** (`analysis/table3_fullmodel.py` -> `analysis/tables_out/table3_fullmodel.{csv,tex}`): one row per synthesized project
+  (14): LUT / DSP / BRAM_18K (count and % of the ZCU102), latency (cycles; undefined for Llama, run-time loop bounds), C-sim
+  mismatching codes vs the fixed-point reference and final-logit max abs error / relative L2 vs FP64 (min-max over seeds). Only
+  `<32,10>` round/saturate designs are simulated (FP64 is the PyTorch reference, not a simulated design). All ResNets exceed the
+  ZCU102 (full: 697-2,160% LUT, up to 11,645% BRAM; tiled: 133-174% BRAM, 277-544% LUT), as did the R1 `<16,5>` ResNets
+  (ResNet-18 full 5.2M LUT / 5,427 BRAM18K); Llama prefill 104% LUT.
 
 ## 2026-10-14 — Table 7 stays at <32,10> (user decision), reported as (LUT, DSP, BRAM) tuples; three merged LLM designs fixed
 * **Format**: Table 7 is `<32,10>` TRN/WRAP for every case, the format in which all 26 programs and all 32 merged-design x program checks
