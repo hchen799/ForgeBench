@@ -1,7 +1,7 @@
 """Paper Table 3 (full-scale models): one row per synthesized project, C-synthesis resources and C-simulation error.
 
-Designs (round/saturate): ResNet-18/34/50/101/152 full at <32,10> and tiled at <16,5> with an 8 x 32 conv tile; Llama-3-8B prefill and
-decode at KV cache 2048 and 8192, <32,10>. Rows grouped as in the paper (Full / Tiled / Prefill / Decode); errors are the
+Designs: ResNet-18/34/50/101/152 full at <32,10> round/saturate and tiled at <16,5> truncate/wrap with an 8 x 32 conv tile; Llama-3-8B prefill and
+decode at KV cache 2048 and 8192, <32,10> round/saturate. Rows grouped as in the paper (Full / Tiled / Prefill / Decode); errors are the
 maximum over seeds.
 
   Resources  LUT, DSP, BRAM_18K (count and % of the ZCU102) and latency (cycles) from csynth.xml:
@@ -9,7 +9,7 @@ maximum over seeds.
   C-sim      Vitis C simulation of the same sources (verify.py via verification/paper_runs/run_fullmodel.sh) against
              (a) the integer-code fixed-point reference: mismatching codes, summed over all seeds and observed tensors, and
              (b) the FP64 PyTorch model: final-logit max abs error and relative L2, min-max over seeds.
-             ResNets: 10 seeds (full: results_paper/fullmodel_r2_sched; tiled: results_paper/fullmodel_r3_16_5). Llama: 3 seeds of 4 prefill + 2 decode tokens with the prefill and
+             ResNets: 10 seeds (full: results_paper/fullmodel_r2_sched; tiled: results_paper/fullmodel_r4_16_5_trn). Llama: 3 seeds of 4 prefill + 2 decode tokens with the prefill and
              decode projects run together (paper_results/fullmodel ctx2048, results_paper/fullmodel_ctx8192_r2); the prefill row
              reports the prefill call, the decode row the two decode calls.
 
@@ -24,10 +24,10 @@ import xml.etree.ElementTree as ET
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(REPO, "analysis", "tables_out")
 LEAN = {"resnet": os.path.join(REPO, "_sweeps", "lean", "fullmodel_csynth_r2_sched", "scale"),
-        "tiled": os.path.join(REPO, "_sweeps", "lean", "fullmodel_csynth_r3_16_5", "scale"),
+        "tiled": os.path.join(REPO, "_sweeps", "lean", "fullmodel_csynth_r4_16_5_trn", "scale"),
         "llama": os.path.join(REPO, "_sweeps", "lean", "fullmodel_csynth_r2", "scale")}
 VERIF = {"resnet": os.path.join(REPO, "verification", "results_paper", "fullmodel_r2_sched"),
-         "tiled": os.path.join(REPO, "verification", "results_paper", "fullmodel_r3_16_5"),
+         "tiled": os.path.join(REPO, "verification", "results_paper", "fullmodel_r4_16_5_trn"),
          2048: os.path.join(REPO, "verification", "paper_results", "fullmodel"),
          8192: os.path.join(REPO, "verification", "results_paper", "fullmodel_ctx8192_r2")}
 REPORT = "project_1/solution1/syn/report/csynth.xml"

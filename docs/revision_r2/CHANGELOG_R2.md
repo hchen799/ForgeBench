@@ -1,5 +1,24 @@
 # CHANGELOG_R2 — generator changes and the committed results they make stale
 
+## 2026-10-15 (later) — Tiled ResNets at <16,5> with an 8x32 conv tile (Table 3); truncate/wrap
+* **Why**: at `<32,10>` the tiled ResNets exceed the ZCU102 (133-174% BRAM, 363-444% DSP, 277-544% LUT). User decision: tiled
+  ResNets at `<16,5>` (default wide accumulator `ap_fixed<64,42>` TRN/WRAP) with the conv tile halved (8 x 64 -> 8 x 32,
+  `auto_generate_json.py --conv-co-factors 32`); full ResNets and Llama stay `<32,10>` RND/SAT.
+* **Llama `<24,8>` dropped**: the full-model verifier (`existing_model_verification/references/project.py`) only implements Q16.5
+  and Q32.10. Llama stays `<32,10>` (user decision).
+* **Round/saturate failed, truncate/wrap passes.** First run at `fixed<16,5,rnd,sat>` (`_sweeps/fullmodel_r3`,
+  `results_paper/fullmodel_r3_16_5`): bit-exact, but FP64 relative L2 > 5% for ResNet-34 (4/10 seeds), 101 (8/10), 152 (10/10;
+  up to 81%). Seed-42 isolation (`results_paper/fullmodel_check_r1src_16_5`): ResNet-152 tiled with Hanqiu's TRN/WRAP 8 x 64
+  source 2.046%, the 8 x 32 schedule at TRN/WRAP 2.046% (identical), at RND/SAT 71%: the storage mode, not the schedule.
+  User decision: truncate/wrap. Re-run (`_sweeps/fullmodel_r4_trn`, same recipe with `"data_type": "ap_fixed<16,5>"`):
+  50/50 PASS, 0 mismatching codes, final-logit relative L2 0.44-2.42% (`results_paper/fullmodel_r4_16_5_trn`); csynth
+  `_sweeps/lean/fullmodel_csynth_r4_16_5_trn`. Sources registered in `contracts.json` (reference v2, both the RND/SAT and the
+  TRN/WRAP revisions). Not yet copied into `scale_models/hls_files` (5 new project directories; ask first).
+* Recipe (reproduces the verified `<32,10>` tiled ResNet-18 byte for byte): `auto_generate_json.py` from a scratch directory (it
+  writes `./auto_generated_configs`), `_sweeps/fullmodel_r3/post.py` (data_type; `"schedule": "pipeline_inner"` on every
+  `conv_tile` op), `gen_configs.run_hls_flow`, `existing_model_verification/register_sources.py`.
+* `analysis/table3_fullmodel.py` reads the truncate/wrap tiled runs.
+
 ## 2026-10-15 — Conv impl re-sampled (seeded 1,000) and re-run; full-model ResNet re-synthesis finished
 * **Conv impl selection** (`analysis/impl_sampler.py conv --seed 20261014`, `manifest/conv_impl_selection.csv`): all 576 designs
   with no unrolling + 53 at random from each of the 8 unrolled (unroll_cin, unroll_cout) groups = 1,000, as gemm. Replaces the
