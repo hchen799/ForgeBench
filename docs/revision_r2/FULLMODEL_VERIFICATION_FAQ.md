@@ -52,7 +52,7 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
    |---|---|---|
    | `fullmodel_r2_sched/` | new-schedule `<32,10>` ResNets, 10 × 10 seeds, all PASS (identical to the tracked runs) | 26 GB |
    | `fullmodel_ctx8192_r2/` | Llama ctx8192 × 3 seeds, PASS | 31 GB |
-   | `fullmodel_r4_16_5_trn/` | tiled `<16,5>` truncate/wrap 8×32 ResNets, 5 × 10 seeds, all PASS (**the paper's**) | |
+   | `fullmodel_r4_16_5_trn/` | tiled `<16,5>` truncate/wrap 8×32 ResNets, 5 × 10 seeds, all PASS (**the paper's**) | 9.1 GB |
    | `fullmodel_r3_16_5/` | the same at round/saturate (superseded: FP64 failures, see 6) | 9.1 GB |
    | `fullmodel_check_r1src_16_5/` | seed-42 isolation runs for 6 and 17 | |
 
@@ -63,9 +63,12 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
    4 prefill tokens then 2 decode calls. Table 3 reports the prefill call (`call0000`) on the prefill row and the two decode calls
    (`call0001`, `call0002`) on the decode row. ctx2048 and ctx8192 give identical numbers: same seed, same 6 tokens, and only the
    cache capacity differs.
-6. **The tiled `<16,5>` ci8/co32 sources are verified:** 50 runs, all bit-exact (0 mismatching codes). Against FP64, ResNet-18
-   (10/10) and ResNet-50 (10/10) pass at ≤ 0.03% relative L2; ResNet-34 passes 6/10, ResNet-101 2/10 and ResNet-152 0/10 (up to
-   81%). Seed-42 isolation runs show the cause is the **round/saturate** storage mode, not the 8×32 schedule:
+6. **The tiled `<16,5>` ci8/co32 sources (truncate/wrap, the paper's) are verified:** 50/50 PASS, 0 mismatching codes, final-logit
+   relative L2 0.44–2.42% (`results_paper/fullmodel_r4_16_5_trn`).
+
+   History: the first version used round/saturate (`_sweeps/fullmodel_r3`, `results_paper/fullmodel_r3_16_5`). It was bit-exact,
+   but missed the FP64 limit for ResNet-34 (6/10 pass), 101 (2/10) and 152 (0/10, up to 81%). Seed-42 isolation runs showed the
+   cause is the round/saturate storage mode, not the 8×32 schedule:
 
    | ResNet-152 tiled `<16,5>`, seed 42 | rel. L2 at logits |
    |---|---|
@@ -73,8 +76,8 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
    | 8×32 schedule, truncate/wrap | 2.046% PASS (identical) |
    | 8×32 schedule, round/saturate (Table 3 row) | 71% FAIL |
 
-   **User decision (2026-10-15): truncate/wrap.** Re-run `_sweeps/fullmodel_r4_trn` → `results_paper/fullmodel_r4_16_5_trn`: 50/50 PASS,
-   0 mismatching codes, relative L2 0.44–2.42%. The round/saturate runs (`fullmodel_r3_16_5`) are superseded.
+   The user chose truncate/wrap (2026-10-15). The round/saturate sources and runs are superseded; they are kept only as the
+   record of the isolation.
 7. **The 24 variants** (`existing_model_verification/results/validation_summary.json`, README "all 24") are 12 models × 2 formats:
    10 ResNets, plus Llama ctx2048 and ctx8192 (each a prefill+decode pair), at `<16,5>` and `<32,10>`. They are Hanqiu's single
    seed (42), on his earlier sources: truncate/wrap `<16,5>`, and the `<32,10>` revision before R2's round/saturate one. They are
@@ -144,8 +147,9 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
        ```
        python auto_generate_json.py --data-types "ap_fixed<32,10>"
        ```
-       Optionally add `--conv-co-factors 32` for the tiled 8×32 designs. Then set `"data_type": "fixed<W,I,rnd,sat>"`, and
-       `"schedule": "pipeline_inner"` on every `conv_tile` op (`_sweeps/fullmodel_r3/post.py`), and run
+       For the tiled designs use `--data-types "ap_fixed<16,5>" --conv-co-factors 32`. Then set `"data_type"` (full ResNets and
+       Llama: `"fixed<32,10,rnd,sat>"`; tiled: `"ap_fixed<16,5>"`, i.e. truncate/wrap), and `"schedule": "pipeline_inner"` on
+       every `conv_tile` op (`_sweeps/fullmodel_r3/post.py <in> <out> <data_type>`), and run
        `gen_configs.run_hls_flow(config, out)`. This reproduces the verified `<32,10>` tiled ResNet-18 `top.cpp` / `top.h` /
        `tb_top.cpp` byte for byte.
     2. **Register** new sources (if they changed): `register_sources.py`.
@@ -154,7 +158,7 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
        SOURCES=<dir> OUT=<dir> PY=<python> bash verification/paper_runs/run_fullmodel.sh
        ```
        It only selects `RESNET*32_10*` projects and the ctx2048 Llama pair. ctx8192 used `_sweeps/llama_ctx8192_verify.sh`, and
-       the tiled `<16,5>` ResNets used `_sweeps/fullmodel_r3/verify.sh`. These should become one parameterized script.
+       the tiled `<16,5>` ResNets used `_sweeps/fullmodel_r4_trn/verify.sh`. These should become one parameterized script.
     4. **Table:**
        ```
        python3 -m analysis.table3_fullmodel
@@ -167,7 +171,7 @@ designs the generator emits from JSON (`scale_models/auto_generate_json.py` → 
 
     **Memory:** not measured. Hanqiu's README quotes about 60 GiB for the Llama-3-8B matrix cache plus activations.
 
-    **Synthesis** (separate, `analysis.run_prebuilt`): ResNet full 18 min–29 h, tiled `<16,5>` 10–80 min, Llama 45–90 min.
+    **Synthesis** (separate, `analysis.run_prebuilt`): ResNet full 18 min–29 h, tiled `<16,5>` 11 min–about 3 h (ResNet-152), Llama 45–90 min.
 16. **`verification/paper_runs/make_fullmodel_table.py` → `verif_fullmodel.tex`** is built from Hanqiu's `validation_summary.json`:
     a single seed on his earlier sources (the 24 variants in 7). It is **not consistent** with Table 3, which computes its own
     error columns from the R2 runs. Drop it, or rebuild it from the R2 run summaries; I don't know whether the current paper draft

@@ -34,18 +34,18 @@ Everything below is collected and committed on `FPT_TRETS_2026` unless marked ot
 | Table 4 (sweeps), synth summary table | `manifest/designs/{gemm,conv,llm}.csv` | `manifest/build_manifest.py` | GEMM 3,072 / conv 5,184 / LLM 3,888 csynth; impl GEMM 999 + 1 FAIL, conv 1,000 (seeded, `conv_impl_selection.csv`), LLM 962 + 38 over capacity |
 | Table 5, Figs 6–8 | `analysis/results_{csynth,impl}/metrics_{gemm,conv,llm}.csv` | `python3 -m analysis.section42` | done (impl 2,961) |
 | Table 7 | `modular_data/modularization_{results.csv,table.tex}` | `modular_data/parse_synth_resourc_util.py --reports-root _sweeps/lean/modular_csynth_32_10_r2` | done, `<32,10>`, (LUT, DSP, BRAM) tuples |
-| Table 3 (full models) | `analysis/tables_out/table3_fullmodel.{csv,tex}` | `python3 -m analysis.table3_fullmodel` | **ResNet-152 tiled `<16,5>` csynth still running** (`_sweeps/lean/fullmodel_csynth_r3_16_5`); everything else done |
+| Table 3 (full models) | `analysis/tables_out/table3_fullmodel.{csv,tex}` | `python3 -m analysis.table3_fullmodel` | **tiled `<16,5>` truncate/wrap csynth running** (`_sweeps/lean/fullmodel_csynth_r4_16_5_trn`); verification done |
 | Table 2 / verification tables | `verification/paper_results/` (compact, tracked); raw runs in `verification/results_paper/` (66 GB, ignored) | `verification/paper_runs/make_tables.py`, `make_fullmodel_table.py` | R2 Table 7 runs (`C_32_10__table7r2_*`, merged) and full-model R2/R3 runs not yet copied into `paper_results/` |
 | Table 6 (Catapult vs Vitis) | `analysis/catapult_vs_vitis.py` | | see `VERIFICATION_HANDOFF.md` |
 
 Full-model sources:
 - `scale_models/hls_files/*_32_10_`: 10 ResNets (new conv schedule) and 4 Llama, `<32,10>` RND/SAT. Verified and registered in
   `contracts.json`.
-- Tiled ResNets at `<16,5>` with an 8×32 conv tile: only in `_sweeps/fullmodel_r3/{configs,hls_files}`, not yet in `scale_models/`.
-  Their hashes are registered. Verified: bit-exact, but FP64 relative L2 > 5% for ResNet-34 (4/10 seeds), 101 (8/10) and 152
-  (10/10). The user decided to report these and explain them. Copying them into `scale_models/hls_files` adds 5 project
-  directories, so ask first.
-- Full-model lean reports (`_sweeps/lean/fullmodel_csynth_{r2,r2_sched,r3_16_5}`) are not yet packaged into `checkpoints/r2/`.
+- Tiled ResNets at `<16,5>` truncate/wrap with an 8×32 conv tile: only in `_sweeps/fullmodel_r4_trn/{configs,hls_files}`, not
+  yet in `scale_models/`. Their hashes are registered. Verified 50/50 (bit-exact, relative L2 0.44–2.42%). An earlier
+  round/saturate version (`_sweeps/fullmodel_r3`) failed FP64 for the deep ResNets and is superseded (`CHANGELOG_R2`). Copying the
+  truncate/wrap projects into `scale_models/hls_files` adds 5 project directories, so ask first.
+- Full-model lean reports (`_sweeps/lean/fullmodel_csynth_{r2,r2_sched,r4_16_5_trn}`; `r3_16_5` is the superseded round/saturate run) are not yet packaged into `checkpoints/r2/`.
   Package them like the other lean archives (`release/package_lean.sh`) and add them to `manifest/_common.py` SOURCES.
 
 Archives (`checkpoints/`, ignored): `20260720/` (R1/July lean archives) and `r2/` (all R2 lean archives listed in
@@ -114,7 +114,7 @@ README.md  REPRODUCE.md  Makefile
   every manifest path). `package_lean.sh`, `make_manifest.py` and `bundle_files.csv` already exist.
 - To do:
   1. Package the full-model lean reports (§1).
-  2. Add `manifest/designs/fullmodel.csv` (Table 3: 14 + 5 tiled `<16,5>` projects, sources, reports, verification runs).
+  2. Add `manifest/designs/fullmodel.csv` (Table 3: the 14 projects — 5 full `<32,10>`, 5 tiled `<16,5>` truncate/wrap, 4 Llama — with sources, reports, verification runs).
   3. Add compact verification results: copy the R2 runs into `verification/paper_results/` the same way as the R1 runs.
   4. Add the Catapult runs.
   5. Dry run: every manifest path resolves, SHA256SUMS verify, no file over the Zenodo per-file limit (and the per-record file
